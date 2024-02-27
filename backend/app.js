@@ -6,6 +6,9 @@ var logger = require("morgan");
 
 var activitiesRouter = require("./routes/activityRoute");
 
+var socialSkillsRouter = require("./routes/socialSkillsRoute");
+var technicalSkillsRouter = require("./routes/technicalSkillsRoute")
+
 var mongoose = require("mongoose");
 var configDB = require("./config/mongodb.json");
 
@@ -34,6 +37,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //routes
 app.use("/activities", activitiesRouter);
+app.use("/socialSkills", socialSkillsRouter);
+app.use("/technicalSkills", technicalSkillsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
