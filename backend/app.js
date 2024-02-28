@@ -16,10 +16,16 @@ const { mongoose } = require("mongoose");
 
 var messageRoute = require("./routes/ConversationRoute");
 
-var activitiesRouter = require("./routes/activityRoute");
+var publicationRoute = require("./routes/publicationRoutes");
+var evenementRoutes = require("./routes/EvenementRoutes");
+commentaireRoutes = require("./routes/ComentaireRoute");
+var PageRoute = require("./routes/PageRoute");
 
-//var indexRouter = require('./routes/index');
-//var usersRouter = require('./routes/users');
+var socialSkillsRouter = require("./routes/socialSkillsRoute");
+var technicalSkillsRouter = require("./routes/technicalSkillsRoute");
+
+var mongoose = require("mongoose");
+var configDB = require("./config/mongodb.json");
 
 var app = express();
 
@@ -39,8 +45,24 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+//app.use('/', indexRouter);
+//app.use('/users', usersRouter);
+
+app.use("/", require("./routes/authRoutes"));
+app.use("/unite", require("./controller/uniteController"));
+app.use("/departement", require("./controller/departementController"));
+app.use("/publications", publicationRoute);
+app.use("/evenemnt", evenementRoutes);
+app.use("/commentaire", commentaireRoutes);
+app.use("/pages", PageRoute);
+app.use("/messages", messageRoute);
 //routes
 app.use("/activities", activitiesRouter);
+app.use("/socialSkills", socialSkillsRouter);
+app.use("/technicalSkills", technicalSkillsRouter);
+
+const port = 8000;
+app.listen(port, () => console.log(`server is running on ${port}`));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
