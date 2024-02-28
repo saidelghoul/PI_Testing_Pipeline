@@ -6,9 +6,6 @@ var logger = require("morgan");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
 const { mongoose } = require("mongoose");
-var publicationRoute = require("./routes/publicationRoutes");
-var evenementRoutes = require("./routes/EvenementRoutes");
-commentaireRoutes = require("./routes/ComentaireRoute");
 var createError = require("http-errors");
 const express = require("express");
 var path = require("path");
@@ -16,8 +13,12 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 const cors = require("cors");
 const { mongoose } = require("mongoose");
+
 var messageRoute = require("./routes/ConversationRoute");
 
+var publicationRoute = require("./routes/publicationRoutes");
+var evenementRoutes = require("./routes/EvenementRoutes");
+commentaireRoutes = require("./routes/ComentaireRoute");
 var PageRoute = require("./routes/PageRoute");
 
 //var indexRouter = require('./routes/index');
