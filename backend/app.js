@@ -38,6 +38,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use('/users', usersRouter);
 
 app.use('/', require('./routes/authRoutes'))
+app.use('/unite',require('./controller/uniteController'))
+app.use('/departement',require('./controller/departementController'))
+
 
 const port = 8000;
 app.listen(port, () => console.log(`server is running on ${port}`));

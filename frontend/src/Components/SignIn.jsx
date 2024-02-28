@@ -15,7 +15,8 @@ import {useNavigate} from 'react-router-dom'
 
 
 export default function SignIn() {
-	
+	const [activeTab, setActiveTab] = useState('tab-1');
+
 	const navigate = useNavigate()
     const [data, setData]= useState({
         email: '',
@@ -45,16 +46,47 @@ export default function SignIn() {
         name: '',
         email: '',
         password: '',
+		confirmedPassword: '',
         role: '',
+		gouvernorat: '',
+		//adresse: '',
+		//telephone: '',
+        //dateNaissance: '',
+        //gender: '',
+       // departement:'',
+
 
     })
 
     const registerUser = async (e)=>{
         e.preventDefault();
-        const {name, email, password,role} = registerdata
+
+        const {
+			name, 
+			email, 
+			confirmedPassword, 
+			password,
+			role, 
+			gouvernorat,
+          //  adresse,
+            //telephone,
+            //dateNaissance,
+            //gender,
+            //departement
+		} = registerdata
         try{
           const{data1} = await axios.post('/register',{
-            name,email,password,role
+            name,
+			email,
+			password,
+			confirmedPassword,
+			role,
+			gouvernorat,
+            //adresse,
+            //telephone,
+            //dateNaissance,
+            //gender,
+            //departement
           })
           if(data1.error){
             toast.error(data1.error)
@@ -62,7 +94,8 @@ export default function SignIn() {
           else{
             setRegisterData({})
             toast.success('inscription successful. Welcome!')
-            navigate('/signin')
+			setActiveTab('tab-1');
+
           }
         }catch(error){
             console.log(error)
@@ -87,10 +120,11 @@ export default function SignIn() {
 						<div className="col-lg-6">
 							<div className="login-sec">
 								<ul className="sign-control">
-									<li data-tab="tab-1" className="current"><a href="#" title="">Sign in</a></li>				
-									<li data-tab="tab-2"><a href="#" title="">Sign up</a></li>				
+								<li data-tab="tab-1" className={activeTab === 'tab-1' ? 'current' : ''}><a href="#" title="">Sign in</a></li>
+								<li data-tab="tab-2" className={activeTab === 'tab-2' ? 'current' : ''}><a href="#" title="">Sign up</a></li>
+
 								</ul>			
-								<div className="sign_in_sec current" id="tab-1">
+								<div className={`sign_in_sec ${activeTab === 'tab-1' ? 'current' : ''}`} id="tab-1">
 									
 									<h3>Sign in</h3>
 									<form  onSubmit={loginUser}>
@@ -132,7 +166,7 @@ export default function SignIn() {
 										</ul>
 									</div>
 								</div>
-								<div className="sign_in_sec" id="tab-2">
+								<div className={`sign_in_sec ${activeTab === 'tab-2' ? 'current' : ''}`} id="tab-2">
 								{/*	<div className="signup-tab">
 										<i className="fa fa-long-arrow-left"></i>
 										<h2>johndoe@example.com</h2>
@@ -144,43 +178,78 @@ export default function SignIn() {
 									<div className="dff-tab current" id="tab-3">
 										<form onSubmit={registerUser}>
 											<div className="row">
+											<div className="signup-tab"> 
+											{/*<i className="fa fa-id-badge"></i>*/}
+											<h2>Quelle est votre profession</h2>
+											<div className="sn-field">
+												<select name="role" value={registerdata.role} onChange={(e) => setRegisterData({...registerdata, role: e.target.value})}>
+													<option value="Directeur d'étude">Directeur d&apos;étude</option>
+													<option value="Chef département">Chef département</option>
+													<option value="Chef unité">Chef unité</option>
+													<option value="Enseignant">Enseigant</option>
+													</select>
+													<i className="fa fa-address-card-o"></i>
+													<span><i className="fa fa-ellipsis-h"></i></span>
+											</div>
+											</div>
+
 												<div className="col-lg-12 no-pdd">
 													<div className="sn-field">
-														<input type="text" name="name" placeholder="Full Name" value={registerdata.name}  onChange={(e) => setRegisterData({...registerdata, name: e.target.value})}/>
+														<input type="text" name="name" placeholder="nom et prenom" value={registerdata.name}  onChange={(e) => setRegisterData({...registerdata, name: e.target.value})}/>
 														<i className="la la-user"></i>
 													</div>
 												</div>
 												<div className="col-lg-12 no-pdd">
 													<div className="sn-field">
 														<input type="email" name="email" placeholder="email" value={registerdata.email}  onChange={(e) => setRegisterData({...registerdata, email: e.target.value})}/>
-														<i className="la la-globe"></i>
+														<i className="fa fa-envelope"></i>
 													</div>
 												</div>
-												{/*<div className="col-lg-12 no-pdd">
-													<div className="sn-field">
-														<select>
-															<option>Category</option>
-															<option>Category 1</option>
-															<option>Category 2</option>
-															<option>Category 3</option>
-															<option>Category 4</option>
-														</select>
-														<i className="la la-dropbox"></i>
-														<span><i className="fa fa-ellipsis-h"></i></span>
-													</div>
- 												 </div>*/}
 												<div className="col-lg-12 no-pdd">
 													<div className="sn-field">
-														<input type="password" name="password" placeholder="Password" value={registerdata.password}  onChange={(e) => setRegisterData({...registerdata, password: e.target.value})}/>
+														<select name="gouvernorat" value={registerdata.gouvernorat} onChange={(e) => setRegisterData({...registerdata, gouvernorat: e.target.value})}>
+															<option>Choisir votre gouvernorat</option>
+															<option value="Ariana">Ariana</option>
+															<option value="Béja">Béja</option>
+															<option value="Ben Arous">Ben Arous</option>
+															<option value="Bizerte">Bizerte</option>
+															<option value="Gabès">Gabès</option>
+															<option value="Gafsa">Gafsa</option>
+															<option value="Jendouba">Jendouba</option>
+															<option value="Kairouan">Kairouan</option>
+															<option value="Kasserine">Kasserine</option>
+															<option value="Kébili">Kébili</option>
+															<option value="Le Kef">Le Kef</option>
+															<option value="Mahdia">Mahdia</option>
+															<option value="La Manouba">La Manouba</option>
+															<option value="Médenine">Médenine</option>
+															<option value="Monastir">Monastir</option>
+															<option value="Nabeul">Nabeul</option>
+															<option value="Sfax">Sfax</option>
+															<option value="Sidi Bouzid">Sidi Bouzid</option>
+															<option value="Siliana">Siliana</option>
+															<option value="Sousse">Sousse</option>
+															<option value="Tataouine">Tataouine</option>
+															<option value="Tozeur">Tozeur</option>
+															<option value="Tunis">Tunis</option>
+															<option value="Zaghouan">Zaghouan</option>
+														</select>
+														<i className="la la-globe"></i>
+														<span><i className="fa fa-ellipsis-h"></i></span>
+													</div>
+                                               </div>
+												<div className="col-lg-12 no-pdd">
+													<div className="sn-field">
+														<input type="password" name="password" placeholder="mot de passe" value={registerdata.password}  onChange={(e) => setRegisterData({...registerdata, password: e.target.value})}/>
 														<i className="la la-lock"></i>
 													</div>
 												</div>
-												{/*<div className="col-lg-12 no-pdd">
+												<div className="col-lg-12 no-pdd">
 													<div className="sn-field">
-														<input type="password" name="repeat-password" placeholder="Repeat Password"/>
+														<input type="password" name="repeat-password" placeholder="confirmer votre mot de passe.." value={registerdata.confirmedPassword}  onChange={(e) => setRegisterData({...registerdata, confirmedPassword: e.target.value})}/>
 														<i className="la la-lock"></i>
 													</div>
-												</div>*/}
+												</div>
 												{/*<div className="col-lg-12 no-pdd">
 													<div className="checky-sec st2">
 														<div className="fgt-sec">
