@@ -8,9 +8,67 @@ import '../../public/assets/css/style.css';
 import '../../public/assets/css/responsive.css';
 import '../../public/assets/lib/slick/slick.css';
 import '../../public/assets/lib/slick/slick-theme.css';
+import { useState } from "react";
+import axios from 'axios';
+import {toast} from 'react-hot-toast'
+import {useNavigate} from 'react-router-dom'
 
 
 export default function SignIn() {
+	
+	const navigate = useNavigate()
+    const [data, setData]= useState({
+        email: '',
+        password:'',
+    })
+    const loginUser = async(e) =>{
+        e.preventDefault()
+          const {email, password} = data
+        try {
+          const {data} = await axios.post('/login', {
+            email,
+            password
+          });
+          if(data.error){
+            toast.error(data.error)
+          }else{
+            setData({});
+            navigate('/home')
+          }
+
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
+ const [registerdata,setRegisterData]=useState({
+        name: '',
+        email: '',
+        password: '',
+        role: '',
+
+    })
+
+    const registerUser = async (e)=>{
+        e.preventDefault();
+        const {name, email, password,role} = registerdata
+        try{
+          const{data1} = await axios.post('/register',{
+            name,email,password,role
+          })
+          if(data1.error){
+            toast.error(data1.error)
+          }
+          else{
+            setRegisterData({})
+            toast.success('inscription successful. Welcome!')
+            navigate('/signin')
+          }
+        }catch(error){
+            console.log(error)
+        }
+    }
+
   return (
    <>
    
@@ -35,17 +93,17 @@ export default function SignIn() {
 								<div className="sign_in_sec current" id="tab-1">
 									
 									<h3>Sign in</h3>
-									<form>
+									<form  onSubmit={loginUser}>
 										<div className="row">
 											<div className="col-lg-12 no-pdd">
 												<div className="sn-field">
-													<input type="text" name="username" placeholder="Username"/>
+													<input type="text" name="email" placeholder="email .. "  value={data.email}  onChange={(e) => setData({...data, email: e.target.value})}/>
 													<i className="la la-user"></i>
 												</div>
 											</div>
 											<div className="col-lg-12 no-pdd">
 												<div className="sn-field">
-													<input type="password" name="password" placeholder="Password"/>
+													<input type="password" name="password" placeholder="Password" value={data.password}  onChange={(e) => setData({...data, password: e.target.value})}/>
 													<i className="la la-lock"></i>
 												</div>
 											</div>
@@ -75,30 +133,30 @@ export default function SignIn() {
 									</div>
 								</div>
 								<div className="sign_in_sec" id="tab-2">
-									<div className="signup-tab">
+								{/*	<div className="signup-tab">
 										<i className="fa fa-long-arrow-left"></i>
 										<h2>johndoe@example.com</h2>
 										<ul>
 											<li data-tab="tab-3" className="current"><a href="#" title="">User</a></li>
 											<li data-tab="tab-4"><a href="#" title="">Company</a></li>
 										</ul>
-									</div>
+ 									 </div>*/}
 									<div className="dff-tab current" id="tab-3">
-										<form>
+										<form onSubmit={registerUser}>
 											<div className="row">
 												<div className="col-lg-12 no-pdd">
 													<div className="sn-field">
-														<input type="text" name="name" placeholder="Full Name"/>
+														<input type="text" name="name" placeholder="Full Name" value={registerdata.name}  onChange={(e) => setRegisterData({...registerdata, name: e.target.value})}/>
 														<i className="la la-user"></i>
 													</div>
 												</div>
 												<div className="col-lg-12 no-pdd">
 													<div className="sn-field">
-														<input type="text" name="country" placeholder="Country"/>
+														<input type="email" name="email" placeholder="email" value={registerdata.email}  onChange={(e) => setRegisterData({...registerdata, email: e.target.value})}/>
 														<i className="la la-globe"></i>
 													</div>
 												</div>
-												<div className="col-lg-12 no-pdd">
+												{/*<div className="col-lg-12 no-pdd">
 													<div className="sn-field">
 														<select>
 															<option>Category</option>
@@ -110,20 +168,20 @@ export default function SignIn() {
 														<i className="la la-dropbox"></i>
 														<span><i className="fa fa-ellipsis-h"></i></span>
 													</div>
-												</div>
+ 												 </div>*/}
 												<div className="col-lg-12 no-pdd">
 													<div className="sn-field">
-														<input type="password" name="password" placeholder="Password"/>
+														<input type="password" name="password" placeholder="Password" value={registerdata.password}  onChange={(e) => setRegisterData({...registerdata, password: e.target.value})}/>
 														<i className="la la-lock"></i>
 													</div>
 												</div>
-												<div className="col-lg-12 no-pdd">
+												{/*<div className="col-lg-12 no-pdd">
 													<div className="sn-field">
 														<input type="password" name="repeat-password" placeholder="Repeat Password"/>
 														<i className="la la-lock"></i>
 													</div>
-												</div>
-												<div className="col-lg-12 no-pdd">
+												</div>*/}
+												{/*<div className="col-lg-12 no-pdd">
 													<div className="checky-sec st2">
 														<div className="fgt-sec">
 															<input type="checkbox" name="cc" id="c2"/>
@@ -133,15 +191,15 @@ export default function SignIn() {
 															<small>Yes, I understand and agree to the workwise Terms & Conditions.</small>
 														</div>
 													</div>
-												</div>
+											</div>*/}
 												<div className="col-lg-12 no-pdd">
-													<button type="submit" value="submit">Get Started</button>
+													<button type="submit" value="submit">Enregistrer</button>
 												</div>
 											</div>
 										</form>
 									</div>
-									<div className="dff-tab" id="tab-4">
-										<form>
+									{/*<div className="dff-tab" id="tab-4">
+										<form >
 											<div className="row">
 												<div className="col-lg-12 no-pdd">
 													<div className="sn-field">
@@ -183,7 +241,7 @@ export default function SignIn() {
 												</div>
 											</div>
 										</form>
-									</div>
+											</div>*/}
 								</div>		
 							</div>
 						</div>
@@ -203,7 +261,7 @@ export default function SignIn() {
 						<li><a href="#" title="">Language</a></li>
 						<li><a href="#" title="">Copyright Policy</a></li>
 					</ul>
-					<p><img src="/assets/images/copy-icon.png" alt=""/>Copyright 2019</p>
+					<p><img src="/assets/images/copy-icon.png" alt=""/>Copyright 2024</p>
 				</div>
 			</div>
 		</div>
