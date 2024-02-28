@@ -1,6 +1,3 @@
-import {  useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import Navbar from './Components/Navbar'
 import Footer from './Components/Footer'
@@ -14,6 +11,12 @@ import AccountSetting from './Components/Pages/AccountSetting'
 import Groups from './Components/Pages/Groups'
 import Messages from './Components/Pages/Messages'
 import Activites from './Components/Pages/Activites'
+import axios from 'axios';
+import { Toaster } from 'react-hot-toast';
+import { UserContextProvider } from '../context/userContext';
+
+axios.defaults.baseURL = 'http://localhost:8000';
+axios.defaults.withCredentials= true
 
 
 function App() {
@@ -25,7 +28,8 @@ function App() {
 
   return (
     <>
-  
+  <UserContextProvider>
+  <Toaster position='bottom-right' toastOptions={{duration:2000}}/>
   <Router>
       <Routes>
         <Route path='/' element={<SignIn />} />
@@ -38,6 +42,7 @@ function App() {
 
       </Routes>
     </Router>
+    </UserContextProvider>
       </>
   )
 }
