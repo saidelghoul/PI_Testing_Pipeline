@@ -3,6 +3,7 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+const dotenv = require('dotenv').config();
 
 var activitiesRouter = require("./routes/activityRoute");
 
@@ -15,9 +16,7 @@ var configDB = require("./config/mongodb.json");
 var app = express();
 
 mongoose
-  .connect(configDB.mongo.uri, {
-    serverSelectionTimeoutMS: 5000,
-  })
+  .connect(process.env.MONGO_URL)
   .then(() => {
     console.log("Connected to the database");
   })
