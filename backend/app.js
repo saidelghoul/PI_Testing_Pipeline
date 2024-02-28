@@ -46,6 +46,13 @@ app.use(express.static(path.join(__dirname, "public")));
 //app.use('/users', usersRouter);
 
 app.use("/", require("./routes/authRoutes"));
+app.use("/unite", require("./controller/uniteController"));
+app.use("/departement", require("./controller/departementController"));
+
+//app.use('/', indexRouter);
+//app.use('/users', usersRouter);
+
+app.use("/", require("./routes/authRoutes"));
 app.use("/publications", publicationRoute);
 app.use("/evenemnt", evenementRoutes);
 app.use("/commentaire", commentaireRoutes);
