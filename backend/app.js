@@ -6,26 +6,24 @@ var logger = require("morgan");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
 const { mongoose } = require("mongoose");
-var createError = require("http-errors");
-const express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-const cors = require("cors");
-const { mongoose } = require("mongoose");
 
 var messageRoute = require("./routes/ConversationRoute");
 
+//activities management routes
+const activitiesRoute = require("./routes/activityRoute");
+const tasksRoute = require("./routes/taskRoute");
+const checklistsRoute = require("./routes/checklistRoute");
+//
+
 var publicationRoute = require("./routes/publicationRoutes");
 var evenementRoutes = require("./routes/EvenementRoutes");
-commentaireRoutes = require("./routes/ComentaireRoute");
+var commentaireRoutes = require("./routes/ComentaireRoute");
 var PageRoute = require("./routes/PageRoute");
 
 var socialSkillsRouter = require("./routes/socialSkillsRoute");
 var technicalSkillsRouter = require("./routes/technicalSkillsRoute");
 
-var mongoose = require("mongoose");
-var configDB = require("./config/mongodb.json");
+//var configDB = require("./config/mongodb.json");
 
 var app = express();
 
@@ -56,8 +54,13 @@ app.use("/evenemnt", evenementRoutes);
 app.use("/commentaire", commentaireRoutes);
 app.use("/pages", PageRoute);
 app.use("/messages", messageRoute);
-//routes
-app.use("/activities", activitiesRouter);
+
+//activities management routes
+app.use("/activities", activitiesRoute);
+app.use("/tasks", tasksRoute);
+app.use("/checklists", checklistsRoute);
+//
+
 app.use("/socialSkills", socialSkillsRouter);
 app.use("/technicalSkills", technicalSkillsRouter);
 
