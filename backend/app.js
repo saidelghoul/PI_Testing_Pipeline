@@ -6,13 +6,7 @@ var logger = require("morgan");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
 const { mongoose } = require("mongoose");
-var createError = require("http-errors");
-const express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-const cors = require("cors");
-const { mongoose } = require("mongoose");
+//const requireAuth = require("./middleware/requireAuth")
 
 var messageRoute = require("./routes/ConversationRoute");
 
@@ -20,14 +14,24 @@ var publicationRoute = require("./routes/publicationRoutes");
 var evenementRoutes = require("./routes/EvenementRoutes");
 commentaireRoutes = require("./routes/ComentaireRoute");
 var PageRoute = require("./routes/PageRoute");
-
+var activitiesRouter = require("./routes/activityRoute");
 var socialSkillsRouter = require("./routes/socialSkillsRoute");
 var technicalSkillsRouter = require("./routes/technicalSkillsRoute");
 
-var mongoose = require("mongoose");
-var configDB = require("./config/mongodb.json");
+//var mongoose = require("mongoose");
+//var configDB = require("./config/mongodb.json");
 
 var app = express();
+
+const isAuthenticated = (req, res, next) => {
+  if (req.user) {
+    // L'utilisateur est authentifié, continuez vers la route suivante
+    next();
+  } else {
+    // L'utilisateur n'est pas authentifié, renvoyez une erreur 401 (non autorisé)
+    res.status(401).json({ message: "Non autorisé" });
+  }
+};
 
 //database connection
 mongoose
@@ -48,7 +52,8 @@ app.use(express.static(path.join(__dirname, "public")));
 //app.use('/', indexRouter);
 //app.use('/users', usersRouter);
 
-app.use("/", require("./routes/authRoutes"));
+app.use("/",  require("./routes/authRoutes"));
+//app.use("/unite",isAuthenticated, require("./controller/uniteController"));
 app.use("/unite", require("./controller/uniteController"));
 app.use("/departement", require("./controller/departementController"));
 app.use("/publications", publicationRoute);
@@ -79,5 +84,8 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
+
+
+
 
 module.exports = app;

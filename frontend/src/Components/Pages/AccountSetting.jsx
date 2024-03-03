@@ -427,11 +427,11 @@ export default function AccountSetting() {
                                 <div className="row">
                                     <div className="col-12">
                                         <h4>Blocking</h4>
-                                        <p>See your list,and make changes if you'd like</p>
+                                        <p>See your list,and make changes if you would like</p>
                                         <div className="bloktext">
                                             <p>You are not bloking anyone</p>
-                                            <p>Need to blok or report someone? Go to the profile of the person you want to blok and select "Blok or Report" from the drowp-down menu at the top of the profile summery</p>
-                                            <p>Note: After you have blocked the person, Any previous profile views of yours and of the other person will disappear from each of your "Who's viewed your profile" sections. </p>
+                                            <p>Need to blok or report someone? Go to the profile of the person you want to blok and select Blok or Report from the drowp-down menu at the top of the profile summery</p>
+                                            <p>Note: After you have blocked the person, Any previous profile views of yours and of the other person will disappear from each of your Who is viewed your profile sections. </p>
                                         </div>
                                     </div>
                                 </div>
@@ -668,7 +668,7 @@ export default function AccountSetting() {
                                     <div className="dropdown privacydropd">
                                         <a href="#" className="dropdown-toggle" data-toggle="dropdown">Sharing your profile when you click apply</a>
                                         <div className="dropdown-menu">
-                                            <p>Chose if you want to share your full profile with the job poster when you're taken off linkedin after clicking apply </p>
+                                            <p>Chose if you want to share your full profile with the job poster when you are taken off linkedin after clicking apply </p>
                                             <div className="row">
                                                 <div className="col-md-9 col-sm-12">
                                                     <form className="radio-form">

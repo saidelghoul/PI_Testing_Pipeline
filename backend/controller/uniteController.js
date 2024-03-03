@@ -1,7 +1,10 @@
 const express = require("express");
 const router = express.Router(); 
-
+//const requireAuth = require("../middleware/requireAuth")
 const Unite = require("../model/unite");
+ 
+//require auth for all unit routes
+//router.use(requireAuth)
 
 // Route to get all units
 router.get("/getAll", async (req, res) => {

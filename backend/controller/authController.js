@@ -16,12 +16,8 @@ const registerUser= async(req,res)=>{
             password,
             confirmedPassword,
             role,
-            gouvernorat,
-            //adresse,
-            //telephone,
-            //dateNaissance,
-            //gender,
-            //departement
+            departement,
+            unite
         }=req.body;
         //check if name was entered
         if(!name){
@@ -69,13 +65,9 @@ const registerUser= async(req,res)=>{
             email,
             password: hashedPassword,
             confirmedPassword:hashedConfirmedPassword,
-            gouvernorat,
-            //adresse,
-            //telephone,
-            //dateNaissance,
-            //gender,
-           // departement,
+            departement,
             role,
+            unite
 
         })
         return res.json(user)
@@ -100,7 +92,7 @@ const loginUser = async (req, res)=>{
         //check if passwords match 
         const match = await comparePassword(password, user.password)
         if(match){
-            jwt.sign({email:user.email, id: user._id, name:user.name, role:user.role},process.env.JWT_SECRET,{},(err,token)=>{
+            jwt.sign({id:user._id ,email:user.email, name:user.name, role:user.role},process.env.JWT_SECRET,{},(err,token)=>{
                 if(err)throw err;
                 res.cookie('token',token).json(user)
             })
@@ -116,17 +108,38 @@ const loginUser = async (req, res)=>{
 }
 
 
-const getProfile=(req, res)=>{
-const {token} = req.cookies
-if(token){
-    jwt.verify(token, process.env.JWT_SECRET,{},(err,user)=>{
-        if(err) throw err;
-        res.json(user)
-    })
-}else{
-    res.json(null) 
-}
-}
+// const getProfile=(req, res)=>{
+// const {token} = req.cookies
+// if(token){
+//     jwt.verify(token, process.env.JWT_SECRET,{},(err,user)=>{
+//         if(err) throw err;
+//         res.json(user)
+//     })
+// }else{
+//     res.json(null) 
+// }
+// }
+
+const getProfile = (req, res) => {
+    const { token } = req.cookies;
+    if (token) {
+      jwt.verify(token, process.env.JWT_SECRET, {}, (err, decodedToken) => {
+        if (err) {
+          console.error("Erreur lors du décodage du token :", err);
+          return res.status(500).json({ error: "Erreur lors du décodage du token" });
+        }
+        const { id, email, name, role } = decodedToken;
+        if (!id) {
+          return res.status(400).json({ error: "ID d'utilisateur non trouvé dans le token" });
+        }
+        // L'ID de l'utilisateur est disponible ici
+        res.json({ id, email, name, role });
+      });
+    } else {
+      res.json(null);
+    }
+  };
+  
 
 module.exports = {
     test,

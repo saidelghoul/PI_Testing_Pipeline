@@ -10,7 +10,14 @@ import '../../../public/assets/css/responsive.css';
 import '../../../public/assets/lib/slick/slick.css';
 import '../../../public/assets/lib/slick/slick-theme.css';
 
+import { useContext } from 'react'
+import { UserContext } from '../../../context/userContext';
+
 export default function Home() {
+
+	const {user} = useContext(UserContext)
+	
+
   return (
     <>
       
@@ -29,8 +36,9 @@ export default function Home() {
 												</div>
 											</div>
 											<div className="user-specs">
-												<h3>John Doe</h3>
-												<span>Enseignant React</span>
+									<> {!!user && (<h1>{user.name}</h1>)}
+									</>
+												<span>{!!user && (<h2>{user.role}</h2>)}</span>
 											</div>
 										</div>
 										
