@@ -4,18 +4,23 @@ const Task = require("../model/task");
 async function getCheckLists(req, res) {
   try {
     const checkLists = await CheckList.find({});
-    res.status(200).json(checkLists);
+    if (!checkLists)
+      res.status(404).json({ title: "error", message: "No checkLists found" });
+    else res.status(200).json({ title: "success", message: checkLists });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ title: "error", message: err.message });
   }
 }
 
 async function getCheckListById(req, res) {
   try {
     const checkList = await CheckList.findById(req.params.id_checklist);
-    res.status(200).json(checkList);
+
+    if (!checkList)
+      res.status(404).json({ title: "error", message: "No checkLists found" });
+    else res.status(200).json({ title: "success", message: checkList });
   } catch (err) {
-    res.status(500).json({ message: err });
+    res.status(500).json({ title: "error", message: err.message });
   }
 }
 
@@ -23,27 +28,35 @@ async function createCheckList(req, res, next) {
   try {
     const task = await Task.findById(req.params.id_task);
     if (!task) {
-      res.status(404).json({ message: "task id does not exist" });
+      res.status(404).json({ title: "error", message: "verify given task id" });
     } else {
       const checklist = new CheckList(req.body);
       checklist.id_task = req.params.id_task;
       checklist.done = false;
 
-      task.checkList.push(task);
+      task.checkList.push(checklist);
 
       const updatedTask = await Task.findByIdAndUpdate(
-        req.params.id_activity,
+        req.params.id_task,
         task,
         { new: true }
       );
 
       const result = await checklist.save();
       if (!result || !updatedTask) {
-        res.status(404).json({ message: "task id does not exist" });
-      } else res.status(200).json({ message: result });
+        res.status(404).json({
+          title: "error",
+          message:
+            "error updating parent task with new checklist/saving new checklist",
+        });
+      } else
+        res.status(201).json({
+          title: "added checklist successfully to parent task: " + task.title,
+          message: result,
+        });
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ title: "error", message: err.message });
   }
 }
 
@@ -53,17 +66,24 @@ async function removeChecklist(req, res) {
       req.params.id_checklist
     );
     if (!checklist)
-      res.status(404).json({ message: "error finding & deleting checklist" });
+      res.status(404).json({
+        title: "error",
+        message: "error finding & deleting checklist",
+      });
     else {
       const updatedTask = Task.updateOne(
         { _id: checklist.id_task },
         { $pull: { checklist: req.params.id_checklist } }
       );
-      if (!updatedTask) res.status(404).json({ message: "error updating" });
-      else res.status(200).json({ updatedTask });
+      if (!updatedTask)
+        res.status(404).json({
+          title: "error",
+          message: "error removing checklist from its parent task",
+        });
+      else res.status(200).json({ title: "deleted", message: updatedTask });
     }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ title: "error", message: err.message });
   }
 }
 
@@ -74,9 +94,16 @@ async function updateChecklist(req, res) {
       req.body,
       { next: true }
     );
-    if (checklist) res.status(200).json({ message: "checklist updated" });
+    if (!checklist)
+      res
+        .status(500)
+        .json({ title: "error", message: "error updating checklist" });
+    else
+      res
+        .status(200)
+        .json({ title: "updated", message: "Checklist updated successfully" });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ title: "error", message: err.message });
   }
 }
 

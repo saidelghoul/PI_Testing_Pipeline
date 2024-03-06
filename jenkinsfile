@@ -1,0 +1,38 @@
+pipeline{
+  agent any
+
+  /*environment {
+        registryCredentials = "nexus"
+        registry = "192.168.33.10:8083"
+    }*/
+   
+  stages {
+
+  stage('Install dependencies') {
+      steps{
+        
+        script {
+            sh('cd backend')
+         sh('npm install')
+        }
+      }
+    }
+
+stage('Unit Test') {
+      steps{
+        
+        script {
+         sh('npm test')
+        }
+      }
+    }
+
+    stage('Build application') {
+         steps{ 
+            script { 
+                sh('npm run build-dev') 
+                } 
+            } 
+        }
+  }
+}
