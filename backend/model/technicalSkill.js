@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 
 var TechnicalSkill = new Schema({
   name: String,
+  description: String,
   experience: String,
   domaine: String,
   pointTechnical: Number,

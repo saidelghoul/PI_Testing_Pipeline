@@ -1,4 +1,5 @@
 var SocialSkill = require("../model/socialSkill");
+var User = require("../model/user");
 
 async function getallSocialSkills(req, res) {
   SocialSkill.find({})
@@ -58,4 +59,36 @@ async function updateSocialSkill(req, res) {
   }
 }
 
-module.exports = { getallSocialSkills, getSocialSkillbyid, addSocialSkill, removeSocialSkill, updateSocialSkill };
+
+// Contrôleur pour l'affectation des compétences sociales à un utilisateur
+async function assignSocialSkillToUser(req, res) {
+
+  try {
+    const userId = req.params.userId;
+    const { skillIds } = req.body;
+
+    const user = await User.findById(userId);
+    const socialSkills = await SocialSkill.find({  _id: {$in:skillIds} });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    }
+
+    if (!socialSkills) {
+      return res.status(404).json({ error: 'Compétences sociales non trouvées' });
+    }
+
+    socialSkills.forEach((socialSkill)=>{
+      
+    user.socialSkills.push(socialSkill);
+    });
+    await user.save();
+
+    return res.status(200).json({ message: 'Compétences sociales affectées à l"utilisateur avec succès' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Une erreur est survenue lors de l"affectation des compétences sociales'+error.message });
+  }
+}
+
+module.exports = { getallSocialSkills, getSocialSkillbyid, addSocialSkill, removeSocialSkill, updateSocialSkill, assignSocialSkillToUser };

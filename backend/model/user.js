@@ -12,6 +12,11 @@ const userSchema = new Schema({
     confirmedPassword:String,
     role: String,
     gouvernorat : String,
+    socialSkills: [{
+      type: Schema.Types.ObjectId,
+      ref: "socialSkills"
+    }],
+    TechnicalSkills : [{type: Schema.Types.ObjectId, ref:"technicalSkill"}]
     //adresse: String,
     //telephone : String,
     //dateNaissance: Date,
