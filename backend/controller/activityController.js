@@ -31,21 +31,19 @@ async function addActivity(req, res) {
     const activity = req.body;
     const { startDate, endDate } = activity;
     if (startDate > endDate)
-      res
-        .status(500)
-        .json({
-          title: "error",
-          message: "startDate must be greater than endDate",
-        });
+      res.status(500).json({
+        title: "error",
+        message: "startDate must be greater than endDate",
+      });
     else {
       const newItem = new Activity(activity);
       newItem.approval = false;
       const saved = await newItem.save();
-      if (!saved) res.status(201).json({ title: "success", message: saved });
-      else
+      if (!saved)
         res
           .status(500)
           .json({ title: "error", message: "error saving activity" });
+      else res.status(201).json({ title: "success", message: saved });
     }
   } catch (err) {
     res.status(500).json({ title: "Server error", message: err.message });
@@ -72,12 +70,10 @@ async function updateActivity(req, res) {
   try {
     const { startDate, endDate } = req.body;
     if (startDate > endDate)
-      res
-        .status(500)
-        .json({
-          title: "error",
-          message: "startDate must be greater than endDate",
-        });
+      res.status(500).json({
+        title: "error",
+        message: "startDate must be greater than endDate",
+      });
     else {
       const activity = await Activity.findByIdAndUpdate(
         req.params.id_activity,

@@ -15,10 +15,15 @@ export const getActivities = async (id) => {
   id = id || "";
   return await axios.get(`${url}/${id}`);
 };
-export const addActivity = async (id, activity) => {
-  return await axios.post(`${url}/${id}`, activity);
+
+export const getTasksByActivity = async (id) => {
+  return await axios.get(`${url}/${id}/tasks`);
 };
-export const editActivity = async (id, activity) => {
+
+export const addActivity = async (activity) => {
+  return await axios.post(`${url}`, activity);
+};
+export const updateActivity = async (id, activity) => {
   return await axios.put(`${url}/${id}`, activity);
 };
 export const deleteActivity = async (id) => {

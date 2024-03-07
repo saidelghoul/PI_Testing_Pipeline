@@ -1,45 +1,33 @@
-import { useEffect, useState } from "react";
-import "../../../public/assets/css/activite.css";
-import { deleteActivity, getActivities } from "../../services/activity-service";
-import Activity from "./Activity";
-import ActivityForm from "./ActivityForm";
-import { Button, Col, Modal, Row } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import Task from "./Task";
+import { getTasksByActivity } from "../../services/activity-service";
 
-export default function Activites() {
-  const [activities, setActivities] = useState([]);
+const Tasks = ({ id_act }) => {
+  const [tasks, setTasks] = useState([]);
 
-  /* pop up*/
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
-  /* pop up end*/
+  const [plannedTasks, setPlannedTasks] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await getActivities();
-      setActivities(data.data.message);
-      console.log(data.data.message);
-    };
+    const fetchTasks = async (id) => {
+      const data = await getTasksByActivity(id);
+      console.log(data.data.message[0].tasks);
+      setTasks(data.data.message[0].tasks);
 
-    fetchData();
+      const filteredTasks = data.data.message[0].tasks.filter((task) => {
+        task.status === "planned";
+      });
+      setPlannedTasks(filteredTasks);
+
+      console.log(plannedTasks);
+    };
+    fetchTasks(id_act);
   }, []);
 
-  /** */
-
-  const removeActivity = async (id) => {
-    const result = await deleteActivity(id);
-    if (result.status == "204") {
-      alert("deleted successfully");
-    }
-  };
-  /** */
   return (
     <>
       <main className="content">
         <div className="container p-0">
-          <h1 className="h3 mb-3">Activites Board ({activities.length})</h1>
+          <h1 className="h3 mb-3">Tasks Board</h1>
 
           <div className="row">
             <div className="col-12 col-lg-6 col-xl-3">
@@ -47,19 +35,22 @@ export default function Activites() {
                 <div className="card-header">
                   <div className="card-actions float-right">
                     <div className="dropdown show">
-                      <Button data-toggle="dropdown" data-display="static">
-                        {" "}
-                        dropdown
-                      </Button>
+                      <a
+                        href="#"
+                        data-toggle="dropdown"
+                        data-display="static"
+                      ></a>
 
                       <div className="dropdown-menu dropdown-menu-right">
-                        <Button className="dropdown-item">Action</Button>
-                        <Button className="dropdown-item">
+                        <a className="dropdown-item" href="#">
+                          Action
+                        </a>
+                        <a className="dropdown-item" href="#">
                           Another action
-                        </Button>
-                        <Button className="dropdown-item">
+                        </a>
+                        <a className="dropdown-item" href="#">
                           Something else here
-                        </Button>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -69,58 +60,16 @@ export default function Activites() {
                   </h6>
                 </div>
                 <div className="card-body p-3">
-                  {activities.map(function (activity, index) {
-                    return (
-                      <Activity
-                        key={index}
-                        activity={activity}
-                        rmActivity={removeActivity}
-                      />
-                    );
+                  {tasks.map(function (task, index) {
+                    return <Task key={index} task={task} />;
                   })}
-
-                  <Button
-                    onClick={handleShow}
+                  <a
                     href="#"
                     className="btn btn-primary btn-block"
                     style={{ backgroundColor: "#e44d3a" }}
                   >
                     Add new
-                  </Button>
-
-                  <Modal
-                    show={show}
-                    onHide={handleClose}
-                    backdrop="static"
-                    keyboard={false}
-                    size="lg"
-                  >
-                    <Modal.Header closeButton>
-                      <Row>
-                        <Modal.Title as={Col}>
-                          <h1>Add activity</h1>
-                        </Modal.Title>
-                        <Button
-                          as={Col}
-                          md="3"
-                          variant="secondary"
-                          onClick={handleClose}
-                          style={{
-                            backgroundColor: "#fff",
-                            color: "#e44d3a",
-                            cursor: "pointer",
-                          }}
-                        >
-                          Close
-                        </Button>
-                      </Row>
-                    </Modal.Header>
-
-                    <Modal.Body>
-                      <ActivityForm />
-                    </Modal.Body>
-                    <Modal.Footer></Modal.Footer>
-                  </Modal>
+                  </a>
                 </div>
               </div>
             </div>
@@ -129,18 +78,28 @@ export default function Activites() {
                 <div className="card-header">
                   <div className="card-actions float-right">
                     <div className="dropdown show">
-                      <Button data-toggle="dropdown" data-display="static">
-                        dropdown
-                      </Button>
+                      <a href="#" data-toggle="dropdown" data-display="static">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          className="feather feather-more-horizontal align-middle"
+                        ></svg>
+                      </a>
 
                       <div className="dropdown-menu dropdown-menu-right">
-                        <Button className="dropdown-item">Action</Button>
-                        <Button className="dropdown-item">
+                        <a className="dropdown-item" href="#">
+                          Action
+                        </a>
+                        <a className="dropdown-item" href="#">
                           Another action
-                        </Button>
-                        <Button className="dropdown-item">
+                        </a>
+                        <a className="dropdown-item" href="#">
                           Something else here
-                        </Button>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -149,13 +108,18 @@ export default function Activites() {
                     Nam pretium turpis et arcu. Duis arcu tortor.
                   </h6>
                 </div>
+
+                {plannedTasks.map((task, index) => {
+                  return <Task key={index} task={task} />;
+                })}
                 <div className="card-body">
-                  <Button
+                  <a
+                    href="#"
                     className="btn btn-primary btn-block"
                     style={{ backgroundColor: "#e44d3a" }}
                   >
                     Add new
-                  </Button>
+                  </a>
                 </div>
               </div>
             </div>
@@ -164,19 +128,28 @@ export default function Activites() {
                 <div className="card-header">
                   <div className="card-actions float-right">
                     <div className="dropdown show">
-                      <Button
-                        data-toggle="dropdown"
-                        data-display="static"
-                      ></Button>
+                      <a href="#" data-toggle="dropdown" data-display="static">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          className="feather feather-more-horizontal align-middle"
+                        ></svg>
+                      </a>
 
                       <div className="dropdown-menu dropdown-menu-right">
-                        <Button className="dropdown-item">Action</Button>
-                        <Button className="dropdown-item">
+                        <a className="dropdown-item" href="#">
+                          Action
+                        </a>
+                        <a className="dropdown-item" href="#">
                           Another action
-                        </Button>
-                        <Button className="dropdown-item">
+                        </a>
+                        <a className="dropdown-item" href="#">
                           Something else here
-                        </Button>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -186,13 +159,13 @@ export default function Activites() {
                   </h6>
                 </div>
                 <div className="card-body">
-                  <Button
+                  <a
                     href="#"
                     className="btn btn-primary btn-block"
                     style={{ backgroundColor: "#e44d3a" }}
                   >
                     Add new
-                  </Button>
+                  </a>
                 </div>
               </div>
             </div>
@@ -201,19 +174,28 @@ export default function Activites() {
                 <div className="card-header">
                   <div className="card-actions float-right">
                     <div className="dropdown show">
-                      <Button
-                        data-toggle="dropdown"
-                        data-display="static"
-                      ></Button>
+                      <a href="#" data-toggle="dropdown" data-display="static">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          className="feather feather-more-horizontal align-middle"
+                        ></svg>
+                      </a>
 
                       <div className="dropdown-menu dropdown-menu-right">
-                        <Button className="dropdown-item">Action</Button>
-                        <Button className="dropdown-item">
+                        <a className="dropdown-item" href="#">
+                          Action
+                        </a>
+                        <a className="dropdown-item" href="#">
                           Another action
-                        </Button>
-                        <Button className="dropdown-item">
+                        </a>
+                        <a className="dropdown-item" href="#">
                           Something else here
-                        </Button>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -223,13 +205,13 @@ export default function Activites() {
                   </h6>
                 </div>
                 <div className="card-body">
-                  <Button
+                  <a
                     href="#"
                     className="btn btn-primary btn-block"
                     style={{ backgroundColor: "#e44d3a" }}
                   >
                     Add new
-                  </Button>
+                  </a>
                 </div>
               </div>
             </div>
@@ -238,4 +220,6 @@ export default function Activites() {
       </main>
     </>
   );
-}
+};
+
+export default Tasks;

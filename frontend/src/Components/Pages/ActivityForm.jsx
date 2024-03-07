@@ -1,70 +1,138 @@
-import React from "react";
+import { useState } from "react";
+import { Button, Col, FormGroup, InputGroup, Row, Form } from "react-bootstrap";
+import { addActivity } from "../../services/activity-service";
 
 const ActivityForm = () => {
+  const [validated, setValidated] = useState(false);
+
+  const [activityItem, setActivityItem] = useState({
+    name: "",
+    category: "",
+    startDate: "",
+    endDate: "",
+    description: "",
+  });
+
+  const onValueChange = (e) => {
+    setActivityItem({ ...activityItem, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (event) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    handleAddActivity();
+  };
+
+  const handleAddActivity = async () => {
+    const result = await addActivity(activityItem);
+    if (result.status == 201) {
+      alert("Activity added successfully");
+    }
+  };
+
+  const validateForm = (e) => {
+    return e.target.value ? setValidated(true) : setValidated(false);
+  };
+
   return (
-    <div className="post-popup pst-pj">
-      <div className="post-project">
-        <h3>Add Activity</h3>
-        <div className="post-project-fields">
-          <form>
-            <div className="row">
-              <div className="col-lg-12">
-                <input type="text" name="title" placeholder="Title" />
-              </div>
-              <div className="col-lg-12">
-                <div className="inp-field">
-                  <select>
-                    <option>Category</option>
-                    <option>Category 1</option>
-                    <option>Category 2</option>
-                    <option>Category 3</option>
-                  </select>
-                </div>
-              </div>
-              <div className="col-lg-12">
-                <input type="text" name="skills" placeholder="Skills" />
-              </div>
-              <div className="col-lg-12">
-                <div className="price-sec">
-                  <div className="price-br">
-                    <input type="text" name="price1" placeholder="Price" />
-                    <i className="la la-dollar"></i>
-                  </div>
-                  <span>To</span>
-                  <div className="price-br">
-                    <input type="text" name="price1" placeholder="Price" />
-                    <i className="la la-dollar"></i>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-12">
-                <textarea
-                  name="description"
-                  placeholder="Description"
-                ></textarea>
-              </div>
-              <div className="col-lg-12">
-                <ul>
-                  <li>
-                    <button className="active" type="submit" value="post">
-                      Post
-                    </button>
-                  </li>
-                  <li>
-                    <a href="#" title="">
-                      Cancel
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </form>
-        </div>
-        <a href="#" title="">
-          <i className="la la-times-circle-o"></i>
-        </a>
-      </div>
-    </div>
+    <Form className=" container-fluid p-4  " noValidate validated={validated}>
+      <Row className="mb-3">
+        <Form.Group as={Col} md="4" controlId="validationCustom01">
+          <Form.Label>Name</Form.Label>
+          <Form.Control
+            required
+            type="text"
+            placeholder="activity name"
+            name="name"
+            value={activityItem.name}
+            onChange={(e) => {
+              validateForm(e);
+              onValueChange(e);
+            }}
+          />
+          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group as={Col} md="4" controlId="validationCustom02">
+          <Form.Label>category</Form.Label>
+          <Form.Control
+            required
+            type="text"
+            placeholder="category"
+            name="category"
+            value={activityItem.category}
+            onChange={(e) => {
+              validateForm(e);
+              onValueChange(e);
+            }}
+          />
+          <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+        </Form.Group>
+      </Row>
+      <Row className="mb-3">
+        <Form.Group as={Col} md="6" controlId="validationCustom03">
+          <Form.Label>Description</Form.Label>
+          <Form.Control
+            placeholder="Description"
+            required
+            as="textarea"
+            rows={3}
+            name="description"
+            value={activityItem.description}
+            onChange={(e) => {
+              validateForm(e);
+              onValueChange(e);
+            }}
+          />
+        </Form.Group>
+        <Form.Group as={Col} md="3" controlId="validationCustom04">
+          <Form.Label>Start date</Form.Label>
+          <Form.Control
+            type="date"
+            placeholder="start date"
+            required
+            name="startDate"
+            value={activityItem.startDate}
+            onChange={(e) => {
+              validateForm(e);
+              onValueChange(e);
+            }}
+          />
+          <Form.Control.Feedback type="invalid">
+            Please provide a valid start date.
+          </Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group as={Col} md="3" controlId="validationCustom05">
+          <Form.Label>End date</Form.Label>
+          <Form.Control
+            type="date"
+            placeholder="end date"
+            required
+            name="endDate"
+            value={activityItem.endDate}
+            onChange={(e) => {
+              validateForm(e);
+              onValueChange(e);
+            }}
+          />
+          <Form.Control.Feedback type="invalid">
+            Please provide a valid end date.
+          </Form.Control.Feedback>
+        </Form.Group>
+      </Row>
+      {validated ? (
+        <Button style={{ backgroundColor: "#e44d3a" }} onClick={handleSubmit}>
+          Submit form
+        </Button>
+      ) : (
+        <Button disabled style={{ backgroundColor: "#e44d3a" }}>
+          Submit form
+        </Button>
+      )}
+    </Form>
   );
 };
 
