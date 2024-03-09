@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Task from "./Task";
 import { getTasksByActivity } from "../../services/activity-service";
+import { Button } from "react-bootstrap";
+import TaskForm from "../Modals/TaskForm";
+import { deleteTask } from "../../services/task-service";
 
 const Tasks = ({ id_act }) => {
   const [tasks, setTasks] = useState([]);
+
+  /* pop up*/
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  /* pop up end*/
 
   const [plannedTasks, setPlannedTasks] = useState([]);
 
@@ -23,11 +34,43 @@ const Tasks = ({ id_act }) => {
     fetchTasks(id_act);
   }, []);
 
+  const removeTask = async (id) => {
+    const result = await deleteTask(id);
+    if (result.status == "204") {
+      alert("deleted successfully");
+      setTasks(tasks.filter((task) => task._id !== id));
+    }
+  };
+  /** */
+
+  const refreshTable = async (activityItem) => {
+    setShow(false);
+    setTasks([...tasks, activityItem]);
+  };
+
   return (
     <>
       <main className="content">
         <div className="container p-0">
-          <h1 className="h3 mb-3">Tasks Board</h1>
+          <div className=" row ">
+            <h1 className="h3 mb-3 col-md-9 ">Tasks Board</h1>
+            <h1 className="h3 mb-3 col-md-3 ">
+              <Button
+                onClick={handleShow}
+                href="#"
+                className="btn btn-primary btn-block"
+                style={{ backgroundColor: "#e44d3a" }}
+              >
+                Add new
+              </Button>
+              <TaskForm
+                refresh={refreshTable}
+                show={show}
+                handleClose={handleClose}
+                id_act={id_act}
+              />
+            </h1>
+          </div>
 
           <div className="row">
             <div className="col-12 col-lg-6 col-xl-3">
@@ -35,11 +78,10 @@ const Tasks = ({ id_act }) => {
                 <div className="card-header">
                   <div className="card-actions float-right">
                     <div className="dropdown show">
-                      <a
-                        href="#"
+                      <Button
                         data-toggle="dropdown"
                         data-display="static"
-                      ></a>
+                      ></Button>
 
                       <div className="dropdown-menu dropdown-menu-right">
                         <a className="dropdown-item" href="#">
@@ -61,15 +103,15 @@ const Tasks = ({ id_act }) => {
                 </div>
                 <div className="card-body p-3">
                   {tasks.map(function (task, index) {
-                    return <Task key={index} task={task} />;
+                    return (
+                      <Task
+                        key={index}
+                        task={task}
+                        refresh={refreshTable}
+                        rmTask={removeTask}
+                      />
+                    );
                   })}
-                  <a
-                    href="#"
-                    className="btn btn-primary btn-block"
-                    style={{ backgroundColor: "#e44d3a" }}
-                  >
-                    Add new
-                  </a>
                 </div>
               </div>
             </div>
@@ -109,17 +151,10 @@ const Tasks = ({ id_act }) => {
                   </h6>
                 </div>
 
-                {plannedTasks.map((task, index) => {
-                  return <Task key={index} task={task} />;
-                })}
                 <div className="card-body">
-                  <a
-                    href="#"
-                    className="btn btn-primary btn-block"
-                    style={{ backgroundColor: "#e44d3a" }}
-                  >
-                    Add new
-                  </a>
+                  {plannedTasks.map((task, index) => {
+                    return <Task key={index} task={task} />;
+                  })}
                 </div>
               </div>
             </div>
@@ -158,15 +193,7 @@ const Tasks = ({ id_act }) => {
                     Nam pretium turpis et arcu. Duis arcu tortor.
                   </h6>
                 </div>
-                <div className="card-body">
-                  <a
-                    href="#"
-                    className="btn btn-primary btn-block"
-                    style={{ backgroundColor: "#e44d3a" }}
-                  >
-                    Add new
-                  </a>
-                </div>
+                <div className="card-body"></div>
               </div>
             </div>
             <div className="col-12 col-lg-6 col-xl-3">
@@ -204,15 +231,7 @@ const Tasks = ({ id_act }) => {
                     Nam pretium turpis et arcu. Duis arcu tortor.
                   </h6>
                 </div>
-                <div className="card-body">
-                  <a
-                    href="#"
-                    className="btn btn-primary btn-block"
-                    style={{ backgroundColor: "#e44d3a" }}
-                  >
-                    Add new
-                  </a>
-                </div>
+                <div className="card-body"></div>
               </div>
             </div>
           </div>

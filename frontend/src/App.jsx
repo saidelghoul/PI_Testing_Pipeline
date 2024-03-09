@@ -15,6 +15,7 @@ import axios from "axios";
 import { Toaster } from "react-hot-toast";
 import { UserContextProvider } from "../context/userContext";
 import ActivityDetails from "./Components/Pages/ActivityDetails";
+import TaskDetails from "./Components/Pages/TaskDetails";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -90,7 +91,6 @@ function App() {
                   <>
                     <Navbar />
                     <Activites />
-                    <Footer />
                   </>
                 }
               />
@@ -100,11 +100,19 @@ function App() {
                   <>
                     <Navbar />
                     <ActivityDetails />
-                    <Footer />
                   </>
                 }
               />
             </Route>
+            <Route
+              path="tasks/:id_task"
+              element={
+                <>
+                  <Navbar />
+                  <TaskDetails />
+                </>
+              }
+            />
           </Routes>
         </Router>
       </UserContextProvider>

@@ -1,4 +1,6 @@
 import PropTypes from "prop-types";
+import { Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const Task = ({ task }) => {
   return (
@@ -29,6 +31,14 @@ const Task = ({ task }) => {
             alt="Avatar"
           />
         </div>
+        <Link to={`/tasks/${task._id}`}>
+          <Button
+            className="btn btn-outline-primary btn-sm"
+            style={{ backgroundColor: "#e44d3a", color: "#fff" }}
+          >
+            View
+          </Button>
+        </Link>
       </div>
     </div>
   );

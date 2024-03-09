@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import "../../../public/assets/css/activite.css";
 import { deleteActivity, getActivities } from "../../services/activity-service";
 import Activity from "./Activity";
-import ActivityForm from "./ActivityForm";
-import { Button, Col, Modal, Row } from "react-bootstrap";
+import ActivityForm from "../Modals/ActivityForm";
+import { Button } from "react-bootstrap";
 
 export default function Activites() {
   const [activities, setActivities] = useState([]);
@@ -20,7 +20,6 @@ export default function Activites() {
     const fetchData = async () => {
       const data = await getActivities();
       setActivities(data.data.message);
-      console.log(data.data.message);
     };
 
     fetchData();
@@ -32,14 +31,39 @@ export default function Activites() {
     const result = await deleteActivity(id);
     if (result.status == "204") {
       alert("deleted successfully");
+      setActivities(activities.filter((activity) => activity._id !== id));
     }
   };
   /** */
+
+  const refreshTable = async (activityItem) => {
+    setShow(false);
+    setActivities([...activities, activityItem]);
+  };
   return (
     <>
       <main className="content">
         <div className="container p-0">
-          <h1 className="h3 mb-3">Activites Board ({activities.length})</h1>
+          <div className=" row ">
+            <h1 className="h3 mb-3 col-md-9 ">
+              Activites Board ({activities.length})
+            </h1>
+            <h1 className=" col-md-3 ">
+              <Button
+                onClick={handleShow}
+                href="#"
+                className="btn btn-primary btn-block"
+                style={{ backgroundColor: "#e44d3a" }}
+              >
+                Add new
+              </Button>
+              <ActivityForm
+                refresh={refreshTable}
+                show={show}
+                handleClose={handleClose}
+              />
+            </h1>
+          </div>
 
           <div className="row">
             <div className="col-12 col-lg-6 col-xl-3">
@@ -49,7 +73,6 @@ export default function Activites() {
                     <div className="dropdown show">
                       <Button data-toggle="dropdown" data-display="static">
                         {" "}
-                        dropdown
                       </Button>
 
                       <div className="dropdown-menu dropdown-menu-right">
@@ -73,54 +96,12 @@ export default function Activites() {
                     return (
                       <Activity
                         key={index}
+                        refresh={refreshTable}
                         activity={activity}
                         rmActivity={removeActivity}
                       />
                     );
                   })}
-
-                  <Button
-                    onClick={handleShow}
-                    href="#"
-                    className="btn btn-primary btn-block"
-                    style={{ backgroundColor: "#e44d3a" }}
-                  >
-                    Add new
-                  </Button>
-
-                  <Modal
-                    show={show}
-                    onHide={handleClose}
-                    backdrop="static"
-                    keyboard={false}
-                    size="lg"
-                  >
-                    <Modal.Header closeButton>
-                      <Row>
-                        <Modal.Title as={Col}>
-                          <h1>Add activity</h1>
-                        </Modal.Title>
-                        <Button
-                          as={Col}
-                          md="3"
-                          variant="secondary"
-                          onClick={handleClose}
-                          style={{
-                            backgroundColor: "#fff",
-                            color: "#e44d3a",
-                            cursor: "pointer",
-                          }}
-                        >
-                          Close
-                        </Button>
-                      </Row>
-                    </Modal.Header>
-
-                    <Modal.Body>
-                      <ActivityForm />
-                    </Modal.Body>
-                    <Modal.Footer></Modal.Footer>
-                  </Modal>
                 </div>
               </div>
             </div>
@@ -129,9 +110,10 @@ export default function Activites() {
                 <div className="card-header">
                   <div className="card-actions float-right">
                     <div className="dropdown show">
-                      <Button data-toggle="dropdown" data-display="static">
-                        dropdown
-                      </Button>
+                      <Button
+                        data-toggle="dropdown"
+                        data-display="static"
+                      ></Button>
 
                       <div className="dropdown-menu dropdown-menu-right">
                         <Button className="dropdown-item">Action</Button>
@@ -149,14 +131,7 @@ export default function Activites() {
                     Nam pretium turpis et arcu. Duis arcu tortor.
                   </h6>
                 </div>
-                <div className="card-body">
-                  <Button
-                    className="btn btn-primary btn-block"
-                    style={{ backgroundColor: "#e44d3a" }}
-                  >
-                    Add new
-                  </Button>
-                </div>
+                <div className="card-body"></div>
               </div>
             </div>
             <div className="col-12 col-lg-6 col-xl-3">
@@ -185,15 +160,7 @@ export default function Activites() {
                     Nam pretium turpis et arcu. Duis arcu tortor.
                   </h6>
                 </div>
-                <div className="card-body">
-                  <Button
-                    href="#"
-                    className="btn btn-primary btn-block"
-                    style={{ backgroundColor: "#e44d3a" }}
-                  >
-                    Add new
-                  </Button>
-                </div>
+                <div className="card-body"></div>
               </div>
             </div>
             <div className="col-12 col-lg-6 col-xl-3">
@@ -222,15 +189,7 @@ export default function Activites() {
                     Nam pretium turpis et arcu. Duis arcu tortor.
                   </h6>
                 </div>
-                <div className="card-body">
-                  <Button
-                    href="#"
-                    className="btn btn-primary btn-block"
-                    style={{ backgroundColor: "#e44d3a" }}
-                  >
-                    Add new
-                  </Button>
-                </div>
+                <div className="card-body"></div>
               </div>
             </div>
           </div>
