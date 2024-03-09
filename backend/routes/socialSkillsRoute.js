@@ -12,6 +12,8 @@ router.delete("/remove/:id", socialSkillController.removeSocialSkill);
 
 router.put("/update/:id", socialSkillController.updateSocialSkill);
 
-router.put('/:userId', socialSkillController.assignSocialSkillToUser);
+router.put('/assign/:userId', socialSkillController.assignSocialSkillToUser);
+
+router.put('/unassign/:userId', socialSkillController.unassignSocialSkillFromUser);
 
 module.exports = router;
