@@ -5,11 +5,14 @@ const Unite = require('../model/unite');
 
 
 // Route to get all departements
-router.get("/getAll", async (req, res) => {
+router.get("/getAlldep", async (req, res) => {
     try {
       const allDepartements = await Departement.find({});
+      
       res.status(200).json(allDepartements);
+
     } catch (error) {
+      
       res.status(500).json({ error: "Server error: " + error.message });
     }
   });
@@ -38,6 +41,36 @@ router.get("/:id/unites", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur: " + error.message });
   }
 });
+
+// router.get('/departement/:id/unites', async (req, res) => {
+//   const departementId = req.params.id;
+//   try {
+//     // Trouver les unités ayant l'ID du département spécifique
+//     const unites = await Unite.find({ departement: departementId });
+//     res.status(200).json(unites);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Erreur serveur: ' + error.message });
+//   }
+// });
+router.get('/departement/:id/unites', async (req, res) => {
+  const id = req.params.id; // Récupérer l'ID du département depuis les paramètres de la requête
+
+  try {
+      // Recherchez les unités qui ont le même ID de département que celui spécifié
+      const unites = await Unite.find({ departement: id });
+
+      if (unites.length === 0) {
+          return res.status(404).json({ error: 'Aucune unité trouvée pour ce département.' });
+      }
+
+      // Envoyez les unités correspondantes en réponse
+      res.status(200).json(unites);
+  } catch (error) {
+      console.error('Erreur lors de la récupération des unités associées au département:', error);
+      res.status(500).json({ error: 'Erreur serveur lors de la récupération des unités.' });
+  }
+});
+
 
 
   // Route to get a departement by ID

@@ -15,8 +15,7 @@ import { UserContext } from '../../../context/userContext';
 
 export default function Home() {
 
-	const {user} = useContext(UserContext)
-	
+	const {user} = useContext(UserContext);
 
   return (
     <>
@@ -793,6 +792,7 @@ export default function Home() {
 				</div>
 			</div>
 		</div>
+
 
     </>
   )

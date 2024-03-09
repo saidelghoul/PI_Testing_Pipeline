@@ -92,7 +92,17 @@ const loginUser = async (req, res)=>{
         //check if passwords match 
         const match = await comparePassword(password, user.password)
         if(match){
-            jwt.sign({id:user._id ,email:user.email, name:user.name, role:user.role},process.env.JWT_SECRET,{},(err,token)=>{
+            jwt.sign({
+                id:user._id ,
+                email:user.email, 
+                name:user.name, 
+                role:user.role, 
+                addresse:user.addresse, 
+                gouvernorat:user.gouvernorat, 
+                telephone:user.telephone, 
+                dateNaissance:user.dateNaissance,
+                gender:user.gender,
+             },process.env.JWT_SECRET,{},(err,token)=>{
                 if(err)throw err;
                 res.cookie('token',token).json(user)
             })
@@ -120,6 +130,8 @@ const loginUser = async (req, res)=>{
 // }
 // }
 
+
+
 const getProfile = (req, res) => {
     const { token } = req.cookies;
     if (token) {
@@ -128,17 +140,19 @@ const getProfile = (req, res) => {
           console.error("Erreur lors du décodage du token :", err);
           return res.status(500).json({ error: "Erreur lors du décodage du token" });
         }
-        const { id, email, name, role } = decodedToken;
+        const { id, email, name, role,addresse,gouvernorat, dateNaissance, telephone,gender } = decodedToken;
         if (!id) {
           return res.status(400).json({ error: "ID d'utilisateur non trouvé dans le token" });
         }
         // L'ID de l'utilisateur est disponible ici
-        res.json({ id, email, name, role });
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate'); // désactive la mise en cache
+        res.json({ id, email, name, role ,addresse,gouvernorat, dateNaissance,telephone,gender});
       });
     } else {
       res.json(null);
     }
-  };
+};
+
   
 
 module.exports = {

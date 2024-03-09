@@ -39,7 +39,7 @@ export default function SignIn() {
     const id = e.target.value;
     setSelectedDepartementId(id);
     axios
-      .get(`/departement/${id}/unites`)
+      .get(`/departement/departement/${id}/unites`)
       .then((response) => {
         setUnits(response.data);
       })
@@ -264,6 +264,9 @@ export default function SignIn() {
                                   })
                                 }
                               >
+                                <option >
+                                  choisir votre role
+                                </option>
                                 <option value="Chef département">
                                   Chef département
                                 </option>

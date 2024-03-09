@@ -9,7 +9,7 @@ const { mongoose } = require("mongoose");
 //const requireAuth = require("./middleware/requireAuth")
 
 var messageRoute = require("./routes/ConversationRoute");
-
+//const userRoutes = require('./routes/userRoutes');
 var publicationRoute = require("./routes/publicationRoutes");
 var evenementRoutes = require("./routes/EvenementRoutes");
 commentaireRoutes = require("./routes/ComentaireRoute");
@@ -65,6 +65,9 @@ app.use("/messages", messageRoute);
 app.use("/activities", activitiesRouter);
 app.use("/socialSkills", socialSkillsRouter);
 app.use("/technicalSkills", technicalSkillsRouter);
+app.use("/user", require("./controller/userController"));
+
+
 
 const port = 8000;
 app.listen(port, () => console.log(`server is running on ${port}`));

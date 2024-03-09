@@ -14,6 +14,7 @@ import Activites from './Components/Pages/Activites'
 import axios from 'axios';
 import { Toaster } from 'react-hot-toast';
 import { UserContextProvider } from '../context/userContext';
+import AccountUpdate from './Components/Pages/AccountUpdate';
 
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials= true
@@ -39,6 +40,7 @@ function App() {
         <Route path='/profil' element={<><Navbar /><Profil /><Footer /></>} />
         <Route path='/settings' element={<><Navbar /><AccountSetting /><Footer /></>} />
         <Route path='/activities' element={<><Navbar /><Activites /><Footer /></>} />
+        <Route path='/completerProfil' element={<><Navbar /><AccountUpdate/><Footer /></>} />
 
       </Routes>
     </Router>
