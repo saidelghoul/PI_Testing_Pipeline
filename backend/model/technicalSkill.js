@@ -7,6 +7,7 @@ var TechnicalSkill = new Schema({
   experience: String,
   domaine: String,
   pointTechnical: Number,
+  dateAttribution: Date,
 });
 
 module.exports = mongoose.model("technicalSkills", TechnicalSkill);

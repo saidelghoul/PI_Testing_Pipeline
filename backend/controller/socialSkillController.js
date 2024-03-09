@@ -79,7 +79,8 @@ async function assignSocialSkillToUser(req, res) {
     }
 
     socialSkills.forEach((socialSkill)=>{
-      
+
+    socialSkill.dateAttribution = new Date(); // date d'aujourd'hui  
     user.socialSkills.push(socialSkill);
     });
     await user.save();
