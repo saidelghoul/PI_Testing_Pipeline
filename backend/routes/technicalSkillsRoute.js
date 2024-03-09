@@ -12,4 +12,6 @@ router.delete("/remove/:id", technicalSkillController.removeTechnicalSkill);
 
 router.put("/update/:id", technicalSkillController.updateTechnicalSkill);
 
+router.put('/:userId', technicalSkillController.assignTechnicalSkillToUser);
+
 module.exports = router;

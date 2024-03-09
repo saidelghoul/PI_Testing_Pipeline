@@ -9,6 +9,5 @@ var SocialSkill = new Schema({
 });
 
 
-const SocialSkillModel = mongoose.model('SocialSkill',SocialSkill);
 
 module.exports = mongoose.model("socialSkills", SocialSkill);
