@@ -1,20 +1,22 @@
+import React from "react";
 import { useState } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
-import { addTask } from "../../services/task-service";
+import { updateTask } from "../../services/task-service";
+import PropTypes from "prop-types";
 
-const TaskForm = ({ refresh, show, handleClose, id_act }) => {
+const TaskUpdate = ({ refresh, show, handleClose, task }) => {
   const [validated, setValidated] = useState(false);
 
   const [taskItem, setTaskItem] = useState({
-    title: "",
-    initDate: "",
-    dueDate: "",
-    status: "",
-    priority: "",
-    tags: [],
-    banner: "",
-    collaborators: [],
-    description: "",
+    title: task.title,
+    initDate: task.initDate.substr(0, 10),
+    dueDate: task.dueDate.substr(0, 10),
+    status: task.status,
+    priority: task.priority,
+    tags: task.tags,
+    banner: task.banner,
+    collaborators: task.collaborators,
+    description: task.description,
   });
 
   const onValueChange = (e) => {
@@ -28,13 +30,13 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
       event.stopPropagation();
     }
 
-    handleAddTask();
+    handleUpdateTask();
   };
 
-  const handleAddTask = async () => {
-    const result = await addTask(taskItem, id_act);
-    if (result.status == 201) {
-      alert("task added successfully");
+  const handleUpdateTask = async () => {
+    const result = await updateTask(task._id, taskItem);
+    if (result.status == 200) {
+      alert("task updated successfully");
       refresh(taskItem);
     }
   };
@@ -216,4 +218,11 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
   );
 };
 
-export default TaskForm;
+TaskUpdate.propTypes = {
+  refresh: PropTypes.func,
+  show: PropTypes.bool,
+  handleClose: PropTypes.func,
+  task: PropTypes.object,
+};
+
+export default TaskUpdate;

@@ -7,6 +7,8 @@ import { deleteTask } from "../../services/task-service";
 
 const Tasks = ({ id_act }) => {
   const [tasks, setTasks] = useState([]);
+  const [progress, setProgress] = useState([]);
+  const [completed, setCompleted] = useState([]);
 
   /* pop up*/
   const [show, setShow] = useState(false);
@@ -16,20 +18,27 @@ const Tasks = ({ id_act }) => {
 
   /* pop up end*/
 
-  const [plannedTasks, setPlannedTasks] = useState([]);
-
   useEffect(() => {
     const fetchTasks = async (id) => {
       const data = await getTasksByActivity(id);
-      console.log(data.data.message[0].tasks);
-      setTasks(data.data.message[0].tasks);
 
-      const filteredTasks = data.data.message[0].tasks.filter((task) => {
-        task.status === "planned";
-      });
-      setPlannedTasks(filteredTasks);
+      setTasks(
+        data.data.message[0].tasks.filter((task) => task.initDate > new Date())
+      );
 
-      console.log(plannedTasks);
+      setProgress(
+        data.data.message[0].tasks.filter(
+          (task) =>
+            new Date(task.initDate) < new Date() &&
+            new Date(task.dueDate) > new Date()
+        )
+      );
+
+      setCompleted(
+        data.data.message[0].tasks.filter(
+          (task) => new Date(task.dueDate) < new Date()
+        )
+      );
     };
     fetchTasks(id_act);
   }, []);
@@ -43,9 +52,18 @@ const Tasks = ({ id_act }) => {
   };
   /** */
 
-  const refreshTable = async (activityItem) => {
+  const refreshTable = async (taskItem) => {
     setShow(false);
-    setTasks([...tasks, activityItem]);
+    if (new Date(taskItem.initDate) > new Date()) {
+      setTasks([...tasks, taskItem]);
+    } else if (
+      new Date(taskItem.initDate) < new Date() &&
+      new Date(taskItem.dueDate) > new Date()
+    ) {
+      setProgress([...tasks, taskItem]);
+    } else {
+      setCompleted([...tasks, taskItem]);
+    }
   };
 
   return (
@@ -53,7 +71,9 @@ const Tasks = ({ id_act }) => {
       <main className="content">
         <div className="container p-0">
           <div className=" row ">
-            <h1 className="h3 mb-3 col-md-9 ">Tasks Board</h1>
+            <h1 className="h3 mb-3 col-md-9 ">
+              Tasks Board ({tasks.length + progress.length + completed.length})
+            </h1>
             <h1 className="h3 mb-3 col-md-3 ">
               <Button
                 onClick={handleShow}
@@ -152,7 +172,7 @@ const Tasks = ({ id_act }) => {
                 </div>
 
                 <div className="card-body">
-                  {plannedTasks.map((task, index) => {
+                  {progress.map((task, index) => {
                     return <Task key={index} task={task} />;
                   })}
                 </div>
@@ -231,7 +251,11 @@ const Tasks = ({ id_act }) => {
                     Nam pretium turpis et arcu. Duis arcu tortor.
                   </h6>
                 </div>
-                <div className="card-body"></div>
+                <div className="card-body">
+                  {completed.map((task, index) => {
+                    return <Task key={index} task={task} />;
+                  })}
+                </div>
               </div>
             </div>
           </div>

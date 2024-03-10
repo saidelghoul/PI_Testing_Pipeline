@@ -28,6 +28,9 @@ const ActivityDetails = () => {
         </div>
         <div className=" col-auto ">
           <p className=" text-body-emphasis "> Collaborators </p>
+          <small className=" text-body-emphasis ">
+            Description: {activity.description}
+          </small>
         </div>
       </div>
       <hr />

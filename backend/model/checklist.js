@@ -13,6 +13,7 @@ const checkListSchema = new Schema(
       required: true,
     },
     done: Boolean,
+    description: String,
     id_task: {
       type: Schema.Types.ObjectId,
       ref: "Task",

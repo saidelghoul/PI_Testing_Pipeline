@@ -1,15 +1,12 @@
 import React from "react";
-
-import PropTypes from "prop-types";
 import { Button, Modal, Row, Col } from "react-bootstrap";
-
-const DeleteForm = ({ rmActivity, show, handleClose, activity }) => {
+const ChecklistDelete = ({ rmChecklist, show, handleClose, checklist }) => {
   return (
     <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1>Delete activity</h1>
+            <h1>Delete checklist</h1>
           </Modal.Title>
           <Button
             as={Col}
@@ -28,22 +25,15 @@ const DeleteForm = ({ rmActivity, show, handleClose, activity }) => {
       </Modal.Header>
 
       <Modal.Body>
-        {activity?.tasks?.length > 0 ? (
-          <small className=" text-danger ">
-            Cannot delete This activity, it has tasks assigned in it{" "}
-          </small>
-        ) : (
-          <b className=" text-danger-emphasis ">
-            Are you sure you want to delete this activity ({activity.name})
-          </b>
-        )}
+        <b className=" text-danger ">
+          Are you sure you want to delete this checklist ({checklist.title})
+        </b>
       </Modal.Body>
       <Modal.Footer>
         <Button
-          className={activity?.tasks?.length > 0 ? " disabled " : ""}
           style={{ backgroundColor: "#e44d3a" }}
           onClick={() => {
-            rmActivity(activity._id);
+            rmChecklist(checklist._id);
           }}
         >
           Delete
@@ -53,11 +43,4 @@ const DeleteForm = ({ rmActivity, show, handleClose, activity }) => {
   );
 };
 
-DeleteForm.propTypes = {
-  rmActivity: PropTypes.func,
-  show: PropTypes.bool,
-  handleClose: PropTypes.func,
-  activity: PropTypes.object.isRequired,
-};
-
-export default DeleteForm;
+export default ChecklistDelete;

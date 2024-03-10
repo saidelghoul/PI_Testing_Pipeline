@@ -40,12 +40,10 @@ async function addTaskToActivity(req, res) {
     const { initDate, dueDate } = req.body;
 
     if (initDate > dueDate) {
-      res
-        .status(500)
-        .json({
-          title: "error",
-          message: "init date is greater than due date",
-        });
+      res.status(500).json({
+        title: "error",
+        message: "init date is greater than due date",
+      });
     } else {
       task.id_activity = req.params.id_activity;
       const act = await Activity.findById(req.params.id_activity);
@@ -59,13 +57,11 @@ async function addTaskToActivity(req, res) {
 
         const savedTask = await task.save();
         if (!savedTask || !updatedActivity)
-          res
-            .status(404)
-            .json({
-              title: "error",
-              message:
-                "error updating parent activity with new task/saving new task",
-            });
+          res.status(404).json({
+            title: "error",
+            message:
+              "error updating parent activity with new task/saving new task",
+          });
         else
           res
             .status(201)
@@ -84,12 +80,10 @@ async function updateTask(req, res, next) {
     const { initDate, dueDate } = req.body;
 
     if (initDate > dueDate) {
-      res
-        .status(500)
-        .json({
-          title: "error",
-          message: "init date is greater than due date",
-        });
+      res.status(500).json({
+        title: "error",
+        message: "init date is greater than due date",
+      });
     } else {
       const updatedTask = await Task.findByIdAndUpdate(
         req.params.id_task,
@@ -121,15 +115,17 @@ async function deleteTask(req, res, next) {
       );
 
       if (!updatedActivity)
+        res.status(404).json({
+          title: "error",
+          message: "Failed to delete task ref from activity",
+        });
+      else if (updatedActivity.checkList.length > 0) {
         res
-          .status(404)
-          .json({
-            title: "error",
-            message: "Failed to delete task ref from activity",
-          });
-      else
+          .status(500)
+          .json({ title: "error", message: "this task has checklists in it" });
+      } else
         res
-          .status(200)
+          .status(204)
           .json({ title: "deleted", message: "Task deleted successfully" });
     }
   } catch (err) {

@@ -1,20 +1,18 @@
 import { useState } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
-import { addActivity } from "../../services/activity-service";
+import { addChecklist } from "../../services/checklist-service";
 
-const ActivityForm = ({ refresh, show, handleClose }) => {
+const ChecklistForm = ({ refresh, show, handleClose, id_task }) => {
   const [validated, setValidated] = useState(false);
 
-  const [activityItem, setActivityItem] = useState({
-    name: "",
-    category: "",
-    startDate: "",
-    endDate: "",
+  const [checklistItem, setChecklistItem] = useState({
+    title: "",
+    holder: "65df6f7a904814fc0404a57a",
     description: "",
   });
 
   const onValueChange = (e) => {
-    setActivityItem({ ...activityItem, [e.target.name]: e.target.value });
+    setChecklistItem({ ...checklistItem, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (event) => {
@@ -24,14 +22,14 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
       event.stopPropagation();
     }
 
-    handleAddActivity();
+    handleChecklist();
   };
 
-  const handleAddActivity = async () => {
-    const result = await addActivity(activityItem);
+  const handleChecklist = async () => {
+    const result = await addChecklist(checklistItem, id_task);
     if (result.status == 201) {
-      alert("Activity added successfully");
-      refresh(activityItem);
+      alert("checklist added successfully");
+      refresh(checklistItem);
     }
   };
 
@@ -50,7 +48,7 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1>Add activity</h1>
+            <h1>Add checklist</h1>
           </Modal.Title>
           <Button
             as={Col}
@@ -75,14 +73,14 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
           validated={validated}
         >
           <Row className="mb-3">
-            <Form.Group as={Col} md="6" controlId="validationCustom01">
-              <Form.Label>Name</Form.Label>
+            <Form.Group as={Col} md="4" controlId="validationCustom01">
+              <Form.Label>Title</Form.Label>
               <Form.Control
                 required
                 type="text"
-                placeholder="activity name"
-                name="name"
-                value={activityItem.name}
+                placeholder="checklist title"
+                name="title"
+                value={checklistItem.title}
                 onChange={(e) => {
                   validateForm(e);
                   onValueChange(e);
@@ -90,24 +88,27 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group as={Col} md="6" controlId="validationCustom02">
-              <Form.Label>category</Form.Label>
-              <Form.Control
-                required
-                type="text"
-                placeholder="category"
-                name="category"
-                value={activityItem.category}
+            <Form.Group as={Col} md="4" controlId="validationCustom02">
+              <Form.Label>holder</Form.Label>
+              <Form.Select
+                aria-label="Default select example"
+                className=" form-control "
+                name="holder"
+                value={checklistItem.holder}
                 onChange={(e) => {
                   validateForm(e);
                   onValueChange(e);
                 }}
-              />
+              >
+                <option>Open this select menu</option>
+                <option value="65df6f7a904814fc0404a57a">Rami</option>
+              </Form.Select>
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
           </Row>
-          <Row className="mb-3">
-            <Form.Group as={Col} md="6" controlId="validationCustom03">
+
+          <Row>
+            <Form.Group as={Col} md="6" controlId="validationCustom04">
               <Form.Label>Description</Form.Label>
               <Form.Control
                 placeholder="Description"
@@ -115,46 +116,12 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
                 as="textarea"
                 rows={3}
                 name="description"
-                value={activityItem.description}
+                value={checklistItem.description}
                 onChange={(e) => {
                   validateForm(e);
                   onValueChange(e);
                 }}
               />
-            </Form.Group>
-            <Form.Group as={Col} md="3" controlId="validationCustom04">
-              <Form.Label>Start date</Form.Label>
-              <Form.Control
-                type="date"
-                placeholder="start date"
-                required
-                name="startDate"
-                value={activityItem.startDate}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
-              />
-              <Form.Control.Feedback type="invalid">
-                Please provide a valid start date.
-              </Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group as={Col} md="3" controlId="validationCustom05">
-              <Form.Label>End date</Form.Label>
-              <Form.Control
-                type="date"
-                placeholder="end date"
-                required
-                name="endDate"
-                value={activityItem.endDate}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
-              />
-              <Form.Control.Feedback type="invalid">
-                Please provide a valid end date.
-              </Form.Control.Feedback>
             </Form.Group>
           </Row>
         </Form>
@@ -172,4 +139,4 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
   );
 };
 
-export default ActivityForm;
+export default ChecklistForm;

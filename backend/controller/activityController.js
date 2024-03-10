@@ -57,7 +57,11 @@ async function removeActivity(req, res) {
       res
         .status(404)
         .json({ title: "error", message: "Couldn't find Activity" });
-    else
+    else if (activity.tasks.length > 0) {
+      res
+        .status(500)
+        .json({ title: "error", message: "this activity has tasks in it" });
+    } else
       res
         .status(204)
         .json({ title: "deleted", message: "Deleted successfully" });

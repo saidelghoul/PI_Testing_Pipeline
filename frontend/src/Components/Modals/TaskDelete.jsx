@@ -1,15 +1,14 @@
 import React from "react";
-
-import PropTypes from "prop-types";
 import { Button, Modal, Row, Col } from "react-bootstrap";
+import PropTypes from "prop-types";
 
-const DeleteForm = ({ rmActivity, show, handleClose, activity }) => {
+const TaskDelete = ({ rmTask, show, handleClose, task }) => {
   return (
     <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1>Delete activity</h1>
+            <h1>Delete task</h1>
           </Modal.Title>
           <Button
             as={Col}
@@ -28,22 +27,23 @@ const DeleteForm = ({ rmActivity, show, handleClose, activity }) => {
       </Modal.Header>
 
       <Modal.Body>
-        {activity?.tasks?.length > 0 ? (
+        <br />
+        {task?.checkList?.length > 0 ? (
           <small className=" text-danger ">
-            Cannot delete This activity, it has tasks assigned in it{" "}
+            Cannot delete This task, it has checklist assigned in it{" "}
           </small>
         ) : (
-          <b className=" text-danger-emphasis ">
-            Are you sure you want to delete this activity ({activity.name})
+          <b className=" text-danger ">
+            Are you sure you want to delete this task ({task.title})
           </b>
         )}
       </Modal.Body>
       <Modal.Footer>
         <Button
-          className={activity?.tasks?.length > 0 ? " disabled " : ""}
+          className={task?.checkList?.length > 0 ? " disabled " : ""}
           style={{ backgroundColor: "#e44d3a" }}
           onClick={() => {
-            rmActivity(activity._id);
+            rmTask(task._id);
           }}
         >
           Delete
@@ -53,11 +53,11 @@ const DeleteForm = ({ rmActivity, show, handleClose, activity }) => {
   );
 };
 
-DeleteForm.propTypes = {
-  rmActivity: PropTypes.func,
+TaskDelete.propTypes = {
+  rmTask: PropTypes.func,
   show: PropTypes.bool,
   handleClose: PropTypes.func,
-  activity: PropTypes.object.isRequired,
+  task: PropTypes.object.isRequired,
 };
 
-export default DeleteForm;
+export default TaskDelete;

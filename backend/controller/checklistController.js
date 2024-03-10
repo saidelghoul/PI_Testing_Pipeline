@@ -1,5 +1,6 @@
 const CheckList = require("../model/checklist");
 const Task = require("../model/task");
+const UserModel = require("../model/user");
 
 async function getCheckLists(req, res) {
   try {
@@ -107,10 +108,22 @@ async function updateChecklist(req, res) {
   }
 }
 
+async function getUsersForChecklist() {
+  try {
+    const users = await UserModel.aggregate([{ $project: { id: $_id } }]);
+    if (users.length > 0)
+      res.status(200).json({ title: "success", message: users });
+    else res.status(404).json({ title: "error", message: "no users found" });
+  } catch (err) {
+    res.status(500).json({ title: "error", message: err });
+  }
+}
+
 module.exports = {
   createCheckList,
   removeChecklist,
   getCheckLists,
   getCheckListById,
   updateChecklist,
+  getUsersForChecklist,
 };

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { updateActivity } from "../../services/activity-service";
+import PropTypes from "prop-types";
 
 const UpdateForm = ({ refresh, show, handleClose, activity }) => {
   const [validated, setValidated] = useState(false);
@@ -8,8 +9,8 @@ const UpdateForm = ({ refresh, show, handleClose, activity }) => {
   const [activityItem, setActivityItem] = useState({
     name: activity.name,
     category: activity.category,
-    startDate: activity.startDate,
-    endDate: activity.endDate,
+    startDate: activity.startDate.substr(0, 10),
+    endDate: activity.endDate.substr(0, 10),
     description: activity.description,
   });
 
@@ -30,7 +31,7 @@ const UpdateForm = ({ refresh, show, handleClose, activity }) => {
   const handleUpdateActivity = async () => {
     const result = await updateActivity(activity._id, activityItem);
     if (result.status == 200) {
-      alert("Activity added successfully");
+      alert("Activity updated successfully");
       refresh(activityItem);
     }
   };
@@ -75,7 +76,7 @@ const UpdateForm = ({ refresh, show, handleClose, activity }) => {
           validated={validated}
         >
           <Row className="mb-3">
-            <Form.Group as={Col} md="4" controlId="validationCustom01">
+            <Form.Group as={Col} md="6" controlId="validationCustom01">
               <Form.Label>Name</Form.Label>
               <Form.Control
                 required
@@ -90,7 +91,7 @@ const UpdateForm = ({ refresh, show, handleClose, activity }) => {
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group as={Col} md="4" controlId="validationCustom02">
+            <Form.Group as={Col} md="6" controlId="validationCustom02">
               <Form.Label>category</Form.Label>
               <Form.Control
                 required
@@ -160,18 +161,23 @@ const UpdateForm = ({ refresh, show, handleClose, activity }) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        {validated ? (
-          <Button style={{ backgroundColor: "#e44d3a" }} onClick={handleSubmit}>
-            Update
-          </Button>
-        ) : (
-          <Button disabled style={{ backgroundColor: "#e44d3a" }}>
-            Update
-          </Button>
-        )}
+        <Button
+          className={validated ? "disabled" : ""}
+          style={{ backgroundColor: "#e44d3a" }}
+          onClick={handleSubmit}
+        >
+          Update
+        </Button>
       </Modal.Footer>
     </Modal>
   );
+};
+
+UpdateForm.propTypes = {
+  refresh: PropTypes.func.isRequired,
+  show: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func,
+  activity: PropTypes.object,
 };
 
 export default UpdateForm;

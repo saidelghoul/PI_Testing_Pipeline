@@ -38,7 +38,7 @@ const Activity = ({ activity, rmActivity, refresh }) => {
         <b>/#{activity.category}</b>
         <p>{activity.description}</p>
 
-        <p>Tasks: {activity.tasks.length}</p>
+        {/*<p>Tasks: {activity.tasks.length}</p>*/}
         <p>
           {activity.startDate.substr(0, 10)} - {activity.endDate.substr(0, 10)}
         </p>
@@ -96,6 +96,7 @@ const Activity = ({ activity, rmActivity, refresh }) => {
 Activity.propTypes = {
   activity: PropTypes.object,
   rmActivity: PropTypes.func,
+  refresh: PropTypes.func,
 };
 
 export default Activity;

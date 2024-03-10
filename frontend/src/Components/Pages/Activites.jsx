@@ -8,6 +8,10 @@ import { Button } from "react-bootstrap";
 export default function Activites() {
   const [activities, setActivities] = useState([]);
 
+  const [progress, setProgress] = useState([]);
+
+  const [completed, setCompleted] = useState([]);
+
   /* pop up*/
   const [show, setShow] = useState(false);
 
@@ -19,7 +23,23 @@ export default function Activites() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await getActivities();
-      setActivities(data.data.message);
+      setActivities(
+        data.data.message.filter((activity) => activity.startDate > new Date())
+      );
+
+      setProgress(
+        data.data.message.filter(
+          (activity) =>
+            new Date(activity.startDate) < new Date() &&
+            new Date(activity.endDate) > new Date()
+        )
+      );
+
+      setCompleted(
+        data.data.message.filter(
+          (activity) => new Date(activity.endDate) < new Date()
+        )
+      );
     };
 
     fetchData();
@@ -38,7 +58,17 @@ export default function Activites() {
 
   const refreshTable = async (activityItem) => {
     setShow(false);
-    setActivities([...activities, activityItem]);
+
+    if (new Date(activityItem.startDate) > new Date()) {
+      setActivities([...activities, activityItem]);
+    } else if (
+      new Date(activityItem.startDate) < new Date() &&
+      new Date(activityItem.endDate) > new Date()
+    ) {
+      setProgress([...activities, activityItem]);
+    } else {
+      setCompleted([...activities, activityItem]);
+    }
   };
   return (
     <>
@@ -46,7 +76,8 @@ export default function Activites() {
         <div className="container p-0">
           <div className=" row ">
             <h1 className="h3 mb-3 col-md-9 ">
-              Activites Board ({activities.length})
+              Activites Board (
+              {activities.length + progress.length + completed.length})
             </h1>
             <h1 className=" col-md-3 ">
               <Button
@@ -64,6 +95,7 @@ export default function Activites() {
               />
             </h1>
           </div>
+          <hr />
 
           <div className="row">
             <div className="col-12 col-lg-6 col-xl-3">
@@ -131,7 +163,18 @@ export default function Activites() {
                     Nam pretium turpis et arcu. Duis arcu tortor.
                   </h6>
                 </div>
-                <div className="card-body"></div>
+                <div className="card-body">
+                  {progress.map(function (activity, index) {
+                    return (
+                      <Activity
+                        key={index}
+                        refresh={refreshTable}
+                        activity={activity}
+                        rmActivity={removeActivity}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             </div>
             <div className="col-12 col-lg-6 col-xl-3">
@@ -189,7 +232,18 @@ export default function Activites() {
                     Nam pretium turpis et arcu. Duis arcu tortor.
                   </h6>
                 </div>
-                <div className="card-body"></div>
+                <div className="card-body">
+                  {completed.map(function (activity, index) {
+                    return (
+                      <Activity
+                        key={index}
+                        refresh={refreshTable}
+                        activity={activity}
+                        rmActivity={removeActivity}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
