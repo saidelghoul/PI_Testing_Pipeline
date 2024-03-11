@@ -1,10 +1,5 @@
 pipeline{
   agent any
-
-  /*environment {
-        registryCredentials = "nexus"
-        registry = "192.168.33.10:8083"
-    }*/
    
   stages {
 
@@ -31,10 +26,10 @@ pipeline{
 
     stage('Build application') {
          steps{ 
-            script { 
-                sh('npm run build') 
-                } 
-            } 
-        }
+            dir('backend'){
+                sh 'npm run build'
+         }
+      }
+  }
   }
 }
