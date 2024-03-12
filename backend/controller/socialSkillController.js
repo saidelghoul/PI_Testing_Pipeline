@@ -138,6 +138,20 @@ async function unassignSocialSkillFromUser(req, res, next) {
   }
 }
 
+async function getSocialSkillsByUser(req, res, next) {
+  try {
+    const user = await User.findById(req.params.userId).populate("socialSkills");
+    
+    if (!user) {
+      res.status(404).json({ title: "error", message: "Utilisateur non trouvé" });
+    } else {
+      res.status(200).json({ title: "success", message: user.socialSkills });
+    }
+  } catch (err) {
+    res.status(500).json({ title: "error", message: err.message });
+  }
+}
+
 
 
 module.exports = { 
@@ -147,4 +161,5 @@ module.exports = {
   removeSocialSkill, 
   updateSocialSkill, 
   assignSocialSkillToUser,
-  unassignSocialSkillFromUser };
+  unassignSocialSkillFromUser,
+  getSocialSkillsByUser };

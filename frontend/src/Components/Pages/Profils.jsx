@@ -9,8 +9,37 @@ import '../../../public/assets/css/style.css';
 import '../../../public/assets/css/responsive.css';
 import '../../../public/assets/lib/slick/slick.css';
 import '../../../public/assets/lib/slick/slick-theme.css';
+import React, {useContext,  useState, useEffect } from 'react';
+import SocialSkillService from '../../services/socialSkill-service';
+import { UserContext } from "../../../context/userContext"
 
-export default function profil() {
+export default function Profil() {
+
+	const { user} = useContext(UserContext)
+
+
+
+	const [socialSkills, setSocialSkills] = useState([]);
+
+	
+  useEffect(() => {
+    // Fonction asynchrone pour récupérer les compétences sociales
+    const fetchSocialSkills = async () => {
+		console.log(user);
+		try {
+		  if (user && user.id) {
+			//const skills = await SocialSkillService.getSocialSkillsByUser(user.id);
+			
+			//setSocialSkills(skills);
+		  }
+		} catch (error) {
+		  console.error('Une erreur s\'est produite lors de la récupération des compétences sociales:', error.message);
+		}
+	  };
+
+	// Appeler la fonction de récupération des compétences sociales
+    fetchSocialSkills();
+  }, []);
   return (
     <>
 
@@ -21,7 +50,7 @@ export default function profil() {
 					<div className="row no-gutters">
 						<div className="col-lg-12 col-sm-12">					
 							<input type="file" id="file"/>
-							<label for="file">Change Image</label>				
+							<label htmlFor="file">Change Image</label>				
 						</div>
 					</div>
 				</div>
@@ -41,7 +70,7 @@ export default function profil() {
 											<img src="/assets/images/resources/user-pro-img.png" alt=""/>
 											<div className="add-dp" id="OpenImgUpload">
 												<input type="file" id="file"/>
-												<label for="file"><i className="fas fa-camera"></i></label>												
+												<label htmlFor="file"><i className="fas fa-camera"></i></label>												
 											</div>
 										</div>
 										<div className="user_pro_status">
@@ -751,7 +780,7 @@ export default function profil() {
 														<li><a href="#" title=""><i className="la la-envelope"></i></a></li>
 													</ul>
 												</div>
-												<div className="job_descp">
+												{/*<div className="job_descp">
 													<h3>Senior Wordpress Developer</h3>
 													<ul className="job-dt">
 														<li><a href="#" title="">Full Time</a></li>
@@ -765,7 +794,15 @@ export default function profil() {
 														<li><a href="#" title="">Javascript</a></li>
 														<li><a href="#" title="">Wordpress</a></li> 	
 													</ul>
-												</div>
+												</div>*/}
+
+												
+
+
+
+
+
+
 												<div className="job-status-bar">
 													<ul className="like-com">
 														<li>
@@ -1513,7 +1550,7 @@ export default function profil() {
 											<h4>India</h4>
 											<p>151/4 BT Chownk, Delhi </p>
   											</div>*/}
-										<div className="user-profile-ov">
+										{/*<div className="user-profile-ov">
 											<h3><a href="#" title="" className="skills-open">Skills</a> <a href="#" title="" className="skills-open"><i className="fa fa-pencil"></i></a> <a href="#"><i className="fa fa-plus-square"></i></a></h3>
 											<ul>
 												<li><a href="#" title="">HTML</a></li>
@@ -1525,7 +1562,20 @@ export default function profil() {
 												<li><a href="#" title="">Illustrator</a></li>
 												<li><a href="#" title="">Corel Draw</a></li>
 											</ul>
-										</div>
+										</div>*/}
+											<div className="user-profile-ov">
+
+											<h3><a href="#" title="" className="skills-open">Skills</a> <a href="#" title="" className="skills-open"><i className="fa fa-pencil"></i></a> <a href="#"><i className="fa fa-plus-square"></i></a></h3>
+      											{/* ... Votre autre contenu ... */}
+      											<ul className="skill-tags">
+        											{user.ListSS.map((skill) => (
+          												<li key={skill._id}>
+            												<a href="#" title={skill.name}>{skill.name}</a>
+          													</li>
+        												))}
+      												</ul>
+    											</div>
+
 									</div>
 									<div className="product-feed-tab" id="rewivewdata">
                                         <section ></section>

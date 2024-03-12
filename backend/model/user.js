@@ -16,7 +16,10 @@ const userSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: "socialSkills"
     }],
-    technicalSkills : [{type: Schema.Types.ObjectId, ref:"technicalSkills"}]
+    technicalSkills : [{
+      type: Schema.Types.ObjectId, 
+      ref:"technicalSkills"
+    }]
     //adresse: String,
     //telephone : String,
     //dateNaissance: Date,
