@@ -1,4 +1,4 @@
-//backend pipeline
+//backend+frontend pipeline
 pipeline{
   agent any
    
@@ -14,9 +14,10 @@ pipeline{
   stage('Install dependencies') {
       steps{
         dir('backend'){
-          
          sh 'npm install'
-
+        }
+        dir('frontend'){
+         sh 'npm install'
         }
       }
     }
@@ -39,13 +40,16 @@ pipeline{
             dir('backend'){
                 sh 'npm run build'
          }
+         dir('frontend'){
+                sh 'npm run build'
+         }
       }
   }
 
 // Build product image with Docker
-  stage('Building image with Docker (node)') { 
+  stage('Building image with Docker (node,react)') { 
         steps{
-         script { sh('docker-compose --version') }
+         script { sh('docker-compose build') }
       } 
     }
 
@@ -55,7 +59,8 @@ pipeline{
          script {
 
              docker.withRegistry("http://"+registry, registryCredentials ) {
-            sh('docker push $registry/nodemongoapp:1.0 ')
+            sh('docker push $registry/nodemongoapp:1.0.0 ')
+            sh('docker push $registry/reactapp:1.0.0 ')
           }
         }
       }
@@ -67,7 +72,9 @@ pipeline{
          script {
            docker.withRegistry("http://"+registry, registryCredentials ) {
 
-            sh('docker pull $registry/nodemongoapp:1.0 ')
+            sh('docker pull $registry/nodemongoapp:1.0.0 ')
+            
+            sh('docker pull $registry/reactapp:1.0.0 ')
 
             sh('docker-compose up -d ')
           }
