@@ -1,6 +1,8 @@
 version: "3.8"
 services:
   backend:
+    image: 172.19.136.127:8083/nodemongoapp:1.0
+    restart: always
     container_name: back
     build:
       context: ./backend
