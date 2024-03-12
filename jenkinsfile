@@ -1,3 +1,4 @@
+//backend pipeline
 pipeline{
   agent any
    
@@ -44,10 +45,7 @@ pipeline{
 // Build product image with Docker
   stage('Building image with Docker (node)') { 
         steps{
-            /*dir('backend'){
-                sh 'docker build -t ramibh120/pibackend:1.0.0 .'
-         }*/
-         script { sh('docker-compose build') }
+         script { sh('docker-compose --version') }
       } 
     }
 
