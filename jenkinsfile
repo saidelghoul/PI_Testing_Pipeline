@@ -47,10 +47,9 @@ pipeline{
             /*dir('backend'){
                 sh 'docker build -t ramibh120/pibackend:1.0.0 .'
          }*/
-         script { sh('sudo docker-compose build') }
+         script { sh('docker-compose build') }
       } 
     }
-  }
 
   //  Uploading Docker images into Nexus Registry
     stage('Deploy to Nexus') {
@@ -77,4 +76,6 @@ pipeline{
         }
       }
     }
+    
+  }
 }
