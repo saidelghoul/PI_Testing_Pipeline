@@ -77,12 +77,26 @@ const SocialSkillService = {
  getSocialSkillsByUser: async (userId) => {
     try {
       const response = await axios.get(`${apiUrl}/getbyuser/${userId}`);
-      return response.data.message; // Assurez-vous que la structure de la réponse correspond à vos besoins
+      return response.data; // Assurez-vous que la structure de la réponse correspond à vos besoins
     } catch (error) {
       console.error('Erreur lors de la récupération des compétences sociales par utilisateur:', error.message);
       throw error;
     }
   },
+
+  
+    // Récupérer les compétences sociales disponibles pour un utilisateur
+    getAvailableSocialSkills: async (userId) => {
+      try {
+        const response = await axios.get(`${apiUrl}/availables/${userId}`);
+        return response.data;
+      } catch (error) {
+        console.error('Erreur lors de la récupération des compétences sociales disponibles:', error.message);
+        throw error;
+      }
+    },
+
+
 };
 
 export default SocialSkillService;

@@ -152,6 +152,34 @@ async function getSocialSkillsByUser(req, res, next) {
   }
 }
 
+async function getAvailableSocialSkills(req, res) {
+  try {
+    const userId = req.params.userId;
+
+    // Recherche de l'utilisateur par son ID
+    const user = await User.findById(userId).populate("socialSkills");
+
+    if (!user) {
+      return res.status(404).json({ error: "Utilisateur non trouvé" });
+    }
+
+    // Récupération de toutes les compétences sociales
+    const allSocialSkills = await SocialSkill.find({});
+
+    // Filtrer les compétences sociales disponibles
+    const availableSkills = allSocialSkills.filter(socialSkill => {
+      // Vérifier si la compétence sociale n'est pas déjà affectée à l'utilisateur
+      return !user.socialSkills.some(existingSkill => existingSkill.equals(socialSkill._id));
+    });
+
+    return res.status(200).json(availableSkills);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Une erreur est survenue lors de la récupération des compétences sociales disponibles",message:error.message });
+  }
+}
+
+
 
 
 module.exports = { 
@@ -162,4 +190,5 @@ module.exports = {
   updateSocialSkill, 
   assignSocialSkillToUser,
   unassignSocialSkillFromUser,
-  getSocialSkillsByUser };
+  getSocialSkillsByUser,
+  getAvailableSocialSkills };

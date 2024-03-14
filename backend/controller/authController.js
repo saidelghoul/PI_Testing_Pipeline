@@ -135,10 +135,10 @@ const loginUser = async (req, res)=>{
 
 
 
-const getProfile = (req, res) => {
+/*const getProfile = async(req, res) => {
     const { token } = req.cookies;
     if (token) {
-      jwt.verify(token, process.env.JWT_SECRET, {}, (err, decodedToken) => {
+      jwt.verify(token, process.env.JWT_SECRET, {}, async(err, decodedToken) => {
         if (err) {
           console.error("Erreur lors du décodage du token :", err);
           return res.status(500).json({ error: "Erreur lors du décodage du token" });
@@ -150,15 +150,54 @@ const getProfile = (req, res) => {
         // L'ID de l'utilisateur est disponible ici
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate'); // désactive la mise en cache
         
-        var ListSS=[];
-        socialSkills.forEach(async element => {
-            var Obj = await SocialSkill.findById(element);
+            
+        
+        
+            try {
+                // Utilisation de Promise.all avec map pour récupérer toutes les compétences sociales de manière asynchrone
+                const socialSkillsList = await Promise.all(socialSkills.map(async (element) => {
+                  return await SocialSkill.findById(element);
+                }));
+      
+                // Renvoyer la réponse avec les données de l'utilisateur, y compris la liste des compétences sociales
+                res.json({ id, email, name, role, addresse, gouvernorat, dateNaissance, telephone, gender, socialSkills: socialSkillsList, technicalSkills });
+              } catch (error) {
+                console.error("Erreur lors de la récupération des compétences sociales :", error);
+                res.status(500).json({ error: "Une erreur est survenue lors de la récupération des compétences sociales" });
+              }
+      });
+    } else {
+      res.json(null);
+    }
+};*/
 
-            ListSS.push(Obj);     
-        res.json({ id, email, name, role ,addresse,gouvernorat, dateNaissance,telephone,gender,ListSS,technicalSkills});
-        });  
+const getProfile = async(req, res) => {
+    const { token } = req.cookies;
+    if (token) {
+      jwt.verify(token, process.env.JWT_SECRET, {}, async (err, decodedToken) => {
+        if (err) {
+          console.error("Erreur lors du décodage du token :", err);
+          return res.status(500).json({ error: "Erreur lors du décodage du token" });
+        }
+        const { id, email, name, role, addresse, gouvernorat, dateNaissance, telephone, gender, socialSkills, technicalSkills } = decodedToken;
+        if (!id) {
+          return res.status(400).json({ error: "ID d'utilisateur non trouvé dans le token" });
+        }
+        // L'ID de l'utilisateur est disponible ici
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate'); // désactive la mise en cache
+        
+        try {
+          // Utilisation de Promise.all avec map pour récupérer toutes les compétences sociales de manière asynchrone
+          const socialSkillsList = await Promise.all(socialSkills.map(async (element) => {
+            return await SocialSkill.findById(element);
+          }));
 
-
+          // Renvoyer la réponse avec les données de l'utilisateur, y compris la liste des compétences sociales
+          res.json({ id, email, name, role, addresse, gouvernorat, dateNaissance, telephone, gender, socialSkills: socialSkillsList, technicalSkills });
+        } catch (error) {
+          console.error("Erreur lors de la récupération des compétences sociales :", error);
+          res.status(500).json({ error: "Une erreur est survenue lors de la récupération des compétences sociales" });
+        }
       });
     } else {
       res.json(null);

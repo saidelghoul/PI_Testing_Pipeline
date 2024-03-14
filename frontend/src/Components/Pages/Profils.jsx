@@ -12,14 +12,60 @@ import '../../../public/assets/lib/slick/slick-theme.css';
 import React, {useContext,  useState, useEffect } from 'react';
 import SocialSkillService from '../../services/socialSkill-service';
 import { UserContext } from "../../../context/userContext"
+import AddSkillForm from '../Modals/Skills/AssignSkillForm';
+import SkillModal from '../Modals/Skills/SkillModal';
+
+
+
 
 export default function Profil() {
 
 	const { user} = useContext(UserContext)
 
+	console.log(user);
+	const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const [anchor, setAnchor] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchor(anchor ? null : event.currentTarget);
+  };
+
+  
+  const id = "65df6f7a904814fc0404a57a"
+
+  const handleRemove = async(skillid)=>{
+	const resp= await SocialSkillService.unassignSocialSkillFromUser(id,skillid);
+
+	if(resp.status === 200){
+		alert(" socialSkill deleted successfully");
+		handleClose();
+		user.socialSkills.filter(element => element._id !== skillid)
+	}
+  }
+
+  const open = Boolean(anchor);
 
 
-	const [socialSkills, setSocialSkills] = useState([]);
+
+  const [showSkillModal, setShowSkillModal] = useState(false);
+  const [selectedSkill, setSelectedSkill] = useState(null);
+
+
+	// Fonction pour ouvrir le modal SkillModal
+	const handleShowSkillModal = (skill) => {
+		setSelectedSkill(skill);
+		setShowSkillModal(true);
+	  };
+
+	  // Fonction pour fermer le modal SkillModal
+  const handleCloseSkillModal = () => {
+    setSelectedSkill(null);
+    setShowSkillModal(false);
+  };
 
 	
   useEffect(() => {
@@ -1565,16 +1611,30 @@ export default function Profil() {
 										</div>*/}
 											<div className="user-profile-ov">
 
-											<h3><a href="#" title="" className="skills-open">Skills</a> <a href="#" title="" className="skills-open"><i className="fa fa-pencil"></i></a> <a href="#"><i className="fa fa-plus-square"></i></a></h3>
+											<h3><a href="#" title="" className="skills-open">Skills</a> <a href="#" title="" className="skills-open"><i className="fa fa-pencil"></i></a> <a onClick={handleShow}><i className="fa fa-plus-square"></i></a></h3>
       											{/* ... Votre autre contenu ... */}
-      											<ul className="skill-tags">
-        											{user.ListSS.map((skill) => (
-          												<li key={skill._id}>
-            												<a href="#" title={skill.name}>{skill.name}</a>
+      											
+													{ user?.socialSkills?.length > 0 ? (<>
+													
+													<ul className="skill-tags">
+        											{user?.socialSkills?.map((skill) => (
+          												<li key={skill?._id}>
+            												<a title={skill?.name} onClick={() => handleShowSkillModal(skill)}>{skill?.name}</a>
           													</li>
+															
+															
         												))}
       												</ul>
+
+													</>) : (<div>vous n'avez encore aucun skills. Rajoutez-en pour personnaliszer votre profil !</div>)} 
+													  <SkillModal skill={selectedSkill} show={showSkillModal} handleClose={handleCloseSkillModal} handleRemove={handleRemove} />
     											</div>
+												
+
+												<AddSkillForm
+                								show={show}
+                								handleClose={handleClose}
+              									/>
 
 									</div>
 									<div className="product-feed-tab" id="rewivewdata">

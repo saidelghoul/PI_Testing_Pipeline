@@ -18,4 +18,6 @@ router.put('/unassign/:userId', socialSkillController.unassignSocialSkillFromUse
 
 router.get('/getbyuser/:userId', socialSkillController.getSocialSkillsByUser);
 
+router.get('/availables/:userId', socialSkillController.getAvailableSocialSkills);
+
 module.exports = router;
