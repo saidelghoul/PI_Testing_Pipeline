@@ -22,5 +22,3 @@ export function UserContextProvider({ children }) {
     </UserContext.Provider>
   );
 }
-
-export const useCurrentUser = () => React.useContext(UserContext);
