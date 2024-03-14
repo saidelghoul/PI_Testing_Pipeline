@@ -22,12 +22,6 @@ axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
 function App() {
-  //const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // if (!isLoggedIn) {
-  // return <SignIn onLogin={() => setIsLoggedIn(true)} />
-  //}
-
   return (
     <>
       <UserContextProvider>
