@@ -8,13 +8,51 @@ import "../../public/assets/css/style.css";
 import "../../public/assets/css/responsive.css";
 import "../../public/assets/lib/slick/slick.css";
 import "../../public/assets/lib/slick/slick-theme.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
   const [activeTab, setActiveTab] = useState("tab-1");
+  const [departements, setDepartements] = useState([]);
+  const [selectedDepartementId, setSelectedDepartementId] = useState("");
+  const [selectedUnitId, setSelectedUnitId] = useState("");
+  const [units, setUnits] = useState([]);
+
+  useEffect(() => {
+    // Récupérer les départements depuis le backend
+    axios
+      .get("/departement/departements")
+      .then((response) => {
+        setDepartements(response.data);
+      })
+      .catch((error) => {
+        console.error(
+          "Erreur lors de la récupération des départements:",
+          error
+        );
+      });
+  }, []);
+
+  const handleDepartementChange = (e) => {
+    const id = e.target.value;
+    setSelectedDepartementId(id);
+    axios
+      .get(`/departement/departement/${id}/unites`)
+      .then((response) => {
+        setUnits(response.data);
+      })
+      .catch((error) => {
+        console.error(
+          "Erreur lors de la récupération des unités associées:",
+          error
+        );
+      });
+  };
+  const handleUnitChange = (e) => {
+    setSelectedUnitId(e.target.value);
+  };
 
   const navigate = useNavigate();
   const [data, setData] = useState({
@@ -34,6 +72,7 @@ export default function SignIn() {
       } else {
         setData({});
         navigate("/home");
+        window.location.reload();
       }
     } catch (error) {
       console.log(error);
@@ -46,12 +85,8 @@ export default function SignIn() {
     password: "",
     confirmedPassword: "",
     role: "",
-    gouvernorat: "",
-    //adresse: '',
-    //telephone: '',
-    //dateNaissance: '',
-    //gender: '',
-    // departement:'',
+    departement: "",
+    unite: "",
   });
 
   const registerUser = async (e) => {
@@ -63,13 +98,16 @@ export default function SignIn() {
       confirmedPassword,
       password,
       role,
-      gouvernorat,
-      //  adresse,
-      //telephone,
-      //dateNaissance,
-      //gender,
-      //departement
+      //departement,
+      //unite,
     } = registerdata;
+
+    // Vérifier si un département a été sélectionné
+    if (!selectedDepartementId) {
+      toast.error("Veuillez sélectionner un département.");
+      return;
+  }
+
     try {
       const { data1 } = await axios.post("/register", {
         name,
@@ -77,12 +115,8 @@ export default function SignIn() {
         password,
         confirmedPassword,
         role,
-        gouvernorat,
-        //adresse,
-        //telephone,
-        //dateNaissance,
-        //gender,
-        //departement
+        departement: selectedDepartementId, // Passer l'ID du département sélectionné
+        unite: selectedUnitId, // Passer l'ID de l'unité sélectionnée
       });
       if (data1.error) {
         toast.error(data1.error);
@@ -230,8 +264,8 @@ export default function SignIn() {
                                   })
                                 }
                               >
-                                <option value="Directeur d'étude">
-                                  Directeur d&apos;étude
+                                <option >
+                                  choisir votre role
                                 </option>
                                 <option value="Chef département">
                                   Chef département
@@ -280,7 +314,47 @@ export default function SignIn() {
                               <i className="fa fa-envelope"></i>
                             </div>
                           </div>
-                          <div className="col-lg-12 no-pdd">
+                          <div className="sn-field">
+                            <select
+                              name="departement"
+                              value={registerdata.selectedDepartementId}
+                              onChange={handleDepartementChange}
+                            >
+                              <option value="">Choisir un département</option>
+                              {departements.map((departement) => (
+                                <option
+                                  key={departement._id}
+                                  value={departement._id}
+                                >
+                                  {departement.name}
+                                </option>
+                              ))}
+                            </select>
+                            <i className="fa fa-university"></i>
+                            <span>
+                              <i className="fa fa-ellipsis-h"></i>
+                            </span>
+                          </div>
+                          <div className="sn-field">
+                            <select
+                              name="unite"
+                              value={registerdata.selectedUnitId}
+                              onChange={handleUnitChange}
+                              disabled={!selectedDepartementId} // Désactiver si aucun département n'est sélectionné
+                            >
+                              <option value="">Choisir une unité</option>
+                              {units.map((unit) => (
+                                <option key={unit._id} value={unit._id}>
+                                  {unit.name}
+                                </option>
+                              ))}
+                            </select>
+                            <i className="fa fa-university"></i>
+                            <span>
+                              <i className="fa fa-ellipsis-h"></i>
+                            </span>
+                          </div>
+                          {/*<div className="col-lg-12 no-pdd">
                             <div className="sn-field">
                               <select
                                 name="gouvernorat"
@@ -323,7 +397,7 @@ export default function SignIn() {
                                 <i className="fa fa-ellipsis-h"></i>
                               </span>
                             </div>
-                          </div>
+                          </div>*/}
                           <div className="col-lg-12 no-pdd">
                             <div className="sn-field">
                               <input
@@ -377,50 +451,6 @@ export default function SignIn() {
                         </div>
                       </form>
                     </div>
-                    {/*<div className="dff-tab" id="tab-4">
-										<form >
-											<div className="row">
-												<div className="col-lg-12 no-pdd">
-													<div className="sn-field">
-														<input type="text" name="company-name" placeholder="Company Name"/>
-														<i className="la la-building"></i>
-													</div>
-												</div>
-												<div className="col-lg-12 no-pdd">
-													<div className="sn-field">
-														<input type="text" name="country" placeholder="Country"/>
-														<i className="la la-globe"></i>
-													</div>
-												</div>
-												<div className="col-lg-12 no-pdd">
-													<div className="sn-field">
-														<input type="password" name="password" placeholder="Password"/>
-														<i className="la la-lock"></i>
-													</div>
-												</div>
-												<div className="col-lg-12 no-pdd">
-													<div className="sn-field">
-														<input type="password" name="repeat-password" placeholder="Repeat Password"/>
-														<i className="la la-lock"></i>
-													</div>
-												</div>
-												<div className="col-lg-12 no-pdd">
-													<div className="checky-sec st2">
-														<div className="fgt-sec">
-															<input type="checkbox" name="cc" id="c3"/>
-															<label htmlFor="c3">
-																<span></span>
-															</label>
-															<small>Yes, I understand and agree to the workwise Terms & Conditions.</small>
-														</div>
-													</div>
-												</div>
-												<div className="col-lg-12 no-pdd">
-													<button type="submit" value="submit">Get Started</button>
-												</div>
-											</div>
-										</form>
-											</div>*/}
                   </div>
                 </div>
               </div>

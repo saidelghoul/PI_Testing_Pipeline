@@ -11,16 +11,35 @@ const userSchema = new Schema({
     password: String,
     confirmedPassword:String,
     role: String,
-    gouvernorat : String,
-    //adresse: String,
-    //telephone : String,
-    //dateNaissance: Date,
-    //gender: String,
-    //enabled: Boolean,
-   // departement: {
-     //   type: mongoose.Schema.Types.ObjectId,
-       // ref: 'Departement', // Référence au modèle Departement
-      //},
+    addresse: {
+        type: String,
+        required: false  // Adresse n'est pas obligatoire
+    },
+    gouvernorat : {
+        type: String,
+        required: false 
+    },
+    telephone : {
+        type: String,
+        required: false 
+    },
+    dateNaissance: 
+    {
+        type: Date,
+        required : false
+    },
+    gender: {
+        type: String,
+        required : false
+    },
+    departement: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Departement', // Référence au modèle Departement
+      },
+      unite: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Unite', // Référence au modèle Unite
+      },
 
 })
 

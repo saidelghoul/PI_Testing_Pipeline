@@ -8,9 +8,13 @@ import "../../public/assets/css/style.css";
 import "../../public/assets/css/responsive.css";
 import "../../public/assets/lib/slick/slick.css";
 import "../../public/assets/lib/slick/slick-theme.css";
-import { Link } from "react-router-dom";
+
+import { useContext } from "react";
+import { UserContext } from "../../context/userContext";
 
 export default function Navbar() {
+  const { user } = useContext(UserContext);
+
   return (
     <>
       <header>
@@ -30,37 +34,37 @@ export default function Navbar() {
             <nav>
               <ul>
                 <li>
-                  <Link to="/home" title="">
+                  <a href="/home" title="">
                     <span>
                       <img src="/assets/images/icon1.png" alt="" />
                     </span>
                     Home
-                  </Link>
+                  </a>
                 </li>
                 <li>
-                  <Link to="/groupes" title="">
+                  <a href="/groupes" title="">
                     <span>
                       <img src="/assets/images/icon2.png" alt="" />
                     </span>
                     Pages
-                  </Link>
+                  </a>
                 </li>
                 <li>
-                  <Link to="/activities" title="">
+                  <a href="/activities" title="">
                     <span>
                       <img src="/assets/images/icon3.png" alt="" />
                     </span>
                     Activites
-                  </Link>
+                  </a>
                 </li>
 
                 <li>
-                  <Link to="/message" title="" className="not-box-openm">
+                  <a href="/message" title="" className="not-box-openm">
                     <span>
                       <img src="/assets/images/icon6.png" alt="" />
                     </span>
                     Messages
-                  </Link>
+                  </a>
                 </li>
                 <li>
                   <a href="#" title="" className="not-box-open">
@@ -81,15 +85,15 @@ export default function Navbar() {
               <div className="user-info">
                 <img src="/assets/images/resources/user.png" alt="" />
                 <a href="#" title="">
-                  John
+                  <> {!!user && <h1>{user.name}</h1>}</>
                 </a>
                 <i className="la la-sort-down"></i>
               </div>
               <div className="user-account-settingss" id="users">
                 <h3 className="tc">
-                  <Link to="/profil" title="">
+                  <a href="/profil" title="">
                     Profil
-                  </Link>
+                  </a>
                 </h3>
 
                 <h3>Online Status</h3>
@@ -123,9 +127,9 @@ export default function Navbar() {
                 <h3>Setting</h3>
                 <ul className="us-links">
                   <li>
-                    <Link to="/settings" title="">
+                    <a href="/settings" title="">
                       Account Setting
-                    </Link>
+                    </a>
                   </li>
                   <li>
                     <a href="#" title="">
@@ -144,7 +148,7 @@ export default function Navbar() {
                   </li>
                 </ul>
                 <h3 className="tc">
-                  <a href="sign-in.html" title="">
+                  <a href="/" title="">
                     Logout
                   </a>
                 </h3>

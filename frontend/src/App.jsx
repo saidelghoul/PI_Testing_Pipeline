@@ -16,6 +16,7 @@ import { Toaster } from "react-hot-toast";
 import { UserContextProvider } from "../context/userContext";
 import ActivityDetails from "./Components/Pages/ActivityDetails";
 import TaskDetails from "./Components/Pages/TaskDetails";
+import AccountUpdate from "./Components/Pages/AccountUpdate";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -110,6 +111,17 @@ function App() {
                 <>
                   <Navbar />
                   <TaskDetails />
+                </>
+              }
+            />
+
+            <Route
+              path="/completerProfil"
+              element={
+                <>
+                  <Navbar />
+                  <AccountUpdate />
+                  <Footer />
                 </>
               }
             />

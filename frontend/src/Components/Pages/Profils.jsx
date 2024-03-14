@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import "../../../public/assets/css/animate.css";
 import "../../../public/assets/css/bootstrap.min.css";
 import "../../../public/assets/css/line-awesome.css";
@@ -9,8 +10,146 @@ import "../../../public/assets/css/style.css";
 import "../../../public/assets/css/responsive.css";
 import "../../../public/assets/lib/slick/slick.css";
 import "../../../public/assets/lib/slick/slick-theme.css";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../../../context/userContext";
+import axios from "axios";
 
 export default function profil() {
+  const { user } = useContext(UserContext);
+  const [departements, setDepartements] = useState([]);
+  const [unites, setUnités] = useState([]);
+  //const [selectedUnit, setSelectedUnit] = useState(null);
+
+  const isAdmin = user && user.role === "Directeur d'étude";
+  const isChefDep = user && user.role === "Chef département";
+
+  const [departement, setDepartement] = useState({
+    name: "",
+    description: "",
+    nbrUnite: 0,
+  });
+
+  useEffect(() => {
+    fetchDepartements();
+    fetchUnités();
+  }, []);
+
+  const fetchDepartements = async () => {
+    try {
+      const response = await axios.get("/departement/getAlldep");
+      setDepartements(response.data);
+    } catch (error) {
+      console.error("Error fetching departements:", error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Appelez l'API pour ajouter le département
+      const response = await axios.post("/departement/add", departement);
+      console.log("Département ajouté avec succès:", response.data);
+      // Réinitialisez le formulaire
+      setDepartement({
+        name: "",
+        description: "",
+        nbrUnite: 0,
+      });
+    } catch (error) {
+      console.error("Erreur lors de l'ajout du département:", error.message);
+    }
+  };
+
+  const [unite, setUnite] = useState({
+    name: "",
+    departement: "",
+  });
+
+  const fetchUnités = async () => {
+    try {
+      const response = await axios.get("/unite/getAll");
+      setUnités(response.data);
+    } catch (error) {
+      console.error("Error fetching unités:", error);
+    }
+  };
+
+  const handleSubmit2 = async (e) => {
+    e.preventDefault();
+    try {
+      // Appelez l'API pour ajouter le département
+      const response = await axios.post("/unite/add", unite);
+      console.log("Unité ajouté avec succès:", response.data);
+      // Réinitialisez le formulaire
+
+      setUnite({
+        name: "",
+        departement: "",
+      });
+    } catch (error) {
+      console.error("Erreur lors de l'ajout du unite:", error.message);
+    }
+  };
+  const handleChange2 = (e) => {
+    const { name, value } = e.target;
+    setUnite({ ...unite, [name]: value });
+  };
+
+  const [updatedUser, setUpdatedUser] = useState({
+    // addresse: "",
+    // gouvernorat: "",
+    // telephone: "",
+    // dateNaissance: "",
+    // gender: "",
+    addresse: user?.addresse || "",
+    gouvernorat: user?.gouvernorat || "",
+    telephone: user?.telephone || "",
+    dateNaissance: user?.dateNaissance || "",
+    gender: user?.gender || "",
+  });
+
+  const handleSubmit1 = async (e) => {
+    e.preventDefault();
+    try {
+      // Appelez l'API pour mettre à jour le profil utilisateur
+      const response = await axios.put(`/user/${user.id}`, updatedUser);
+      console.log("Profil utilisateur mis à jour avec succès:", response.data);
+      // Réinitialisez le formulaire
+      setUpdatedUser({
+        addresse: "",
+        gouvernorat: "",
+        telephone: "",
+        dateNaissance: "",
+        gender: "",
+      });
+      window.location.reload();
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du profil:", error.message);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUpdatedUser((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
+  };
+
+  const handleDeleteUnit = async (id) => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer cette unité ?")) {
+      try {
+        await axios.delete(`/unite/remove/${id}`);
+        fetchUnités();
+      } catch (error) {
+        console.error(
+          "Erreur lors de la suppression de l'unité:",
+          error.message
+        );
+      }
+    }
+  };
+
   return (
     <>
       <section className="cover-sec">
@@ -20,6 +159,7 @@ export default function profil() {
             <div className="row no-gutters">
               <div className="col-lg-12 col-sm-12">
                 <input type="file" id="file" />
+                <label htmlFor="file">Change Image</label>
               </div>
             </div>
           </div>
@@ -41,6 +181,9 @@ export default function profil() {
                         />
                         <div className="add-dp" id="OpenImgUpload">
                           <input type="file" id="file" />
+                          <label htmlFor="file">
+                            <i className="fas fa-camera"></i>
+                          </label>
                         </div>
                       </div>
                       <div className="user_pro_status">
@@ -55,43 +198,178 @@ export default function profil() {
                           </li>
                         </ul>
                       </div>
+                      <div>
+                        {/* <a href="/completerProfil" title="">
+                            <i className="la la-user"></i> completer mon profil
+                          </a> */}
+                        <ul>
+                          <li>
+                            <a className="post_project" href="#" title="">
+                              Completer mon profil
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+
+                      <div className="post-popup pst-pj">
+                        <div className="post-project">
+                          <h3>completer mon profil</h3>
+                          <div className="post-project-fields">
+                            <form onSubmit={handleSubmit1}>
+                              <div className="row">
+                                <div className="col-lg-12">
+                                  <label htmlFor="addresse">Ville :</label>
+                                  <input
+                                    type="text"
+                                    id="addresse"
+                                    name="addresse"
+                                    placeholder="ville"
+                                    value={updatedUser.addresse}
+                                    onChange={handleChange}
+                                  />
+                                </div>
+                                <div className="col-lg-12">
+                                  <div className="inp-field">
+                                    <label htmlFor="gouvernorat">
+                                      Gouvernorat :
+                                    </label>
+                                    <select
+                                      id="gouvernorat"
+                                      name="gouvernorat"
+                                      value={updatedUser.gouvernorat}
+                                      onChange={handleChange}
+                                    >
+                                      <option>
+                                        Sélectionnez un gouvernorat
+                                      </option>
+                                      <option value="Ariana">Ariana</option>
+                                      <option value="Béja">Béja</option>
+                                      <option value="Ben Arous">
+                                        Ben Arous
+                                      </option>
+                                      <option value="Bizerte">Bizerte</option>
+                                      <option value="Gabès">Gabès</option>
+                                      <option value="Gafsa">Gafsa</option>
+                                      <option value="Jendouba">Jendouba</option>
+                                      <option value="Kairouan">Kairouan</option>
+                                      <option value="Kasserine">
+                                        Kasserine
+                                      </option>
+                                      <option value="Kébili">Kébili</option>
+                                      <option value="Kef">Le Kef</option>
+                                      <option value="Mahdia">Mahdia</option>
+                                      <option value="Manouba">Manouba</option>
+                                      <option value="Médenine">Médenine</option>
+                                      <option value="Monastir">Monastir</option>
+                                      <option value="Nabeul">Nabeul</option>
+                                      <option value="Sfax">Sfax</option>
+                                      <option value="Sidi Bouzid">
+                                        Sidi Bouzid
+                                      </option>
+                                      <option value="Siliana">Siliana</option>
+                                      <option value="Sousse">Sousse</option>
+                                      <option value="Tataouine">
+                                        Tataouine
+                                      </option>
+                                      <option value="Tozeur">Tozeur</option>
+                                      <option value="Tunis">Tunis</option>
+                                      <option value="Zaghouan">Zaghouan</option>
+                                    </select>
+                                  </div>
+                                </div>
+
+                                <div className="col-lg-12">
+                                  <label htmlFor="telephone">Téléphone :</label>
+                                  <input
+                                    type="text"
+                                    id="telephone"
+                                    name="telephone"
+                                    placeholder="telephone"
+                                    value={updatedUser.telephone}
+                                    onChange={handleChange}
+                                  />
+                                </div>
+                                <div className="col-lg-12">
+                                  <div className="price-sec">
+                                    <label htmlFor="dateNaissance">
+                                      Date de Naissance :
+                                    </label>
+
+                                    <input
+                                      type="date"
+                                      id="dateNaissance"
+                                      name="dateNaissance"
+                                      placeholder="Price"
+                                      value={updatedUser.dateNaissance}
+                                      onChange={handleChange}
+                                    />
+                                    <i className="la la-dollar"></i>
+                                  </div>
+                                </div>
+                                <div className="col-lg-12">
+                                  <label htmlFor="gender">Genre :</label>
+                                  <select
+                                    id="gender"
+                                    name="gender"
+                                    value={updatedUser.gender}
+                                    onChange={handleChange}
+                                  >
+                                    <option value="homme">Homme</option>
+                                    <option value="femme">Femme</option>
+                                  </select>
+                                </div>
+                                <div className="col-lg-12">
+                                  <ul>
+                                    <li>
+                                      <button
+                                        className="active"
+                                        type="submit"
+                                        value="post"
+                                      >
+                                        Submit
+                                      </button>
+                                    </li>
+                                    {/* <li><a href="#" type="close" title="">Cancel</a></li> */}
+                                  </ul>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                          <a href="#" title="">
+                            <i className="la la-times-circle-o"></i>
+                          </a>
+                        </div>
+                      </div>
                       <ul className="social_links">
-                        <li>
-                          <a href="#" title="">
-                            <i className="la la-globe"></i> www.example.com
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#" title="">
-                            <i className="fa fa-facebook-square"></i>{" "}
-                            Http://www.facebook.com/john...
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#" title="">
-                            <i className="fa fa-twitter"></i>{" "}
-                            Http://www.Twitter.com/john...
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#" title="">
-                            <i className="fa fa-google-plus-square"></i>{" "}
-                            Http://www.googleplus.com/john...
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#" title="">
-                            <i className="fa fa-behance-square"></i>{" "}
-                            Http://www.behance.com/john...
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#" title="">
-                            <i className="fa fa-pinterest"></i>{" "}
-                            Http://www.pinterest.com/john...
-                          </a>
-                        </li>
-                        <li>
+                        {!!user && user.gouvernorat && (
+                          <li>
+                            <i className="la la-globe"> Gouvernorat : </i>
+                            <h3>{user.gouvernorat}</h3>
+                          </li>
+                        )}
+                        {!!user && user.addresse && (
+                          <li>
+                            <i className="la la-globe"> Ville : </i>
+                            <h3>{user.addresse}</h3>
+                          </li>
+                        )}
+                        {!!user && user.dateNaissance && (
+                          <li>
+                            <i className="la la-globe"> Date de naissance : </i>
+                            <h3>
+                              {new Date(user.dateNaissance).toLocaleDateString(
+                                "fr-FR"
+                              )}
+                            </h3>
+                          </li>
+                        )}
+                        {!!user && user.telephone && (
+                          <li>
+                            <i className="la la-globe"> Telephone : </i>
+                            <h3>{user.telephone}</h3>
+                          </li>
+                        )}
+                        {/* <li>
                           <a href="#" title="">
                             <i className="fa fa-instagram"></i>{" "}
                             Http://www.instagram.com/john...
@@ -102,7 +380,7 @@ export default function profil() {
                             <i className="fa fa-youtube"></i>{" "}
                             Http://www.youtube.com/john...
                           </a>
-                        </li>
+                        </li> */}
                       </ul>
                     </div>
                     <div className="suggestions full-width">
@@ -183,9 +461,10 @@ export default function profil() {
                 <div className="col-lg-6">
                   <div className="main-ws-sec">
                     <div className="user-tab-sec rewivew">
-                      <h3>John Doe</h3>
+                      <h3> {!!user && <>{user.name}</>}</h3>
                       <div className="star-descp">
-                        <span>Graphic Designer at Self Employed</span>
+                        <span> {!!user && <>{user.role}</>}</span>
+
                         <ul>
                           <li>
                             <i className="fa fa-star"></i>
@@ -248,7 +527,7 @@ export default function profil() {
                           <li data-tab="payment-dd">
                             <a href="#" title="">
                               <img src="/assets/images/ic6.png" alt="" />
-                              <span>Payment</span>
+                              <span>Settings</span>
                             </a>
                           </li>
                         </ul>
@@ -2414,6 +2693,11 @@ export default function profil() {
                                   </li>
                                   <li>
                                     <a href="#" title="">
+                                      Unbid
+                                    </a>
+                                  </li>
+                                  <li>
+                                    <a href="#" title="">
                                       Close
                                     </a>
                                   </li>
@@ -3886,161 +4170,215 @@ export default function profil() {
                         </div>
                       </div>
                     </div>
-                    <div className="product-feed-tab" id="payment-dd">
-                      <div className="billing-method">
-                        <ul>
-                          <li>
-                            <h3>Add Billing Method</h3>
-                            <a href="#" title="">
-                              <i className="fa fa-plus-circle"></i>
-                            </a>
-                          </li>
-                          <li>
-                            <h3>See Activity</h3>
+                    {isAdmin && (
+                      <div className="product-feed-tab" id="payment-dd">
+                        <div className="billing-method">
+                          <ul>
+                            <li>
+                              <h3>Ajouter Departement</h3>
+                              <a href="#" title="">
+                                <i className="fa fa-plus-circle"></i>
+                              </a>
+                            </li>
+                            {/* <li>
+                            <h3>voir unites</h3>
                             <a href="#" title="">
                               View All
                             </a>
-                          </li>
-                          <li>
-                            <h3>Total Money</h3>
-                            <span>$0.00</span>
-                          </li>
-                        </ul>
-                        <div className="lt-sec">
-                          <img src="/assets/images/lt-icon.png" alt="" />
-                          <h4>All your transactions are saved here</h4>
-                          <a href="#" title="">
-                            Click Here
-                          </a>
+                          </li> */}
+                          </ul>
+                          <div className="lt-sec">
+                            <img src="/assets/images/lt-icon.png" alt="" />
+                            <h4>liste des departements </h4>
+                            <table className="table table-sm">
+                              <thead>
+                                <tr>
+                                  <th scope="col">nom departement </th>
+                                  <th scope="col">Description</th>
+                                  <th scope="col">Nombre des unités</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {departements.map((departement) => (
+                                  <tr key={departement._id}>
+                                    <td>{departement.name}</td>
+                                    <td>{departement.description}</td>
+                                    <td>{departement.nbrUnite}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
-                      </div>
-                      <div className="add-billing-method">
-                        <h3>Add Billing Method</h3>
-                        <h4>
-                          <img src="/assets/images/dlr-icon.png" alt="" />
-                          <span>
-                            With workwise payment protection , only pay for work
-                            delivered.
-                          </span>
-                        </h4>
-                        <div className="payment_methods">
-                          <h4>Credit or Debit Cards</h4>
-                          <form>
-                            <div className="row">
-                              <div className="col-lg-12">
-                                <div className="cc-head">
-                                  <h5>Card Number</h5>
-                                  <ul>
-                                    <li>
-                                      <img
-                                        src="/assets/images/cc-icon1.png"
-                                        alt=""
-                                      />
-                                    </li>
-                                    <li>
-                                      <img
-                                        src="/assets/images/cc-icon2.png"
-                                        alt=""
-                                      />
-                                    </li>
-                                    <li>
-                                      <img
-                                        src="/assets/images/cc-icon3.png"
-                                        alt=""
-                                      />
-                                    </li>
-                                    <li>
-                                      <img
-                                        src="/assets/images/cc-icon4.png"
-                                        alt=""
-                                      />
-                                    </li>
-                                  </ul>
-                                </div>
-                                <div className="inpt-field pd-moree">
-                                  <input
-                                    type="text"
-                                    name="cc-number"
-                                    placeholder=""
-                                  />
-                                  <i className="fa fa-credit-card"></i>
-                                </div>
-                              </div>
-                              <div className="col-lg-6">
-                                <div className="cc-head">
-                                  <h5>First Name</h5>
-                                </div>
-                                <div className="inpt-field">
-                                  <input
-                                    type="text"
-                                    name="f-name"
-                                    placeholder=""
-                                  />
-                                </div>
-                              </div>
-                              <div className="col-lg-6">
-                                <div className="cc-head">
-                                  <h5>Last Name</h5>
-                                </div>
-                                <div className="inpt-field">
-                                  <input
-                                    type="text"
-                                    name="l-name"
-                                    placeholder=""
-                                  />
-                                </div>
-                              </div>
-                              <div className="col-lg-6">
-                                <div className="cc-head">
-                                  <h5>Expiresons</h5>
-                                </div>
-                                <div className="rowwy">
-                                  <div className="row">
-                                    <div className="col-lg-6 pd-left-none no-pd">
-                                      <div className="inpt-field">
-                                        <input
-                                          type="text"
-                                          name="f-name"
-                                          placeholder=""
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="col-lg-6 pd-right-none no-pd">
-                                      <div className="inpt-field">
-                                        <input
-                                          type="text"
-                                          name="f-name"
-                                          placeholder=""
-                                        />
-                                      </div>
-                                    </div>
+                        <div className="add-billing-method">
+                          <h3>Ajouter un departement</h3>
+
+                          <div className="payment_methods">
+                            <form onSubmit={handleSubmit}>
+                              <div className="row">
+                                <div className="col-lg-12">
+                                  <div className="cc-head">
+                                    <h5>nom de departement</h5>
+                                  </div>
+                                  <div className="inpt-field pd-moree">
+                                    <input
+                                      type="text"
+                                      name="name"
+                                      placeholder="nom departement ..."
+                                      value={departement.name}
+                                      onChange={(e) =>
+                                        setDepartement({
+                                          ...departement,
+                                          name: e.target.value,
+                                        })
+                                      }
+                                    />
+                                    <i className="fa fa-university"></i>
                                   </div>
                                 </div>
-                              </div>
-                              <div className="col-lg-6">
-                                <div className="cc-head">
-                                  <h5>
-                                    Cvv (Security Code){" "}
-                                    <i className="fa fa-question-circle"></i>
-                                  </h5>
+                                <div className="col-lg-6">
+                                  <div className="cc-head">
+                                    <h5>Description</h5>
+                                  </div>
+                                  <div className="inpt-field pd-moree">
+                                    <input
+                                      type="text"
+                                      name="description"
+                                      placeholder="description ..."
+                                      value={departement.description}
+                                      onChange={(e) =>
+                                        setDepartement({
+                                          ...departement,
+                                          description: e.target.value,
+                                        })
+                                      }
+                                    />
+                                    <i className="fa fa-university"></i>
+                                  </div>
                                 </div>
-                                <div className="inpt-field">
-                                  <input
-                                    type="text"
-                                    name="l-name"
-                                    placeholder=""
-                                  />
+                                <div className="col-lg-6">
+                                  <div className="cc-head">
+                                    <h5>nombre des unités </h5>
+                                  </div>
+                                  <div className="inpt-field">
+                                    <input
+                                      type="number"
+                                      name="nbrUnite"
+                                      placeholder=""
+                                      value={departement.nbrUnite}
+                                      onChange={(e) =>
+                                        setDepartement({
+                                          ...departement,
+                                          nbrUnite: parseInt(e.target.value),
+                                        })
+                                      }
+                                    />
+                                  </div>
+                                </div>
+
+                                <div className="col-lg-12">
+                                  <button type="submit">ajouter</button>
                                 </div>
                               </div>
-                              <div className="col-lg-12">
-                                <button type="submit">Continue</button>
-                              </div>
-                            </div>
-                          </form>
-                          <h4>Add Paypal Account</h4>
+                            </form>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
+
+                    {isChefDep && (
+                      <div className="product-feed-tab" id="payment-dd">
+                        <div className="billing-method">
+                          <ul>
+                            <li>
+                              <h3>Ajouter Unité</h3>
+                              <a href="#" title="">
+                                <i className="fa fa-plus-circle"></i>
+                              </a>
+                            </li>
+                          </ul>
+                          <div className="lt-sec">
+                            <img src="/assets/images/lt-icon.png" alt="" />
+                            <h4>liste des unités </h4>
+                            <table className="table table-sm">
+                              <thead>
+                                <tr>
+                                  <th scope="col">nom unité </th>
+                                  <th scope="col">Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {unites.map((unite) => (
+                                  <tr key={unite._id}>
+                                    <td>{unite.name}</td>
+                                    <td>
+                                      <i
+                                        className="fa fa-trash"
+                                        style={{
+                                          color: "red",
+                                          cursor: "pointer",
+                                        }}
+                                        onClick={() =>
+                                          handleDeleteUnit(unite._id)
+                                        }
+                                      ></i>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div className="add-billing-method">
+                          <h3>Ajouter une unité</h3>
+
+                          <div className="payment_methods">
+                            <form onSubmit={handleSubmit2}>
+                              <div className="row">
+                                <div className="col-lg-12">
+                                  <div className="cc-head">
+                                    <h5>nom de l`unité</h5>
+                                  </div>
+                                  <div className="inpt-field pd-moree">
+                                    <input
+                                      type="text"
+                                      name="name"
+                                      placeholder="nom de l`unité ..."
+                                      value={unite.name}
+                                      onChange={handleChange2}
+                                    />
+                                    <i className="fa fa-university"></i>
+                                  </div>
+                                  <div className="inpt-field pd-moree">
+                                    <select
+                                      name="departement"
+                                      value={unite.departement}
+                                      onChange={handleChange2}
+                                    >
+                                      <option value="">
+                                        Sélectionnez un département
+                                      </option>
+                                      {departements.map((departement) => (
+                                        <option
+                                          key={departement._id}
+                                          value={departement._id}
+                                        >
+                                          {departement.name}
+                                        </option>
+                                      ))}
+                                    </select>
+                                    <i className="fa fa-university"></i>
+                                  </div>
+                                </div>
+                                <div className="col-lg-12">
+                                  <button type="submit">ajouter</button>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="col-lg-3">
