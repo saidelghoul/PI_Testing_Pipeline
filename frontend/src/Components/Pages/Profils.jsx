@@ -159,8 +159,6 @@ export default function Profil() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const [anchor, setAnchor] = React.useState(null);
-
   const id = "65df6f7a904814fc0404a57a";
 
   const handleRemove = async (skillid) => {
@@ -175,8 +173,6 @@ export default function Profil() {
       user.socialSkills.filter((element) => element._id !== skillid);
     }
   };
-
-  const open = Boolean(anchor);
 
   const [showSkillModal, setShowSkillModal] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState(null);
@@ -5076,7 +5072,7 @@ export default function Profil() {
                           </>
                         ) : (
                           <div>
-                            vous n'avez encore aucun skills. Rajoutez-en pour
+                            vous navez encore aucun skills. Rajoutez-en pour
                             personnaliszer votre profil !
                           </div>
                         )}
