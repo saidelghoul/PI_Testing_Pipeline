@@ -45,7 +45,7 @@ function App() {
               }
             />
             <Route
-              path="/Groupes"
+              path="/groupes"
               element={
                 <>
                   <Navbar />
@@ -55,7 +55,7 @@ function App() {
               }
             />
             <Route
-              path="/Message"
+              path="/message"
               element={
                 <>
                   <Navbar />
