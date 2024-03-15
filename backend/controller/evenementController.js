@@ -1,5 +1,6 @@
 var Evenement = require("../model/Evenement");
 const moment = require("moment");
+const Commentaire = require("../model/commentair");
 
 async function add(req, res) {
   const evenement = req.body;
@@ -59,7 +60,7 @@ async function update(req, res) {
   }
 }
 
-async function removeCondition(req, res) {
+async function remove2(req, res) {
   const id = req.params.id;
   try {
     const evenement = await Evenement.findById(id);
@@ -67,12 +68,12 @@ async function removeCondition(req, res) {
       return res.status(404).json({ error: "Couldn't find event" });
 
     const dateDebut = evenement.dateDebut;
-    const currentDate = moment();
+    const currentDate = Date.now;
     const diffInDays = moment(dateDebut).diff(currentDate, "days");
 
     if (diffInDays < 4) {
-      console.log("Too late to delete.");
-      return res.status(400).json({ error: "Too late to delete" });
+      console.log(`Difference in days: ${diffInDays}`);
+      return res.status(400).json({ error: "  Too late to delete" });
     }
 
     const deletedEvent = await Evenement.findByIdAndDelete(id);
@@ -84,5 +85,29 @@ async function removeCondition(req, res) {
     res.status(500).json({ error: "Server error" + err.message });
   }
 }
+async function addComment(req, res) {
+  try {
+    const { id } = req.params;
 
-module.exports = { getall, getbyid, add, remove, update ,removeCondition};
+    const commentaire = new Commentaire({
+      contenu: req.body.contenu,
+    });
+
+    const nouveauCommentaire = await commentaire.save();
+
+    const evenement = await Evenement.findById(id);
+
+    evenement.commentaires.push(nouveauCommentaire._id);
+
+    const evenementMiseAJour = await evenement.save();
+
+    res.json(evenementMiseAJour);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Erreur lors de l'ajout du commentaire à la publication",
+    });
+  }
+}
+
+module.exports = { getall, getbyid, add, remove, update, remove2, addComment };

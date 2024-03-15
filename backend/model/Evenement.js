@@ -9,6 +9,7 @@ var Evenement = new Schema({
   DateFin: Date,
   Capacite: Number,
   Prix: Number,
+  commentaires: [{ type: Schema.Types.ObjectId, ref: "Commentaire" }], // Liste des commentaires associés à la publication
 });
 
 module.exports = mongoose.model("Evenement", Evenement);

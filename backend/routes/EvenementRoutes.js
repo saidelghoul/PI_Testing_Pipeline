@@ -12,6 +12,8 @@ router.delete("/remove/:id", evenementController.remove);
 
 router.put("/update/:id", evenementController.update);
 
-router.delete("/removeCondition/:id", evenementController.removeCondition);
+router.delete("/remove2/:id", evenementController.remove2);
+
+router.post("/:id/commentaires", evenementController.addComment);
 
 module.exports = router;

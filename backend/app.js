@@ -8,7 +8,7 @@ const cors = require("cors");
 const { mongoose } = require("mongoose");
 var publicationRoute = require("./routes/publicationRoutes");
 var evenementRoutes = require("./routes/EvenementRoutes");
-commentaireRoutes = require("./routes/ComentaireRoute");
+var commentaireRoutes = require("./routes/ComentaireRoute");
 
 //var indexRouter = require('./routes/index');
 //var usersRouter = require('./routes/users');

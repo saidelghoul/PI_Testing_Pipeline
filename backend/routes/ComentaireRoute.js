@@ -1,15 +1,13 @@
 var express = require("express");
 var router = express.Router();
-var evenementController = require("../controller/evenementController");
+var commentaireController = require("../controller/commentaireController");
 
-router.get("/getall", evenementController.getall);
+router.get("/getall", commentaireController.getall);
 
-router.get("/getbyid/:id", evenementController.getbyid);
+router.post("/add", commentaireController.add);
 
-router.post("/add", evenementController.add);
+router.delete("/remove/:id", commentaireController.remove);
 
-router.delete("/remove/:id", evenementController.remove);
-
-router.put("/update/:id", evenementController.update);
+router.put("/update/:id", commentaireController.update);
 
 module.exports = router;
