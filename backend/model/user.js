@@ -35,10 +35,13 @@ const userSchema = new Schema({
     departement: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Departement', // Référence au modèle Departement
+        required : false
+
       },
       unite: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Unite', // Référence au modèle Unite
+        required : false
       },
 
 })

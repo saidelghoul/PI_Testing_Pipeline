@@ -23,6 +23,8 @@ export default function profil() {
 
   const isAdmin = user && user.role === "Directeur d'étude"; 
   const isChefDep = user && user.role==="Chef département";
+  const isChefUnite = user && user.role === "Chef unité";
+
 
   const[departement, setDepartement] = useState({
     name: "",
@@ -45,11 +47,13 @@ export default function profil() {
   };
 
   
-  const handleSubmit = async (e) => {
+  const handleSubmitDep = async (e) => {
     e.preventDefault();
     try {
       // Appelez l'API pour ajouter le département
       const response = await axios.post('/departement/add', departement);
+      fetchDepartements();
+
       console.log('Département ajouté avec succès:', response.data);
       // Réinitialisez le formulaire
       setDepartement({
@@ -84,9 +88,10 @@ export default function profil() {
     try {
       // Appelez l'API pour ajouter le département
       const response = await axios.post('/unite/add', unite);
+      fetchUnités();
+
       console.log('Unité ajouté avec succès:', response.data);
       // Réinitialisez le formulaire
-      
       setUnite({
         name: '',
         departement: '',
@@ -120,6 +125,7 @@ export default function profil() {
     try {
       // Appelez l'API pour mettre à jour le profil utilisateur
       const response = await axios.put(`/user/${user.id}`, updatedUser);
+
       console.log('Profil utilisateur mis à jour avec succès:', response.data);
       // Réinitialisez le formulaire
       setUpdatedUser({
@@ -157,6 +163,16 @@ export default function profil() {
     }
   };
 
+  const handleDeleteDep = async (id) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ?')) {
+      try {
+        await axios.delete(`/unite/removedep/${id}`);
+        fetchDepartements();
+      } catch (error) {
+        console.error('Erreur lors de la suppression ', error.message);
+      }
+    }
+  };
   return (
     <>
       <section className="cover-sec">
@@ -205,15 +221,41 @@ export default function profil() {
                           </li>
                         </ul>
                       </div>
+                      <br/>
                       <div>
-                      {/* <a href="/completerProfil" title="">
-                            <i className="la la-user"></i> completer mon profil
-                          </a> */}
+                      <br/>
                         <ul>
 												<li><a className="post_project" href="#" title="">Completer mon profil</a></li>
 											</ul>
                       </div>
-                    
+                      <div>
+                        <br></br>
+                      </div>
+                      <div>
+                      {isAdmin && (
+    <div>
+      <a href="/completerProfil" title="">
+        <i className="la la-user"></i> Mes chefs département
+      </a>
+    </div>
+  )}
+  {isChefDep && (
+    <div>
+      <a href="/completerProfil" title="">
+        <i className="la la-user"></i> Mes chefs unité
+      </a>
+    </div>
+  )}
+  {isChefUnite && (
+    <div>
+      <a href="/completerProfil" title="">
+        <i className="la la-user"></i> Mes enseignants
+      </a>
+    </div>
+  )}
+                         
+                      </div>
+                      <br/>
               <div className="post-popup pst-pj">
 			<div className="post-project">
 				<h3>completer mon profil</h3>
@@ -417,8 +459,7 @@ export default function profil() {
                     <div className="user-tab-sec rewivew">
                       <h3> {!!user && <>{user.name}</>}</h3>
                       <div className="star-descp">
-                        <span> {!!user && <>{user.role}</>}</span>
-
+                        <span> {!!user && <>{user.role}</> }</span> 
                         <ul>
                           <li>
                             <i className="fa fa-star"></i>
@@ -4150,6 +4191,7 @@ export default function profil() {
                                 <th scope="col">nom departement </th>
                                 <th scope="col">Description</th>
                                 <th scope="col">Nombre des unités</th>
+                                <th>Actions</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -4158,6 +4200,10 @@ export default function profil() {
                                   <td>{departement.name}</td>
                                   <td>{departement.description}</td>
                                   <td>{departement.nbrUnite}</td>
+                                  <td>
+                                  <i className="fa fa-trash" style={{ color: 'red', cursor: 'pointer' }} onClick={() => handleDeleteDep(departement._id)}></i>
+
+                      </td>
                                 </tr>
                               ))}
                             </tbody>
@@ -4168,7 +4214,7 @@ export default function profil() {
                         <h3>Ajouter un departement</h3>
   
                         <div className="payment_methods">
-                          <form onSubmit={handleSubmit}>
+                          <form onSubmit={handleSubmitDep}>
                             <div className="row">
                               <div className="col-lg-12">
                                 <div className="cc-head">
@@ -4258,6 +4304,8 @@ export default function profil() {
                           </table>
                         </div>
                       </div>
+
+                      
                       <div className="add-billing-method">
                         <h3>Ajouter une unité</h3>
   
