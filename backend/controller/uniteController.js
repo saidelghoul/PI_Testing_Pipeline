@@ -95,6 +95,19 @@ router.delete("/remove/:id", async (req, res) => {
   }
 });
 
+
+// Route to remove a dep by ID
+router.delete("/removedep/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const deletedUnit = await Departement.findByIdAndDelete(id);
+    if (!deletedUnit) res.status(404).json({ error: "Couldn't find Unite" });
+    else res.status(204).json({ info: "Deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Server error: " + err.message });
+  }
+});
+
 // Route to update a unit by ID
 router.put("/update/:id", async (req, res) => {
   const id = req.params.id;

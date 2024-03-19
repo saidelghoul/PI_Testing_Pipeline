@@ -1,7 +1,10 @@
+const SocialSkill = require("../model/socialSkill");
 const User = require("../model/user");
+const Departement = require("../model/departement");
+const Unite = require("../model/unite");
+
 const { hashPassword, comparePassword } = require("../helpers/auth");
 const jwt = require("jsonwebtoken");
-const SocialSkill = require("../model/socialSkill");
 
 const test = (req, res) => {
   res.json("test is working");
@@ -74,52 +77,81 @@ const registerUser = async (req, res) => {
   }
 };
 
-//login endpoint
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    //Check if user exists
+    // Vérifier si l'utilisateur existe
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({
-        error: "No user found",
-      });
+      return res.json({ error: "No user found" });
     }
 
-    //check if passwords match
+    // Vérifier si les mots de passe correspondent
     const match = await comparePassword(password, user.password);
     if (match) {
-      jwt.sign(
-        {
-          id: user._id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          addresse: user.addresse,
-          gouvernorat: user.gouvernorat,
-          telephone: user.telephone,
-          dateNaissance: user.dateNaissance,
-          gender: user.gender,
-          socialSkills: user.socialSkills,
-          technicalSkills: user.technicalSkills,
-        },
-        process.env.JWT_SECRET,
-        {},
-        (err, token) => {
-          if (err) throw err;
-          res.cookie("token", token).json(user);
-        }
-      );
-    }
-    if (!match) {
-      res.json({
-        error: "Passwords do not match",
+      // Récupérer les détails du département associé à l'utilisateur
+      const departement = await Departement.findById(user.departement);
+      // Récupérer les détails de l'unité associée à l'utilisateur
+      const unite = await Unite.findById(user.unite);
+
+      // Créer le token JWT en incluant toutes les informations nécessaires
+      const tokenPayload = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        addresse: user.addresse,
+        gouvernorat: user.gouvernorat,
+        telephone: user.telephone,
+        dateNaissance: user.dateNaissance,
+        gender: user.gender,
+        departement: departement.name, // inclure seulement le nom du département
+        unite: unite.name, // Inclure seulement le nom de l'unité
+        socialSkills: user.socialSkills,
+        technicalSkills: user.technicalSkills,
+      };
+
+      jwt.sign(tokenPayload, process.env.JWT_SECRET, {}, (err, token) => {
+        if (err) throw err;
+        res.cookie("token", token).json(user);
       });
+    } else {
+      res.json({ error: "Passwords do not match" });
     }
   } catch (error) {
     console.log(error);
   }
+
+  // check if confirmed password matches password
+  if (password !== confirmedPassword) {
+    return res.json({
+      error: "Confirmed password does not match password",
+    });
+  }
+
+  //check email
+  const exist = await User.findOne({ email });
+  if (exist) {
+    return res.json({
+      error: "Email is taken already",
+    });
+  }
+
+  const hashedPassword = await hashPassword(password);
+  const hashedConfirmedPassword = await hashPassword(confirmedPassword);
+
+  //create user in database
+  const user = await User.create({
+    name,
+    email,
+    password: hashedPassword,
+    confirmedPassword: hashedConfirmedPassword,
+    departement,
+    role,
+    unite,
+  });
+  return res.json(user);
 };
 
 const getProfile = async (req, res) => {
@@ -180,12 +212,10 @@ const getProfile = async (req, res) => {
           "Erreur lors de la récupération des compétences sociales :",
           error
         );
-        res
-          .status(500)
-          .json({
-            error:
-              "Une erreur est survenue lors de la récupération des compétences sociales",
-          });
+        res.status(500).json({
+          error:
+            "Une erreur est survenue lors de la récupération des compétences sociales",
+        });
       }
     });
   } else {

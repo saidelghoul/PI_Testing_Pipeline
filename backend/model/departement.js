@@ -8,11 +8,6 @@ const departementSchema = new Schema({
     type : Number,
     required : true, 
    },
-  //  user: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'User', // Référence au modèle User
-  //   required: false,
-  // },
 
   users: [{
     type: mongoose.Schema.Types.ObjectId,

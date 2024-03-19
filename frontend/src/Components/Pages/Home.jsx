@@ -37,7 +37,10 @@ export default function Home() {
                         </div>
                         <div className="user-specs">
                           <> {!!user && <h1>{user.name}</h1>}</>
-                          <span>{!!user && <h2>{user.role}</h2>}</span>
+                          <span> {!!user && <h2>{user.role}</h2>}</span>
+                          <span>
+                            Département {!!user && <h2>{user.departement}</h2>}
+                          </span>
                         </div>
                       </div>
                     </div>

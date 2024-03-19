@@ -55,6 +55,11 @@ export default function SignIn() {
   };
 
   const navigate = useNavigate();
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+  };
+
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -122,8 +127,11 @@ export default function SignIn() {
         toast.error(data1.error);
       } else {
         setRegisterData({});
-        toast.success("inscription successful. Welcome!");
         setActiveTab("tab-1");
+
+        // window.location.reload();
+
+        toast.success("inscription successful. Welcome!");
       }
     } catch (error) {
       console.log(error);
@@ -147,29 +155,29 @@ export default function SignIn() {
               <div className="col-lg-6">
                 <div className="login-sec">
                   <ul className="sign-control">
-                    <li
-                      data-tab="tab-1"
-                      className={activeTab === "tab-1" ? "current" : ""}
-                    >
+                  <li
+                data-tab="tab-1"
+                className={activeTab === "tab-1" ? "current" : ""}
+                onClick={() => handleTabChange("tab-1")}
+              >
                       <a href="#" title="">
                         Sign in
                       </a>
                     </li>
                     <li
-                      data-tab="tab-2"
-                      className={activeTab === "tab-2" ? "current" : ""}
-                    >
+                data-tab="tab-2"
+                className={activeTab === "tab-2" ? "current" : ""}
+                onClick={() => handleTabChange("tab-2")}
+              >
                       <a href="#" title="">
                         Sign up
                       </a>
                     </li>
                   </ul>
                   <div
-                    className={`sign_in_sec ${
-                      activeTab === "tab-1" ? "current" : ""
-                    }`}
-                    id="tab-1"
-                  >
+              className={`sign_in_sec ${activeTab === "tab-1" ? "current" : ""}`}
+              id="tab-1"
+            >
                     <h3>Sign in</h3>
                     <form onSubmit={loginUser}>
                       <div className="row">
@@ -234,11 +242,9 @@ export default function SignIn() {
                     </div>
                   </div>
                   <div
-                    className={`sign_in_sec ${
-                      activeTab === "tab-2" ? "current" : ""
-                    }`}
-                    id="tab-2"
-                  >
+              className={`sign_in_sec ${activeTab === "tab-2" ? "current" : ""}`}
+              id="tab-2"
+            >
                     {/*	<div className="signup-tab">
 										<i className="fa fa-long-arrow-left"></i>
 										<h2>johndoe@example.com</h2>
@@ -267,11 +273,14 @@ export default function SignIn() {
                                 <option >
                                   choisir votre role
                                 </option>
+                                {/* <option value="Directeur d'étude">
+                                  Directeur d'étude
+                                </option> */}
                                 <option value="Chef département">
                                   Chef département
                                 </option>
                                 <option value="Chef unité">Chef unité</option>
-                                <option value="Enseignant">Enseigant</option>
+                                <option value="Enseignant">Enseignant</option>
                               </select>
                               <i className="fa fa-address-card-o"></i>
                               <span>

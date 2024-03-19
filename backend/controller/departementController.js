@@ -98,7 +98,7 @@ router.get('/departement/:id/unites', async (req, res) => {
   });
   
   // Route to remove a departement by ID
-  router.delete("/remove/:id", async (req, res) => {
+  router.delete("/:id", async (req, res) => {
     const id = req.params.id;
     try {
       const deletedDepartement = await Unite.findByIdAndDelete(id);
