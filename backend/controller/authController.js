@@ -122,36 +122,6 @@ const loginUser = async (req, res) => {
   } catch (error) {
     console.log(error);
   }
-
-  // check if confirmed password matches password
-  if (password !== confirmedPassword) {
-    return res.json({
-      error: "Confirmed password does not match password",
-    });
-  }
-
-  //check email
-  const exist = await User.findOne({ email });
-  if (exist) {
-    return res.json({
-      error: "Email is taken already",
-    });
-  }
-
-  const hashedPassword = await hashPassword(password);
-  const hashedConfirmedPassword = await hashPassword(confirmedPassword);
-
-  //create user in database
-  const user = await User.create({
-    name,
-    email,
-    password: hashedPassword,
-    confirmedPassword: hashedConfirmedPassword,
-    departement,
-    role,
-    unite,
-  });
-  return res.json(user);
 };
 
 const getProfile = async (req, res) => {
