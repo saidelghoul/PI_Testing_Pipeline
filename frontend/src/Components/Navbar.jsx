@@ -11,12 +11,23 @@ import "../../public/assets/lib/slick/slick-theme.css";
 
 import { useContext } from 'react'
 import { UserContext } from '../../context/userContext';
+import axios from 'axios';
 
 
 export default function Navbar() {
 
   const {user} = useContext(UserContext)
-
+  const handleLogout = async () => {
+    try {
+        // Appel à l'API backend pour déconnecter l'utilisateur
+        await axios.get('/logout');
+        // Redirection vers la page d'accueil après la déconnexion
+        window.location.href = '/';
+    } catch (error) {
+        console.error('Erreur lors de la déconnexion :', error);
+        // Gérer l'erreur, si nécessaire
+    }
+};
   return (
     <>
       <header>
@@ -151,10 +162,10 @@ export default function Navbar() {
                   </li>
                 </ul>
                 <h3 className="tc">
-                  <a href="/" title="">
-                    Logout
-                  </a>
-                </h3>
+            <a href="/" title="" onClick={handleLogout}>
+                Logout
+            </a>
+        </h3>
               </div>
             </div>
           </div>

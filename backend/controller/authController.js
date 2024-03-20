@@ -188,11 +188,14 @@ const getProfile = (req, res) => {
     }
 };
 
+const logout = (req, res) => {
+    res.clearCookie('token').json({ message: 'Déconnexion réussie' });
+};
 
 module.exports = {
     test,
     registerUser,
     loginUser,
     getProfile,
-    
+    logout
 }

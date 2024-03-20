@@ -108,16 +108,16 @@ export default function profil() {
 
 
   const [updatedUser, setUpdatedUser] = useState({
-    // addresse: "",
-    // gouvernorat: "",
-    // telephone: "",
-    // dateNaissance: "",
-    // gender: "",
-    addresse: user?.addresse || "",
-    gouvernorat: user?.gouvernorat || "",
-    telephone: user?.telephone || "",
-    dateNaissance: user?.dateNaissance || "",
-    gender: user?.gender || "",
+    addresse: "",
+    gouvernorat: "",
+    telephone: "",
+    dateNaissance: "",
+    gender: "",
+    // addresse: user?.addresse || "",
+    // gouvernorat: user?.gouvernorat || "",
+    // telephone: user?.telephone || "",
+    // dateNaissance: user?.dateNaissance || "",
+    // gender: user?.gender || "",
   });
 
   const handleSubmit1 = async (e) => {
@@ -225,7 +225,7 @@ export default function profil() {
                       <div>
                       <br/>
                         <ul>
-												<li><a className="post_project" href="#" title="">Completer mon profil</a></li>
+												<li><a className="post_project" href="#" title="">mettre a jour mon profil</a></li>
 											</ul>
                       </div>
                       <div>
