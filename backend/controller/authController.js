@@ -58,6 +58,19 @@ const registerUser = async (req, res) => {
       });
     }
 
+    if (!email) {
+      return res.json({
+        error: "Email is required",
+      });
+    }
+    
+    // Vérifier si l'email se termine par @esprit.tn
+    if (!email.endsWith("@esprit.tn")) {
+      return res.json({
+        error: "Email must end with @esprit.tn",
+      });
+    }
+    
     const hashedPassword = await hashPassword(password);
     const hashedConfirmedPassword = await hashPassword(confirmedPassword);
 
