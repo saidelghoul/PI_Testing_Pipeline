@@ -57,7 +57,9 @@ router.put('/:userId', async (req, res) => {
           dateNaissance: updatedUser.dateNaissance,
           gender: updatedUser.gender,
           departement: departement.name, // inclure seulement le nom du département
-          unite: unite.name // Inclure seulement le nom de l'unité
+          unite: unite.name, // Inclure seulement le nom de l'unité
+          socialSkills: updatedUser.socialSkills,
+        technicalSkills: updatedUser.technicalSkills,
       };
 
       // Générer un nouveau token avec les informations mises à jour
@@ -179,7 +181,7 @@ router.get('/enseignantsbydep', async (req, res) => {
     // Recherche du departement par nom
     const departement = await Departement.findOne({ name: departementName });
     if (!departement) {
-      return res.status(404).json({ error: 'Unité non trouvé' });
+      return res.status(404).json({ error: 'Departement non trouvé' });
     }
 
     // Recherche des utilisateurs avec le rôle "Enseignant" et le département trouvé

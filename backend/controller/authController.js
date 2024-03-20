@@ -144,6 +144,8 @@ const getProfile = async (req, res) => {
         dateNaissance,
         telephone,
         gender,
+        departement, 
+        unite,
         socialSkills,
         technicalSkills,
       } = decodedToken;
@@ -174,6 +176,8 @@ const getProfile = async (req, res) => {
           dateNaissance,
           telephone,
           gender,
+          departement, 
+          unite,
           socialSkills: socialSkillsList,
           technicalSkills,
         });
@@ -193,9 +197,14 @@ const getProfile = async (req, res) => {
   }
 };
 
+const logout = (req, res) => {
+  res.clearCookie('token').json({ message: 'Déconnexion réussie' });
+};
+
 module.exports = {
   test,
   registerUser,
   loginUser,
   getProfile,
+  logout
 };

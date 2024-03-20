@@ -10,33 +10,64 @@ const Departement = require('../model/departement'); // Assurez-vous d'importer 
 // Route to get all units
 router.get("/getAll", async (req, res) => {
   try {
-    const allUnits = await Unite.find({});
+    const { departementName } = req.query;
+    const departement = await Departement.findOne({ name: departementName });
+    if (!departement) {
+      return res.status(404).json({ error: 'Unité non trouvé' });
+    }
+    const allUnits = await Unite.find({departement: departement._id}).populate('departement', 'name');
     res.status(200).json(allUnits);
   } catch (error) {
     res.status(500).json({ error: "Server error: " + error.message });
   }
 });
 
+router.get('/getunitebydep', async (req, res) => {
+  try {
+    const { departementName } = req.query;
+
+    // Recherche du departement par nom
+    const departement = await Departement.findOne({ name: departementName });
+    if (!departement) {
+      return res.status(404).json({ error: 'Unité non trouvé' });
+    }
+
+    // Recherche des utilisateurs avec le rôle "Enseignant" et le département trouvé
+    const unite = await Unite.find({ departement: departement._id })
+                                    .populate('departement', 'name');
+    res.json(unite);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des utilisateurs :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
+  }
+});
+
+// Route pour gérer les requêtes POST vers /unite/adding
+router.post("/adding", async (req, res) => {
+  const { name, departementName } = req.body;
+
+  try {
+    // Recherchez le département par nom
+    const departement = await Departement.findOne({ name: departementName });
+    if (!departement) {
+      return res.status(404).json({ error: 'Département non trouvé' });
+    }
+
+    // Créez une nouvelle unité avec les données fournies
+    const newUnite = await Unite.create({ name, departement: departement._id });
+
+    res.status(201).json(newUnite);
+  } catch (err) {
+    console.error('Erreur lors de l\'ajout de l\'unité :', err.message);
+    res.status(500).json({ error: "Erreur lors de l'ajout de l'unité" });
+  }
+});
 
 // router.post("/add", async (req, res) => {
 //   const uniteData = req.body; // Assurez-vous que les données sont correctement récupérées
-//   const { departementId, ...uniteInfo } = uniteData; // Extraire l'ID du département de uniteData
 //   try {
-//     // Vérifiez si le département existe
-//     const departement = await Departement.findById(departementId);
-//     if (!departement) {
-//       return res.status(404).json({ error: "Département non trouvé" });
-//     }
-
-//     // Créer une nouvelle unité en incluant l'ID du département
-//     const newUnite = await Unite.create({
-//       ...uniteInfo,
-//       departement: departementId, // Associer l'unité au département
-//     });
-
-//     // Ajouter l'unité créée à la liste d'unités du département
-//     departement.unites.push(newUnite);
-//     await departement.save();
+//     const newUnite = await Unite.create(uniteData); // Utilisez la méthode create pour ajouter une nouvelle unité
+//     await newUnite.populate('departement').execPopulate;
 
 //     res.status(201).json(newUnite);
 //   } catch (err) {
@@ -44,19 +75,6 @@ router.get("/getAll", async (req, res) => {
 //     res.status(500).json({ error: "Erreur lors de l'ajout de l'unité" });
 //   }
 // });
-
-router.post("/add", async (req, res) => {
-  const uniteData = req.body; // Assurez-vous que les données sont correctement récupérées
-  try {
-    const newUnite = await Unite.create(uniteData); // Utilisez la méthode create pour ajouter une nouvelle unité
-    await newUnite.populate('departement').execPopulate();
-
-    res.status(201).json(newUnite);
-  } catch (err) {
-    console.error('Erreur lors de l\'ajout de l\'unité:', err.message);
-    res.status(500).json({ error: "Erreur lors de l'ajout de l'unité" });
-  }
-});
 
 
 // Route to get a unit by ID

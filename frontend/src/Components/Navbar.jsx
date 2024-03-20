@@ -12,10 +12,19 @@ import "../../public/assets/lib/slick/slick-theme.css";
 import { useContext } from "react";
 import { UserContext } from "../../context/userContext";
 import { Link } from "react-router-dom";
+import axios from 'axios';
 
 export default function Navbar() {
-  const { user } = useContext(UserContext);
-
+ 
+  const {user} = useContext(UserContext)
+  const handleLogout = async () => {
+    try {
+        await axios.get('/logout');
+        window.location.href = '/';
+    } catch (error) {
+        console.error('Erreur lors de la déconnexion :', error);
+    }
+};
   return (
     <>
       <header>
@@ -35,12 +44,12 @@ export default function Navbar() {
             <nav>
               <ul>
                 <li>
-                  <Link to="/home" title="">
+                <a href="/home" title="">
                     <span>
                       <img src="/assets/images/icon1.png" alt="" />
                     </span>
                     Home
-                  </Link>
+                  </a>
                 </li>
                 <li>
                   <Link to="/groupes" title="">
@@ -92,9 +101,9 @@ export default function Navbar() {
               </div>
               <div className="user-account-settingss" id="users">
                 <h3 className="tc">
-                  <Link to="/profil" title="">
+                <a href="/profil" title="">
                     Profil
-                  </Link>
+                  </a>
                 </h3>
 
                 <h3>Online Status</h3>
@@ -149,7 +158,7 @@ export default function Navbar() {
                   </li>
                 </ul>
                 <h3 className="tc">
-                  <Link to="/" title="">
+                  <Link to="/" title="" onClick={handleLogout}>
                     Logout
                   </Link>
                 </h3>

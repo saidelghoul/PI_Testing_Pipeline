@@ -113,7 +113,7 @@ router.get('/departement/:id/unites', async (req, res) => {
   router.put("/update/:id", async (req, res) => {
     const id = req.params.id;
     try {
-      const updatedDepartement = await Unite.findByIdAndUpdate(id, req.body, {
+      const updatedDepartement = await Departement.findByIdAndUpdate(id, req.body, {
         new: true,
       });
       if (!updatedDepartement) res.status(404).json({ error: "Couldn't find Departement" });
