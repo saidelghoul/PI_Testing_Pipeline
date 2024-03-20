@@ -23,7 +23,6 @@ export default function profil() {
   const { user } = useContext(UserContext);
   const [departements, setDepartements] = useState([]);
   const [unites, setUnités] = useState([]);
-  //const [selectedUnit, setSelectedUnit] = useState(null);
 
   const isAdmin = user && user.role === "Directeur d'étude"; 
   const isChefDep = user && user.role==="Chef département";
@@ -40,7 +39,9 @@ export default function profil() {
   useEffect(() => {
     if(user){
     fetchDepartements();
-    fetchUnités();  }}, [user]);
+    fetchUnités();
+    fetchUserData();
+  }}, [user]);
 
   const fetchDepartements = async () => {
     try {
@@ -51,32 +52,14 @@ export default function profil() {
     }
   };
 
-  
-  // const handleSubmitDep = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     const response = await axios.post('/departement/add', departement);
-  //     fetchDepartements();
-
-  //     console.log('Département ajouté avec succès:', response.data);
-  //     setDepartement({
-  //       name: '',
-  //       description: '',
-  //       nbrUnite: 0,
-  //     });
-  //   } catch (error) {
-  //     console.error('Erreur lors de l\'ajout du département:', error.message);
-  //   }
-  // };
-  const [isEditing, setIsEditing] = useState(false); // Nouvel état pour gérer le mode d'édition
-
+  const [isEditing, setIsEditing] = useState(false); 
 
   const handleSubmitDep = async (e) => {
     e.preventDefault();
     try {
-      if (isEditing) { // Si nous sommes en mode d'édition, exécutez la mise à jour
+      if (isEditing) { 
         await axios.put(`/departement/update/${departement._id}`, departement);
-        setIsEditing(false); // Quitter le mode d'édition après la mise à jour
+        setIsEditing(false); 
       } else {
         await axios.post('/departement/add', departement);
       }
@@ -87,7 +70,6 @@ export default function profil() {
     }
   };
   const handleEditDep = async (id) => {
-    // Fetch departement details for editing
     try {
       const response = await axios.get(`/departement/getbyid/${id}`);
       const { _id,name, description, nbrUnite } = response.data;
@@ -98,17 +80,6 @@ export default function profil() {
       console.error('Error fetching departement for editing:', error);
     }
   };
-
-  // const handleUpdateDep = async () => {
-  //   try {
-  //     await axios.put(`/departement/update/${departement._id}`, departement);
-  //     fetchDepartements();
-  //     setDepartement({ name: '', description: '', nbrUnite: 0 });
-  //   } catch (error) {
-  //     console.error('Error updating departement:', error);
-  //   }
-  // };
-
 
   const[unite, setUnite] = useState({
     name: "",
@@ -129,29 +100,12 @@ export default function profil() {
 
   const [isEditingUnit, setIsEditingUnit] = useState(false); 
 
-// const handleSubmit2 = async (e) => {
-//   e.preventDefault();
-//   try {
-    
-//     const departementName = user.departement;
-//     const uniteData = { ...unite, departementName };
-
-//     const response = await axios.post('/unite/adding', uniteData);
-//     fetchUnités();
-
-//     console.log('Unité ajoutée avec succès :', response.data);
-//     setUnite({ name: '' });
-//   } catch (error) {
-//     console.error('Erreur lors de l\'ajout de l\'unité :', error.message);
-//   }
-// };
-
 const handleSubmit2 = async (e) => {
   e.preventDefault();
   try {
-    if (isEditingUnit) { // Si nous sommes en mode édition, exécutez la mise à jour
+    if (isEditingUnit) { 
       await axios.put(`/unite/update/${unite._id}`, unite);
-      setIsEditingUnit(false); // Quitter le mode d'édition après la mise à jour
+      setIsEditingUnit(false); 
     } else {
       const departementName = user.departement;
       const uniteData = { ...unite, departementName };
@@ -165,12 +119,12 @@ const handleSubmit2 = async (e) => {
 };
 
 const handleEditUnit = async (id) => {
-  // Fetch unit details for editing
+
   try {
     const response = await axios.get(`/unite/getbyid/${id}`);
     const { _id, name } = response.data;
-    setUnite({ _id, name }); // Assurez-vous de mettre à jour l'unité avec ses détails
-    setIsEditingUnit(true); // Activer le mode d'édition
+    setUnite({ _id, name });
+    setIsEditingUnit(true);
   } catch (error) {
     console.error('Error fetching unit for editing:', error);
   }
@@ -188,20 +142,28 @@ const handleEditUnit = async (id) => {
     telephone: "",
     dateNaissance: "",
     gender: "",
-    // addresse: user?.addresse || "",
-    // gouvernorat: user?.gouvernorat || "",
-    // telephone: user?.telephone || "",
-    // dateNaissance: user?.dateNaissance || "",
-    // gender: user?.gender || "",
   });
 
+
+  const fetchUserData = async () => {
+    try {
+      const userResponse = await axios.get(`/user/getbyid/${user.id}`);
+      if (userResponse.data) {
+        // Si l'utilisateur existe, mettez à jour l'état userData avec les données de l'utilisateur
+        setUpdatedUser(userResponse.data);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  
   const handleSubmit1 = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.put(`/user/${user.id}`, updatedUser);
 
       console.log('Profil utilisateur mis à jour avec succès:', response.data);
-      // Réinitialisez le formulaire
       setUpdatedUser({
         addresse: "",
         gouvernorat: "",
@@ -217,6 +179,8 @@ const handleEditUnit = async (id) => {
       console.error('Erreur lors de la mise à jour du profil:', error.message);
     }
   };
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -358,7 +322,7 @@ const handleEditUnit = async (id) => {
                       <div>
                       <br/>
                         <ul>
-												<li><a className="post_project" href="#" title="">mettre a jour mon profil</a></li>
+												<li><a className="post_project" href="#" title="" onClick={fetchUserData}>mettre a jour mon profil</a></li>
 											</ul>
                       </div>
                       <div>
