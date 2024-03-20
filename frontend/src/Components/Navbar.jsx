@@ -9,25 +9,13 @@ import "../../public/assets/css/responsive.css";
 import "../../public/assets/lib/slick/slick.css";
 import "../../public/assets/lib/slick/slick-theme.css";
 
-import { useContext } from 'react'
-import { UserContext } from '../../context/userContext';
-import axios from 'axios';
-
+import { useContext } from "react";
+import { UserContext } from "../../context/userContext";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
+  const { user } = useContext(UserContext);
 
-  const {user} = useContext(UserContext)
-  const handleLogout = async () => {
-    try {
-        // Appel à l'API backend pour déconnecter l'utilisateur
-        await axios.get('/logout');
-        // Redirection vers la page d'accueil après la déconnexion
-        window.location.href = '/';
-    } catch (error) {
-        console.error('Erreur lors de la déconnexion :', error);
-        // Gérer l'erreur, si nécessaire
-    }
-};
   return (
     <>
       <header>
@@ -47,45 +35,45 @@ export default function Navbar() {
             <nav>
               <ul>
                 <li>
-                  <a href="/home" title="">
+                  <Link to="/home" title="">
                     <span>
                       <img src="/assets/images/icon1.png" alt="" />
                     </span>
                     Home
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/groupes" title="">
+                  <Link to="/groupes" title="">
                     <span>
                       <img src="/assets/images/icon2.png" alt="" />
                     </span>
                     Pages
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/activities" title="">
+                  <Link to="/activities" title="">
                     <span>
                       <img src="/assets/images/icon3.png" alt="" />
                     </span>
                     Activites
-                  </a>
+                  </Link>
                 </li>
 
                 <li>
-                  <a href="/message" title="" className="not-box-openm">
+                  <Link to="/message" title="" className="not-box-openm">
                     <span>
                       <img src="/assets/images/icon6.png" alt="" />
                     </span>
                     Messages
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" title="" className="not-box-open">
+                  <Link to="#" title="" className="not-box-open">
                     <span>
                       <img src="/assets/images/icon7.png" alt="" />
                     </span>
                     Notification
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </nav>
@@ -98,16 +86,15 @@ export default function Navbar() {
               <div className="user-info">
                 <img src="/assets/images/resources/user.png" alt="" />
                 <a href="#" title="">
-                <> {!!user && (<h1>{user.name}</h1>)}
-									</>
+                  <> {!!user && <h1>{user.name}</h1>}</>
                 </a>
                 <i className="la la-sort-down"></i>
               </div>
               <div className="user-account-settingss" id="users">
                 <h3 className="tc">
-                  <a href="/profil" title="">
+                  <Link to="/profil" title="">
                     Profil
-                  </a>
+                  </Link>
                 </h3>
 
                 <h3>Online Status</h3>
@@ -141,9 +128,9 @@ export default function Navbar() {
                 <h3>Setting</h3>
                 <ul className="us-links">
                   <li>
-                    <a href="/settings" title="">
+                    <Link to="/settings" title="">
                       Account Setting
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <a href="#" title="">
@@ -162,10 +149,10 @@ export default function Navbar() {
                   </li>
                 </ul>
                 <h3 className="tc">
-            <a href="/" title="" onClick={handleLogout}>
-                Logout
-            </a>
-        </h3>
+                  <Link to="/" title="">
+                    Logout
+                  </Link>
+                </h3>
               </div>
             </div>
           </div>

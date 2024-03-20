@@ -1,15 +1,16 @@
 {
   "name": "frontend",
-  "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "start": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mui/base": "^5.0.0-beta.39",
     "axios": "^1.6.7",
     "bootstrap": "^5.3.3",
     "jquery": "^3.7.1",
@@ -23,6 +24,7 @@
     "react-router-dom": "^6.22.1"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
     "@vitejs/plugin-react": "^4.2.1",

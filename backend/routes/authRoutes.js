@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const cors = require('cors')
 const { test ,registerUser, loginUser, getProfile, logout} = require('../controller/authController')
@@ -6,11 +6,15 @@ const { test ,registerUser, loginUser, getProfile, logout} = require('../control
 
 //middleware
 router.use(
-    cors({
-        credentials:true,
-        origin: 'http://localhost:5173'
-    })
-    )
+  cors({
+    credentials: true,
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "http://172.19.136.127:3000",
+    ],
+  })
+);
 
     router.get('/', test)
     router.post('/register', registerUser)
@@ -18,4 +22,4 @@ router.use(
     router.get('/profile',getProfile)
     router.get('/logout',logout)
 
-    module.exports = router
+module.exports = router;

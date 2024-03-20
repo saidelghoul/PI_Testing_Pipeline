@@ -6,20 +6,22 @@ var logger = require("morgan");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
 const { mongoose } = require("mongoose");
-//const requireAuth = require("./middleware/requireAuth")
 
 var messageRoute = require("./routes/ConversationRoute");
-//const userRoutes = require('./routes/userRoutes');
+
+//activities management routes
+const activitiesRoute = require("./routes/activityRoute");
+const tasksRoute = require("./routes/taskRoute");
+const checklistsRoute = require("./routes/checklistRoute");
+//
+
 var publicationRoute = require("./routes/publicationRoutes");
 var evenementRoutes = require("./routes/EvenementRoutes");
-commentaireRoutes = require("./routes/ComentaireRoute");
+var commentaireRoutes = require("./routes/ComentaireRoute");
 var PageRoute = require("./routes/PageRoute");
 var activitiesRouter = require("./routes/activityRoute");
 var socialSkillsRouter = require("./routes/socialSkillsRoute");
 var technicalSkillsRouter = require("./routes/technicalSkillsRoute");
-
-//var mongoose = require("mongoose");
-//var configDB = require("./config/mongodb.json");
 
 var app = express();
 
@@ -43,6 +45,7 @@ mongoose
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "twig");
 
+//app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -52,7 +55,7 @@ app.use(express.static(path.join(__dirname, "public")));
 //app.use('/', indexRouter);
 //app.use('/users', usersRouter);
 
-app.use("/",  require("./routes/authRoutes"));
+app.use("/", require("./routes/authRoutes"));
 //app.use("/unite",isAuthenticated, require("./controller/uniteController"));
 app.use("/unite", require("./controller/uniteController"));
 app.use("/departement", require("./controller/departementController"));
@@ -61,13 +64,16 @@ app.use("/evenemnt", evenementRoutes);
 app.use("/commentaire", commentaireRoutes);
 app.use("/pages", PageRoute);
 app.use("/messages", messageRoute);
-//routes
-app.use("/activities", activitiesRouter);
+
+//activities management routes
+app.use("/activities", activitiesRoute);
+app.use("/tasks", tasksRoute);
+app.use("/checklists", checklistsRoute);
+//
+
 app.use("/socialSkills", socialSkillsRouter);
 app.use("/technicalSkills", technicalSkillsRouter);
 app.use("/user", require("./controller/userController"));
-
-
 
 const port = 8000;
 app.listen(port, () => console.log(`server is running on ${port}`));
@@ -87,8 +93,5 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
-
-
-
 
 module.exports = app;
