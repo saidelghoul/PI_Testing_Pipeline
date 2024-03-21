@@ -16,10 +16,13 @@ import { useState, useEffect } from "react";
 export default function Home() {
   const [publication, setPublication] = useState([]);
   const [events, setEvent] = useState([]);
+
   useEffect(() => {
     fetchPublication();
     fetchEvent();
   }, []);
+
+  //get all publication
   const fetchPublication = async () => {
     try {
       const res = await axios.get("/publications/getall");
@@ -28,13 +31,36 @@ export default function Home() {
       console.error("error fetching publication", error);
     }
   };
-
+  //get all event
   const fetchEvent = async () => {
     try {
       const res = await axios.get("/evenemnt/getall");
       setEvent(res.data);
     } catch (error) {
       console.error("error fetching events", error);
+    }
+  };
+
+  //delet event
+  const handleDeleteEvent = async (id) => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer ?")) {
+      try {
+        await axios.delete(`/evenemnt/remove/${id}`);
+        fetchEvent();
+      } catch (error) {
+        console.error("Erreur lors de la suppression ", error.message);
+      }
+    }
+  };
+  //delete publication
+  const handleDeletePub = async (id) => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer ?")) {
+      try {
+        await axios.delete(`/publications/delete/${id}`);
+        fetchPublication();
+      } catch (error) {
+        console.error("Erreur lors de la suppression ", error.message);
+      }
     }
   };
   // add event
@@ -62,10 +88,14 @@ export default function Home() {
         Capacite: "",
         Prix: "",
       });
-      alert("evenement ajout avec success");
+      alert("Evenement ajouté avec succès");
     } catch (error) {
       console.error("error ", error);
-      alert("cant add");
+      if (error.response && error.response.data && error.response.data.error) {
+        alert(error.response.data.error);
+      } else {
+        alert("Une erreur s'est produite, veuillez réessayer.");
+      }
     }
   };
   //add publication
@@ -170,7 +200,12 @@ export default function Home() {
                                         src="/assets/images/clock.png"
                                         alt=""
                                       />
-                                      {publication.DatePublication}
+                                      publier le:{" "}
+                                      {publication.DatePublication
+                                        ? new Date(
+                                            publication.DatePublication
+                                          ).toLocaleDateString("fr-FR")
+                                        : "Date"}
                                     </span>
                                   </div>
                                 </div>
@@ -232,10 +267,14 @@ export default function Home() {
                                       Comment 15
                                     </a>
                                   </li>
+                                  <li
+                                    className="fa fa-trash"
+                                    style={{ color: "red", cursor: "pointer" }}
+                                    onClick={() =>
+                                      handleDeletePub(publication._id)
+                                    }
+                                  ></li>
                                 </ul>
-                                <a href="#">
-                                  <i className="fas fa-eye"></i>Views 50
-                                </a>
                               </div>
                             </div>
                           ))}
@@ -345,13 +384,6 @@ export default function Home() {
                               </form>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                      <div className="process-comm">
-                        <div className="spinner">
-                          <div className="bounce1"></div>
-                          <div className="bounce2"></div>
-                          <div className="bounce3"></div>
                         </div>
                       </div>
                     </div>
@@ -472,10 +504,20 @@ export default function Home() {
                                       Comment 15
                                     </a>
                                   </li>
+                                  <li>
+                                    <i
+                                      className="fa fa-trash"
+                                      style={{
+                                        color: "red",
+                                        cursor: "pointer",
+                                        marginLeft: "auto",
+                                      }}
+                                      onClick={() =>
+                                        handleDeleteEvent(event._id)
+                                      }
+                                    ></i>
+                                  </li>
                                 </ul>
-                                <a href="#">
-                                  <i className="fas fa-eye"></i>Views 50
-                                </a>
                               </div>
                             </div>
                           ))}
@@ -738,7 +780,7 @@ export default function Home() {
               </div>
             </form>
           </div>
-          <a href="#" title="">
+          <a href="#" title="" color="black">
             <i className="la la-times-circle-o"></i>
           </a>
         </div>

@@ -5,6 +5,20 @@ const Commentaire = require("../model/commentair");
 async function add(req, res) {
   const evenement = req.body;
   const newItem = new Evenement(evenement);
+
+  // Check if DateFin is before DateDebut
+  if (new Date(evenement.DateFin) <= new Date(evenement.DateDebut)) {
+    return res
+      .status(400)
+      .json({ error: "Il faut avoir une date de fin après la date de début" });
+  }
+  if (new Date(evenement.DateDebut) <= new Date()) {
+    return res.status(400).json({
+      error:
+        "il est impossible de faire un événement avant ou à la date d'aujourd'hui ",
+    });
+  }
+
   try {
     const saved = await newItem.save();
     res.status(201).json(saved);
