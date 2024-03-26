@@ -1,13 +1,34 @@
 const mongoose = require("mongoose");
-var Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-var Activity = new Schema({
-  Name: String,
-  Category: String,
-  Approval: Boolean,
-  StartDate: Date,
-  EndDate: Date,
-  Description: String,
-});
+const activitySchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "activity name is required"],
+    },
+    category: String,
+    approval: {
+      type: Boolean,
+      required: true,
+    },
+    startDate: {
+      type: Date,
+      required: [true, "start date is required"],
+    },
+    endDate: {
+      type: Date,
+      required: [true, "end date is required"],
+    },
+    description: String,
+    tasks: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Task",
+      },
+    ],
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model("activities", Activity);
+module.exports = mongoose.model("Activity", activitySchema);
