@@ -11,9 +11,11 @@ import "../../../public/assets/lib/slick/slick.css";
 import "../../../public/assets/lib/slick/slick-theme.css";
 
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { UserContext } from "../../../context/userContext";
 
 export default function Home() {
+  const user = useContext(UserContext);
   const [publication, setPublication] = useState([]);
   const [events, setEvent] = useState([]);
 
