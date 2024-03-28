@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const Status = {
   ACTIVE: "active",
@@ -11,7 +12,7 @@ const Priority = {
   MEDIUM: "medium",
 };
 
-const taskSchema = new mongoose.Schema(
+const taskSchema = new Schema(
   {
     title: {
       type: String,
@@ -19,7 +20,7 @@ const taskSchema = new mongoose.Schema(
     },
     initDate: {
       type: Date,
-      required: [true, " init date is required"],
+      required: [true, "init date is required"],
     },
     dueDate: {
       type: Date,
@@ -36,22 +37,21 @@ const taskSchema = new mongoose.Schema(
       default: Priority.LOW,
     },
     tags: [],
-    banner: String,
     collaborators: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "User",
       },
     ],
     checkList: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "CheckList",
       },
     ],
     description: String,
     id_activity: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Activity",
     },
   },

@@ -1,10 +1,10 @@
 const CheckList = require("../model/checklist");
 const Task = require("../model/task");
-const UserModel = require("../model/user");
 
 async function getCheckLists(req, res) {
   try {
     const checkLists = await CheckList.find({});
+
     if (!checkLists)
       res.status(404).json({ title: "error", message: "No checkLists found" });
     else res.status(200).json({ title: "success", message: checkLists });
@@ -15,11 +15,21 @@ async function getCheckLists(req, res) {
 
 async function getCheckListById(req, res) {
   try {
-    const checkList = await CheckList.findById(req.params.id_checklist);
+    const checkList = await CheckList.findById(
+      req.params.id_checklist
+    ).populate("holder");
 
     if (!checkList)
       res.status(404).json({ title: "error", message: "No checkLists found" });
-    else res.status(200).json({ title: "success", message: checkList });
+    else {
+      const newHolder = {
+        _id: checkList.holder._id,
+        name: checkList.holder.name,
+        role: checkList.holder.role,
+      };
+      checkList.holder = newHolder;
+      res.status(200).json({ title: "success", message: checkList });
+    }
   } catch (err) {
     res.status(500).json({ title: "error", message: err.message });
   }
@@ -108,14 +118,28 @@ async function updateChecklist(req, res) {
   }
 }
 
-async function getUsersForChecklist() {
+async function getAssignedUsersForChecklist(req, res) {
   try {
-    const users = await UserModel.aggregate([{ $project: { id: $_id } }]);
-    if (users.length > 0)
+    const task = await Task.findById(req.params.id_task).populate(
+      "collaborators"
+    );
+
+    let users = [];
+    task.collaborators.map((collaborator) =>
+      users.push({
+        id: collaborator._id,
+        name: collaborator.name,
+        role: collaborator.role,
+      })
+    );
+
+    if (!task)
+      res.status(500).json({ title: "error", message: "no such task" });
+    else {
       res.status(200).json({ title: "success", message: users });
-    else res.status(404).json({ title: "error", message: "no users found" });
+    }
   } catch (err) {
-    res.status(500).json({ title: "error", message: err });
+    res.status(500).json({ title: "error", message: err.message });
   }
 }
 
@@ -125,5 +149,5 @@ module.exports = {
   getCheckLists,
   getCheckListById,
   updateChecklist,
-  getUsersForChecklist,
+  getAssignedUsersForChecklist,
 };

@@ -19,15 +19,24 @@ const ActivityDetails = () => {
 
   return (
     <div className="container p-0 ">
-      <h1 className="h3 mb-3">Activity Details</h1>
+      <h1 className="h3 mb-3 text-center ">Activity Details</h1>
       <div className=" row ">
         <div className=" col">
           <h1 className=" text-bg-primary "> Name: {activity.name}</h1>
 
           <h1 className=" text-bg-primary "> Category: {activity.category}</h1>
         </div>
+        <div className=" col ">
+          <h1 className=" text-bg-primary ">
+            {" "}
+            From: {activity?.startDate?.substr(0, 10)}
+          </h1>
+          <h1 className=" text-bg-primary ">
+            {" "}
+            To: {activity?.endDate?.substr(0, 10)}
+          </h1>
+        </div>
         <div className=" col-auto ">
-          <p className=" text-body-emphasis "> Collaborators </p>
           <small className=" text-body-emphasis ">
             Description: {activity.description}
           </small>

@@ -1,4 +1,4 @@
-var Activity = require("../model/activity");
+const Activity = require("../model/activity");
 
 async function getActivities(req, res) {
   Activity.find({})
@@ -99,14 +99,14 @@ async function updateActivity(req, res) {
 
 async function getTasksByActivity(req, res, next) {
   try {
-    const activity = await Activity.find({
-      _id: req.params.id_activity,
-    }).populate("tasks");
+    const activity = await Activity.findById(req.params.id_activity).populate(
+      "tasks"
+    );
     if (!activity)
       res
         .status(404)
         .json({ title: "error", message: "Couldn't find Activity" });
-    else res.status(200).json({ title: "success", message: activity });
+    else res.status(200).json({ title: "success", message: activity.tasks });
   } catch (err) {
     res.status(500).json({ title: "error", message: err.message });
   }

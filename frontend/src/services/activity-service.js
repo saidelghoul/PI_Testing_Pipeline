@@ -1,16 +1,6 @@
 import axios from "axios";
 const url = "http://localhost:8000/activities";
 
-axios.interceptors.request.use(
-  (config) => {
-    console.log("yey");
-    return config;
-  },
-  (err) => {
-    return Promise.reject(err);
-  }
-);
-
 export const getActivities = async (id) => {
   id = id || "";
   return await axios.get(`${url}/${id}`);

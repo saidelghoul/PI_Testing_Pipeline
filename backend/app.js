@@ -1,13 +1,13 @@
-var createError = require("http-errors");
+const createError = require("http-errors");
 const express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
 const { mongoose } = require("mongoose");
 
-var messageRoute = require("./routes/ConversationRoute");
+const messageRoute = require("./routes/ConversationRoute");
 
 //activities management routes
 const activitiesRoute = require("./routes/activityRoute");
@@ -15,15 +15,15 @@ const tasksRoute = require("./routes/taskRoute");
 const checklistsRoute = require("./routes/checklistRoute");
 //
 
-var publicationRoute = require("./routes/publicationRoutes");
-var evenementRoutes = require("./routes/EvenementRoutes");
-var commentaireRoutes = require("./routes/ComentaireRoute");
-var PageRoute = require("./routes/PageRoute");
-var activitiesRouter = require("./routes/activityRoute");
-var socialSkillsRouter = require("./routes/socialSkillsRoute");
-var technicalSkillsRouter = require("./routes/technicalSkillsRoute");
+const publicationRoute = require("./routes/publicationRoutes");
+const evenementRoutes = require("./routes/EvenementRoutes");
+const commentaireRoutes = require("./routes/ComentaireRoute");
+const PageRoute = require("./routes/PageRoute");
+const activitiesRouter = require("./routes/activityRoute");
+const socialSkillsRouter = require("./routes/socialSkillsRoute");
+const technicalSkillsRouter = require("./routes/technicalSkillsRoute");
 
-var app = express();
+const app = express();
 
 const isAuthenticated = (req, res, next) => {
   if (req.user) {

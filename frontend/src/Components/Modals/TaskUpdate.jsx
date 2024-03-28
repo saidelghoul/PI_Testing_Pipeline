@@ -1,7 +1,7 @@
-import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
-import { updateTask } from "../../services/task-service";
+import { updateTask, getUsersForTask } from "../../services/task-service";
+import Select from "react-select";
 import PropTypes from "prop-types";
 
 const TaskUpdate = ({ refresh, show, handleClose, task }) => {
@@ -18,6 +18,25 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
     collaborators: task.collaborators,
     description: task.description,
   });
+
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const dbusers = await getUsersForTask();
+      let options = [];
+
+      dbusers.data.message.map((user) =>
+        options.push({
+          value: user._id,
+          label: user.name + " (" + user.role + ")",
+        })
+      );
+
+      setUsers(options);
+    };
+    fetchUsers();
+  }, []);
 
   const onValueChange = (e) => {
     setTaskItem({ ...taskItem, [e.target.name]: e.target.value });
@@ -45,6 +64,29 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
     return e.target.value ? setValidated(true) : setValidated(false);
   };
 
+  //tag field validation
+  const options = [
+    { value: "chocolate", label: "Chocolate" },
+    { value: "strawberry", label: "Strawberry" },
+    { value: "vanilla", label: "Vanilla" },
+  ];
+
+  const onUserChange = (name, value) => {
+    let collabs = [];
+    value.forEach((element) => {
+      collabs.push(element.value);
+    });
+
+    setTaskItem({ ...taskItem, [name]: collabs });
+    console.log(name, value, collabs);
+
+    value.forEach((element) => {
+      console.log(element.label + ": " + element.value);
+    });
+  };
+
+  // end of tagfiled for testing purposes
+
   return (
     <Modal
       show={show}
@@ -56,7 +98,7 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1>Add task</h1>
+            <h1>Update task</h1>
           </Modal.Title>
           <Button
             as={Col}
@@ -138,18 +180,14 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
           <Row className="mb-3">
             <Form.Group as={Col} md="4" controlId="validationCustom010">
               <Form.Label>Tags</Form.Label>
-              <Form.Control
-                required
-                type="text"
-                placeholder="tags"
-                name="tags"
-                value={taskItem.tags}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+              <Select
+                defaultValue={[options[2], options[3]]}
+                isMulti
+                name="colors"
+                options={options}
+                className="basic-multi-select"
+                classNamePrefix="select"
               />
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
             <Form.Group as={Col} md="4" controlId="validationCustom05">
               <Form.Label>Start date</Form.Label>
@@ -164,9 +202,6 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
                   onValueChange(e);
                 }}
               />
-              <Form.Control.Feedback type="invalid">
-                Please provide a valid start date.
-              </Form.Control.Feedback>
             </Form.Group>
             <Form.Group as={Col} md="4" controlId="validationCustom06">
               <Form.Label>End date</Form.Label>
@@ -191,7 +226,6 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
               <Form.Label>Description</Form.Label>
               <Form.Control
                 placeholder="Description"
-                required
                 as="textarea"
                 rows={3}
                 name="description"
@@ -200,6 +234,18 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
                   validateForm(e);
                   onValueChange(e);
                 }}
+              />
+            </Form.Group>
+            <Form.Group as={Col} md="6" controlId="validationCustom11">
+              <Form.Label>Collaborators</Form.Label>
+              <Select
+                onChange={(value) => onUserChange("collaborators", value)}
+                defaultValue={[options[2], options[3]]}
+                isMulti
+                name="collaborators"
+                options={users}
+                className="basic-multi-select"
+                classNamePrefix="select"
               />
             </Form.Group>
           </Row>
@@ -211,7 +257,7 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
           style={{ backgroundColor: "#e44d3a" }}
           onClick={handleSubmit}
         >
-          Add
+          Update
         </Button>
       </Modal.Footer>
     </Modal>

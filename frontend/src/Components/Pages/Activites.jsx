@@ -71,184 +71,123 @@ export default function Activites() {
     }
   };
   return (
-    <>
-      <main className="content">
-        <div className="container p-0">
-          <div className=" row ">
-            <h1 className="h3 mb-3 col-md-9 ">
-              Activites Board (
-              {activities.length + progress.length + completed.length})
-            </h1>
-            <h1 className=" col-md-3 ">
-              <Button
-                onClick={handleShow}
-                href="#"
-                className="btn btn-primary btn-block"
-                style={{ backgroundColor: "#e44d3a" }}
-              >
-                Add new
-              </Button>
-              <ActivityForm
-                refresh={refreshTable}
-                show={show}
-                handleClose={handleClose}
-              />
-            </h1>
+    <main className="content">
+      <div className="container p-0">
+        <div className=" row ">
+          <h1 className="h3 mb-3 col-md-9 ">
+            Activites Board (
+            {activities.length + progress.length + completed.length})
+          </h1>
+          <h1 className=" col-md-3 ">
+            <Button
+              onClick={handleShow}
+              href="#"
+              className="btn btn-primary btn-block"
+              style={{ backgroundColor: "#e44d3a" }}
+            >
+              Add new
+            </Button>
+            <ActivityForm
+              refresh={refreshTable}
+              show={show}
+              handleClose={handleClose}
+            />
+          </h1>
+        </div>
+        <hr />
+
+        <div className="row">
+          <div className="col-12 col-lg-6 col-xl-3">
+            <div className="card card-border-primary">
+              <div className="card-header">
+                <div className="card-actions float-right">
+                  <div className="dropdown show"></div>
+                </div>
+                <h5 className="card-title">Upcoming</h5>
+                <h6 className="card-subtitle text-muted">
+                  Nam pretium turpis et arcu. Duis arcu tortor.
+                </h6>
+              </div>
+              <div className="card-body p-3">
+                {activities.map(function (activity, index) {
+                  return (
+                    <Activity
+                      key={index}
+                      refresh={refreshTable}
+                      activity={activity}
+                      rmActivity={removeActivity}
+                    />
+                  );
+                })}
+              </div>
+            </div>
           </div>
-          <hr />
-
-          <div className="row">
-            <div className="col-12 col-lg-6 col-xl-3">
-              <div className="card card-border-primary">
-                <div className="card-header">
-                  <div className="card-actions float-right">
-                    <div className="dropdown show">
-                      <Button data-toggle="dropdown" data-display="static">
-                        {" "}
-                      </Button>
-
-                      <div className="dropdown-menu dropdown-menu-right">
-                        <Button className="dropdown-item">Action</Button>
-                        <Button className="dropdown-item">
-                          Another action
-                        </Button>
-                        <Button className="dropdown-item">
-                          Something else here
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  <h5 className="card-title">Upcoming</h5>
-                  <h6 className="card-subtitle text-muted">
-                    Nam pretium turpis et arcu. Duis arcu tortor.
-                  </h6>
+          <div className="col-12 col-lg-6 col-xl-3">
+            <div className="card card-border-warning">
+              <div className="card-header">
+                <div className="card-actions float-right">
+                  <div className="dropdown show"></div>
                 </div>
-                <div className="card-body p-3">
-                  {activities.map(function (activity, index) {
-                    return (
-                      <Activity
-                        key={index}
-                        refresh={refreshTable}
-                        activity={activity}
-                        rmActivity={removeActivity}
-                      />
-                    );
-                  })}
-                </div>
+                <h5 className="card-title">In Progress</h5>
+                <h6 className="card-subtitle text-muted">
+                  Nam pretium turpis et arcu. Duis arcu tortor.
+                </h6>
+              </div>
+              <div className="card-body">
+                {progress.map(function (activity, index) {
+                  return (
+                    <Activity
+                      key={index}
+                      refresh={refreshTable}
+                      activity={activity}
+                      rmActivity={removeActivity}
+                    />
+                  );
+                })}
               </div>
             </div>
-            <div className="col-12 col-lg-6 col-xl-3">
-              <div className="card card-border-warning">
-                <div className="card-header">
-                  <div className="card-actions float-right">
-                    <div className="dropdown show">
-                      <Button
-                        data-toggle="dropdown"
-                        data-display="static"
-                      ></Button>
-
-                      <div className="dropdown-menu dropdown-menu-right">
-                        <Button className="dropdown-item">Action</Button>
-                        <Button className="dropdown-item">
-                          Another action
-                        </Button>
-                        <Button className="dropdown-item">
-                          Something else here
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  <h5 className="card-title">In Progress</h5>
-                  <h6 className="card-subtitle text-muted">
-                    Nam pretium turpis et arcu. Duis arcu tortor.
-                  </h6>
+          </div>
+          <div className="col-12 col-lg-6 col-xl-3">
+            <div className="card card-border-danger">
+              <div className="card-header">
+                <div className="card-actions float-right">
+                  <div className="dropdown show"></div>
                 </div>
-                <div className="card-body">
-                  {progress.map(function (activity, index) {
-                    return (
-                      <Activity
-                        key={index}
-                        refresh={refreshTable}
-                        activity={activity}
-                        rmActivity={removeActivity}
-                      />
-                    );
-                  })}
-                </div>
+                <h5 className="card-title">On hold</h5>
+                <h6 className="card-subtitle text-muted">
+                  Nam pretium turpis et arcu. Duis arcu tortor.
+                </h6>
               </div>
+              <div className="card-body"></div>
             </div>
-            <div className="col-12 col-lg-6 col-xl-3">
-              <div className="card card-border-danger">
-                <div className="card-header">
-                  <div className="card-actions float-right">
-                    <div className="dropdown show">
-                      <Button
-                        data-toggle="dropdown"
-                        data-display="static"
-                      ></Button>
-
-                      <div className="dropdown-menu dropdown-menu-right">
-                        <Button className="dropdown-item">Action</Button>
-                        <Button className="dropdown-item">
-                          Another action
-                        </Button>
-                        <Button className="dropdown-item">
-                          Something else here
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  <h5 className="card-title">On hold</h5>
-                  <h6 className="card-subtitle text-muted">
-                    Nam pretium turpis et arcu. Duis arcu tortor.
-                  </h6>
+          </div>
+          <div className="col-12 col-lg-6 col-xl-3">
+            <div className="card card-border-success">
+              <div className="card-header">
+                <div className="card-actions float-right">
+                  <div className="dropdown show"></div>
                 </div>
-                <div className="card-body"></div>
+                <h5 className="card-title">Completed</h5>
+                <h6 className="card-subtitle text-muted">
+                  Nam pretium turpis et arcu. Duis arcu tortor.
+                </h6>
               </div>
-            </div>
-            <div className="col-12 col-lg-6 col-xl-3">
-              <div className="card card-border-success">
-                <div className="card-header">
-                  <div className="card-actions float-right">
-                    <div className="dropdown show">
-                      <Button
-                        data-toggle="dropdown"
-                        data-display="static"
-                      ></Button>
-
-                      <div className="dropdown-menu dropdown-menu-right">
-                        <Button className="dropdown-item">Action</Button>
-                        <Button className="dropdown-item">
-                          Another action
-                        </Button>
-                        <Button className="dropdown-item">
-                          Something else here
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  <h5 className="card-title">Completed</h5>
-                  <h6 className="card-subtitle text-muted">
-                    Nam pretium turpis et arcu. Duis arcu tortor.
-                  </h6>
-                </div>
-                <div className="card-body">
-                  {completed.map(function (activity, index) {
-                    return (
-                      <Activity
-                        key={index}
-                        refresh={refreshTable}
-                        activity={activity}
-                        rmActivity={removeActivity}
-                      />
-                    );
-                  })}
-                </div>
+              <div className="card-body">
+                {completed.map(function (activity, index) {
+                  return (
+                    <Activity
+                      key={index}
+                      refresh={refreshTable}
+                      activity={activity}
+                      rmActivity={removeActivity}
+                    />
+                  );
+                })}
               </div>
             </div>
           </div>
         </div>
-      </main>
-    </>
+      </div>
+    </main>
   );
 }

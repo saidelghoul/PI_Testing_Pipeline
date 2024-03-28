@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
-import { addTask } from "../../services/task-service";
+import { addTask, getUsersForTask } from "../../services/task-service";
+import Select from "react-select";
+import PropTypes from "prop-types";
 
 const TaskForm = ({ refresh, show, handleClose, id_act }) => {
   const [validated, setValidated] = useState(false);
@@ -16,6 +18,25 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
     collaborators: [],
     description: "",
   });
+
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const dbusers = await getUsersForTask();
+      let options = [];
+
+      dbusers.data.message.map((user) =>
+        options.push({
+          value: user._id,
+          label: user.name + " (" + user.role + ")",
+        })
+      );
+
+      setUsers(options);
+    };
+    fetchUsers();
+  }, []);
 
   const onValueChange = (e) => {
     setTaskItem({ ...taskItem, [e.target.name]: e.target.value });
@@ -43,6 +64,28 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
     return e.target.value ? setValidated(true) : setValidated(false);
   };
 
+  //tag field validation
+  const options = [
+    { value: "chocolate", label: "Chocolate" },
+    { value: "strawberry", label: "Strawberry" },
+    { value: "vanilla", label: "Vanilla" },
+  ];
+
+  const onUserChange = (name, value) => {
+    let collabs = [];
+    value.forEach((element) => {
+      collabs.push(element.value);
+    });
+
+    setTaskItem({ ...taskItem, [name]: collabs });
+    console.log(name, value, collabs);
+
+    value.forEach((element) => {
+      console.log(element.label + ": " + element.value);
+    });
+  };
+
+  // end of tagfiled for testing purposes
   return (
     <Modal
       show={show}
@@ -130,24 +173,20 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
               </Form.Select>
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
           </Row>
           <Row className="mb-3">
             <Form.Group as={Col} md="4" controlId="validationCustom010">
               <Form.Label>Tags</Form.Label>
-              <Form.Control
-                required
-                type="text"
-                placeholder="tags"
-                name="tags"
-                value={taskItem.tags}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+
+              <Select
+                defaultValue={[options[2], options[3]]}
+                isMulti
+                name="colors"
+                options={options}
+                className="basic-multi-select"
+                classNamePrefix="select"
               />
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
             <Form.Group as={Col} md="4" controlId="validationCustom05">
               <Form.Label>Start date</Form.Label>
@@ -189,7 +228,6 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
               <Form.Label>Description</Form.Label>
               <Form.Control
                 placeholder="Description"
-                required
                 as="textarea"
                 rows={3}
                 name="description"
@@ -198,6 +236,17 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
                   validateForm(e);
                   onValueChange(e);
                 }}
+              />
+            </Form.Group>
+            <Form.Group as={Col} md="6" controlId="validationCustom11">
+              <Form.Label>Collaborators</Form.Label>
+              <Select
+                onChange={(value) => onUserChange("collaborators", value)}
+                isMulti
+                name="collaborators"
+                options={users}
+                className="basic-multi-select"
+                classNamePrefix="select"
               />
             </Form.Group>
           </Row>
@@ -214,6 +263,13 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
       </Modal.Footer>
     </Modal>
   );
+};
+
+TaskForm.propTypes = {
+  refresh: PropTypes.func,
+  show: PropTypes.bool,
+  handleClose: PropTypes.func,
+  id_act: PropTypes.string,
 };
 
 export default TaskForm;

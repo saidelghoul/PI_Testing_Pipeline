@@ -92,18 +92,23 @@ const UpdateForm = ({ refresh, show, handleClose, activity }) => {
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
             <Form.Group as={Col} md="6" controlId="validationCustom02">
-              <Form.Label>category</Form.Label>
-              <Form.Control
+              <Form.Label>Category</Form.Label>
+              <Form.Select
                 required
-                type="text"
-                placeholder="category"
+                aria-label="Default select example"
+                className=" form-control "
                 name="category"
                 value={activityItem.category}
                 onChange={(e) => {
                   validateForm(e);
                   onValueChange(e);
                 }}
-              />
+              >
+                <option value="project">Project</option>
+                <option value="course">Course</option>
+                <option value="workshop">Workshop</option>
+                <option value="exam">Exam</option>
+              </Form.Select>
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
           </Row>
@@ -112,7 +117,6 @@ const UpdateForm = ({ refresh, show, handleClose, activity }) => {
               <Form.Label>Description</Form.Label>
               <Form.Control
                 placeholder="Description"
-                required
                 as="textarea"
                 rows={3}
                 name="description"

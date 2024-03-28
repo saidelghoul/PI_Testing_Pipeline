@@ -1,16 +1,21 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getChecklistByTask, getTasks } from "../../services/task-service";
 import Checklist from "./Checklist";
 import ChecklistForm from "../Modals/ChecklistForm";
 import { Button } from "react-bootstrap";
-import { deleteChecklist } from "../../services/checklist-service";
+import {
+  deleteChecklist,
+  getAssignedUsersForChecklist,
+} from "../../services/checklist-service";
 
 const TaskDetails = () => {
   const { id_task } = useParams();
 
   const [task, setTask] = useState({});
   const [checklists, setChecklists] = useState({});
+
+  const [users, setUsers] = useState([]);
 
   const refreshTable = async (checklistItem) => {
     setShow(false);
@@ -25,13 +30,17 @@ const TaskDetails = () => {
 
     const fetchChecklist = async (id) => {
       const data = await getChecklistByTask(id);
-      console.log(data.data.message.checkList);
-      setChecklists(data.data.message.checkList);
-      console.log(checklists);
+      setChecklists(data.data.message);
+    };
+
+    const fetchAssignedUsers = async (id) => {
+      const data = await getAssignedUsersForChecklist(id);
+      setUsers(data.data.message);
     };
 
     fetchTask(id_task);
     fetchChecklist(id_task);
+    fetchAssignedUsers(id_task);
   }, []);
 
   /* pop up*/
@@ -52,7 +61,7 @@ const TaskDetails = () => {
 
   return (
     <div className="container p-0 ">
-      <h1 className="h3 mb-3">Task Details</h1>
+      <h1 className="h3 mb-3 text-center ">Task Details</h1>
       <div className=" row ">
         <div className=" col">
           <h1 className=" text-bg-primary "> Title: {task.title}</h1>
@@ -61,8 +70,16 @@ const TaskDetails = () => {
           <h1 className=" text-bg-success "> Status: {task.status}</h1>
           <h1 className=" text-bg-success "> Priority: {task.priority}</h1>
         </div>
+        <div className=" col ">
+          <p className=" text-bg-primary "> Collaborators: </p>
+          {users.map((user, index) => (
+            <p className=" text-body-emphasis " key={index}>
+              {" "}
+              {user.name} ( {user.role} )
+            </p>
+          ))}
+        </div>
         <div className=" col-auto ">
-          <p className=" text-body-emphasis "> Collaborators </p>
           <small className=" text-body-emphasis ">
             Description: {task.description}
           </small>
@@ -88,6 +105,7 @@ const TaskDetails = () => {
               show={show}
               handleClose={handleClose}
               id_task={id_task}
+              users={users}
             />
           </h1>
         </div>

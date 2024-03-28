@@ -1,13 +1,23 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+const Category = {
+  PROJECT: "project",
+  COURSE: "course",
+  WORKSHOP: "workshop",
+  EXAM: "exam",
+};
+
 const activitySchema = new Schema(
   {
     name: {
       type: String,
       required: [true, "activity name is required"],
     },
-    category: String,
+    category: {
+      type: String,
+      enum: Category,
+    },
     approval: {
       type: Boolean,
       required: true,

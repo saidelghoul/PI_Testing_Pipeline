@@ -1,10 +1,15 @@
-import React, { useState } from "react";
-import { Button, Card, Col, Row, Form } from "react-bootstrap";
-import { updateChecklist } from "../../services/checklist-service";
+import { useEffect, useState } from "react";
+import { Button, Card, Col, Row } from "react-bootstrap";
+import {
+  getChecklists,
+  updateChecklist,
+} from "../../services/checklist-service";
 import ChecklistDelete from "../Modals/ChecklistDelete";
+import PropTypes from "prop-types";
 
 const Checklist = ({ checkList, index, rmChecklist }) => {
   const [toggle, setToggle] = useState(checkList.done);
+  const [holder, setHolder] = useState({});
 
   const updateDone = async (e) => {
     checkList.done = e.target.checked;
@@ -13,6 +18,14 @@ const Checklist = ({ checkList, index, rmChecklist }) => {
       setToggle(!toggle);
     }
   };
+
+  useEffect(() => {
+    const fetchChecklist = async (id) => {
+      const checklist = await getChecklists(id);
+      setHolder(checklist.holder);
+    };
+    fetchChecklist(checkList._id);
+  }, []);
 
   /* pop up*/
   const [showDelete, setShowDelete] = useState(false);
@@ -25,7 +38,11 @@ const Checklist = ({ checkList, index, rmChecklist }) => {
 
   return (
     <>
-      <Card bg={toggle ? "success" : "secondary"} style={{ width: "18rem" }}>
+      <Card
+        bg={toggle ? "success" : "secondary"}
+        style={{ width: "18rem" }}
+        className=" shadow shadow-sm"
+      >
         <Card.Header>
           <Row bg={toggle ? "success" : "secondary"}>
             <Col md="9">Todo N°{index}</Col>
@@ -46,6 +63,7 @@ const Checklist = ({ checkList, index, rmChecklist }) => {
         <Card.Body>
           <Card.Title className=" text-white ">{checkList.title}</Card.Title>
           <Card.Text className=" text-white ">
+            Assigned to: {holder.name} ( {holder.role} ) Description:{" "}
             {checkList.description}
           </Card.Text>
           <Button
@@ -65,6 +83,12 @@ const Checklist = ({ checkList, index, rmChecklist }) => {
       />
     </>
   );
+};
+
+Checklist.propTypes = {
+  checkList: PropTypes.object,
+  index: PropTypes.number,
+  rmChecklist: PropTypes.func,
 };
 
 export default Checklist;

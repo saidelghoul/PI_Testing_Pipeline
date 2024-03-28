@@ -1,18 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { addChecklist } from "../../services/checklist-service";
+import PropTypes from "prop-types";
+import Select from "react-select";
 
-const ChecklistForm = ({ refresh, show, handleClose, id_task }) => {
+const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
   const [validated, setValidated] = useState(false);
 
   const [checklistItem, setChecklistItem] = useState({
     title: "",
-    holder: "65df6f7a904814fc0404a57a",
+    holder: "",
     description: "",
   });
 
+  const [holders, setHolders] = useState([]);
+
+  useEffect(() => {
+    console.log(users);
+    let options = [];
+
+    users?.map((user) =>
+      options.push({
+        value: user?.id,
+        label: user?.name + " (" + user?.role + ")",
+      })
+    );
+
+    setHolders(options);
+  }, []);
+
   const onValueChange = (e) => {
     setChecklistItem({ ...checklistItem, [e.target.name]: e.target.value });
+    console.log(e.target.value);
   };
 
   const handleSubmit = (event) => {
@@ -35,6 +54,10 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task }) => {
 
   const validateForm = (e) => {
     return e.target.value ? setValidated(true) : setValidated(false);
+  };
+
+  const onHolderChange = (name, value) => {
+    setChecklistItem({ ...checklistItem, [name]: value?.[0]?.value });
   };
 
   return (
@@ -73,7 +96,7 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task }) => {
           validated={validated}
         >
           <Row className="mb-3">
-            <Form.Group as={Col} md="4" controlId="validationCustom01">
+            <Form.Group as={Col} md="6" controlId="validationCustom01">
               <Form.Label>Title</Form.Label>
               <Form.Control
                 required
@@ -88,9 +111,10 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task }) => {
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group as={Col} md="4" controlId="validationCustom02">
-              <Form.Label>holder</Form.Label>
+            <Form.Group as={Col} md="6" controlId="validationCustom02">
+              <Form.Label>Holder</Form.Label>
               <Form.Select
+                required
                 aria-label="Default select example"
                 className=" form-control "
                 name="holder"
@@ -101,8 +125,19 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task }) => {
                 }}
               >
                 <option>Open this select menu</option>
-                <option value="65df6f7a904814fc0404a57a">Rami</option>
+                {users.map((user, index) => (
+                  <option key={index} value={user._id}>
+                    {user.name} ( {user.role} )
+                  </option>
+                ))}
               </Form.Select>
+              <Select
+                onChange={(value) => onHolderChange("holder", value)}
+                name="holder"
+                options={holders}
+                className="basic-multi-select"
+                classNamePrefix="select"
+              />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
           </Row>
@@ -112,7 +147,6 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task }) => {
               <Form.Label>Description</Form.Label>
               <Form.Control
                 placeholder="Description"
-                required
                 as="textarea"
                 rows={3}
                 name="description"
@@ -137,6 +171,14 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task }) => {
       </Modal.Footer>
     </Modal>
   );
+};
+
+ChecklistForm.propTypes = {
+  refresh: PropTypes.func,
+  show: PropTypes.bool,
+  handleClose: PropTypes.func,
+  id_task: PropTypes.string,
+  users: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default ChecklistForm;
