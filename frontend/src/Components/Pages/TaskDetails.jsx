@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { getChecklistByTask, getTasks } from "../../services/task-service";
 import Checklist from "./Checklist";
 import ChecklistForm from "../Modals/ChecklistForm";
-import { Button } from "react-bootstrap";
+import { Badge, Button, Spinner } from "react-bootstrap";
 import {
   deleteChecklist,
   getAssignedUsersForChecklist,
@@ -11,15 +11,21 @@ import {
 
 const TaskDetails = () => {
   const { id_task } = useParams();
+  const [loading, setLoading] = useState(true);
 
   const [task, setTask] = useState({});
   const [checklists, setChecklists] = useState({});
 
   const [users, setUsers] = useState([]);
 
-  const refreshTable = async (checklistItem) => {
+  const fetchChecklist = async (id) => {
+    const data = await getChecklistByTask(id);
+    setChecklists(data.data.message);
+  };
+
+  const refreshTable = async () => {
     setShow(false);
-    setChecklists([...checklists, checklistItem]);
+    fetchChecklist(id_task);
   };
 
   useEffect(() => {
@@ -36,6 +42,7 @@ const TaskDetails = () => {
     const fetchAssignedUsers = async (id) => {
       const data = await getAssignedUsersForChecklist(id);
       setUsers(data.data.message);
+      setLoading(false);
     };
 
     fetchTask(id_task);
@@ -52,23 +59,57 @@ const TaskDetails = () => {
   /* pop up end*/
 
   const removeChecklist = async (id) => {
-    const result = await deleteChecklist(id);
-    if (result.status == "204") {
-      alert("deleted successfully");
-      setChecklists(checklists.filter((checklist) => checklist._id !== id));
+    try {
+      const result = await deleteChecklist(id);
+      if (result.status == 204) {
+        alert("deleted successfully");
+        setChecklists(checklists.filter((checklist) => checklist._id !== id));
+      }
+    } catch (error) {
+      alert(error.message);
     }
   };
+
+  if (loading) {
+    return (
+      <Spinner animation="border" role="output" variant="danger">
+        <span className="visually-hidden container p-0">Loading...</span>
+      </Spinner>
+    );
+  }
 
   return (
     <div className="container p-0 ">
       <h1 className="h3 mb-3 text-center ">Task Details</h1>
+      <h1 className="h3 mb-3 text-center ">( {task.title} )</h1>
+      <div className=" d-flex flex-row flex-wrap gap-3 mt-4 text-center ">
+        {task?.tags?.map((tag, index) => (
+          <span
+            key={`${index}-${tag}`}
+            className=" d-flex d-inline-flex align-items-start justify-content-start px-3 py-2 rounded rounded-2 text-sm-center shadow-sm font-monospace mr-2"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+      <hr />
       <div className=" row ">
         <div className=" col">
-          <h1 className=" text-bg-primary "> Title: {task.title}</h1>
-          <br />
-          <h1 className=" text-bg-primary "> Tags: {task.tags}</h1>
           <h1 className=" text-bg-success "> Status: {task.status}</h1>
-          <h1 className=" text-bg-success "> Priority: {task.priority}</h1>
+          <br />
+          <Badge pill bg="danger">
+            <p className=" text-white "> High priority</p>
+          </Badge>
+        </div>
+        <div className=" col ">
+          <h1 className=" text-bg-primary ">
+            {" "}
+            From: {task?.initDate?.substr(0, 10)}
+          </h1>
+          <h1 className=" text-bg-primary ">
+            {" "}
+            To: {task?.dueDate?.substr(0, 10)}
+          </h1>
         </div>
         <div className=" col ">
           <p className=" text-bg-primary "> Collaborators: </p>
@@ -114,6 +155,7 @@ const TaskDetails = () => {
             {checklists.map((checklist, index) => {
               return (
                 <Checklist
+                  refresh={refreshTable}
                   key={index}
                   checkList={checklist}
                   index={index + 1}

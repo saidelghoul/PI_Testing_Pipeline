@@ -3,7 +3,7 @@ import "../../../public/assets/css/activite.css";
 import { deleteActivity, getActivities } from "../../services/activity-service";
 import Activity from "./Activity";
 import ActivityForm from "../Modals/ActivityForm";
-import { Button } from "react-bootstrap";
+import { Button, Spinner } from "react-bootstrap";
 
 export default function Activites() {
   const [activities, setActivities] = useState([]);
@@ -11,6 +11,7 @@ export default function Activites() {
   const [progress, setProgress] = useState([]);
 
   const [completed, setCompleted] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   /* pop up*/
   const [show, setShow] = useState(false);
@@ -19,29 +20,29 @@ export default function Activites() {
   const handleShow = () => setShow(true);
 
   /* pop up end*/
+  const fetchData = async () => {
+    const data = await getActivities();
+    setActivities(
+      data.data.message.filter((activity) => activity.startDate > new Date())
+    );
+
+    setProgress(
+      data.data.message.filter(
+        (activity) =>
+          new Date(activity.startDate) < new Date() &&
+          new Date(activity.endDate) > new Date()
+      )
+    );
+
+    setCompleted(
+      data.data.message.filter(
+        (activity) => new Date(activity.endDate) < new Date()
+      )
+    );
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await getActivities();
-      setActivities(
-        data.data.message.filter((activity) => activity.startDate > new Date())
-      );
-
-      setProgress(
-        data.data.message.filter(
-          (activity) =>
-            new Date(activity.startDate) < new Date() &&
-            new Date(activity.endDate) > new Date()
-        )
-      );
-
-      setCompleted(
-        data.data.message.filter(
-          (activity) => new Date(activity.endDate) < new Date()
-        )
-      );
-    };
-
     fetchData();
   }, []);
 
@@ -49,27 +50,31 @@ export default function Activites() {
 
   const removeActivity = async (id) => {
     const result = await deleteActivity(id);
-    if (result.status == "204") {
+    if (result.status == 204) {
       alert("deleted successfully");
       setActivities(activities.filter((activity) => activity._id !== id));
     }
   };
   /** */
 
-  const refreshTable = async (activityItem) => {
+  const refreshTable = async () => {
     setShow(false);
 
-    if (new Date(activityItem.startDate) > new Date()) {
-      setActivities([...activities, activityItem]);
-    } else if (
-      new Date(activityItem.startDate) < new Date() &&
-      new Date(activityItem.endDate) > new Date()
-    ) {
-      setProgress([...activities, activityItem]);
-    } else {
-      setCompleted([...activities, activityItem]);
-    }
+    fetchData();
   };
+
+  if (loading) {
+    return (
+      <main className="content">
+        <div className="container p-0">
+          <Spinner animation="border" role="output" variant="danger">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="content">
       <div className="container p-0">

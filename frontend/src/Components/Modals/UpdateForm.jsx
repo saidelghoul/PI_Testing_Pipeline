@@ -29,10 +29,15 @@ const UpdateForm = ({ refresh, show, handleClose, activity }) => {
   };
 
   const handleUpdateActivity = async () => {
-    const result = await updateActivity(activity._id, activityItem);
-    if (result.status == 200) {
-      alert("Activity updated successfully");
-      refresh(activityItem);
+    try {
+      const result = await updateActivity(activity._id, activityItem);
+      if (result.status == 200) {
+        alert("Activity updated successfully");
+        refresh();
+        handleClose();
+      }
+    } catch (error) {
+      alert(error.message);
     }
   };
 

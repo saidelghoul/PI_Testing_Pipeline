@@ -41,9 +41,11 @@ const DeleteForm = ({ rmActivity, show, handleClose, activity }) => {
       <Modal.Footer>
         <Button
           className={activity?.tasks?.length > 0 ? " disabled " : ""}
+          disabled={activity?.tasks?.length > 0}
           style={{ backgroundColor: "#e44d3a" }}
           onClick={() => {
             rmActivity(activity._id);
+            handleClose();
           }}
         >
           Delete

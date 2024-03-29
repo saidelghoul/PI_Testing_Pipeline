@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Task from "./Task";
 import { getTasksByActivity } from "../../services/activity-service";
-import { Button } from "react-bootstrap";
+import { Button, Spinner } from "react-bootstrap";
 import TaskForm from "../Modals/TaskForm";
 import { deleteTask } from "../../services/task-service";
 
-const Tasks = ({ id_act }) => {
+const Tasks = ({ id_act, category }) => {
   const [tasks, setTasks] = useState([]);
   const [progress, setProgress] = useState([]);
   const [completed, setCompleted] = useState([]);
+
+  const [loading, setLoading] = useState(true);
 
   /* pop up*/
   const [show, setShow] = useState(false);
@@ -17,50 +19,110 @@ const Tasks = ({ id_act }) => {
   const handleShow = () => setShow(true);
 
   /* pop up end*/
+  const fetchTasks = async (id) => {
+    const data = await getTasksByActivity(id);
+
+    setTasks(data.data.message.filter((task) => task.initDate > new Date()));
+
+    setProgress(
+      data.data.message.filter(
+        (task) =>
+          new Date(task.initDate) < new Date() &&
+          new Date(task.dueDate) > new Date()
+      )
+    );
+
+    setCompleted(
+      data.data.message.filter((task) => new Date(task.dueDate) < new Date())
+    );
+
+    setLoading(false);
+  };
+
+  // start of options definition by activity category
+  let options = [];
+  switch (category) {
+    case "course":
+      options = [
+        { value: "Lectures", label: "Lectures" },
+        { value: "Assignments", label: "Assignments" },
+        { value: "Exercises", label: "Exercises" },
+        { value: "Resources", label: "Resources" },
+        { value: "Feedback", label: "Feedback" },
+        { value: "Discussion", label: "Discussion" },
+        { value: "Evaluation", label: "Evaluation" },
+      ];
+      break;
+
+    case "workshop":
+      options = [
+        { value: "Demonstration", label: "Demonstration" },
+        { value: "Activities", label: "Activities" },
+        { value: "Materials", label: "Materials" },
+        { value: "Feedback", label: "Feedback" },
+        { value: "Discussions", label: "Discussions" },
+        { value: "Evaluation", label: "Evaluation" },
+      ];
+      break;
+
+    case "project":
+      options = [
+        { value: "Requirements", label: "Requirements" },
+        { value: "Design", label: "Design" },
+        { value: "Coding", label: "Coding" },
+        { value: "Testing", label: "Testing" },
+        { value: "Documentation", label: "Documentation" },
+        { value: "Feedback", label: "Feedback" },
+        { value: "Discussions", label: "Discussions" },
+        { value: "Evaluation", label: "Evaluation" },
+      ];
+      break;
+
+    default:
+      options = [
+        { value: "Instructions", label: "Instructions" },
+        { value: "Questions", label: "Questions" },
+        { value: "Marking", label: "Marking" },
+        { value: "Protocols", label: "Protocols" },
+        { value: "Timing", label: "Timing" },
+        { value: "Feedback", label: "Feedback" },
+        { value: "Discussions", label: "Discussions" },
+        { value: "Evaluation", label: "Evaluation" },
+      ];
+      break;
+  }
+
+  // end of options definition by activity category
 
   useEffect(() => {
-    const fetchTasks = async (id) => {
-      const data = await getTasksByActivity(id);
-
-      setTasks(data.data.message.filter((task) => task.initDate > new Date()));
-
-      setProgress(
-        data.data.message.filter(
-          (task) =>
-            new Date(task.initDate) < new Date() &&
-            new Date(task.dueDate) > new Date()
-        )
-      );
-
-      setCompleted(
-        data.data.message.filter((task) => new Date(task.dueDate) < new Date())
-      );
-    };
     fetchTasks(id_act);
   }, []);
 
   const removeTask = async (id) => {
-    const result = await deleteTask(id);
-    if (result.status == "204") {
-      alert("deleted successfully");
-      setTasks(tasks.filter((task) => task._id !== id));
+    try {
+      const result = await deleteTask(id);
+      if (result.status == 204) {
+        alert("deleted successfully");
+        setTasks(tasks.filter((task) => task._id !== id));
+      }
+    } catch (err) {
+      alert(err.message);
     }
   };
   /** */
 
-  const refreshTable = async (taskItem) => {
+  const refreshTable = async () => {
     setShow(false);
-    if (new Date(taskItem.initDate) > new Date()) {
-      setTasks([...tasks, taskItem]);
-    } else if (
-      new Date(taskItem.initDate) < new Date() &&
-      new Date(taskItem.dueDate) > new Date()
-    ) {
-      setProgress([...tasks, taskItem]);
-    } else {
-      setCompleted([...tasks, taskItem]);
-    }
+    fetchTasks(id_act);
   };
+
+  if (loading) {
+    return (
+      <Spinner animation="border" role="output" variant="danger">
+        <span className="visually-hidden container p-0">Loading...</span>
+      </Spinner>
+    );
+  }
 
   return (
     <main className="content">
@@ -83,6 +145,7 @@ const Tasks = ({ id_act }) => {
               show={show}
               handleClose={handleClose}
               id_act={id_act}
+              options={options}
             />
           </h1>
         </div>
@@ -106,7 +169,8 @@ const Tasks = ({ id_act }) => {
                       key={index}
                       task={task}
                       refresh={refreshTable}
-                      rmTask={removeTask}
+                      removeTask={removeTask}
+                      options={options}
                     />
                   );
                 })}
@@ -127,7 +191,15 @@ const Tasks = ({ id_act }) => {
 
               <div className="card-body">
                 {progress.map((task, index) => {
-                  return <Task key={index} task={task} />;
+                  return (
+                    <Task
+                      key={index}
+                      task={task}
+                      refresh={refreshTable}
+                      removeTask={removeTask}
+                      options={options}
+                    />
+                  );
                 })}
               </div>
             </div>
@@ -159,7 +231,15 @@ const Tasks = ({ id_act }) => {
               </div>
               <div className="card-body">
                 {completed.map((task, index) => {
-                  return <Task key={index} task={task} />;
+                  return (
+                    <Task
+                      key={index}
+                      task={task}
+                      refresh={refreshTable}
+                      removeTask={removeTask}
+                      options={options}
+                    />
+                  );
                 })}
               </div>
             </div>

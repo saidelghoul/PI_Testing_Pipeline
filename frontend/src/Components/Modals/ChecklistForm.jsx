@@ -16,22 +16,24 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
   const [holders, setHolders] = useState([]);
 
   useEffect(() => {
-    console.log(users);
-    let options = [];
+    const retrieveUsers = async () => {
+      let options = [];
 
-    users?.map((user) =>
-      options.push({
-        value: user?.id,
-        label: user?.name + " (" + user?.role + ")",
-      })
-    );
+      await users?.map((user) =>
+        options.push({
+          value: user?.id,
+          label: user?.name + " (" + user?.role + ")",
+        })
+      );
 
-    setHolders(options);
+      setHolders(options);
+    };
+
+    retrieveUsers();
   }, []);
 
   const onValueChange = (e) => {
     setChecklistItem({ ...checklistItem, [e.target.name]: e.target.value });
-    console.log(e.target.value);
   };
 
   const handleSubmit = (event) => {
@@ -45,10 +47,15 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
   };
 
   const handleChecklist = async () => {
-    const result = await addChecklist(checklistItem, id_task);
-    if (result.status == 201) {
-      alert("checklist added successfully");
-      refresh(checklistItem);
+    try {
+      const result = await addChecklist(checklistItem, id_task);
+      if (result.status == 201) {
+        alert("checklist added successfully");
+        refresh();
+        handleClose();
+      }
+    } catch (error) {
+      alert(error.message);
     }
   };
 
@@ -57,7 +64,9 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
   };
 
   const onHolderChange = (name, value) => {
-    setChecklistItem({ ...checklistItem, [name]: value?.[0]?.value });
+    setChecklistItem({ ...checklistItem, [name]: value?.value });
+
+    console.log(name, value, value?.value);
   };
 
   return (
@@ -113,25 +122,8 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
             </Form.Group>
             <Form.Group as={Col} md="6" controlId="validationCustom02">
               <Form.Label>Holder</Form.Label>
-              <Form.Select
-                required
-                aria-label="Default select example"
-                className=" form-control "
-                name="holder"
-                value={checklistItem.holder}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
-              >
-                <option>Open this select menu</option>
-                {users.map((user, index) => (
-                  <option key={index} value={user._id}>
-                    {user.name} ( {user.role} )
-                  </option>
-                ))}
-              </Form.Select>
               <Select
+                required
                 onChange={(value) => onHolderChange("holder", value)}
                 name="holder"
                 options={holders}
@@ -162,7 +154,7 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
       </Modal.Body>
       <Modal.Footer>
         <Button
-          className={validated ? "disabled" : ""}
+          className={validated ? "" : "disabled"}
           style={{ backgroundColor: "#e44d3a" }}
           onClick={handleSubmit}
         >

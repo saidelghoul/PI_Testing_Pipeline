@@ -4,7 +4,7 @@ import { updateTask, getUsersForTask } from "../../services/task-service";
 import Select from "react-select";
 import PropTypes from "prop-types";
 
-const TaskUpdate = ({ refresh, show, handleClose, task }) => {
+const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
   const [validated, setValidated] = useState(false);
 
   const [taskItem, setTaskItem] = useState({
@@ -21,6 +21,10 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
 
   const [users, setUsers] = useState([]);
 
+  const [collaborators, setCollaborators] = useState([]);
+
+  const [assignedTags, setAssignedTags] = useState([]);
+
   useEffect(() => {
     const fetchUsers = async () => {
       const dbusers = await getUsersForTask();
@@ -35,7 +39,21 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
 
       setUsers(options);
     };
+
+    const fetchAssignedTags = () => {
+      let options = [];
+
+      task?.tags?.map((tag) =>
+        options.push({
+          value: tag,
+          label: tag,
+        })
+      );
+
+      setAssignedTags(options);
+    };
     fetchUsers();
+    fetchAssignedTags();
   }, []);
 
   const onValueChange = (e) => {
@@ -53,23 +71,21 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
   };
 
   const handleUpdateTask = async () => {
-    const result = await updateTask(task._id, taskItem);
-    if (result.status == 200) {
-      alert("task updated successfully");
-      refresh(taskItem);
+    try {
+      const result = await updateTask(task._id, taskItem);
+      if (result.status == 200) {
+        alert("task updated successfully");
+        refresh();
+        handleClose();
+      }
+    } catch (error) {
+      alert(error.message);
     }
   };
 
   const validateForm = (e) => {
     return e.target.value ? setValidated(true) : setValidated(false);
   };
-
-  //tag field validation
-  const options = [
-    { value: "chocolate", label: "Chocolate" },
-    { value: "strawberry", label: "Strawberry" },
-    { value: "vanilla", label: "Vanilla" },
-  ];
 
   const onUserChange = (name, value) => {
     let collabs = [];
@@ -86,6 +102,20 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
   };
 
   // end of tagfiled for testing purposes
+
+  const onTagChange = (name, value) => {
+    let tags = [];
+    value.forEach((element) => {
+      tags.push(element.value);
+    });
+
+    setTaskItem({ ...taskItem, [name]: tags });
+    console.log(name, value, tags);
+
+    value.forEach((element) => {
+      console.log(element.label + ": " + element.value);
+    });
+  };
 
   return (
     <Modal
@@ -150,7 +180,6 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
                   onValueChange(e);
                 }}
               >
-                <option>Open this select menu</option>
                 <option value="planned">Planned</option>
                 <option value="active">Active</option>
                 <option value="complete">Completed</option>
@@ -169,7 +198,6 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
                   onValueChange(e);
                 }}
               >
-                <option>Open this select menu</option>
                 <option value="high">High</option>
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
@@ -181,9 +209,10 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
             <Form.Group as={Col} md="4" controlId="validationCustom010">
               <Form.Label>Tags</Form.Label>
               <Select
-                defaultValue={[options[2], options[3]]}
+                onChange={(value) => onTagChange("tags", value)}
+                defaultValue={assignedTags}
                 isMulti
-                name="colors"
+                name="tags"
                 options={options}
                 className="basic-multi-select"
                 classNamePrefix="select"
@@ -240,7 +269,6 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
               <Form.Label>Collaborators</Form.Label>
               <Select
                 onChange={(value) => onUserChange("collaborators", value)}
-                defaultValue={[options[2], options[3]]}
                 isMulti
                 name="collaborators"
                 options={users}

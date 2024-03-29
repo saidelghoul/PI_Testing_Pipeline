@@ -1,13 +1,11 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { Button } from "react-bootstrap";
+import { Badge, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import TaskDelete from "../Modals/TaskDelete";
 import TaskUpdate from "../Modals/TaskUpdate";
 
-const Task = ({ task, rmTask, refresh }) => {
-  const [toggleButton, setToggleButton] = useState(false);
-
+const Task = ({ task, removeTask, refresh, options }) => {
   /* pop up*/
   const [showDelete, setShowDelete] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
@@ -24,35 +22,24 @@ const Task = ({ task, rmTask, refresh }) => {
     <div className="card mb-3 bg-light">
       <div className="card-body p-3">
         <div className="float-right mr-n2">
-          <label className="custom-control custom-checkbox">
-            <input
-              type="checkbox"
-              className="custom-control-input"
-              onChange={() => setToggleButton(!toggleButton)}
-            />
-            <span className="custom-control-label"></span>
-          </label>
+          {task.priority === "high" && (
+            <Badge className=" text-white " pill bg="danger">
+              High priority
+            </Badge>
+          )}
         </div>
         <h1 className="text-bold">{task.title}</h1>
 
-        <p>Description: {task.description}</p>
+        {task.description !== "" && <p>Description: {task.description}</p>}
 
         <p>Status: {task.status}</p>
 
-        <p>Priority: {task.priority}</p>
-
-        {/*<p>Checklist: {task.checkList.length}</p>*/}
         <p>
           {task.initDate.substr(0, 10)} - {task.dueDate.substr(0, 10)}
         </p>
         <div className="float-right mt-n1">
-          <img
-            src="/assets/images/resources/user-pro-img.png"
-            width="32"
-            height="32"
-            className="rounded-circle"
-            alt="Avatar"
-          />
+          <p>Collaborators: {task?.collaborators?.length}</p>
+          <p>Checklist: {task?.checkList?.length}</p>
         </div>
         <Link to={`/tasks/${task._id}`}>
           <Button
@@ -80,7 +67,8 @@ const Task = ({ task, rmTask, refresh }) => {
         </Button>
 
         <TaskDelete
-          rmTask={rmTask}
+          refresh={refresh}
+          removeTask={removeTask}
           show={showDelete}
           handleClose={handleCloseDelete}
           task={task}
@@ -91,6 +79,7 @@ const Task = ({ task, rmTask, refresh }) => {
           show={showUpdate}
           handleClose={handleCloseUpdate}
           task={task}
+          options={options}
         />
       </div>
     </div>
@@ -99,6 +88,8 @@ const Task = ({ task, rmTask, refresh }) => {
 
 Task.propTypes = {
   task: PropTypes.object,
+  removeTask: PropTypes.func,
+  refresh: PropTypes.func,
 };
 
 export default Task;

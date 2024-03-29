@@ -31,7 +31,7 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
     const result = await addActivity(activityItem);
     if (result.status == 201) {
       alert("Activity added successfully");
-      refresh(activityItem);
+      refresh();
     }
   };
 

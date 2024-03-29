@@ -34,22 +34,18 @@ const Activity = ({ activity, rmActivity, refresh }) => {
             <span className="custom-control-label"></span>
           </label>
         </div>
-        <h1 className="text-bold">{activity.name}</h1>
-        <b>/#{activity.category}</b>
-        <p>{activity.description}</p>
+        <h1 className="text-bold">
+          [ {activity.category} ] {activity.name}
+        </h1>
+        {activity.description !== "" && (
+          <p>Description: {activity.description}</p>
+        )}
 
-        {/*<p>Tasks: {activity.tasks.length}</p>*/}
         <p>
           {activity.startDate.substr(0, 10)} - {activity.endDate.substr(0, 10)}
         </p>
         <div className="float-right mt-n1">
-          <img
-            src="/assets/images/resources/user-pro-img.png"
-            width="32"
-            height="32"
-            className="rounded-circle"
-            alt="Avatar"
-          />
+          <p>Tasks: {activity?.tasks?.length}</p>
         </div>
         <Link to={`/activities/${activity._id}`}>
           <Button

@@ -1,6 +1,13 @@
-import React from "react";
 import { Button, Modal, Row, Col } from "react-bootstrap";
-const ChecklistDelete = ({ rmChecklist, show, handleClose, checklist }) => {
+import PropTypes from "prop-types";
+
+const ChecklistDelete = ({
+  refresh,
+  rmChecklist,
+  show,
+  handleClose,
+  checklist,
+}) => {
   return (
     <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
@@ -34,6 +41,8 @@ const ChecklistDelete = ({ rmChecklist, show, handleClose, checklist }) => {
           style={{ backgroundColor: "#e44d3a" }}
           onClick={() => {
             rmChecklist(checklist._id);
+            handleClose();
+            refresh();
           }}
         >
           Delete
@@ -41,6 +50,13 @@ const ChecklistDelete = ({ rmChecklist, show, handleClose, checklist }) => {
       </Modal.Footer>
     </Modal>
   );
+};
+
+ChecklistDelete.propTypes = {
+  rmChecklist: PropTypes.func,
+  show: PropTypes.bool,
+  handleClose: PropTypes.func,
+  checklist: PropTypes.object,
 };
 
 export default ChecklistDelete;

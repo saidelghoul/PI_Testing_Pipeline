@@ -4,17 +4,15 @@ import { addTask, getUsersForTask } from "../../services/task-service";
 import Select from "react-select";
 import PropTypes from "prop-types";
 
-const TaskForm = ({ refresh, show, handleClose, id_act }) => {
+const TaskForm = ({ refresh, show, handleClose, id_act, options }) => {
   const [validated, setValidated] = useState(false);
 
   const [taskItem, setTaskItem] = useState({
     title: "",
     initDate: "",
     dueDate: "",
-    status: "",
     priority: "",
     tags: [],
-    banner: "",
     collaborators: [],
     description: "",
   });
@@ -53,10 +51,14 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
   };
 
   const handleAddTask = async () => {
-    const result = await addTask(taskItem, id_act);
-    if (result.status == 201) {
-      alert("task added successfully");
-      refresh(taskItem);
+    try {
+      const result = await addTask(taskItem, id_act);
+      if (result.status == 201) {
+        alert("task added successfully");
+        refresh();
+      }
+    } catch (error) {
+      alert(error.message);
     }
   };
 
@@ -65,11 +67,6 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
   };
 
   //tag field validation
-  const options = [
-    { value: "chocolate", label: "Chocolate" },
-    { value: "strawberry", label: "Strawberry" },
-    { value: "vanilla", label: "Vanilla" },
-  ];
 
   const onUserChange = (name, value) => {
     let collabs = [];
@@ -79,6 +76,20 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
 
     setTaskItem({ ...taskItem, [name]: collabs });
     console.log(name, value, collabs);
+
+    value.forEach((element) => {
+      console.log(element.label + ": " + element.value);
+    });
+  };
+
+  const onTagChange = (name, value) => {
+    let tags = [];
+    value.forEach((element) => {
+      tags.push(element.value);
+    });
+
+    setTaskItem({ ...taskItem, [name]: tags });
+    console.log(name, value, tags);
 
     value.forEach((element) => {
       console.log(element.label + ": " + element.value);
@@ -125,6 +136,7 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
             <Form.Group as={Col} md="4" controlId="validationCustom01">
               <Form.Label>Title</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 required
                 type="text"
                 placeholder="task title"
@@ -139,28 +151,19 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
             </Form.Group>
             <Form.Group as={Col} md="4" controlId="validationCustom02">
               <Form.Label>Status</Form.Label>
-              <Form.Select
+              <Form.Control
                 aria-label="Default select example"
-                className=" form-control "
-                name="status"
-                value={taskItem.status}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
-              >
-                <option>Open this select menu</option>
-                <option value="planned">Planned</option>
-                <option value="active">Active</option>
-                <option value="complete">Completed</option>
-              </Form.Select>
+                className=" form-control mt-2 "
+                value="Planned"
+                disabled
+              />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
             <Form.Group as={Col} md="4" controlId="validationCustom03">
               <Form.Label>Priority</Form.Label>
               <Form.Select
                 aria-label="Default select example"
-                className=" form-control "
+                className=" form-control mt-2  "
                 name="priority"
                 value={taskItem.priority}
                 onChange={(e) => {
@@ -168,7 +171,6 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
                   onValueChange(e);
                 }}
               >
-                <option>Open this select menu</option>
                 <option value="high">High</option>
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
@@ -180,17 +182,18 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
               <Form.Label>Tags</Form.Label>
 
               <Select
-                defaultValue={[options[2], options[3]]}
+                onChange={(value) => onTagChange("tags", value)}
                 isMulti
-                name="colors"
+                name="tags"
                 options={options}
-                className="basic-multi-select"
+                className="basic-multi-select mt-2 "
                 classNamePrefix="select"
               />
             </Form.Group>
             <Form.Group as={Col} md="4" controlId="validationCustom05">
               <Form.Label>Start date</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 type="date"
                 placeholder="init date"
                 required
@@ -208,6 +211,7 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
             <Form.Group as={Col} md="4" controlId="validationCustom06">
               <Form.Label>End date</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 type="date"
                 placeholder="end date"
                 required
@@ -227,6 +231,7 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
             <Form.Group as={Col} md="6" controlId="validationCustom04">
               <Form.Label>Description</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 placeholder="Description"
                 as="textarea"
                 rows={3}
@@ -245,7 +250,7 @@ const TaskForm = ({ refresh, show, handleClose, id_act }) => {
                 isMulti
                 name="collaborators"
                 options={users}
-                className="basic-multi-select"
+                className="basic-multi-select mt-2 "
                 classNamePrefix="select"
               />
             </Form.Group>

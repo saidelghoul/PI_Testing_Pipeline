@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Col, Row } from "react-bootstrap";
+import { Button, Card, Col, Row, Spinner } from "react-bootstrap";
 import {
   getChecklists,
   updateChecklist,
@@ -7,9 +7,10 @@ import {
 import ChecklistDelete from "../Modals/ChecklistDelete";
 import PropTypes from "prop-types";
 
-const Checklist = ({ checkList, index, rmChecklist }) => {
+const Checklist = ({ refresh, checkList, index, rmChecklist }) => {
   const [toggle, setToggle] = useState(checkList.done);
   const [holder, setHolder] = useState({});
+  const [loading, setLoading] = useState(true);
 
   const updateDone = async (e) => {
     checkList.done = e.target.checked;
@@ -22,7 +23,8 @@ const Checklist = ({ checkList, index, rmChecklist }) => {
   useEffect(() => {
     const fetchChecklist = async (id) => {
       const checklist = await getChecklists(id);
-      setHolder(checklist.holder);
+      setHolder(checklist.data.message.holder);
+      setLoading(false);
     };
     fetchChecklist(checkList._id);
   }, []);
@@ -36,12 +38,20 @@ const Checklist = ({ checkList, index, rmChecklist }) => {
 
   /* pop up end*/
 
+  if (loading) {
+    return (
+      <Spinner animation="border" role="output" variant="danger">
+        <span className="visually-hidden container p-0">Loading...</span>
+      </Spinner>
+    );
+  }
+
   return (
     <>
       <Card
         bg={toggle ? "success" : "secondary"}
         style={{ width: "18rem" }}
-        className=" shadow shadow-sm"
+        className=" shadow shadow-sm m-3 "
       >
         <Card.Header>
           <Row bg={toggle ? "success" : "secondary"}>
@@ -63,8 +73,11 @@ const Checklist = ({ checkList, index, rmChecklist }) => {
         <Card.Body>
           <Card.Title className=" text-white ">{checkList.title}</Card.Title>
           <Card.Text className=" text-white ">
-            Assigned to: {holder.name} ( {holder.role} ) Description:{" "}
-            {checkList.description}
+            -Assigned to:{holder?.name} ( {holder?.role} )
+            <br />
+            {checkList?.description !== "" && (
+              <>-Description: {checkList?.description}</>
+            )}
           </Card.Text>
           <Button
             style={{ backgroundColor: "#e44d3a" }}
@@ -76,6 +89,7 @@ const Checklist = ({ checkList, index, rmChecklist }) => {
       </Card>
 
       <ChecklistDelete
+        refresh={refresh}
         rmChecklist={rmChecklist}
         show={showDelete}
         handleClose={handleCloseDelete}
