@@ -101,9 +101,10 @@ const Tasks = ({ id_act, category }) => {
   const removeTask = async (id) => {
     try {
       const result = await deleteTask(id);
-      if (result.status == 204) {
+      if (result.status === 204) {
         alert("deleted successfully");
-        setTasks(tasks.filter((task) => task._id !== id));
+
+        fetchTasks(id_act);
       }
     } catch (err) {
       alert(err.message);

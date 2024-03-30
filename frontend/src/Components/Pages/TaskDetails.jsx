@@ -61,9 +61,9 @@ const TaskDetails = () => {
   const removeChecklist = async (id) => {
     try {
       const result = await deleteChecklist(id);
-      if (result.status == 204) {
+      if (result.status === 204) {
         alert("deleted successfully");
-        setChecklists(checklists.filter((checklist) => checklist._id !== id));
+        fetchChecklist(id_task);
       }
     } catch (error) {
       alert(error.message);

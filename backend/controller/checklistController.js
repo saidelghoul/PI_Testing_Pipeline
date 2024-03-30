@@ -46,6 +46,7 @@ async function createCheckList(req, res, next) {
       checklist.done = false;
 
       task.checkList.push(checklist);
+      task.status = "active";
 
       const updatedTask = await Task.findByIdAndUpdate(
         req.params.id_task,
@@ -82,9 +83,9 @@ async function removeChecklist(req, res) {
         message: "error finding & deleting checklist",
       });
     else {
-      const updatedTask = Task.updateOne(
+      const updatedTask = await Task.updateOne(
         { _id: checklist.id_task },
-        { $pull: { checklist: req.params.id_checklist } }
+        { $pull: { checkList: req.params.id_checklist } }
       );
       if (!updatedTask)
         res.status(404).json({
@@ -124,18 +125,17 @@ async function getAssignedUsersForChecklist(req, res) {
       "collaborators"
     );
 
-    let users = [];
-    task.collaborators.map((collaborator) =>
-      users.push({
-        id: collaborator._id,
-        name: collaborator.name,
-        role: collaborator.role,
-      })
-    );
-
     if (!task)
       res.status(500).json({ title: "error", message: "no such task" });
     else {
+      let users = [];
+      task.collaborators.map((collaborator) =>
+        users.push({
+          id: collaborator._id,
+          name: collaborator.name,
+          role: collaborator.role,
+        })
+      );
       res.status(200).json({ title: "success", message: users });
     }
   } catch (err) {

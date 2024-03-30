@@ -50,9 +50,9 @@ export default function Activites() {
 
   const removeActivity = async (id) => {
     const result = await deleteActivity(id);
-    if (result.status == 204) {
+    if (result.status === 204) {
       alert("deleted successfully");
-      setActivities(activities.filter((activity) => activity._id !== id));
+      fetchData();
     }
   };
   /** */

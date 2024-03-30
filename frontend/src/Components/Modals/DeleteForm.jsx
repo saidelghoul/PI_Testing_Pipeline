@@ -1,5 +1,3 @@
-import React from "react";
-
 import PropTypes from "prop-types";
 import { Button, Modal, Row, Col } from "react-bootstrap";
 
@@ -9,7 +7,7 @@ const DeleteForm = ({ rmActivity, show, handleClose, activity }) => {
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1>Delete activity</h1>
+            <h1 className=" text-white ">Delete activity</h1>
           </Modal.Title>
           <Button
             as={Col}
@@ -28,15 +26,9 @@ const DeleteForm = ({ rmActivity, show, handleClose, activity }) => {
       </Modal.Header>
 
       <Modal.Body>
-        {activity?.tasks?.length > 0 ? (
-          <small className=" text-danger ">
-            Cannot delete This activity, it has tasks assigned in it{" "}
-          </small>
-        ) : (
-          <b className=" text-danger-emphasis ">
-            Are you sure you want to delete this activity ({activity.name})
-          </b>
-        )}
+        <div className=" text-danger text-center ">
+          Are you sure you want to delete this activity ({activity.name})
+        </div>
       </Modal.Body>
       <Modal.Footer>
         <Button

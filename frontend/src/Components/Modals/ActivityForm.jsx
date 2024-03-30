@@ -1,20 +1,46 @@
 import { useState } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { addActivity } from "../../services/activity-service";
+import PropTypes from "prop-types";
 
 const ActivityForm = ({ refresh, show, handleClose }) => {
-  const [validated, setValidated] = useState(false);
-
   const [activityItem, setActivityItem] = useState({
     name: "",
-    category: "",
+    category: "project",
     startDate: "",
     endDate: "",
     description: "",
   });
 
+  //form errors validation
+  const [errors, setErrors] = useState({});
+
+  const validateValues = (inputValues) => {
+    let errors = {};
+    if (inputValues.name.length < 5 || inputValues.name.length > 50) {
+      errors.name = "Name length must be between 5 and 50";
+    }
+    if (!inputValues.startDate) {
+      errors.startDate = "startDate is required";
+    }
+    if (
+      !inputValues.endDate ||
+      new Date(inputValues.endDate) < new Date(inputValues.startDate)
+    ) {
+      errors.endDate = "endDate is required & must be greater than startDate";
+    }
+    if (inputValues.description.length > 2500) {
+      errors.description =
+        "Description exceeds maximum length of 2500 characters";
+    }
+    return errors;
+  };
+
+  // end of form errors validation
+
   const onValueChange = (e) => {
     setActivityItem({ ...activityItem, [e.target.name]: e.target.value });
+    setErrors(validateValues(activityItem));
   };
 
   const handleSubmit = (event) => {
@@ -24,19 +50,20 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
       event.stopPropagation();
     }
 
-    handleAddActivity();
+    if (Object.keys(errors).length === 0) handleAddActivity();
   };
 
   const handleAddActivity = async () => {
-    const result = await addActivity(activityItem);
-    if (result.status == 201) {
-      alert("Activity added successfully");
-      refresh();
+    try {
+      const result = await addActivity(activityItem);
+      if (result.status === 201) {
+        alert("Activity added successfully");
+        refresh();
+        handleClose();
+      }
+    } catch (error) {
+      alert(error.message);
     }
-  };
-
-  const validateForm = (e) => {
-    return e.target.value ? setValidated(true) : setValidated(false);
   };
 
   return (
@@ -72,7 +99,7 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
         <Form
           className=" container-fluid p-4  "
           noValidate
-          validated={validated}
+          validated={Object.keys(errors).length === 0}
         >
           <Row className="mb-3">
             <Form.Group as={Col} md="6" controlId="validationCustom01">
@@ -83,12 +110,11 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
                 placeholder="activity name"
                 name="name"
                 value={activityItem.name}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               />
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+              {errors.name && (
+                <small className=" text-danger ">{errors.name}</small>
+              )}
             </Form.Group>
             <Form.Group as={Col} md="6" controlId="validationCustom02">
               <Form.Label>Category</Form.Label>
@@ -98,17 +124,13 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
                 className=" form-control "
                 name="category"
                 value={activityItem.category}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               >
                 <option value="project">Project</option>
                 <option value="course">Course</option>
                 <option value="workshop">Workshop</option>
                 <option value="exam">Exam</option>
               </Form.Select>
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
           </Row>
           <Row className="mb-3">
@@ -120,11 +142,11 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
                 rows={3}
                 name="description"
                 value={activityItem.description}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               />
+              {errors.description && (
+                <small className=" text-danger ">{errors.description}</small>
+              )}
             </Form.Group>
             <Form.Group as={Col} md="3" controlId="validationCustom04">
               <Form.Label>Start date</Form.Label>
@@ -134,14 +156,11 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
                 required
                 name="startDate"
                 value={activityItem.startDate}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               />
-              <Form.Control.Feedback type="invalid">
-                Please provide a valid start date.
-              </Form.Control.Feedback>
+              {errors.startDate && (
+                <small className=" text-danger ">{errors.startDate}</small>
+              )}
             </Form.Group>
             <Form.Group as={Col} md="3" controlId="validationCustom05">
               <Form.Label>End date</Form.Label>
@@ -151,21 +170,18 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
                 required
                 name="endDate"
                 value={activityItem.endDate}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               />
-              <Form.Control.Feedback type="invalid">
-                Please provide a valid end date.
-              </Form.Control.Feedback>
+              {errors.endDate && (
+                <small className=" text-danger ">{errors.endDate}</small>
+              )}
             </Form.Group>
           </Row>
         </Form>
       </Modal.Body>
       <Modal.Footer>
         <Button
-          className={validated ? "disabled" : ""}
+          disabled={Object.keys(errors).length !== 0}
           style={{ backgroundColor: "#e44d3a" }}
           onClick={handleSubmit}
         >
@@ -174,6 +190,12 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
       </Modal.Footer>
     </Modal>
   );
+};
+
+ActivityForm.propTypes = {
+  refresh: PropTypes.func,
+  show: PropTypes.bool,
+  handleClose: PropTypes.func,
 };
 
 export default ActivityForm;

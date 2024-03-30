@@ -15,7 +15,10 @@ async function getTasks(req, res, next) {
 
 async function getTaskById(req, res) {
   try {
-    const task = await Task.findById(req.params.id_task);
+    const task = await Task.findById(req.params.id_task).populate(
+      "collaborators"
+    );
+
     if (!task)
       res.status(400).json({ title: "error", message: "Task not found" });
     else res.status(200).json({ title: "success", message: task });

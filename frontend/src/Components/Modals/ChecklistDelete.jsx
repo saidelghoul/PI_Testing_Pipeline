@@ -13,7 +13,7 @@ const ChecklistDelete = ({
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1>Delete checklist</h1>
+            <h1 className=" text-white ">Delete checklist</h1>
           </Modal.Title>
           <Button
             as={Col}
@@ -32,9 +32,9 @@ const ChecklistDelete = ({
       </Modal.Header>
 
       <Modal.Body>
-        <b className=" text-danger ">
+        <div className=" text-danger text-center  ">
           Are you sure you want to delete this checklist ({checklist.title})
-        </b>
+        </div>
       </Modal.Body>
       <Modal.Footer>
         <Button
@@ -53,6 +53,7 @@ const ChecklistDelete = ({
 };
 
 ChecklistDelete.propTypes = {
+  refresh: PropTypes.func,
   rmChecklist: PropTypes.func,
   show: PropTypes.bool,
   handleClose: PropTypes.func,

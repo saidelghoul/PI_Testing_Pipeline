@@ -80,6 +80,7 @@ const Checklist = ({ refresh, checkList, index, rmChecklist }) => {
             )}
           </Card.Text>
           <Button
+            className="btn btn-outline-light"
             style={{ backgroundColor: "#e44d3a" }}
             onClick={handleShowDelete}
           >

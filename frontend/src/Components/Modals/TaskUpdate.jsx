@@ -5,8 +5,6 @@ import Select from "react-select";
 import PropTypes from "prop-types";
 
 const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
-  const [validated, setValidated] = useState(false);
-
   const [taskItem, setTaskItem] = useState({
     title: task.title,
     initDate: task.initDate.substr(0, 10),
@@ -19,13 +17,43 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
     description: task.description,
   });
 
+  //form errors validation
+  const [errors, setErrors] = useState({});
+
+  const validateValues = (inputValues) => {
+    let errors = {};
+    if (inputValues.title.length < 5 || inputValues.title.length > 50) {
+      errors.title = "Title length must be between 5 and 50";
+    }
+    if (!inputValues.initDate) {
+      errors.initDate = "initDate is required";
+    }
+    if (
+      !inputValues.dueDate ||
+      new Date(inputValues.dueDate) < new Date(inputValues.initDate)
+    ) {
+      errors.dueDate = "dueDate is required & must be greater than initDate";
+    }
+    if (inputValues.tags.length < 1 || inputValues.tags.length > 5) {
+      errors.tags = "Please specify number of tags between 1 and 5";
+    }
+    if (inputValues.collaborators.length < 1) {
+      errors.collaborators = "Please specify at least one collaborator";
+    }
+    if (inputValues.description.length > 2500) {
+      errors.description =
+        "Description exceeds maximum length of 2500 characters";
+    }
+    return errors;
+  };
+
+  // end of form errors validation
+
   const [users, setUsers] = useState([]);
-
-  const [collaborators, setCollaborators] = useState([]);
-
   const [assignedTags, setAssignedTags] = useState([]);
 
   useEffect(() => {
+    // fetch users(potential collabs) into proper list for the react select
     const fetchUsers = async () => {
       const dbusers = await getUsersForTask();
       let options = [];
@@ -40,6 +68,7 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
       setUsers(options);
     };
 
+    // fetch tags from task into proper list for the react select
     const fetchAssignedTags = () => {
       let options = [];
 
@@ -58,6 +87,7 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
 
   const onValueChange = (e) => {
     setTaskItem({ ...taskItem, [e.target.name]: e.target.value });
+    setErrors(validateValues(taskItem));
   };
 
   const handleSubmit = (event) => {
@@ -67,14 +97,14 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
       event.stopPropagation();
     }
 
-    handleUpdateTask();
+    if (Object.keys(errors).length === 0) handleUpdateTask();
   };
 
   const handleUpdateTask = async () => {
     try {
       const result = await updateTask(task._id, taskItem);
       if (result.status == 200) {
-        alert("task updated successfully");
+        alert("Task updated successfully");
         refresh();
         handleClose();
       }
@@ -83,9 +113,7 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
     }
   };
 
-  const validateForm = (e) => {
-    return e.target.value ? setValidated(true) : setValidated(false);
-  };
+  //user field selection change validation
 
   const onUserChange = (name, value) => {
     let collabs = [];
@@ -100,9 +128,9 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
       console.log(element.label + ": " + element.value);
     });
   };
+  //end of user field selection change validation
 
-  // end of tagfiled for testing purposes
-
+  //tag field validation
   const onTagChange = (name, value) => {
     let tags = [];
     value.forEach((element) => {
@@ -116,6 +144,7 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
       console.log(element.label + ": " + element.value);
     });
   };
+  // end of tagfiled for testing purposes
 
   return (
     <Modal
@@ -128,7 +157,7 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1>Update task</h1>
+            <h1 className=" text-white ">Update task</h1>
           </Modal.Title>
           <Button
             as={Col}
@@ -150,7 +179,7 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
         <Form
           className=" container-fluid p-4  "
           noValidate
-          validated={validated}
+          validated={Object.keys(errors).length === 0}
         >
           <Row className="mb-3">
             <Form.Group as={Col} md="4" controlId="validationCustom01">
@@ -161,12 +190,11 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
                 placeholder="task title"
                 name="title"
                 value={taskItem.title}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               />
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+              {errors.title && (
+                <small className=" text-danger ">{errors.title}</small>
+              )}
             </Form.Group>
             <Form.Group as={Col} md="4" controlId="validationCustom02">
               <Form.Label>Status</Form.Label>
@@ -175,16 +203,12 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
                 className=" form-control "
                 name="status"
                 value={taskItem.status}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               >
                 <option value="planned">Planned</option>
                 <option value="active">Active</option>
                 <option value="complete">Completed</option>
               </Form.Select>
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
             <Form.Group as={Col} md="4" controlId="validationCustom03">
               <Form.Label>Priority</Form.Label>
@@ -193,16 +217,15 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
                 className=" form-control "
                 name="priority"
                 value={taskItem.priority}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               >
                 <option value="high">High</option>
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
               </Form.Select>
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+              {errors.priority && (
+                <small className=" text-danger ">{errors.priority}</small>
+              )}
             </Form.Group>
           </Row>
           <Row className="mb-3">
@@ -217,6 +240,9 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
                 className="basic-multi-select"
                 classNamePrefix="select"
               />
+              {errors.tags && (
+                <small className=" text-danger ">{errors.tags}</small>
+              )}
             </Form.Group>
             <Form.Group as={Col} md="4" controlId="validationCustom05">
               <Form.Label>Start date</Form.Label>
@@ -226,11 +252,11 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
                 required
                 name="initDate"
                 value={taskItem.initDate}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               />
+              {errors.initDate && (
+                <small className=" text-danger ">{errors.initDate}</small>
+              )}
             </Form.Group>
             <Form.Group as={Col} md="4" controlId="validationCustom06">
               <Form.Label>End date</Form.Label>
@@ -240,14 +266,11 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
                 required
                 name="dueDate"
                 value={taskItem.dueDate}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               />
-              <Form.Control.Feedback type="invalid">
-                Please provide a valid end date.
-              </Form.Control.Feedback>
+              {errors.dueDate && (
+                <small className=" text-danger ">{errors.dueDate}</small>
+              )}
             </Form.Group>
           </Row>
           <Row>
@@ -259,11 +282,11 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
                 rows={3}
                 name="description"
                 value={taskItem.description}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               />
+              {errors.description && (
+                <small className=" text-danger ">{errors.description}</small>
+              )}
             </Form.Group>
             <Form.Group as={Col} md="6" controlId="validationCustom11">
               <Form.Label>Collaborators</Form.Label>
@@ -275,13 +298,16 @@ const TaskUpdate = ({ refresh, show, handleClose, task, options }) => {
                 className="basic-multi-select"
                 classNamePrefix="select"
               />
+              {errors.collaborators && (
+                <small className=" text-danger ">{errors.collaborators}</small>
+              )}
             </Form.Group>
           </Row>
         </Form>
       </Modal.Body>
       <Modal.Footer>
         <Button
-          className={validated ? "disabled" : ""}
+          disabled={Object.keys(errors).length !== 0}
           style={{ backgroundColor: "#e44d3a" }}
           onClick={handleSubmit}
         >
@@ -297,6 +323,7 @@ TaskUpdate.propTypes = {
   show: PropTypes.bool,
   handleClose: PropTypes.func,
   task: PropTypes.object,
+  options: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default TaskUpdate;
