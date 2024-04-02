@@ -15,7 +15,44 @@ import "../../../public/assets/js/jquery.mCustomScrollbar.js";
 import "../../../public/assets/lib/slick/slick.min.js";
 import "../../../public/assets/js/scrollbar.js";
 import "../../../public/assets/js/script.js";
+import { useState,useContext } from 'react';
+import axios from 'axios';
+import { UserContext } from "../../../context/userContext.jsx";
+
+
 export default function AccountSetting() {
+  const { user } = useContext(UserContext);
+
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmedNewPassword, setConfirmedNewPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'oldPassword') setOldPassword(value);
+    else if (name === 'newPassword') setNewPassword(value);
+    else if (name === 'confirmedNewPassword') setConfirmedNewPassword(value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put(`/user/changePassword/${user.id}`, {
+        oldPassword,
+        newPassword,
+        confirmedNewPassword,
+      });
+      setSuccessMessage(response.data.message);
+    } catch (error) {
+      if (error.response) {
+        setErrorMessage(error.response.data.error);
+      } else {
+        setErrorMessage('Une erreur s\'est produite lors de la communication avec le serveur');
+      }
+    }
+  };
   return (
     <>
       <section className="profile-account-setting">
@@ -25,7 +62,7 @@ export default function AccountSetting() {
               <div className="col-lg-3">
                 <div className="acc-leftbar">
                   <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                    <a
+                    {/* <a
                       className="nav-item nav-link active"
                       id="nav-acc-tab"
                       data-toggle="tab"
@@ -35,8 +72,8 @@ export default function AccountSetting() {
                       aria-selected="true"
                     >
                       <i className="la la-cogs"></i>Account Setting
-                    </a>
-                    <a
+                    </a> */}
+                    {/* <a
                       className="nav-item nav-link"
                       id="nav-status-tab"
                       data-toggle="tab"
@@ -46,7 +83,7 @@ export default function AccountSetting() {
                       aria-selected="false"
                     >
                       <i className="fa fa-line-chart"></i>Status
-                    </a>
+                    </a> */}
                     <a
                       className="nav-item nav-link"
                       id="nav-password-tab"
@@ -56,9 +93,9 @@ export default function AccountSetting() {
                       aria-controls="nav-password"
                       aria-selected="false"
                     >
-                      <i className="fa fa-lock"></i>Change Password
+                      <i className="fa fa-lock"></i>Changer mot de passe
                     </a>
-                    <a
+                    {/* <a
                       className="nav-item nav-link"
                       id="nav-notification-tab"
                       data-toggle="tab"
@@ -112,7 +149,7 @@ export default function AccountSetting() {
                       aria-selected="false"
                     >
                       <i className="fa fa-cc-diners-club"></i>Blocking
-                    </a>
+                    </a> */}
                     <a
                       className="nav-item nav-link"
                       id="nav-deactivate-tab"
@@ -122,103 +159,76 @@ export default function AccountSetting() {
                       aria-controls="nav-deactivate"
                       aria-selected="false"
                     >
-                      <i className="fa fa-random"></i>Deactivate Account
+                      <i className="fa fa-random"></i>Désactiver compte
                     </a>
                   </div>
                 </div>
               </div>
               <div className="col-lg-9">
-                <div className="tab-content" id="nav-tabContent">
-                  <div
-                    className="tab-pane fade show active"
-                    id="nav-acc"
-                    role="tabpanel"
-                    aria-labelledby="nav-acc-tab"
-                  >
-                    <div className="acc-setting">
-                      <h3>Account Setting</h3>
-                      <form>
-                        <div className="notbar">
-                          <h4>Notification Sound</h4>
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Vivamus pretium nulla quis erat dapibus,
-                            varius hendrerit neque suscipit. Integer in ex
-                            euismod, posuere lectus id
-                          </p>
-                          <div className="toggle-btn">
-                            <div className="custom-control custom-switch">
-                              <input
-                                type="checkbox"
-                                className="custom-control-input"
-                                id="customSwitch1"
-                              />
-                              <label
-                                className="custom-control-label"
-                                htmlFor="customSwitch1"
-                              ></label>
-                            </div>
-                          </div>
+              <div className="acc-setting">
+                    <h3>Account Setting</h3>
+                    <form onSubmit={handleSubmit}>
+                      <div className="cp-field">
+                        <h5>Old Password</h5>
+                        <div className="cpp-fiel">
+                          <input
+                             type="password"
+                             id="oldPassword"
+                             name="oldPassword"
+                             value={oldPassword}
+                             onChange={handleChange}
+                             required
+                          />
+                          <i className="fa fa-lock"></i>
                         </div>
-                        <div className="notbar">
-                          <h4>Notification Email</h4>
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Vivamus pretium nulla quis erat dapibus,
-                            varius hendrerit neque suscipit. Integer in ex
-                            euismod, posuere lectus id
-                          </p>
-                          <div className="toggle-btn">
-                            <div className="custom-control custom-switch">
-                              <input
-                                type="checkbox"
-                                className="custom-control-input"
-                                id="customSwitch2"
-                              />
-                              <label
-                                className="custom-control-label"
-                                htmlFor="customSwitch2"
-                              ></label>
-                            </div>
-                          </div>
+                      </div>
+                      <div className="cp-field">
+                        <h5>New Password</h5>
+                        <div className="cpp-fiel">
+                          <input
+                           type="password"
+                           id="newPassword"
+                           name="newPassword"
+                           value={newPassword}
+                           onChange={handleChange}
+                          required                   />
+                          <i className="fa fa-lock"></i>
                         </div>
-                        <div className="notbar">
-                          <h4>Chat Message Sound</h4>
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Vivamus pretium nulla quis erat dapibus,
-                            varius hendrerit neque suscipit. Integer in ex
-                            euismod, posuere lectus id
-                          </p>
-                          <div className="toggle-btn">
-                            <div className="custom-control custom-switch">
-                              <input
-                                type="checkbox"
-                                className="custom-control-input"
-                                id="customSwitch3"
-                              />
-                              <label
-                                className="custom-control-label"
-                                htmlFor="customSwitch3"
-                              ></label>
-                            </div>
-                          </div>
+                      </div>
+                      <div className="cp-field">
+                        <h5>Repeat Password</h5>
+                        <div className="cpp-fiel">
+                          <input
+                            type="password"
+                            id="confirmedNewPassword"
+                            name="confirmedNewPassword"
+                            value={confirmedNewPassword}
+                            onChange={handleChange}
+                            required         />
+                          <i className="fa fa-lock"></i>
                         </div>
-                        <div className="save-stngs">
-                          <ul>
-                            <li>
-                              <button type="submit">Save Setting</button>
-                            </li>
-                            <li>
-                              <button type="submit">Restore Setting</button>
-                            </li>
-                          </ul>
-                        </div>
-                      </form>
-                    </div>
+                      </div>
+                      <div className="cp-field">
+                        <h5>
+                          <a href="#" title="">
+                            Forgot Password?
+                          </a>
+                        </h5>
+                      </div>
+                      <div className="save-stngs pd2">
+                        <ul>
+                          <li>
+                            <button type="submit">Save Setting</button>
+                          </li>
+                          <li>
+                          </li>
+                        </ul>
+                      </div>
+                    </form>
+                    {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
                   </div>
-                </div>
-                <div
+                {/* <div
                   className="tab-pane fade"
                   id="nav-status"
                   role="tabpanel"
@@ -299,61 +309,7 @@ export default function AccountSetting() {
                   role="tabpanel"
                   aria-labelledby="nav-password-tab"
                 >
-                  <div className="acc-setting">
-                    <h3>Account Setting</h3>
-                    <form>
-                      <div className="cp-field">
-                        <h5>Old Password</h5>
-                        <div className="cpp-fiel">
-                          <input
-                            type="text"
-                            name="old-password"
-                            placeholder="Old Password"
-                          />
-                          <i className="fa fa-lock"></i>
-                        </div>
-                      </div>
-                      <div className="cp-field">
-                        <h5>New Password</h5>
-                        <div className="cpp-fiel">
-                          <input
-                            type="text"
-                            name="new-password"
-                            placeholder="New Password"
-                          />
-                          <i className="fa fa-lock"></i>
-                        </div>
-                      </div>
-                      <div className="cp-field">
-                        <h5>Repeat Password</h5>
-                        <div className="cpp-fiel">
-                          <input
-                            type="text"
-                            name="repeat-password"
-                            placeholder="Repeat Password"
-                          />
-                          <i className="fa fa-lock"></i>
-                        </div>
-                      </div>
-                      <div className="cp-field">
-                        <h5>
-                          <a href="#" title="">
-                            Forgot Password?
-                          </a>
-                        </h5>
-                      </div>
-                      <div className="save-stngs pd2">
-                        <ul>
-                          <li>
-                            <button type="submit">Save Setting</button>
-                          </li>
-                          <li>
-                            <button type="submit">Restore Setting</button>
-                          </li>
-                        </ul>
-                      </div>
-                    </form>
-                  </div>
+                 
                 </div>
                 <div
                   className="tab-pane fade"
@@ -1371,7 +1327,7 @@ export default function AccountSetting() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

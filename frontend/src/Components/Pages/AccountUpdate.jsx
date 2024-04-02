@@ -56,14 +56,6 @@ export default function AccountUpdate() {
     }
   };
 
-  // const fetchChefUnite = async () => {
-  //   try {
-  //     const response = await axios.get("/user/chefunite");
-  //     setChefUnits(response.data);
-  //   } catch (error) {
-  //     console.error("Error fetching users:", error);
-  //   }
-  // };
   const fetchChefUnite = async () => {
     try {
       // Ajoutez le departementId de l'utilisateur connecté à la requête
@@ -97,6 +89,15 @@ export default function AccountUpdate() {
       setEnsDep(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
+    }
+  };
+  const toggleUserActivation = async (userId, isActive) => {
+    try {
+      await axios.put(`/user/${isActive ? 'activate' : 'deactivate'}/${userId}`);
+      // Actualiser les données après l'activation ou la désactivation de l'utilisateur
+      fetchChefsDep();
+    } catch (error) {
+      console.error("Error toggling user activation:", error);
     }
   };
   
@@ -203,7 +204,13 @@ export default function AccountUpdate() {
                                   <td>{user.name}</td>
                                   <td>{user.email}</td> 
                                   <td>{user.departement.name}</td> 
-                                  <td></td>  
+                                  <td>
+                                  {user.isActive ? (
+                                  <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
+                                ) : (
+                                  <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
+                                )}
+</td>  
                                 </tr>
                               ))}
                             </tbody>
@@ -232,7 +239,14 @@ export default function AccountUpdate() {
                   <td>{user.name}</td>
                   <td>{user.email}</td> 
                   <td>{user.unite.name}</td>  
-                  <td></td>
+                  <td>
+                  {user.isActive ? (
+                                  <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
+                                ) : (
+                                  <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
+                                )}
+
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -258,7 +272,14 @@ export default function AccountUpdate() {
                 <tr key={user._id}>
                   <td>{user.name}</td>
                   <td>{user.email}</td> 
-                  <td></td>
+                  <td>
+                  {user.isActive ? (
+                                  <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
+                                ) : (
+                                  <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
+                                )}
+
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -286,66 +307,19 @@ export default function AccountUpdate() {
                                 <tr key={user._id}>
                                   <td>{user.name}</td>
                                   <td>{user.email}</td> 
-                                  <td></td>
+                                  <td>
+                                  {user.isActive ? (
+                                  <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
+                                ) : (
+                                  <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
+                                )}
+
+                                  </td>
                                 </tr>
                               ))}
                             </tbody>
                           </table>
                        </div> )}
-                    {/* <div className="acc-setting">
-                      <h3>liste des départements </h3>
-                      <form >
-      <div>
-        <label htmlFor="addresse">Adresse :</label>
-        <input
-          type="text"
-          id="addresse"
-          name="addresse"
-         
-        />
-      </div>
-      <div>
-        <label htmlFor="gouvernorat">Gouvernorat :</label>
-        <input
-          type="text"
-          id="gouvernorat"
-          name="gouvernorat"
-        
-        />
-      </div>
-      <div>
-        <label htmlFor="telephone">Téléphone :</label>
-        <input
-          type="text"
-          id="telephone"
-          name="telephone"
-       
-        />
-      </div>
-      <div>
-        <label htmlFor="dateNaissance">Date de Naissance :</label>
-        <input
-          type="date"
-          id="dateNaissance"
-          name="dateNaissance"
-         
-        />
-      </div>
-      <div>
-        <label htmlFor="gender">Genre :</label>
-        <select
-          id="gender"
-          name="gender"
-        
-        >
-          <option value="male">Homme</option>
-          <option value="female">Femme</option>
-          <option value="other">Autre</option>
-        </select>
-      </div>
-      <button type="submit">Mettre à jour</button>
-    </form>
-                    </div> */}
                   </div>
                 </div>
               </div>
