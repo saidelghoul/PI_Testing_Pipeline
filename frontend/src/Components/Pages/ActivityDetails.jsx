@@ -47,13 +47,12 @@ const ActivityDetails = () => {
           </h1>
         </div>
         <div className=" col-auto ">
-          <small className=" text-body-emphasis ">
-            Description: {activity.description}
-          </small>
+          <small className=" text-bg-primary "> Description: </small>
+          <p className=" text-body-emphasis ">{activity.description}</p>
         </div>
       </div>
       <hr />
-      <Tasks id_act={id_activity} category={activity.category} />
+      <Tasks activity={activity} />
     </div>
   );
 };

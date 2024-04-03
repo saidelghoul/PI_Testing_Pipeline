@@ -92,7 +92,10 @@ async function removeChecklist(req, res) {
           title: "error",
           message: "error removing checklist from its parent task",
         });
-      else res.status(200).json({ title: "deleted", message: updatedTask });
+      else
+        res
+          .status(200)
+          .json({ title: "deleted", message: "deleted successfully" });
     }
   } catch (err) {
     res.status(500).json({ title: "error", message: err.message });
@@ -110,10 +113,28 @@ async function updateChecklist(req, res) {
       res
         .status(500)
         .json({ title: "error", message: "error updating checklist" });
-    else
-      res
-        .status(200)
-        .json({ title: "updated", message: "Checklist updated successfully" });
+    else {
+      const task = await Task.findById(checklist.id_task).populate("checkList");
+      // for task status update, this checks if all the checklists inside a task are done
+      let total = 0;
+      task.checkList.forEach((checklist) => {
+        if (checklist.done) total++;
+      });
+      if (task.checkList.length === total) task.status = "complete";
+      else if (total === 0) task.status = "planned";
+      else task.status = "active";
+      const saved = await task.save();
+      //
+      if (!saved)
+        res
+          .status(500)
+          .json({ title: "error", message: "error updating task status" });
+      else
+        res.status(200).json({
+          title: "updated",
+          message: "Checklist updated successfully",
+        });
+    }
   } catch (err) {
     res.status(500).json({ title: "error", message: err.message });
   }

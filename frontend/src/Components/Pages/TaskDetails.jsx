@@ -70,6 +70,36 @@ const TaskDetails = () => {
     }
   };
 
+  //define priority bg color
+  let bgpriority;
+
+  switch (task.priority) {
+    case "high":
+      bgpriority = "danger";
+      break;
+    case "medium":
+      bgpriority = "primary";
+      break;
+    default:
+      bgpriority = "success";
+      break;
+  }
+
+  //define status bg color
+  let bgstatus;
+
+  switch (task.status) {
+    case "active":
+      bgstatus = "danger";
+      break;
+    case "planned":
+      bgstatus = "primary";
+      break;
+    default:
+      bgstatus = "success";
+      break;
+  }
+
   if (loading) {
     return (
       <Spinner animation="border" role="output" variant="danger">
@@ -95,10 +125,12 @@ const TaskDetails = () => {
       <hr />
       <div className=" row ">
         <div className=" col">
-          <h1 className=" text-bg-success "> Status: {task.status}</h1>
+          <Badge pill bg={bgpriority}>
+            <p className=" text-white "> {task.priority} priority</p>
+          </Badge>
           <br />
-          <Badge pill bg="danger">
-            <p className=" text-white "> High priority</p>
+          <Badge pill bg={bgstatus} className=" mt-2">
+            <p className=" text-white"> {task.status}</p>
           </Badge>
         </div>
         <div className=" col ">
@@ -112,7 +144,7 @@ const TaskDetails = () => {
           </h1>
         </div>
         <div className=" col ">
-          <p className=" text-bg-primary "> Collaborators: </p>
+          <small className=" text-bg-primary "> Collaborators: </small>
           {users.map((user, index) => (
             <p className=" text-body-emphasis " key={index}>
               {" "}
@@ -121,9 +153,8 @@ const TaskDetails = () => {
           ))}
         </div>
         <div className=" col-auto ">
-          <small className=" text-body-emphasis ">
-            Description: {task.description}
-          </small>
+          <small className=" text-bg-primary "> Description: </small>
+          <p className=" text-body-emphasis ">{task.description}</p>
         </div>
       </div>
       <hr />

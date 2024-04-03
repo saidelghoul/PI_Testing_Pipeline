@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Task from "./Task";
 import { getTasksByActivity } from "../../services/activity-service";
 import { Button, Spinner } from "react-bootstrap";
 import TaskForm from "../Modals/TaskForm";
 import { deleteTask } from "../../services/task-service";
+import PropTypes from "prop-types";
 
-const Tasks = ({ id_act, category }) => {
+const Tasks = ({ activity }) => {
   const [tasks, setTasks] = useState([]);
+  const [overdone, setOverdone] = useState([]);
   const [progress, setProgress] = useState([]);
   const [completed, setCompleted] = useState([]);
 
@@ -22,18 +24,36 @@ const Tasks = ({ id_act, category }) => {
   const fetchTasks = async (id) => {
     const data = await getTasksByActivity(id);
 
-    setTasks(data.data.message.filter((task) => task.initDate > new Date()));
+    setTasks(
+      data.data.message.filter(
+        (task) =>
+          new Date(task.initDate) > new Date() && task.status === "planned"
+      )
+    );
+
+    setOverdone(
+      data.data.message.filter(
+        (task) =>
+          (new Date(task.dueDate) < new Date() && task.status === "active") ||
+          (new Date(task.initDate) < new Date() &&
+            new Date(task.dueDate) > new Date() &&
+            task.status === "planned") ||
+          (new Date(task.dueDate) < new Date() && task.status === "planned")
+      )
+    );
 
     setProgress(
       data.data.message.filter(
         (task) =>
-          new Date(task.initDate) < new Date() &&
-          new Date(task.dueDate) > new Date()
+          (new Date(task.initDate) < new Date() &&
+            new Date(task.dueDate) > new Date() &&
+            task.status === "active") ||
+          (new Date(task.initDate) > new Date() && task.status === "active")
       )
     );
 
     setCompleted(
-      data.data.message.filter((task) => new Date(task.dueDate) < new Date())
+      data.data.message.filter((task) => task.status === "complete")
     );
 
     setLoading(false);
@@ -41,7 +61,7 @@ const Tasks = ({ id_act, category }) => {
 
   // start of options definition by activity category
   let options = [];
-  switch (category) {
+  switch (activity.category) {
     case "course":
       options = [
         { value: "Lectures", label: "Lectures" },
@@ -95,7 +115,7 @@ const Tasks = ({ id_act, category }) => {
   // end of options definition by activity category
 
   useEffect(() => {
-    fetchTasks(id_act);
+    fetchTasks(activity._id);
   }, []);
 
   const removeTask = async (id) => {
@@ -104,7 +124,7 @@ const Tasks = ({ id_act, category }) => {
       if (result.status === 204) {
         alert("deleted successfully");
 
-        fetchTasks(id_act);
+        fetchTasks(activity._id);
       }
     } catch (err) {
       alert(err.message);
@@ -114,7 +134,7 @@ const Tasks = ({ id_act, category }) => {
 
   const refreshTable = async () => {
     setShow(false);
-    fetchTasks(id_act);
+    fetchTasks(activity._id);
   };
 
   if (loading) {
@@ -130,7 +150,12 @@ const Tasks = ({ id_act, category }) => {
       <div className="container p-0">
         <div className=" row ">
           <h1 className="h3 mb-3 col-md-9 ">
-            Tasks Board ({tasks.length + progress.length + completed.length})
+            Tasks Board (
+            {tasks.length +
+              progress.length +
+              overdone.length +
+              completed.length}
+            )
           </h1>
           <h1 className="h3 mb-3 col-md-3 ">
             <Button
@@ -145,7 +170,7 @@ const Tasks = ({ id_act, category }) => {
               refresh={refreshTable}
               show={show}
               handleClose={handleClose}
-              id_act={id_act}
+              activity={activity}
               options={options}
             />
           </h1>
@@ -158,9 +183,10 @@ const Tasks = ({ id_act, category }) => {
                 <div className="card-actions float-right">
                   <div className="dropdown show"></div>
                 </div>
-                <h5 className="card-title">Upcoming</h5>
+                <h5 className="card-title">Upcoming ( {tasks?.length} )</h5>
                 <h6 className="card-subtitle text-muted">
-                  Nam pretium turpis et arcu. Duis arcu tortor.
+                  Tasks that have not reached their period and they are marked
+                  as planned
                 </h6>
               </div>
               <div className="card-body p-3">
@@ -172,6 +198,7 @@ const Tasks = ({ id_act, category }) => {
                       refresh={refreshTable}
                       removeTask={removeTask}
                       options={options}
+                      activity={activity}
                     />
                   );
                 })}
@@ -184,9 +211,12 @@ const Tasks = ({ id_act, category }) => {
                 <div className="card-actions float-right">
                   <div className="dropdown show"></div>
                 </div>
-                <h5 className="card-title">In Progress</h5>
+                <h5 className="card-title">
+                  In Progress ( {progress?.length} )
+                </h5>
                 <h6 className="card-subtitle text-muted">
-                  Nam pretium turpis et arcu. Duis arcu tortor.
+                  Tasks that are currently in their period or started before &
+                  marked as active
                 </h6>
               </div>
 
@@ -199,6 +229,7 @@ const Tasks = ({ id_act, category }) => {
                       refresh={refreshTable}
                       removeTask={removeTask}
                       options={options}
+                      activity={activity}
                     />
                   );
                 })}
@@ -211,12 +242,27 @@ const Tasks = ({ id_act, category }) => {
                 <div className="card-actions float-right">
                   <div className="dropdown show"></div>
                 </div>
-                <h5 className="card-title">On hold</h5>
+                <h5 className="card-title">On hold ( {overdone?.length} )</h5>
                 <h6 className="card-subtitle text-muted">
-                  Nam pretium turpis et arcu. Duis arcu tortor.
+                  Tasks that are past their finish date but still marked as
+                  active or they are planned but were not finished in date or
+                  still in period
                 </h6>
               </div>
-              <div className="card-body"></div>
+              <div className="card-body">
+                {overdone.map((task, index) => {
+                  return (
+                    <Task
+                      key={index}
+                      task={task}
+                      refresh={refreshTable}
+                      removeTask={removeTask}
+                      options={options}
+                      activity={activity}
+                    />
+                  );
+                })}
+              </div>
             </div>
           </div>
           <div className="col-12 col-lg-6 col-xl-3">
@@ -225,9 +271,11 @@ const Tasks = ({ id_act, category }) => {
                 <div className="card-actions float-right">
                   <div className="dropdown show"></div>
                 </div>
-                <h5 className="card-title">Completed</h5>
+                <h5 className="card-title">
+                  Completed ( {completed?.length} )
+                </h5>
                 <h6 className="card-subtitle text-muted">
-                  Nam pretium turpis et arcu. Duis arcu tortor.
+                  Tasks that are marked as completed
                 </h6>
               </div>
               <div className="card-body">
@@ -239,6 +287,7 @@ const Tasks = ({ id_act, category }) => {
                       refresh={refreshTable}
                       removeTask={removeTask}
                       options={options}
+                      activity={activity}
                     />
                   );
                 })}
@@ -249,6 +298,10 @@ const Tasks = ({ id_act, category }) => {
       </div>
     </main>
   );
+};
+
+Tasks.propTypes = {
+  activity: PropTypes.object,
 };
 
 export default Tasks;

@@ -28,6 +28,26 @@ const UpdateForm = ({ refresh, show, handleClose, activity }) => {
     ) {
       errors.endDate = "endDate is required & must be greater than startDate";
     }
+    if (
+      Math.round(
+        (new Date(inputValues.endDate).getTime() -
+          new Date(inputValues.startDate).getTime()) /
+          (1000 * 3600 * 24)
+      ) < 3
+    ) {
+      errors.startDate =
+        "Difference in start date & end date must be more than 3 days";
+    }
+    if (
+      Math.round(
+        (new Date(inputValues.endDate).getTime() -
+          new Date(inputValues.startDate).getTime()) /
+          (1000 * 3600 * 24)
+      ) > 270
+    ) {
+      errors.endDate =
+        "Difference in start date & end date must be less than 9 months";
+    }
     if (inputValues.description.length > 2500) {
       errors.description =
         "Description exceeds maximum length of 2500 characters";

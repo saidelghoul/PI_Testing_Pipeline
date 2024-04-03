@@ -102,15 +102,17 @@ export default function Activites() {
         <hr />
 
         <div className="row">
-          <div className="col-12 col-lg-6 col-xl-3">
+          <div className="col-12 col-lg-4 col-xl-4">
             <div className="card card-border-primary">
               <div className="card-header">
                 <div className="card-actions float-right">
                   <div className="dropdown show"></div>
                 </div>
-                <h5 className="card-title">Upcoming</h5>
+                <h5 className="card-title">
+                  Upcoming ( {activities?.length} )
+                </h5>
                 <h6 className="card-subtitle text-muted">
-                  Nam pretium turpis et arcu. Duis arcu tortor.
+                  Activities that are yet to be achieved due to their duration
                 </h6>
               </div>
               <div className="card-body p-3">
@@ -127,15 +129,18 @@ export default function Activites() {
               </div>
             </div>
           </div>
-          <div className="col-12 col-lg-6 col-xl-3">
+          <div className="col-12 col-lg-4 col-xl-4">
             <div className="card card-border-warning">
               <div className="card-header">
                 <div className="card-actions float-right">
                   <div className="dropdown show"></div>
                 </div>
-                <h5 className="card-title">In Progress</h5>
+                <h5 className="card-title">
+                  In Progress ( {progress?.length} )
+                </h5>
                 <h6 className="card-subtitle text-muted">
-                  Nam pretium turpis et arcu. Duis arcu tortor.
+                  Activities that are currently marked as in progress due to
+                  their duration
                 </h6>
               </div>
               <div className="card-body">
@@ -152,29 +157,18 @@ export default function Activites() {
               </div>
             </div>
           </div>
-          <div className="col-12 col-lg-6 col-xl-3">
-            <div className="card card-border-danger">
-              <div className="card-header">
-                <div className="card-actions float-right">
-                  <div className="dropdown show"></div>
-                </div>
-                <h5 className="card-title">On hold</h5>
-                <h6 className="card-subtitle text-muted">
-                  Nam pretium turpis et arcu. Duis arcu tortor.
-                </h6>
-              </div>
-              <div className="card-body"></div>
-            </div>
-          </div>
-          <div className="col-12 col-lg-6 col-xl-3">
+          <div className="col-12 col-lg-4 col-xl-4">
             <div className="card card-border-success">
               <div className="card-header">
                 <div className="card-actions float-right">
                   <div className="dropdown show"></div>
                 </div>
-                <h5 className="card-title">Completed</h5>
+                <h5 className="card-title">
+                  Completed ( {completed?.length} )
+                </h5>
                 <h6 className="card-subtitle text-muted">
-                  Nam pretium turpis et arcu. Duis arcu tortor.
+                  Activities that have been marked as completed due to their
+                  duration
                 </h6>
               </div>
               <div className="card-body">

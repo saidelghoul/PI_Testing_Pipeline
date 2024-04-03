@@ -28,6 +28,34 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
       new Date(inputValues.endDate) < new Date(inputValues.startDate)
     ) {
       errors.endDate = "endDate is required & must be greater than startDate";
+      errors.startDate = "";
+    }
+    if (
+      Math.round(
+        (new Date(inputValues.endDate).getTime() -
+          new Date(inputValues.startDate).getTime()) /
+          (1000 * 3600 * 24)
+      ) < 3
+    ) {
+      errors.startDate =
+        "Difference in start date & end date must be more than 3 days";
+      console.log(
+        Math.round(
+          (new Date(inputValues.endDate).getTime() -
+            new Date(inputValues.startDate).getTime()) /
+            (1000 * 3600 * 24)
+        )
+      );
+    }
+    if (
+      Math.round(
+        (new Date(inputValues.endDate).getTime() -
+          new Date(inputValues.startDate).getTime()) /
+          (1000 * 3600 * 24)
+      ) > 270
+    ) {
+      errors.endDate =
+        "Difference in start date & end date must be less than 9 months";
     }
     if (inputValues.description.length > 2500) {
       errors.description =

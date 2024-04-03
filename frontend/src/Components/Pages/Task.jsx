@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import TaskDelete from "../Modals/TaskDelete";
 import TaskUpdate from "../Modals/TaskUpdate";
 
-const Task = ({ task, removeTask, refresh, options }) => {
+const Task = ({ task, removeTask, refresh, options, activity }) => {
   /* pop up*/
   const [showDelete, setShowDelete] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
@@ -34,7 +34,7 @@ const Task = ({ task, removeTask, refresh, options }) => {
       break;
   }
 
-  //define
+  //define status bg color
   let bgstatus;
 
   switch (task.status) {
@@ -113,6 +113,7 @@ const Task = ({ task, removeTask, refresh, options }) => {
           handleClose={handleCloseUpdate}
           task={task}
           options={options}
+          activity={activity}
         />
       </div>
     </div>
@@ -124,6 +125,7 @@ Task.propTypes = {
   removeTask: PropTypes.func,
   refresh: PropTypes.func,
   options: PropTypes.arrayOf(PropTypes.object),
+  activity: PropTypes.object,
 };
 
 export default Task;

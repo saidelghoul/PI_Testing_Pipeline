@@ -4,7 +4,7 @@ import { addTask, getUsersForTask } from "../../services/task-service";
 import Select from "react-select";
 import PropTypes from "prop-types";
 
-const TaskForm = ({ refresh, show, handleClose, id_act, options }) => {
+const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -53,15 +53,45 @@ const TaskForm = ({ refresh, show, handleClose, id_act, options }) => {
     ) {
       errors.dueDate = "dueDate is required & must be greater than initDate";
     }
+    if (new Date(inputValues.initDate) < new Date(activity.startDate)) {
+      errors.initDate =
+        "Initial date must be more than activity start date: " +
+        activity.startDate.substring(0, 10);
+    }
+    if (new Date(inputValues.dueDate) > new Date(activity.endDate)) {
+      errors.dueDate =
+        "Due date must be less than activity end date: " +
+        activity.endDate.substring(0, 10);
+    }
+    if (
+      Math.round(
+        (new Date(inputValues.dueDate).getTime() -
+          new Date(inputValues.initDate).getTime()) /
+          (1000 * 3600 * 24)
+      ) < 3
+    ) {
+      errors.initDate =
+        "Difference in Initial date & Due date must be more than 3 days";
+    }
+    if (
+      Math.round(
+        (new Date(inputValues.dueDate).getTime() -
+          new Date(inputValues.initDate).getTime()) /
+          (1000 * 3600 * 24)
+      ) > 180
+    ) {
+      errors.dueDate =
+        "Difference in Initial date & Due date must be less than 6 months";
+    }
     if (inputValues.tags.length < 1 || inputValues.tags.length > 5) {
       errors.tags = "Please specify number of tags between 1 and 5";
     }
     if (inputValues.collaborators.length < 1) {
       errors.collaborators = "Please specify at least one collaborator";
     }
-    if (inputValues.description.length > 2500) {
+    if (inputValues.description.length > 1500) {
       errors.description =
-        "Description exceeds maximum length of 2500 characters";
+        "Description exceeds maximum length of 1500 characters";
     }
     return errors;
   };
@@ -85,7 +115,7 @@ const TaskForm = ({ refresh, show, handleClose, id_act, options }) => {
 
   const handleAddTask = async () => {
     try {
-      const result = await addTask(taskItem, id_act);
+      const result = await addTask(taskItem, activity._id);
       if (result.status === 201) {
         alert("Task added successfully");
         refresh();
@@ -143,7 +173,7 @@ const TaskForm = ({ refresh, show, handleClose, id_act, options }) => {
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1 className=" text-white ">Add task</h1>
+            <h1 className=" text-light ">Add task</h1>
           </Modal.Title>
           <Button
             as={Col}
@@ -307,7 +337,7 @@ TaskForm.propTypes = {
   refresh: PropTypes.func,
   show: PropTypes.bool,
   handleClose: PropTypes.func,
-  id_act: PropTypes.string,
+  activity: PropTypes.object,
   options: PropTypes.arrayOf(PropTypes.object),
 };
 

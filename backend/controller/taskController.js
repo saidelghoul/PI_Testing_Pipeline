@@ -21,7 +21,9 @@ async function getTaskById(req, res) {
 
     if (!task)
       res.status(400).json({ title: "error", message: "Task not found" });
-    else res.status(200).json({ title: "success", message: task });
+    else {
+      res.status(200).json({ title: "success", message: task });
+    }
   } catch (err) {
     res.status(500).json({ title: "error", message: err.message });
   }

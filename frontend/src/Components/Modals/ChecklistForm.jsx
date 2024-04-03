@@ -42,9 +42,9 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
     if (!inputValues.holder) {
       errors.holder = "Please specify a task holder";
     }
-    if (inputValues.description.length > 2500) {
+    if (inputValues.description.length > 200) {
       errors.description =
-        "Description exceeds maximum length of 2500 characters";
+        "Description exceeds maximum length of 200 characters";
     }
     return errors;
   };
@@ -144,8 +144,8 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
                 className="basic-multi-select"
                 classNamePrefix="select"
               />
-              {errors.title && (
-                <small className=" text-danger ">{errors.title}</small>
+              {errors.holder && (
+                <small className=" text-danger ">{errors.holder}</small>
               )}
             </Form.Group>
           </Row>
