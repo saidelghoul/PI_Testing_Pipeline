@@ -5,7 +5,6 @@ import Profil from "./Components/Pages/Profils";
 import { Route, Routes } from "react-router-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 
-import Home from "./Components/Pages/Home";
 import SignIn from "./Components/SignIn";
 import AccountSetting from "./Components/Pages/AccountSetting";
 import Groups from "./Components/Pages/Groups";
@@ -17,6 +16,8 @@ import { UserContextProvider } from "../context/userContext";
 import ActivityDetails from "./Components/Pages/ActivityDetails";
 import TaskDetails from "./Components/Pages/TaskDetails";
 import AccountUpdate from "./Components/Pages/AccountUpdate";
+import Home from "./Components/Home/Home";
+import UpdatePublication from "./Components/Home/UpdatePublication";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -35,6 +36,16 @@ function App() {
                 <>
                   <Navbar />
                   <Home />
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/update/:id"
+              element={
+                <>
+                  <Navbar />
+                  <UpdatePublication />
                   <Footer />
                 </>
               }

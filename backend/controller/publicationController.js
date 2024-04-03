@@ -2,8 +2,15 @@ var Publication = require("../model/publication");
 const Commentaire = require("../model/commentair");
 
 async function add(req, res) {
-  const publication = req.body;
-  const newItem = new Publication(publication);
+  const { sujet, contenu } = req.body; // Assurez-vous de récupérer creator correctement depuis req.body
+  const userId = req.user.userId; // Assurez-vous que req.user contient les données de l'utilisateur authentifié
+
+  const newItem = new Publication({
+    creator:userId, // Utilisation de la valeur de creator récupérée depuis req.body
+    Sujet: sujet,
+    Contenue: contenu
+  });
+
   try {
     const saved = await newItem.save();
     res.status(201).json(saved);
@@ -11,6 +18,7 @@ async function add(req, res) {
     res.status(500).json({ error: "Server error" + err.message });
   }
 }
+
 
 async function getall(req, res) {
   Publication.find({})

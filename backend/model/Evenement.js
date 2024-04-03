@@ -9,7 +9,10 @@ var Evenement = new Schema({
   DateFin: {type: Date,required: true,},
   Capacite: { type: Number, required: true },
   Prix: Number,
-  commentaires: [{ type: Schema.Types.ObjectId, ref: "Commentaire" }], // Liste des commentaires associés à la publication
+  Creator: { 
+    type: mongoose.Schema.Types.ObjectId,
+     ref: 'User' 
+    },
 });
 
 module.exports = mongoose.model("Evenement", Evenement);

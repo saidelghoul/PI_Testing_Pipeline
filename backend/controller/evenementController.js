@@ -3,16 +3,24 @@ const moment = require("moment");
 const Commentaire = require("../model/commentair");
 
 async function add(req, res) {
-  const evenement = req.body;
-  const newItem = new Evenement(evenement);
+  const {titre,contenue,dateDebut,dateFin,cap,prix,userId} = req.body;
+  const newItem = new Evenement({
+    Titre:titre,
+    Contenu:contenue,
+    DateDebut:dateDebut,
+    DateFin:dateFin,
+    Capacite:cap,
+    Prix:prix,
+    Creator:userId
+  });
 
   // Check if DateFin is before DateDebut
-  if (new Date(evenement.DateFin) <= new Date(evenement.DateDebut)) {
+  if (new Date(dateFin.DateFin) <= new Date(dateDebut.DateDebut)) {
     return res
       .status(400)
       .json({ error: "Il faut avoir une date de fin après la date de début" });
   }
-  if (new Date(evenement.DateDebut) <= new Date()) {
+  if (new Date(dateDebut.DateDebut) <= new Date()) {
     return res.status(400).json({
       error:
         "il est impossible de faire un événement avant ou à la date d'aujourd'hui ",

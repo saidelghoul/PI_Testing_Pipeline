@@ -9,16 +9,20 @@ import "../../../public/assets/css/style.css";
 import "../../../public/assets/css/responsive.css";
 import "../../../public/assets/lib/slick/slick.css";
 import "../../../public/assets/lib/slick/slick-theme.css";
-
 import axios from "axios";
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../../context/userContext";
+import { Link, useParams } from "react-router-dom";
 
 export default function Home() {
   const user = useContext(UserContext);
+
+  const [currentPublicationId, setCurrentPublicationId] = useState(null);
+  const [currentEventId, setCurrentEventId] = useState(null);
+
   const [publication, setPublication] = useState([]);
   const [events, setEvent] = useState([]);
-
+  const { id } = useParams();
   useEffect(() => {
     fetchPublication();
     fetchEvent();
@@ -42,6 +46,19 @@ export default function Home() {
       console.error("error fetching events", error);
     }
   };
+  events.sort(
+    (a, b) => new Date(b.DatePublication) - new Date(a.DatePublication)
+  );
+  publication.sort(
+    (a, b) => new Date(b.DatePublication) - new Date(a.DatePublication)
+  );
+  const combinedItems = [
+    ...events.map((event) => ({ type: "Evenement", ...event })),
+    ...publication.map((publication) => ({
+      type: "Publication",
+      ...publication,
+    })),
+  ];
 
   //delet event
   const handleDeleteEvent = async (id) => {
@@ -73,14 +90,26 @@ export default function Home() {
     DateFin: "",
     Capacite: "",
     Prix: "",
+    Creator:user
   });
+  
   const handleChange = (event) => {
     setEventData({ ...eventData, [event.target.name]: event.target.value });
   };
+  
   const handelSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/evenemnt/add", eventData);
+      const newData={
+        titre:eventData.Titre,
+        contenue:eventData.Contenu,
+        dateDebut:eventData.DateDebut,
+        dateFin:eventData.DateFin,
+        cap:eventData.Capacite,
+        prix:eventData.Prix,
+        user:user
+      }
+      await axios.post("/evenemnt/add", newData);
 
       setEventData({
         Titre: "",
@@ -89,10 +118,13 @@ export default function Home() {
         DateFin: "",
         Capacite: "",
         Prix: "",
+        Creator:user
       });
-      alert("Evenement ajouté avec succès");
+  
+      alert("Événement ajouté avec succès");
     } catch (error) {
-      console.error("error ", error);
+      console.error("Erreur :", error);
+      console.log(user.id)
       if (error.response && error.response.data && error.response.data.error) {
         alert(error.response.data.error);
       } else {
@@ -100,28 +132,115 @@ export default function Home() {
       }
     }
   };
+  
   //add publication
+
   const [pubData, setPubData] = useState({
     Sujet: "",
     Contenue: "",
+    creator: user.id// Utilisation directe de l'ID de l'utilisateur depuis le contexte
   });
-  const handleChanged = (pub) => {
-    setPubData({ ...pubData, [pub.target.name]: pub.target.value });
+
+  const handleChanged = (event) => {
+    setPubData({ ...pubData, [event.target.name]: event.target.value });
   };
+
   const handelSubmited = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/publications/add", pubData);
+      const newData = {
+        sujet: pubData.Sujet,
+        contenu: pubData.Contenue,
+        creator: user.id// Utilisez la propriété creator de pubData
+      };
 
+      await axios.post("/publications/add", newData);
+
+      // Effacez les champs du formulaire
       setPubData({
         Sujet: "",
         Contenue: "",
       });
-      alert("publication ajout avec success");
+
+      alert("Publication ajoutée avec succès");
+    } catch (error) {
+      console.error(user)
+
+      console.error("Erreur :", error);
+      alert("Impossible d'ajouter la publication");
+    }
+  };
+
+
+
+  //add comentaire to pub
+  const [commentData, setCommentData] = useState({
+    Contenue: "",
+    creator: user,
+  });
+  const handleChangeComent = (e) => {
+    setCommentData({ ...commentData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmitComment = async (e) => {
+    e.preventDefault();
+    if (!currentPublicationId) {
+      console.error("ID de la publication non défini.");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `/commentaire/addToPub/${currentPublicationId}`,
+        commentData
+      );
+      setCommentData({
+        Contenue: "",
+        creator: "user", // Assurez-vous de remplacer "user" par l'ID réel de l'utilisateur si nécessaire
+      });
+      alert("Commentaire ajouté avec succès");
+    } catch (error) {
+      console.error("Erreur lors de l'ajout du commentaire :", error);
+    }
+  };
+
+  const handleCommentClick = (id) => {
+    setCurrentPublicationId(id);
+  };
+
+  //add comentaire to event
+  const [comentEventData, setComentEventData] = useState({
+    Contenue: "",
+    creator: "user",
+  });
+  const handleChangeComentEvent = (e) => {
+    setComentEventData({
+      ...comentEventData,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handelSubmitComentEvent = async (e) => {
+    e.preventDefault();
+    if (!setCurrentEventId) {
+      console.error("ID de l'evenement non défini.");
+      return;
+    }
+    try {
+      await axios.post(
+        `/commentaire/addToEvent/${currentEventId}`,
+        comentEventData
+      );
+      setComentEventData({
+        Contenue: "",
+        creator: "user",
+      });
+      alert("commentaire ajout avec success");
     } catch (error) {
       console.error("error ", error);
       alert("cant add");
     }
+  };
+  const handleCommentClicked = (id) => {
+    setCurrentEventId(id);
   };
 
   return (
@@ -152,79 +271,7 @@ export default function Home() {
                         </div>
                       </div>
                     </div>
-                    <div className="suggestions full-width">
-                      <div className="sd-title">
-                        <h3>Suggestions</h3>
-                        <i className="la la-ellipsis-v"></i>
-                      </div>
-                      <div className="suggestions-list">
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s1.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Jessica William</h4>
-                            <span>Graphic Designer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s2.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>John Doe</h4>
-                            <span>PHP Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s3.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Poonam</h4>
-                            <span>Wordpress Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s4.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Bill Gates</h4>
-                            <span>C & C++ Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s5.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Jessica William</h4>
-                            <span>Graphic Designer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s6.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>John Doe</h4>
-                            <span>PHP Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="view-more">
-                          <a href="#" title="">
-                            View More
-                          </a>
-                        </div>
-                      </div>
-                    </div>
+                   
                   </div>
                 </div>
                 {/* acceiul */}
@@ -260,11 +307,11 @@ export default function Home() {
                       <div className="posty">
                         <div className="post-bar no-margin">
                           {publication.map((publication) => (
-                            <div className="job-status-bar">
-                              <div
-                                key={publication._id}
-                                className="post_topbar"
-                              >
+                            <div
+                              className="job-status-bar"
+                              key={publication._id}
+                            >
+                              <div className="post_topbar">
                                 <div className="usy-dt">
                                   <img
                                     src="/assets/images/resources/us-pc2.png"
@@ -287,36 +334,45 @@ export default function Home() {
                                   </div>
                                 </div>
                                 <div className="ed-opts">
-                                  <a href="#" title="" className="ed-opts-open">
-                                    <i className="la la-ellipsis-v"></i>
+                                  <a
+                                    href="#"
+                                    title=""
+                                    className="ed-opts-open"
+                                    onClick={() =>
+                                      handleDeletePub(publication._id)
+                                    }
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="16"
+                                      height="16"
+                                      fill="currentColor"
+                                      className="bi bi-trash3"
+                                      viewBox="0 0 16 16"
+                                    >
+                                      <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                                    </svg>{" "}
                                   </a>
-                                  <ul className="ed-options">
-                                    <li>
-                                      <a href="#" title="">
-                                        Edit Post
-                                      </a>
-                                    </li>
-                                    <li>
-                                      <a href="#" title="">
-                                        Unsaved
-                                      </a>
-                                    </li>
-                                    <li>
-                                      <a href="#" title="">
-                                        Unbid
-                                      </a>
-                                    </li>
-                                    <li>
-                                      <a href="#" title="">
-                                        Close
-                                      </a>
-                                    </li>
-                                    <li>
-                                      <a href="#" title="">
-                                        Hide
-                                      </a>
-                                    </li>
-                                  </ul>
+                                  <Link
+                                    to={`/update/${publication._id} `}
+                                    title=""
+                                    className="ed-opts-open"
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="16"
+                                      height="16"
+                                      fill="currentColor"
+                                      className="bi bi-pencil-square"
+                                      viewBox="0 0 16 16"
+                                    >
+                                      <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"
+                                      />
+                                    </svg>
+                                  </Link>
                                 </div>
                               </div>
                               <div className="epi-sec">
@@ -344,123 +400,37 @@ export default function Home() {
                                       Comment 15
                                     </a>
                                   </li>
-                                  <li
-                                    className="fa fa-trash"
-                                    style={{ color: "red", cursor: "pointer" }}
-                                    onClick={() =>
-                                      handleDeletePub(publication._id)
-                                    }
-                                  ></li>
                                 </ul>
+                              </div>
+                              {/* ajout d'un commentaire pour publication  */}
+                              <div className="post-comment">
+                                <div className="cm_img">
+                                  <img
+                                    src="/assets/images/resources/bg-img4.png"
+                                    alt=""
+                                  />
+                                </div>
+                                <div
+                                  className="comment_box"
+                                  onClick={() =>
+                                    handleCommentClick(publication._id)
+                                  }
+                                >
+                                  <form onSubmit={handleSubmitComment}>
+                                    <input
+                                      type="text"
+                                      name="Contenue"
+                                      placeholder="Post a comment"
+                                      value={commentData.Contenue}
+                                      onChange={handleChangeComent}
+                                      required
+                                    />
+                                    <button type="submit">Send</button>
+                                  </form>
+                                </div>
                               </div>
                             </div>
                           ))}
-                          {/* commentaire */}
-                        </div>
-                        <div className="comment-section">
-                          <a href="#" className="plus-ic">
-                            <i className="la la-plus"></i>
-                          </a>
-                          <div className="comment-sec">
-                            <ul>
-                              <li>
-                                <div className="comment-list">
-                                  <div className="bg-img">
-                                    <img
-                                      src="/assets/images/resources/bg-img1.png"
-                                      alt=""
-                                    />
-                                  </div>
-                                  <div className="comment">
-                                    <h3>John Doe</h3>
-                                    <span>
-                                      <img
-                                        src="/assets/images/clock.png"
-                                        alt=""
-                                      />{" "}
-                                      3 min ago
-                                    </span>
-                                    <p>Lorem ipsum dolor sit amet, </p>
-                                    <a href="#" title="" className="active">
-                                      <i className="fa fa-reply-all"></i>Reply
-                                    </a>
-                                  </div>
-                                </div>
-                                <ul>
-                                  <li>
-                                    <div className="comment-list">
-                                      <div className="bg-img">
-                                        <img
-                                          src="/assets/images/resources/bg-img2.png"
-                                          alt=""
-                                        />
-                                      </div>
-                                      <div className="comment">
-                                        <h3>John Doe</h3>
-                                        <span>
-                                          <img
-                                            src="/assets/images/clock.png"
-                                            alt=""
-                                          />{" "}
-                                          3 min ago
-                                        </span>
-                                        <p>Hi John </p>
-                                        <a href="#" title="">
-                                          <i className="fa fa-reply-all"></i>
-                                          Reply
-                                        </a>
-                                      </div>
-                                    </div>
-                                  </li>
-                                </ul>
-                              </li>
-                              <li>
-                                <div className="comment-list">
-                                  <div className="bg-img">
-                                    <img
-                                      src="/assets/images/resources/bg-img3.png"
-                                      alt=""
-                                    />
-                                  </div>
-                                  <div className="comment">
-                                    <h3>John Doe</h3>
-                                    <span>
-                                      <img
-                                        src="/assets/images/clock.png"
-                                        alt=""
-                                      />{" "}
-                                      3 min ago
-                                    </span>
-                                    <p>
-                                      Lorem ipsum dolor sit amet, consectetur
-                                      adipiscing elit. Aliquam luctus hendrerit
-                                      metus, ut ullamcorper quam finibus at.
-                                    </p>
-                                    <a href="#" title="">
-                                      <i className="fa fa-reply-all"></i>Reply
-                                    </a>
-                                  </div>
-                                </div>
-                              </li>
-                            </ul>
-                          </div>
-                          <div className="post-comment">
-                            <div className="cm_img">
-                              <img
-                                src="/assets/images/resources/bg-img4.png"
-                                alt=""
-                              />
-                            </div>
-                            <div className="comment_box">
-                              <form>
-                                <input
-                                  type="text"
-                                  placeholder="Post a comment"
-                                />
-                                <button type="submit">Send</button>
-                              </form>
-                            </div>
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -596,67 +566,42 @@ export default function Home() {
                                   </li>
                                 </ul>
                               </div>
+                              {/* ajout d'un commentaire a un evenement  */}
+                              <div className="post-comment">
+                                <div className="cm_img">
+                                  <img
+                                    src="/assets/images/resources/bg-img4.png"
+                                    alt=""
+                                  />
+                                </div>
+                                <div
+                                  className="comment_box"
+                                  onClick={() =>
+                                    handleCommentClicked(event._id)
+                                  }
+                                >
+                                  <form onSubmit={handelSubmitComentEvent}>
+                                    <input
+                                      type="text"
+                                      name="Contenue"
+                                      placeholder="Post a comment"
+                                      value={comentEventData.Contenue}
+                                      onChange={handleChangeComentEvent}
+                                      required
+                                    />
+                                    <button type="submit">Send</button>
+                                  </form>
+                                </div>
+                              </div>
                             </div>
                           ))}
                           {/* commentaire */}
                         </div>
                         <div className="comment-section">
-                          <a href="#" className="plus-ic">
-                            <i className="la la-plus"></i>
-                          </a>
+                         
                           <div className="comment-sec">
                             <ul>
-                              <li>
-                                <div className="comment-list">
-                                  <div className="bg-img">
-                                    <img
-                                      src="/assets/images/resources/bg-img1.png"
-                                      alt=""
-                                    />
-                                  </div>
-                                  <div className="comment">
-                                    <h3>John Doe</h3>
-                                    <span>
-                                      <img
-                                        src="/assets/images/clock.png"
-                                        alt=""
-                                      />{" "}
-                                      3 min ago
-                                    </span>
-                                    <p>Lorem ipsum dolor sit amet, </p>
-                                    <a href="#" title="" className="active">
-                                      <i className="fa fa-reply-all"></i>Reply
-                                    </a>
-                                  </div>
-                                </div>
-                                <ul>
-                                  <li>
-                                    <div className="comment-list">
-                                      <div className="bg-img">
-                                        <img
-                                          src="/assets/images/resources/bg-img2.png"
-                                          alt=""
-                                        />
-                                      </div>
-                                      <div className="comment">
-                                        <h3>John Doe</h3>
-                                        <span>
-                                          <img
-                                            src="/assets/images/clock.png"
-                                            alt=""
-                                          />{" "}
-                                          3 min ago
-                                        </span>
-                                        <p>Hi John </p>
-                                        <a href="#" title="">
-                                          <i className="fa fa-reply-all"></i>
-                                          Reply
-                                        </a>
-                                      </div>
-                                    </div>
-                                  </li>
-                                </ul>
-                              </li>
+                             
                               <li>
                                 <div className="comment-list">
                                   <div className="bg-img">
@@ -679,9 +624,7 @@ export default function Home() {
                                       adipiscing elit. Aliquam luctus hendrerit
                                       metus, ut ullamcorper quam finibus at.
                                     </p>
-                                    <a href="#" title="">
-                                      <i className="fa fa-reply-all"></i>Reply
-                                    </a>
+                                    
                                   </div>
                                 </div>
                               </li>
