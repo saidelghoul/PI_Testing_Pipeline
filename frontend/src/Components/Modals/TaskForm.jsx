@@ -6,26 +6,6 @@ import PropTypes from "prop-types";
 
 const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
   const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    // fetch users(potential collabs) into proper list for the react select
-
-    const fetchUsers = async () => {
-      const dbusers = await getUsersForTask();
-      let options = [];
-
-      dbusers.data.message.map((user) =>
-        options.push({
-          value: user._id,
-          label: user.name + " (" + user.role + ")",
-        })
-      );
-
-      setUsers(options);
-    };
-    fetchUsers();
-  }, []);
-
   const [taskItem, setTaskItem] = useState({
     title: "",
     initDate: "",
@@ -35,7 +15,6 @@ const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
     collaborators: [],
     description: "",
   });
-
   //form errors validation
   const [errors, setErrors] = useState({});
 
@@ -98,6 +77,27 @@ const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
 
   // end of form errors validation
 
+  useEffect(() => {
+    // fetch users(potential collabs) into proper list for the react select
+
+    const fetchUsers = async () => {
+      const dbusers = await getUsersForTask();
+      let options = [];
+
+      dbusers.data.message.map((user) =>
+        options.push({
+          value: user._id,
+          label: user.name + " (" + user.role + ")",
+        })
+      );
+
+      setUsers(options);
+    };
+    fetchUsers();
+
+    setErrors(validateValues(taskItem));
+  }, [taskItem]);
+
   const onValueChange = (e) => {
     setTaskItem({ ...taskItem, [e.target.name]: e.target.value });
     setErrors(validateValues(taskItem));
@@ -136,11 +136,6 @@ const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
 
     setTaskItem({ ...taskItem, [name]: collabs });
     setErrors(validateValues(taskItem));
-    console.log(name, value, collabs);
-
-    value.forEach((element) => {
-      console.log(element.label + ": " + element.value);
-    });
   };
 
   //end of user field selection change validation
@@ -154,11 +149,6 @@ const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
 
     setTaskItem({ ...taskItem, [name]: tags });
     setErrors(validateValues(taskItem));
-    console.log(name, value, tags);
-
-    value.forEach((element) => {
-      console.log(element.label + ": " + element.value);
-    });
   };
 
   // end of tagfiled for testing purposes

@@ -6,6 +6,8 @@ router.get("/", checkListController.getCheckLists);
 
 router.get("/:id_task/users", checkListController.getAssignedUsersForChecklist);
 
+router.get("/:id_user/checklist", checkListController.getCheckListByHolder);
+
 router.get("/:id_checklist", checkListController.getCheckListById);
 
 router.post("/:id_task", checkListController.createCheckList);

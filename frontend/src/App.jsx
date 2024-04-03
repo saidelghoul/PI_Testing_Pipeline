@@ -17,112 +17,121 @@ import { UserContextProvider } from "../context/userContext";
 import ActivityDetails from "./Components/Pages/ActivityDetails";
 import TaskDetails from "./Components/Pages/TaskDetails";
 import AccountUpdate from "./Components/Pages/AccountUpdate";
+import Section from "./Components/Pages/Section";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
 function App() {
   return (
-    <>
-      <UserContextProvider>
-        <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
-        <Router>
-          <Routes>
-            <Route path="/" element={<SignIn />} />
+    <UserContextProvider>
+      <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
+      <Router>
+        <Routes>
+          <Route path="/" element={<SignIn />} />
+          <Route
+            path="/home"
+            element={
+              <>
+                <Navbar />
+                <Home />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/groupes"
+            element={
+              <>
+                <Navbar />
+                <Groups />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/message"
+            element={
+              <>
+                <Navbar />
+                <Messages />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/profil"
+            element={
+              <>
+                <Navbar />
+                <Profil />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <>
+                <Navbar />
+                <AccountSetting />
+                <Footer />
+              </>
+            }
+          />
+          <Route path="/activities">
             <Route
-              path="/home"
+              index
               element={
                 <>
                   <Navbar />
-                  <Home />
-                  <Footer />
+                  <Activites />
                 </>
               }
             />
             <Route
-              path="/groupes"
+              path=":id_activity"
               element={
                 <>
                   <Navbar />
-                  <Groups />
-                  <Footer />
+                  <ActivityDetails />
                 </>
               }
             />
-            <Route
-              path="/message"
-              element={
-                <>
-                  <Navbar />
-                  <Messages />
-                  <Footer />
-                </>
-              }
-            />
-            <Route
-              path="/profil"
-              element={
-                <>
-                  <Navbar />
-                  <Profil />
-                  <Footer />
-                </>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <>
-                  <Navbar />
-                  <AccountSetting />
-                  <Footer />
-                </>
-              }
-            />
-            <Route path="/activities">
-              <Route
-                index
-                element={
-                  <>
-                    <Navbar />
-                    <Activites />
-                  </>
-                }
-              />
-              <Route
-                path=":id_activity"
-                element={
-                  <>
-                    <Navbar />
-                    <ActivityDetails />
-                  </>
-                }
-              />
-            </Route>
-            <Route
-              path="tasks/:id_task"
-              element={
-                <>
-                  <Navbar />
-                  <TaskDetails />
-                </>
-              }
-            />
+          </Route>
+          <Route
+            path="tasks/:id_task"
+            element={
+              <>
+                <Navbar />
+                <TaskDetails />
+              </>
+            }
+          />
 
-            <Route
-              path="/completerProfil"
-              element={
-                <>
-                  <Navbar />
-                  <AccountUpdate />
-                  <Footer />
-                </>
-              }
-            />
-          </Routes>
-        </Router>
-      </UserContextProvider>
-    </>
+          <Route
+            path=":id_user/tasks"
+            element={
+              <>
+                <Navbar />
+                <Section />
+              </>
+            }
+          />
+
+          <Route
+            path="/completerProfil"
+            element={
+              <>
+                <Navbar />
+                <AccountUpdate />
+                <Footer />
+              </>
+            }
+          />
+        </Routes>
+      </Router>
+    </UserContextProvider>
   );
 }
 

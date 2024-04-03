@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { addActivity } from "../../services/activity-service";
 import PropTypes from "prop-types";
@@ -39,13 +39,6 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
     ) {
       errors.startDate =
         "Difference in start date & end date must be more than 3 days";
-      console.log(
-        Math.round(
-          (new Date(inputValues.endDate).getTime() -
-            new Date(inputValues.startDate).getTime()) /
-            (1000 * 3600 * 24)
-        )
-      );
     }
     if (
       Math.round(
@@ -70,6 +63,10 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
     setActivityItem({ ...activityItem, [e.target.name]: e.target.value });
     setErrors(validateValues(activityItem));
   };
+
+  useEffect(() => {
+    setErrors(validateValues(activityItem));
+  }, [activityItem]);
 
   const handleSubmit = (event) => {
     const form = event.currentTarget;

@@ -26,7 +26,18 @@ const TaskDetails = () => {
 
   const fetchChecklist = async (id) => {
     const data = await getChecklistByTask(id);
-    setChecklists(data.data.message);
+
+    const current = data.data.message.filter(
+      (checklist) => checklist.archived === false
+    );
+    setChecklists(current);
+
+    const archived = data.data.message.filter(
+      (checklist) => checklist.archived === true
+    );
+    setArchived(archived);
+
+    console.log(archived);
   };
 
   const refreshTable = async () => {
@@ -38,21 +49,6 @@ const TaskDetails = () => {
     const fetchTask = async (id) => {
       const data = await getTasks(id);
       setTask(data.data.message);
-    };
-
-    const fetchChecklist = async (id) => {
-      const data = await getChecklistByTask(id);
-
-      const current = data.data.message.filter(
-        (checklist) => checklist.archived === false
-      );
-
-      const archived = data.data.message.filter(
-        (checklist) => checklist.archived === true
-      );
-      setArchived(archived);
-
-      setChecklists(current);
     };
 
     const fetchAssignedUsers = async (id) => {
@@ -264,6 +260,7 @@ const TaskDetails = () => {
                 <tr>
                   <th>#</th>
                   <th>Checklist title</th>
+                  <th>Holder</th>
                   <th>Description</th>
 
                   <th>Delete?</th>
@@ -274,6 +271,9 @@ const TaskDetails = () => {
                   <tr key={index}>
                     <td>{index + 1}</td>
                     <td>{checklist?.title}</td>
+                    <td>
+                      {checklist?.holder?.name} ( {checklist?.holder?.role} )
+                    </td>
                     <td>{checklist?.description}</td>
                     <td>
                       <Button

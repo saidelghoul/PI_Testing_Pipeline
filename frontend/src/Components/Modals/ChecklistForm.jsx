@@ -7,24 +7,6 @@ import Select from "react-select";
 const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
   //retrieve the collaborators from the current task into a proper list
   const [holders, setHolders] = useState([]);
-
-  useEffect(() => {
-    const retrieveUsers = async () => {
-      let options = [];
-
-      await users?.map((user) =>
-        options.push({
-          value: user?.id,
-          label: user?.name + " (" + user?.role + ")",
-        })
-      );
-
-      setHolders(options);
-    };
-
-    retrieveUsers();
-  }, []);
-
   const [checklistItem, setChecklistItem] = useState({
     title: "",
     holder: "",
@@ -50,6 +32,24 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
   };
 
   // end of form errors validation
+  useEffect(() => {
+    const retrieveUsers = async () => {
+      let options = [];
+
+      await users?.map((user) =>
+        options.push({
+          value: user?.id,
+          label: user?.name + " (" + user?.role + ")",
+        })
+      );
+
+      setHolders(options);
+    };
+
+    retrieveUsers();
+
+    setErrors(validateValues(checklistItem));
+  }, [checklistItem]);
 
   const onValueChange = (e) => {
     setChecklistItem({ ...checklistItem, [e.target.name]: e.target.value });

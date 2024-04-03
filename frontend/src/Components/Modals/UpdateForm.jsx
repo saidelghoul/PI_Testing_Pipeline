@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { updateActivity } from "../../services/activity-service";
 import PropTypes from "prop-types";
@@ -60,6 +60,10 @@ const UpdateForm = ({ refresh, show, handleClose, activity }) => {
     setActivityItem({ ...activityItem, [e.target.name]: e.target.value });
     setErrors(validateValues(activityItem));
   };
+
+  useEffect(() => {
+    setErrors(validateValues(activityItem));
+  }, [activityItem]);
 
   const handleSubmit = (event) => {
     const form = event.currentTarget;

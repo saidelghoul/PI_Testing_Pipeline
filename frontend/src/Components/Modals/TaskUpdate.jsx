@@ -144,7 +144,9 @@ const TaskUpdate = ({
 
     fetchUsers();
     fetchAssignedCollaboratorsAndTags();
-  }, []);
+
+    setErrors(validateValues(taskItem));
+  }, [taskItem]);
 
   const onValueChange = (e) => {
     setTaskItem({ ...taskItem, [e.target.name]: e.target.value });
@@ -184,11 +186,6 @@ const TaskUpdate = ({
     });
 
     setTaskItem({ ...taskItem, [name]: collabs });
-    console.log(name, value, collabs);
-
-    value.forEach((element) => {
-      console.log(element.label + ": " + element.value);
-    });
   };
   //end of user field selection change validation
 
@@ -200,11 +197,6 @@ const TaskUpdate = ({
     });
 
     setTaskItem({ ...taskItem, [name]: tags });
-    console.log(name, value, tags);
-
-    value.forEach((element) => {
-      console.log(element.label + ": " + element.value);
-    });
   };
   // end of tagfiled for testing purposes
 

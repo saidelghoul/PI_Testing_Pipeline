@@ -20,7 +20,7 @@ async function getTaskById(req, res) {
     );
 
     if (!task)
-      res.status(400).json({ title: "error", message: "Task not found" });
+      res.status(404).json({ title: "error", message: "Task not found" });
     else {
       res.status(200).json({ title: "success", message: task });
     }
@@ -35,7 +35,7 @@ async function getCheckListsByTask(req, res) {
     if (task)
       res.status(200).json({ title: "success", message: task.checkList });
     else
-      res.status(400).json({ title: "error", message: "checkList not found" });
+      res.status(404).json({ title: "error", message: "checkList not found" });
   } catch (err) {
     res.status(500).json({ title: "error", message: err.message });
   }
