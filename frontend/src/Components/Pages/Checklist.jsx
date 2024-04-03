@@ -7,7 +7,7 @@ import {
 import ChecklistDelete from "../Modals/ChecklistDelete";
 import PropTypes from "prop-types";
 
-const Checklist = ({ refresh, checkList, index, rmChecklist }) => {
+const Checklist = ({ refresh, checkList, index, upChecklist }) => {
   const [toggle, setToggle] = useState(checkList.done);
   const [holder, setHolder] = useState({});
   const [loading, setLoading] = useState(true);
@@ -102,19 +102,21 @@ const Checklist = ({ refresh, checkList, index, rmChecklist }) => {
 
       <ChecklistDelete
         refresh={refresh}
-        rmChecklist={rmChecklist}
+        upChecklist={upChecklist}
         show={showDelete}
         handleClose={handleCloseDelete}
         checklist={checkList}
+        deleting={true}
       />
     </>
   );
 };
 
 Checklist.propTypes = {
+  refresh: PropTypes.func,
   checkList: PropTypes.object,
   index: PropTypes.number,
-  rmChecklist: PropTypes.func,
+  upChecklist: PropTypes.func,
 };
 
 export default Checklist;

@@ -3,10 +3,11 @@ import PropTypes from "prop-types";
 
 const ChecklistDelete = ({
   refresh,
-  rmChecklist,
+  upChecklist,
   show,
   handleClose,
   checklist,
+  deleting,
 }) => {
   return (
     <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
@@ -33,20 +34,34 @@ const ChecklistDelete = ({
 
       <Modal.Body>
         <div className=" text-danger text-center  ">
-          Are you sure you want to delete this checklist ({checklist.title})
+          Are you sure you want to delete this checklist
         </div>
+        <div className=" text-danger text-center  ">({checklist.title})</div>
       </Modal.Body>
       <Modal.Footer>
-        <Button
-          style={{ backgroundColor: "#e44d3a" }}
-          onClick={() => {
-            rmChecklist(checklist._id);
-            handleClose();
-            refresh();
-          }}
-        >
-          Delete
-        </Button>
+        {deleting === true ? (
+          <Button
+            style={{ backgroundColor: "#e44d3a" }}
+            onClick={() => {
+              upChecklist(checklist._id, checklist);
+              handleClose();
+              refresh();
+            }}
+          >
+            Archive
+          </Button>
+        ) : (
+          <Button
+            style={{ backgroundColor: "#e44d3a" }}
+            onClick={() => {
+              upChecklist(checklist._id);
+              handleClose();
+              refresh();
+            }}
+          >
+            Delete
+          </Button>
+        )}
       </Modal.Footer>
     </Modal>
   );
@@ -54,10 +69,11 @@ const ChecklistDelete = ({
 
 ChecklistDelete.propTypes = {
   refresh: PropTypes.func,
-  rmChecklist: PropTypes.func,
+  upChecklist: PropTypes.func,
   show: PropTypes.bool,
   handleClose: PropTypes.func,
   checklist: PropTypes.object,
+  deleting: PropTypes.bool,
 };
 
 export default ChecklistDelete;

@@ -90,7 +90,10 @@ async function updateActivity(req, res) {
         res
           .status(404)
           .json({ title: "error", message: "Couldn't find Activity" });
-      else res.status(200).json({ title: "success", message: activity });
+      else
+        res
+          .status(200)
+          .json({ title: "success", message: "updated successfully" });
     }
   } catch (err) {
     res.status(500).json({ title: "Server error", message: err.message });

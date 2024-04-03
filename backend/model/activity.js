@@ -37,6 +37,10 @@ const activitySchema = new Schema(
         ref: "Task",
       },
     ],
+    archived: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

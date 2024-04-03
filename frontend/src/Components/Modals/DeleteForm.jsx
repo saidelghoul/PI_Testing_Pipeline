@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { Button, Modal, Row, Col } from "react-bootstrap";
 
-const DeleteForm = ({ rmActivity, show, handleClose, activity }) => {
+const DeleteForm = ({ upActivity, show, handleClose, activity, deleting }) => {
   return (
     <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
@@ -27,31 +27,43 @@ const DeleteForm = ({ rmActivity, show, handleClose, activity }) => {
 
       <Modal.Body>
         <div className=" text-danger text-center ">
-          Are you sure you want to delete this activity ({activity.name})
+          Are you sure you want to delete/archive this activity
         </div>
+        <div className=" text-danger text-center ">( {activity?.name} )</div>
       </Modal.Body>
       <Modal.Footer>
-        <Button
-          className={activity?.tasks?.length > 0 ? " disabled " : ""}
-          disabled={activity?.tasks?.length > 0}
-          style={{ backgroundColor: "#e44d3a" }}
-          onClick={() => {
-            rmActivity(activity._id);
-            handleClose();
-          }}
-        >
-          Delete
-        </Button>
+        {deleting === true ? (
+          <Button
+            style={{ backgroundColor: "#e44d3a" }}
+            onClick={() => {
+              upActivity(activity._id, activity);
+              handleClose();
+            }}
+          >
+            Archive
+          </Button>
+        ) : (
+          <Button
+            style={{ backgroundColor: "#e44d3a" }}
+            onClick={() => {
+              upActivity(activity._id);
+              handleClose();
+            }}
+          >
+            Delete
+          </Button>
+        )}
       </Modal.Footer>
     </Modal>
   );
 };
 
 DeleteForm.propTypes = {
-  rmActivity: PropTypes.func,
+  upActivity: PropTypes.func,
   show: PropTypes.bool,
   handleClose: PropTypes.func,
   activity: PropTypes.object.isRequired,
+  deleting: PropTypes.bool,
 };
 
 export default DeleteForm;

@@ -36,8 +36,8 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
 
   const validateValues = (inputValues) => {
     let errors = {};
-    if (inputValues.title.length < 5 || inputValues.title.length > 50) {
-      errors.title = "Title length must be between 5 and 50";
+    if (inputValues.title.length < 2 || inputValues.title.length > 50) {
+      errors.title = "Title length must be between 2 and 50";
     }
     if (!inputValues.holder) {
       errors.holder = "Please specify a task holder";

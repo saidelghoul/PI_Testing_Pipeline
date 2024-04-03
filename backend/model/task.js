@@ -54,6 +54,10 @@ const taskSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Activity",
     },
+    archived: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

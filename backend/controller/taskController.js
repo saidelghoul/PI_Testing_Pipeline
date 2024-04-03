@@ -72,7 +72,7 @@ async function addTaskToActivity(req, res) {
         else
           res
             .status(201)
-            .json({ title: "Task saved successfully", message: savedTask });
+            .json({ title: "success", message: "Task saved successfully" });
       } else {
         res.status(404).json({ title: "error", error: "no activity found" });
       }
@@ -101,7 +101,10 @@ async function updateTask(req, res, next) {
       );
       if (!updatedTask)
         res.status(404).json({ title: "error", error: "Task not found" });
-      else res.status(200).json({ title: "updated", message: updatedTask });
+      else
+        res
+          .status(200)
+          .json({ title: "updated", message: "task updated successfully" });
     }
   } catch (err) {
     res.status(500).json({ title: "error", error: err.message });
@@ -126,7 +129,7 @@ async function deleteTask(req, res, next) {
           title: "error",
           message: "Failed to delete task ref from activity",
         });
-      else if (updatedActivity.checkList.length > 0) {
+      else if (updatedActivity?.checkList?.length > 0) {
         res
           .status(500)
           .json({ title: "error", message: "this task has checklists in it" });

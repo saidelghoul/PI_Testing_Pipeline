@@ -19,6 +19,10 @@ const checkListSchema = new Schema(
       ref: "Task",
       required: true,
     },
+    archived: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

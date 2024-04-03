@@ -17,8 +17,8 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
 
   const validateValues = (inputValues) => {
     let errors = {};
-    if (inputValues.name.length < 5 || inputValues.name.length > 50) {
-      errors.name = "Name length must be between 5 and 50";
+    if (inputValues.name.length < 2 || inputValues.name.length > 50) {
+      errors.name = "Name length must be between 2 and 50";
     }
     if (!inputValues.startDate) {
       errors.startDate = "startDate is required";

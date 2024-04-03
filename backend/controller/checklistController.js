@@ -63,8 +63,8 @@ async function createCheckList(req, res, next) {
         });
       } else
         res.status(201).json({
-          title: "added checklist successfully to parent task: " + task.title,
-          message: result,
+          title: "success",
+          message: "added checklist successfully to parent task: " + task.title,
         });
     }
   } catch (err) {
@@ -117,10 +117,13 @@ async function updateChecklist(req, res) {
       const task = await Task.findById(checklist.id_task).populate("checkList");
       // for task status update, this checks if all the checklists inside a task are done
       let total = 0;
-      task.checkList.forEach((checklist) => {
+      const current = task.checkList.filter(
+        (checklist) => checklist.archived === false
+      );
+      current.forEach((checklist) => {
         if (checklist.done) total++;
       });
-      if (task.checkList.length === total) task.status = "complete";
+      if (current.length === total) task.status = "complete";
       else if (total === 0) task.status = "planned";
       else task.status = "active";
       const saved = await task.save();
