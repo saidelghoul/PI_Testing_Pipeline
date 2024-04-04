@@ -106,6 +106,21 @@ export default function Navbar() {
                   </a>
                 </h3>
 
+                <h3>Skills</h3>
+                <ul className="us-links">
+                  <li>
+                    <div className="fgt-sec">
+                      <Link to={`/socialSkills/`}><p>Social Skills</p></Link>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="fgt-sec">
+                    <Link to={`/technicalSkills/`}><p>Technical Skills</p></Link>
+
+                    </div>
+                  </li>
+                </ul>
+
                 <h3>Online Status</h3>
                 <ul className="on-off-status">
                   <li>
@@ -166,7 +181,9 @@ export default function Navbar() {
             </div>
           </div>
         </div>
+        <div className="margin-bottom: 20px;"></div>
       </header>
+      
     </>
   );
 }
