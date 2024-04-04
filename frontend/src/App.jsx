@@ -97,72 +97,6 @@ function App() {
             />
 
             <Route
-              path="/affectSkill/:id"
-              element={
-                <>
-                  <Navbar />
-                  <AffectSkill/>
-                  <Footer />
-                </>
-              }
-            />
-
-            <Route
-              path="/socialSkills/"
-              element={
-                <>
-                  <Navbar />
-                  <SocialSkills/>
-                  <Footer />
-                </>
-              }
-            />
-            <Route
-              path="/socialSkills/add"
-              element={
-                <>
-                  <Navbar />
-                  <AddSocialSkill/>
-                  <Footer />
-                </>
-              }
-            />
-
-            <Route
-              path="/socialSkills/edit/:id"
-              element={
-                <>
-                  <Navbar />
-                  <EditSocialSkill/>
-                  <Footer />
-                </>
-              }
-            />
-
-            <Route
-              path="/socialSkills/delete/:id"
-              element={
-                <>
-                  <Navbar />
-                  <DeleteSocialSkill/>
-                  <Footer />
-                </>
-              }
-            />
-
-            <Route
-              path="/technicalSkills/"
-              element={
-                <>
-                  <Navbar />
-                  <TechnicalSkills/>
-                  <Footer />
-                </>
-              }
-            />
-
-            
-            <Route
               path=":id_activity"
               element={
                 <>
@@ -198,6 +132,71 @@ function App() {
               <>
                 <Navbar />
                 <AccountUpdate />
+                <Footer />
+              </>
+            }
+          />
+
+          <Route
+            path="/affectSkill/:id"
+            element={
+              <>
+                <Navbar />
+                <AffectSkill />
+                <Footer />
+              </>
+            }
+          />
+
+          <Route
+            path="/socialSkills/"
+            element={
+              <>
+                <Navbar />
+                <SocialSkills />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/socialSkills/add"
+            element={
+              <>
+                <Navbar />
+                <AddSocialSkill />
+                <Footer />
+              </>
+            }
+          />
+
+          <Route
+            path="/socialSkills/edit/:id"
+            element={
+              <>
+                <Navbar />
+                <EditSocialSkill />
+                <Footer />
+              </>
+            }
+          />
+
+          <Route
+            path="/socialSkills/delete/:id"
+            element={
+              <>
+                <Navbar />
+                <DeleteSocialSkill />
+                <Footer />
+              </>
+            }
+          />
+
+          <Route
+            path="/technicalSkills/"
+            element={
+              <>
+                <Navbar />
+                <TechnicalSkills />
                 <Footer />
               </>
             }

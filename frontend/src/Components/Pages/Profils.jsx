@@ -19,28 +19,21 @@ import AddSkillForm from "../Modals/Skills/AssignSkillForm";
 import { Link } from "react-router-dom";
 import SocialSkillAffect from "./Skills/SocialSkills/SocialSkillAffect";
 
-
-
 export default function profil() {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useContext(UserContext);
-  console.log(user);
   const [departements, setDepartements] = useState([]);
   const [unites, setUnités] = useState([]);
 
-  const isAdmin = user && user.role === "Directeur d'étude"; 
-  const isChefDep = user && user.role==="Chef département";
+  const isAdmin = user && user.role === "Directeur d'étude";
+  const isChefDep = user && user.role === "Chef département";
   const isChefUnite = user && user.role === "Chef unité";
 
-
-  const[departement, setDepartement] = useState({
+  const [departement, setDepartement] = useState({
     name: "",
-    description:"",
-    nbrUnite:0
+    description: "",
+    nbrUnite: 0,
   });
-
-
-
 
   useEffect(() => {
     if (user) {
@@ -50,11 +43,9 @@ export default function profil() {
 
       fetchSkills();
       getAssigned();
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }, [user]);
-
-
 
   const [skills, setSkills] = useState([]);
 
@@ -73,89 +64,84 @@ export default function profil() {
     }
   };
 
-  const [isEditing, setIsEditing] = useState(false); 
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleSubmitDep = async (e) => {
     e.preventDefault();
     try {
-      if (isEditing) { 
+      if (isEditing) {
         await axios.put(`/departement/update/${departement._id}`, departement);
-        setIsEditing(false); 
+        setIsEditing(false);
       } else {
-        await axios.post('/departement/add', departement);
+        await axios.post("/departement/add", departement);
       }
       fetchDepartements();
-      setDepartement({ name: '', description: '', nbrUnite: 0 });
+      setDepartement({ name: "", description: "", nbrUnite: 0 });
     } catch (error) {
-      console.error('Error adding/updating departement:', error);
+      console.error("Error adding/updating departement:", error);
     }
   };
   const handleEditDep = async (id) => {
     try {
       const response = await axios.get(`/departement/getbyid/${id}`);
-      const { _id,name, description, nbrUnite } = response.data;
-      setDepartement({ _id,name, description, nbrUnite });
+      const { _id, name, description, nbrUnite } = response.data;
+      setDepartement({ _id, name, description, nbrUnite });
       setIsEditing(true);
-
     } catch (error) {
-      console.error('Error fetching departement for editing:', error);
+      console.error("Error fetching departement for editing:", error);
     }
   };
 
-  const[unite, setUnite] = useState({
+  const [unite, setUnite] = useState({
     name: "",
-    });
+  });
 
   const fetchUnités = async () => {
     try {
-      const response = await axios.get("/unite/getAll",{
-        params: { departementName: user.departement }
+      const response = await axios.get("/unite/getAll", {
+        params: { departementName: user.departement },
       });
       setUnités(response.data);
-     
     } catch (error) {
       console.error("Error fetching unités:", error);
     }
   };
- 
 
-  const [isEditingUnit, setIsEditingUnit] = useState(false); 
+  const [isEditingUnit, setIsEditingUnit] = useState(false);
 
-const handleSubmit2 = async (e) => {
-  e.preventDefault();
-  try {
-    if (isEditingUnit) { 
-      await axios.put(`/unite/update/${unite._id}`, unite);
-      setIsEditingUnit(false); 
-    } else {
-      const departementName = user.departement;
-      const uniteData = { ...unite, departementName };
-      await axios.post('/unite/adding', uniteData);
+  const handleSubmit2 = async (e) => {
+    e.preventDefault();
+    try {
+      if (isEditingUnit) {
+        await axios.put(`/unite/update/${unite._id}`, unite);
+        setIsEditingUnit(false);
+      } else {
+        const departementName = user.departement;
+        const uniteData = { ...unite, departementName };
+        await axios.post("/unite/adding", uniteData);
+      }
+      fetchUnités();
+      setUnite({ name: "" });
+    } catch (error) {
+      console.error("Error adding/updating unit:", error);
     }
-    fetchUnités();
-    setUnite({ name: '' });
-  } catch (error) {
-    console.error('Error adding/updating unit:', error);
-  }
-};
+  };
 
-const handleEditUnit = async (id) => {
-
-  try {
-    const response = await axios.get(`/unite/getbyid/${id}`);
-    const { _id, name } = response.data;
-    setUnite({ _id, name });
-    setIsEditingUnit(true);
-  } catch (error) {
-    console.error('Error fetching unit for editing:', error);
-  }
-};
+  const handleEditUnit = async (id) => {
+    try {
+      const response = await axios.get(`/unite/getbyid/${id}`);
+      const { _id, name } = response.data;
+      setUnite({ _id, name });
+      setIsEditingUnit(true);
+    } catch (error) {
+      console.error("Error fetching unit for editing:", error);
+    }
+  };
 
   const handleChange2 = (e) => {
     const { name, value } = e.target;
     setUnite({ ...unite, [name]: value });
   };
-
 
   const [updatedUser, setUpdatedUser] = useState({
     addresse: "",
@@ -165,20 +151,19 @@ const handleEditUnit = async (id) => {
     gender: "",
   });
 
-  const [assigned,setAssigned] = useState([]);
+  const [assigned, setAssigned] = useState([]);
 
   const getAssigned = async () => {
     try {
       const skillsData = SocialSkillService.getSocialSkillsByUser(user.id);
       if (skillsData) {
         // Si l'utilisateur existe, mettez à jour l'état userData avec les données de l'utilisateur
-        setAssigned(skillsData)
+        setAssigned(skillsData);
       }
     } catch (error) {
       console.error("Error fetching user skills:", error);
     }
   };
-
 
   const fetchUserData = async () => {
     try {
@@ -186,74 +171,73 @@ const handleEditUnit = async (id) => {
       if (userResponse.data) {
         // Si l'utilisateur existe, mettez à jour l'état userData avec les données de l'utilisateur
         setUpdatedUser(userResponse.data);
-        
       }
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error("Error fetching user data:", error);
     }
   };
   const [errors, setErrors] = useState({}); // State to hold form validation errors
 
-  
   const handleSubmit1 = async (e) => {
     e.preventDefault();
-   // Obtain the current date
-   const currentDate = new Date();
-    
-   // Calculate the date 25 years ago
-   const minDate = new Date(currentDate.getFullYear() - 25, currentDate.getMonth(), currentDate.getDate());
+    // Obtain the current date
+    const currentDate = new Date();
 
-   const validationErrors = {};
+    // Calculate the date 25 years ago
+    const minDate = new Date(
+      currentDate.getFullYear() - 25,
+      currentDate.getMonth(),
+      currentDate.getDate()
+    );
 
-   // Check if the date of birth is provided
-   if (!updatedUser.dateNaissance) {
-     validationErrors.dateNaissance = "Veuillez fournir votre date de naissance.";
-   } else {
-     // Check if the entered date is valid
-     const userDateOfBirth = new Date(updatedUser.dateNaissance);
-     if (isNaN(userDateOfBirth.getTime())) {
-       validationErrors.dateNaissance = "Veuillez entrer une date de naissance valide.";
-     } else {
-       // Check if the user is at least 25 years old
-       if (userDateOfBirth > minDate) {
-         validationErrors.dateNaissance = "Vous devez avoir au moins 25 ans.";
-       }
-     }
-   }
-// Vérifiez si le numéro de téléphone est numérique
-if (isNaN(updatedUser.telephone)) {
-  validationErrors.telephone = "Le numéro de téléphone doit être numérique.";
-}
+    const validationErrors = {};
 
-// Update state with errors, if any
-setErrors(validationErrors);
+    // Check if the date of birth is provided
+    if (!updatedUser.dateNaissance) {
+      validationErrors.dateNaissance =
+        "Veuillez fournir votre date de naissance.";
+    } else {
+      // Check if the entered date is valid
+      const userDateOfBirth = new Date(updatedUser.dateNaissance);
+      if (isNaN(userDateOfBirth.getTime())) {
+        validationErrors.dateNaissance =
+          "Veuillez entrer une date de naissance valide.";
+      } else {
+        // Check if the user is at least 25 years old
+        if (userDateOfBirth > minDate) {
+          validationErrors.dateNaissance = "Vous devez avoir au moins 25 ans.";
+        }
+      }
+    }
+    // Vérifiez si le numéro de téléphone est numérique
+    if (isNaN(updatedUser.telephone)) {
+      validationErrors.telephone =
+        "Le numéro de téléphone doit être numérique.";
+    }
 
-// If there are validation errors, do not proceed with form submission
-if (Object.keys(validationErrors).length > 0) {
-  return;
-}
-  try {
-    
+    // Update state with errors, if any
+    setErrors(validationErrors);
+
+    // If there are validation errors, do not proceed with form submission
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
+    try {
       const response = await axios.put(`/user/${user.id}`, updatedUser);
 
-      console.log('Profil utilisateur mis à jour avec succès:', response.data);
+      console.log("Profil utilisateur mis à jour avec succès:", response.data);
       setUpdatedUser({
         addresse: "",
         gouvernorat: "",
         telephone: "",
         dateNaissance: "",
         gender: "",
-        
-
       });
       window.location.reload();
-
     } catch (error) {
-      console.error('Erreur lors de la mise à jour du profil:', error.message);
+      console.error("Erreur lors de la mise à jour du profil:", error.message);
     }
   };
-
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -264,29 +248,30 @@ if (Object.keys(validationErrors).length > 0) {
   };
 
   const handleDeleteUnit = async (id) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette unité ?')) {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer cette unité ?")) {
       try {
         await axios.delete(`/unite/remove/${id}`);
         fetchUnités();
       } catch (error) {
-        console.error('Erreur lors de la suppression de l\'unité:', error.message);
+        console.error(
+          "Erreur lors de la suppression de l'unité:",
+          error.message
+        );
       }
     }
   };
 
   const handleDeleteDep = async (id) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer ?')) {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer ?")) {
       try {
         await axios.delete(`/unite/removedep/${id}`);
         fetchDepartements();
       } catch (error) {
-        console.error('Erreur lors de la suppression ', error.message);
+        console.error("Erreur lors de la suppression ", error.message);
       }
     }
   };
 
-
-  
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -329,7 +314,7 @@ if (Object.keys(validationErrors).length > 0) {
         if (user && user.id) {
           //const skills = await SocialSkillService.getSocialSkillsByUser(user.id);
           //setSocialSkills(skills);
-        }   
+        }
       } catch (error) {
         console.error(
           "Une erreur s'est produite lors de la récupération des compétences sociales:",
@@ -342,18 +327,17 @@ if (Object.keys(validationErrors).length > 0) {
     fetchSocialSkills();
   }, []);
 
-
-  if(isLoading) {return (<div>Loading...</div>)}
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
-    
       <section className="cover-sec">
         <img src="/assets/images/resources/cover-img.jpg" alt="" />
         <div className="add-pic-box">
           <div className="container">
-            <div className="row no-gutters">
-            </div>
+            <div className="row no-gutters"></div>
           </div>
         </div>
       </section>
@@ -366,14 +350,12 @@ if (Object.keys(validationErrors).length > 0) {
                   <div className="main-left-sidebar">
                     <div className="user_profile">
                       <div className="user-pro-img">
-
                         <img
                           src="/assets/images/resources/user-pro-img.png"
                           alt=""
                         />
-                
-                        <div className="add-dp" id="OpenImgUpload">
-                        </div>
+
+                        <div className="add-dp" id="OpenImgUpload"></div>
                       </div>
                       <div className="user_pro_status">
                         <ul className="flw-status">
@@ -387,152 +369,217 @@ if (Object.keys(validationErrors).length > 0) {
                           </li>
                         </ul>
                       </div>
-                      <br/>
+                      <br />
                       <div>
-                      <br/>
+                        <br />
                         <ul>
-												<li><a className="post_project" href="#" title="" onClick={fetchUserData}>mettre a jour mon profil</a></li>
-											</ul>
+                          <li>
+                            <a
+                              className="post_project"
+                              href="#"
+                              title=""
+                              onClick={fetchUserData}
+                            >
+                              mettre a jour mon profil
+                            </a>
+                          </li>
+                        </ul>
                       </div>
                       <div>
                         <br></br>
                       </div>
                       <div>
-                      {isAdmin && (
-    <div>
-      <a href="/completerProfil" title="">
-        <i className="la la-user"></i> Mes chefs département
-      </a>
-    </div>
-  )}
-  {isChefDep && (
-    <div>
-      <a href="/completerProfil" title="">
-        <i className="la la-user"></i> Mes chefs unité
-      </a>
-    </div>
-  )}
-  {isChefUnite && (
-    <div>
-      <a href="/completerProfil" title="">
-        <i className="la la-user"></i> Mes enseignants
-      </a>
-    </div>
-  )}
-                         
+                        {isAdmin && (
+                          <div>
+                            <a href="/completerProfil" title="">
+                              <i className="la la-user"></i> Mes chefs
+                              département
+                            </a>
+                          </div>
+                        )}
+                        {isChefDep && (
+                          <div>
+                            <a href="/completerProfil" title="">
+                              <i className="la la-user"></i> Mes chefs unité
+                            </a>
+                          </div>
+                        )}
+                        {isChefUnite && (
+                          <div>
+                            <a href="/completerProfil" title="">
+                              <i className="la la-user"></i> Mes enseignants
+                            </a>
+                          </div>
+                        )}
                       </div>
-                      <br/>
+                      <br />
                       <div className="post-popup pst-pj">
-			<div className="post-project">
-				<h3>completer mon profil</h3>
-				<div className="post-project-fields">
-					<form onSubmit={handleSubmit1}>
-						<div className="row">
-							<div className="col-lg-12">
-              <label htmlFor="addresse">Ville :</label>
-								<input type="text"  id="addresse" name="addresse" placeholder="ville" value={updatedUser.addresse} onChange={handleChange}/>
-							</div>
-							<div className="col-lg-12">
-    <div className="inp-field">
-        <label htmlFor="gouvernorat">Gouvernorat :</label>
-        <select
-            id="gouvernorat"
-            name="gouvernorat"
-            value={updatedUser.gouvernorat}
-            onChange={handleChange}
-        >
-            <option>Sélectionnez un gouvernorat</option>
-            <option value="Ariana">Ariana</option>
-            <option value="Béja">Béja</option>
-            <option value="Ben Arous">Ben Arous</option>
-            <option value="Bizerte">Bizerte</option>
-            <option value="Gabès">Gabès</option>
-            <option value="Gafsa">Gafsa</option>
-            <option value="Jendouba">Jendouba</option>
-            <option value="Kairouan">Kairouan</option>
-            <option value="Kasserine">Kasserine</option>
-            <option value="Kébili">Kébili</option>
-            <option value="Kef">Le Kef</option>
-            <option value="Mahdia">Mahdia</option>
-            <option value="Manouba">Manouba</option>
-            <option value="Médenine">Médenine</option>
-            <option value="Monastir">Monastir</option>
-            <option value="Nabeul">Nabeul</option>
-            <option value="Sfax">Sfax</option>
-            <option value="Sidi Bouzid">Sidi Bouzid</option>
-            <option value="Siliana">Siliana</option>
-            <option value="Sousse">Sousse</option>
-            <option value="Tataouine">Tataouine</option>
-            <option value="Tozeur">Tozeur</option>
-            <option value="Tunis">Tunis</option>
-            <option value="Zaghouan">Zaghouan</option>
-        </select>
-    </div>
-</div>
+                        <div className="post-project">
+                          <h3>completer mon profil</h3>
+                          <div className="post-project-fields">
+                            <form onSubmit={handleSubmit1}>
+                              <div className="row">
+                                <div className="col-lg-12">
+                                  <label htmlFor="addresse">Ville :</label>
+                                  <input
+                                    type="text"
+                                    id="addresse"
+                                    name="addresse"
+                                    placeholder="ville"
+                                    value={updatedUser.addresse}
+                                    onChange={handleChange}
+                                  />
+                                </div>
+                                <div className="col-lg-12">
+                                  <div className="inp-field">
+                                    <label htmlFor="gouvernorat">
+                                      Gouvernorat :
+                                    </label>
+                                    <select
+                                      id="gouvernorat"
+                                      name="gouvernorat"
+                                      value={updatedUser.gouvernorat}
+                                      onChange={handleChange}
+                                    >
+                                      <option>
+                                        Sélectionnez un gouvernorat
+                                      </option>
+                                      <option value="Ariana">Ariana</option>
+                                      <option value="Béja">Béja</option>
+                                      <option value="Ben Arous">
+                                        Ben Arous
+                                      </option>
+                                      <option value="Bizerte">Bizerte</option>
+                                      <option value="Gabès">Gabès</option>
+                                      <option value="Gafsa">Gafsa</option>
+                                      <option value="Jendouba">Jendouba</option>
+                                      <option value="Kairouan">Kairouan</option>
+                                      <option value="Kasserine">
+                                        Kasserine
+                                      </option>
+                                      <option value="Kébili">Kébili</option>
+                                      <option value="Kef">Le Kef</option>
+                                      <option value="Mahdia">Mahdia</option>
+                                      <option value="Manouba">Manouba</option>
+                                      <option value="Médenine">Médenine</option>
+                                      <option value="Monastir">Monastir</option>
+                                      <option value="Nabeul">Nabeul</option>
+                                      <option value="Sfax">Sfax</option>
+                                      <option value="Sidi Bouzid">
+                                        Sidi Bouzid
+                                      </option>
+                                      <option value="Siliana">Siliana</option>
+                                      <option value="Sousse">Sousse</option>
+                                      <option value="Tataouine">
+                                        Tataouine
+                                      </option>
+                                      <option value="Tozeur">Tozeur</option>
+                                      <option value="Tunis">Tunis</option>
+                                      <option value="Zaghouan">Zaghouan</option>
+                                    </select>
+                                  </div>
+                                </div>
 
-							<div className="col-lg-12">
-                <label htmlFor="telephone">Téléphone :</label>
-								<input type="text" id="telephone" name="telephone" placeholder="telephone" value={updatedUser.telephone} onChange={handleChange}/>
-                {errors.telephone && <span className="error-message">{errors.telephone}</span>}
-							</div>
-							<div className="col-lg-12">
-								<div className="price-sec">
-                    <label htmlFor="dateNaissance">Date de Naissance :</label>
+                                <div className="col-lg-12">
+                                  <label htmlFor="telephone">Téléphone :</label>
+                                  <input
+                                    type="text"
+                                    id="telephone"
+                                    name="telephone"
+                                    placeholder="telephone"
+                                    value={updatedUser.telephone}
+                                    onChange={handleChange}
+                                  />
+                                  {errors.telephone && (
+                                    <span className="error-message">
+                                      {errors.telephone}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="col-lg-12">
+                                  <div className="price-sec">
+                                    <label htmlFor="dateNaissance">
+                                      Date de Naissance :
+                                    </label>
 
-										<input type="date" id="dateNaissance" name="dateNaissance" placeholder="Price" value={updatedUser.dateNaissance} onChange={handleChange}/>
-                    {errors.dateNaissance && <span className="error-message">{errors.dateNaissance}</span>}
-
-								</div>
-							</div>
-							<div className="col-lg-12">
-                <label htmlFor="gender">Genre :</label>
-                <select
-          id="gender"
-          name="gender"
-          value={updatedUser.gender}
-          onChange={handleChange}
-        >
-          <option value="homme">Homme</option>
-          <option value="femme">Femme</option>
-        </select>
-							</div>
-							<div className="col-lg-12">
-								<ul>
-									<li><button className="active" type="submit" value="post">Submit</button></li>
-									{/* <li><a href="#" type="close" title="">Cancel</a></li> */}
-								</ul>
-							</div>
-						</div>
-					</form>
-				</div>
-				<a href="#" title=""><i className="la la-times-circle-o"></i></a>
-			</div>
-		</div>
-    <ul className="social_links">
-                      {!!user && user.gouvernorat && (
-    <li>
-      <i className="la la-globe"> Gouvernorat : </i> 
-      <h3>{user.gouvernorat}</h3>
-    </li>
-  )}
-  {!!user && user.addresse && (
-    <li>
-      <i className="la la-globe"> Ville :  </i> 
-      <h3>{user.addresse}</h3>
-    </li>
-  )}
-  {!!user && user.dateNaissance && (
-    <li>
-      <i className="la la-globe"> Date de naissance : </i> 
-      <h3>{new Date(user.dateNaissance).toLocaleDateString('fr-FR')}</h3>
-    </li>
-  )}
-  {!!user && user.telephone && (
-    <li>
-      <i className="la la-globe">  Telephone : </i>
-      <h3>{user.telephone}</h3>
-    </li>
-  )}
+                                    <input
+                                      type="date"
+                                      id="dateNaissance"
+                                      name="dateNaissance"
+                                      placeholder="Price"
+                                      value={updatedUser.dateNaissance}
+                                      onChange={handleChange}
+                                    />
+                                    {errors.dateNaissance && (
+                                      <span className="error-message">
+                                        {errors.dateNaissance}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="col-lg-12">
+                                  <label htmlFor="gender">Genre :</label>
+                                  <select
+                                    id="gender"
+                                    name="gender"
+                                    value={updatedUser.gender}
+                                    onChange={handleChange}
+                                  >
+                                    <option value="homme">Homme</option>
+                                    <option value="femme">Femme</option>
+                                  </select>
+                                </div>
+                                <div className="col-lg-12">
+                                  <ul>
+                                    <li>
+                                      <button
+                                        className="active"
+                                        type="submit"
+                                        value="post"
+                                      >
+                                        Submit
+                                      </button>
+                                    </li>
+                                    {/* <li><a href="#" type="close" title="">Cancel</a></li> */}
+                                  </ul>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                          <a href="#" title="">
+                            <i className="la la-times-circle-o"></i>
+                          </a>
+                        </div>
+                      </div>
+                      <ul className="social_links">
+                        {!!user && user.gouvernorat && (
+                          <li>
+                            <i className="la la-globe"> Gouvernorat : </i>
+                            <h3>{user.gouvernorat}</h3>
+                          </li>
+                        )}
+                        {!!user && user.addresse && (
+                          <li>
+                            <i className="la la-globe"> Ville : </i>
+                            <h3>{user.addresse}</h3>
+                          </li>
+                        )}
+                        {!!user && user.dateNaissance && (
+                          <li>
+                            <i className="la la-globe"> Date de naissance : </i>
+                            <h3>
+                              {new Date(user.dateNaissance).toLocaleDateString(
+                                "fr-FR"
+                              )}
+                            </h3>
+                          </li>
+                        )}
+                        {!!user && user.telephone && (
+                          <li>
+                            <i className="la la-globe"> Telephone : </i>
+                            <h3>{user.telephone}</h3>
+                          </li>
+                        )}
                         {/* <li>
                           <a href="#" title="">
                             <i className="fa fa-instagram"></i>{" "}
@@ -627,7 +674,7 @@ if (Object.keys(validationErrors).length > 0) {
                     <div className="user-tab-sec rewivew">
                       <h3> {!!user && <>{user.name}</>}</h3>
                       <div className="star-descp">
-                        <span> {!!user && <>{user.role}</> }</span> 
+                        <span> {!!user && <>{user.role}</>}</span>
                         <ul>
                           <li>
                             <i className="fa fa-star"></i>
@@ -649,14 +696,11 @@ if (Object.keys(validationErrors).length > 0) {
                           Status
                         </a>
 
-                        
-
                         {<SocialSkillAffect userId={user._id} />}
-
                       </div>
                       <div className="tab-feed st2 settingjb">
                         <ul>
-                          <li data-tab="feed-dd" >
+                          <li data-tab="feed-dd">
                             <a href="#" title="">
                               <img src="/assets/images/ic1.png" alt="" />
                               <span>Feed</span>
@@ -3151,8 +3195,8 @@ if (Object.keys(validationErrors).length > 0) {
                         </div>
                       </div>
                     </div>
-                     
-                   <div className="product-feed-tab current" id="info-dd">
+
+                    <div className="product-feed-tab current" id="info-dd">
                       <div className="user-profile-ov">
                         <h3>
                           <a href="#" title="" className="overview-open">
@@ -3235,16 +3279,11 @@ if (Object.keys(validationErrors).length > 0) {
                           <a href="#" title="" className="skills-open">
                             <i className="fa fa-pencil"></i>
                           </a>{" "}
-
-
-                          
-                         
-                          <Link to={`/affectSkill/${user?.id}` }>
-                          <i className="fa fa-plus-square"></i>
-                  </Link>
-                        
+                          <Link to={`/affectSkill/${user?.id}`}>
+                            <i className="fa fa-plus-square"></i>
+                          </Link>
                         </h3>
-                        
+
                         {/* */}
 
                         {user?.socialSkills?.length > 0 ? (
@@ -3268,10 +3307,14 @@ if (Object.keys(validationErrors).length > 0) {
                             personnaliszer votre profil !
                           </div>
                         )}
-                        
                       </div>
 
-                      <AddSkillForm show={show} handleClose={handleClose} skills={skills} assignSocialSkills={assigned} />
+                      <AddSkillForm
+                        show={show}
+                        handleClose={handleClose}
+                        skills={skills}
+                        assignSocialSkills={assigned}
+                      />
                     </div>
                     <div className="product-feed-tab" id="rewivewdata">
                       <section></section>
@@ -4282,170 +4325,233 @@ if (Object.keys(validationErrors).length > 0) {
                       </div>
                     </div>
                     {isAdmin && (
-                    <div className="product-feed-tab" id="payment-dd">
-                      <div className="billing-method">
-                        <ul>
-                          <li>
-                            <h3>Ajouter Departement</h3>
-                            <a href="#" title="">
-                              <i className="fa fa-plus-circle"></i>
-                            </a>
-                          </li>
-                          {/* <li>
+                      <div className="product-feed-tab" id="payment-dd">
+                        <div className="billing-method">
+                          <ul>
+                            <li>
+                              <h3>Ajouter Departement</h3>
+                              <a href="#" title="">
+                                <i className="fa fa-plus-circle"></i>
+                              </a>
+                            </li>
+                            {/* <li>
                             <h3>voir unites</h3>
                             <a href="#" title="">
                               View All
                             </a>
                           </li> */}
-                        </ul>
-                        <div className="lt-sec">
-                          <img src="/assets/images/lt-icon.png" alt="" />
-                          <h4>liste des departements </h4>
-                          <table className="table table-sm">
-                            <thead>
-                              <tr>
-                                <th scope="col">nom departement </th>
-                                <th scope="col">Description</th>
-                                <th scope="col">Nombre des unités</th>
-                                <th>Actions</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {departements.map((departement) => (
-                                <tr key={departement._id}>
-                                  <td>{departement.name}</td>
-                                  <td>{departement.description}</td>
-                                  <td>{departement.nbrUnite}</td>
-                                  <td>
-                                  <i className="fa fa-edit" style={{ color: 'orange', cursor: 'pointer', marginRight: '10px'}} onClick={() => handleEditDep(departement._id)}></i>
-                                  <i className="fa fa-trash" style={{ color: 'red', cursor: 'pointer' }} onClick={() => handleDeleteDep(departement._id)}></i>
-
-                      </td>
+                          </ul>
+                          <div className="lt-sec">
+                            <img src="/assets/images/lt-icon.png" alt="" />
+                            <h4>liste des departements </h4>
+                            <table className="table table-sm">
+                              <thead>
+                                <tr>
+                                  <th scope="col">nom departement </th>
+                                  <th scope="col">Description</th>
+                                  <th scope="col">Nombre des unités</th>
+                                  <th>Actions</th>
                                 </tr>
-                              ))}
-                            </tbody>
-                          </table>
+                              </thead>
+                              <tbody>
+                                {departements.map((departement) => (
+                                  <tr key={departement._id}>
+                                    <td>{departement.name}</td>
+                                    <td>{departement.description}</td>
+                                    <td>{departement.nbrUnite}</td>
+                                    <td>
+                                      <i
+                                        className="fa fa-edit"
+                                        style={{
+                                          color: "orange",
+                                          cursor: "pointer",
+                                          marginRight: "10px",
+                                        }}
+                                        onClick={() =>
+                                          handleEditDep(departement._id)
+                                        }
+                                      ></i>
+                                      <i
+                                        className="fa fa-trash"
+                                        style={{
+                                          color: "red",
+                                          cursor: "pointer",
+                                        }}
+                                        onClick={() =>
+                                          handleDeleteDep(departement._id)
+                                        }
+                                      ></i>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
-                      </div>
-                      <div className="add-billing-method">
-                      <h3>{isEditing ? 'Modifier le departement' : 'Ajouter un departement'}</h3> {/* Afficher le titre correct en fonction du mode d'édition */}
-                        <div className="payment_methods">
-                          <form onSubmit={handleSubmitDep}>
-                            <div className="row">
-                              <div className="col-lg-12">
-                                <div className="cc-head">
-                                  <h5>nom de departement</h5>
-                                 
-                                </div>
-                                <div className="inpt-field pd-moree">
-                                  <input
-                                    type="text"
-                                    name="name"
-                                    placeholder="nom departement ..."
-                                    value={departement.name}
-                                    onChange={(e) => setDepartement({ ...departement, name: e.target.value })}
+                        <div className="add-billing-method">
+                          <h3>
+                            {isEditing
+                              ? "Modifier le departement"
+                              : "Ajouter un departement"}
+                          </h3>{" "}
+                          {/* Afficher le titre correct en fonction du mode d'édition */}
+                          <div className="payment_methods">
+                            <form onSubmit={handleSubmitDep}>
+                              <div className="row">
+                                <div className="col-lg-12">
+                                  <div className="cc-head">
+                                    <h5>nom de departement</h5>
+                                  </div>
+                                  <div className="inpt-field pd-moree">
+                                    <input
+                                      type="text"
+                                      name="name"
+                                      placeholder="nom departement ..."
+                                      value={departement.name}
+                                      onChange={(e) =>
+                                        setDepartement({
+                                          ...departement,
+                                          name: e.target.value,
+                                        })
+                                      }
                                     />
-                                  <i className="fa fa-university"></i>
+                                    <i className="fa fa-university"></i>
+                                  </div>
+                                </div>
+                                <div className="col-lg-6">
+                                  <div className="cc-head">
+                                    <h5>Description</h5>
+                                  </div>
+                                  <div className="inpt-field pd-moree">
+                                    <input
+                                      type="text"
+                                      name="description"
+                                      placeholder="description ..."
+                                      value={departement.description}
+                                      onChange={(e) =>
+                                        setDepartement({
+                                          ...departement,
+                                          description: e.target.value,
+                                        })
+                                      }
+                                    />
+                                    <i className="fa fa-university"></i>
+                                  </div>
+                                </div>
+                                <div className="col-lg-6">
+                                  <div className="cc-head">
+                                    <h5>nombre des unités </h5>
+                                  </div>
+                                  <div className="inpt-field">
+                                    <input
+                                      type="number"
+                                      name="nbrUnite"
+                                      placeholder=""
+                                      value={departement.nbrUnite}
+                                      onChange={(e) =>
+                                        setDepartement({
+                                          ...departement,
+                                          nbrUnite: parseInt(e.target.value),
+                                        })
+                                      }
+                                    />
+                                  </div>
+                                </div>
+
+                                <div className="col-lg-12">
+                                  <button type="submit">
+                                    {isEditing ? "Modifier" : "Ajouter"}
+                                  </button>{" "}
+                                  {/* Utiliser le texte correct pour le bouton en fonction du mode d'édition */}
                                 </div>
                               </div>
-                              <div className="col-lg-6">
-                                <div className="cc-head">
-                                  <h5>Description</h5>
-                                </div>
-                                <div className="inpt-field pd-moree">
-                                  <input
-                                    type="text"
-                                    name="description"
-                                    placeholder="description ..."
-                                    value={departement.description}
-                                    onChange={(e) => setDepartement({ ...departement, description: e.target.value })}                                  />
-                                  <i className="fa fa-university"></i>
-                                </div>
-                              </div>
-                              <div className="col-lg-6">
-                                <div className="cc-head">
-                                  <h5>nombre des unités </h5>
-                                </div>
-                                <div className="inpt-field">
-                                  <input
-                                    type="number"
-                                    name="nbrUnite"
-                                    placeholder=""
-                                    value={departement.nbrUnite}
-                                    onChange={(e) => setDepartement({ ...departement, nbrUnite: parseInt(e.target.value) })}                                  />
-                                </div>
-                              </div>
-            
-                              <div className="col-lg-12">
-                              <button type="submit">{isEditing ? 'Modifier' : 'Ajouter'}</button> {/* Utiliser le texte correct pour le bouton en fonction du mode d'édition */}
-                              </div>
-                            </div>
-                          </form>
+                            </form>
+                          </div>
                         </div>
                       </div>
-                    </div>)}
+                    )}
 
                     {isChefDep && (
-                    <div className="product-feed-tab" id="payment-dd">
-                      <div className="billing-method">
-                        <ul>
-                          <li>
-                            <h3>Ajouter Unité</h3>
-                            <a href="#" title="">
-                              <i className="fa fa-plus-circle"></i>
-                            </a>
-                          </li>
-                        </ul>
-                        <div className="lt-sec">
-                          <img src="/assets/images/lt-icon.png" alt="" />
-                          <h4>liste des unités </h4>
-                          <table className="table table-sm">
-                            <thead>
-                              <tr>
-                                <th scope="col">nom unité </th>
-                                <th scope="col">Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {unites.map((unite) => (
-                                <tr key={unite._id}>
-                                  <td>{unite.name}</td>
-                                  <td>
-                                  <i className="fa fa-edit" style={{ color: 'orange', cursor: 'pointer', marginRight: '10px'}} onClick={() => handleEditUnit(unite._id)}></i>
-
-                                  <i className="fa fa-trash" style={{ color: 'red', cursor: 'pointer' }} onClick={() => handleDeleteUnit(unite._id)}></i>
-
-                      </td>
+                      <div className="product-feed-tab" id="payment-dd">
+                        <div className="billing-method">
+                          <ul>
+                            <li>
+                              <h3>Ajouter Unité</h3>
+                              <a href="#" title="">
+                                <i className="fa fa-plus-circle"></i>
+                              </a>
+                            </li>
+                          </ul>
+                          <div className="lt-sec">
+                            <img src="/assets/images/lt-icon.png" alt="" />
+                            <h4>liste des unités </h4>
+                            <table className="table table-sm">
+                              <thead>
+                                <tr>
+                                  <th scope="col">nom unité </th>
+                                  <th scope="col">Action</th>
                                 </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
+                              </thead>
+                              <tbody>
+                                {unites.map((unite) => (
+                                  <tr key={unite._id}>
+                                    <td>{unite.name}</td>
+                                    <td>
+                                      <i
+                                        className="fa fa-edit"
+                                        style={{
+                                          color: "orange",
+                                          cursor: "pointer",
+                                          marginRight: "10px",
+                                        }}
+                                        onClick={() =>
+                                          handleEditUnit(unite._id)
+                                        }
+                                      ></i>
 
-                      
-                      <div className="add-billing-method">
-                      <h3>{isEditingUnit ? 'Modifier l`unité' : 'Ajouter une unité'}</h3>
-  
-                        <div className="payment_methods">
-                          <form onSubmit={handleSubmit2}>
-                            <div className="row">
-                              <div className="col-lg-12">
-                                <div className="cc-head">
-                                  <h5>nom de l`unité</h5>
-                                 
-                                </div>
-                                <div className="inpt-field pd-moree">
-                                  <input
-                                    type="text"
-                                    name="name"
-                                    placeholder="nom de l`unité ..."
-                                    value={unite.name}
-                                    onChange={handleChange2}
+                                      <i
+                                        className="fa fa-trash"
+                                        style={{
+                                          color: "red",
+                                          cursor: "pointer",
+                                        }}
+                                        onClick={() =>
+                                          handleDeleteUnit(unite._id)
+                                        }
+                                      ></i>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+
+                        <div className="add-billing-method">
+                          <h3>
+                            {isEditingUnit
+                              ? "Modifier l`unité"
+                              : "Ajouter une unité"}
+                          </h3>
+
+                          <div className="payment_methods">
+                            <form onSubmit={handleSubmit2}>
+                              <div className="row">
+                                <div className="col-lg-12">
+                                  <div className="cc-head">
+                                    <h5>nom de l`unité</h5>
+                                  </div>
+                                  <div className="inpt-field pd-moree">
+                                    <input
+                                      type="text"
+                                      name="name"
+                                      placeholder="nom de l`unité ..."
+                                      value={unite.name}
+                                      onChange={handleChange2}
                                     />
-                                  <i className="fa fa-university"></i>
-                                </div>
-                                {/* <div className="inpt-field pd-moree">
+                                    <i className="fa fa-university"></i>
+                                  </div>
+                                  {/* <div className="inpt-field pd-moree">
                                 <select
             name="departement"
             value={unite.departement}
@@ -4460,15 +4566,18 @@ if (Object.keys(validationErrors).length > 0) {
           </select>
                                   <i className="fa fa-university"></i>
                                 </div> */}
+                                </div>
+                                <div className="col-lg-12">
+                                  <button type="submit">
+                                    {isEditingUnit ? "Modifier" : "Ajouter"}
+                                  </button>
+                                </div>
                               </div>
-                              <div className="col-lg-12">
-                              <button type="submit">{isEditingUnit ? 'Modifier' : 'Ajouter'}</button>
-                              </div>
-                            </div>
-                          </form>
+                            </form>
+                          </div>
                         </div>
                       </div>
-                    </div>)}
+                    )}
                   </div>
                 </div>
                 <div className="col-lg-3">
@@ -4591,7 +4700,6 @@ if (Object.keys(validationErrors).length > 0) {
           </div>
         </div>
       </main>
-      
     </>
   );
 }
