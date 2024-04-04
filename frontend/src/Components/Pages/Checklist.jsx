@@ -1,16 +1,11 @@
-import { useEffect, useState } from "react";
-import { Button, Card, Col, Row, Spinner } from "react-bootstrap";
-import {
-  getChecklists,
-  updateChecklist,
-} from "../../services/checklist-service";
+import { useState } from "react";
+import { Button, Card, Col, Row } from "react-bootstrap";
+import { updateChecklist } from "../../services/checklist-service";
 import ChecklistDelete from "../Modals/ChecklistDelete";
 import PropTypes from "prop-types";
 
 const Checklist = ({ refresh, checkList, index, upChecklist }) => {
   const [toggle, setToggle] = useState(checkList.done);
-  const [holder, setHolder] = useState({});
-  const [loading, setLoading] = useState(true);
 
   const updateDone = async (e) => {
     checkList.done = e.target.checked;
@@ -20,15 +15,6 @@ const Checklist = ({ refresh, checkList, index, upChecklist }) => {
     }
   };
 
-  useEffect(() => {
-    const fetchChecklist = async (id) => {
-      const checklist = await getChecklists(id);
-      setHolder(checklist.data.message.holder);
-      setLoading(false);
-    };
-    fetchChecklist(checkList._id);
-  }, []);
-
   /* pop up*/
   const [showDelete, setShowDelete] = useState(false);
 
@@ -37,14 +23,6 @@ const Checklist = ({ refresh, checkList, index, upChecklist }) => {
   const handleCloseDelete = () => setShowDelete(false);
 
   /* pop up end*/
-
-  if (loading) {
-    return (
-      <Spinner animation="border" role="output" variant="danger">
-        <span className="visually-hidden container p-0">Loading...</span>
-      </Spinner>
-    );
-  }
 
   return (
     <>
@@ -91,7 +69,7 @@ const Checklist = ({ refresh, checkList, index, upChecklist }) => {
         <Card.Body>
           <Card.Title className=" text-white ">{checkList.title}</Card.Title>
           <Card.Text className=" text-white ">
-            -Assigned to:{holder?.name} ( {holder?.role} )
+            -Assigned to:{checkList?.holder?.name} ( {checkList?.holder?.role} )
             <br />
             {checkList?.description !== "" && (
               <>-Description: {checkList?.description}</>

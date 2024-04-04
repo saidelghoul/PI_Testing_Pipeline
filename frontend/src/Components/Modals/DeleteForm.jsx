@@ -36,7 +36,7 @@ const DeleteForm = ({ upActivity, show, handleClose, activity, deleting }) => {
           <Button
             style={{ backgroundColor: "#e44d3a" }}
             onClick={() => {
-              upActivity(activity._id, activity);
+              upActivity(activity._id, activity, true);
               handleClose();
             }}
           >

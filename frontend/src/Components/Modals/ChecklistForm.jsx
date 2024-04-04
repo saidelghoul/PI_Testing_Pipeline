@@ -123,6 +123,7 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
             <Form.Group as={Col} md="6" controlId="validationCustom01">
               <Form.Label>Title</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 required
                 type="text"
                 placeholder="checklist title"
@@ -141,7 +142,7 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
                 onChange={(value) => onHolderChange("holder", value)}
                 name="holder"
                 options={holders}
-                className="basic-multi-select"
+                className="basic-multi-select mt-2 "
                 classNamePrefix="select"
               />
               {errors.holder && (
@@ -154,6 +155,7 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
             <Form.Group as={Col} md="6" controlId="validationCustom04">
               <Form.Label>Description</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 placeholder="Description"
                 as="textarea"
                 rows={3}

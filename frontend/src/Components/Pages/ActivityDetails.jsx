@@ -22,9 +22,13 @@ const ActivityDetails = () => {
 
   if (loading) {
     return (
-      <Spinner animation="border" role="output" variant="danger">
-        <span className="visually-hidden container p-0">Loading...</span>
-      </Spinner>
+      <main className="content">
+        <div className=" text-center ">
+          <Spinner animation="border" role="output" variant="danger">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
+      </main>
     );
   }
 

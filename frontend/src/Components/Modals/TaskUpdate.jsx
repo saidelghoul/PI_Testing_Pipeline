@@ -38,13 +38,13 @@ const TaskUpdate = ({
       errors.title = "Title length must be between 2 and 50";
     }
     if (!inputValues.initDate) {
-      errors.initDate = "initDate is required";
+      errors.initDate = "Initial Date is required";
     }
     if (
       !inputValues.dueDate ||
       new Date(inputValues.dueDate) < new Date(inputValues.initDate)
     ) {
-      errors.dueDate = "dueDate is required & must be greater than initDate";
+      errors.dueDate = "Due Date is required & must be greater than initDate";
     }
     if (new Date(inputValues.initDate) < new Date(activity.startDate)) {
       errors.initDate =
@@ -83,9 +83,9 @@ const TaskUpdate = ({
     if (inputValues.collaborators.length < 1) {
       errors.collaborators = "Please specify at least one collaborator";
     }
-    if (inputValues.description.length > 1500) {
+    if (inputValues.description.length > 200) {
       errors.description =
-        "Description exceeds maximum length of 1500 characters";
+        "Description exceeds maximum length of 200 characters";
     }
     return errors;
   };
@@ -251,6 +251,7 @@ const TaskUpdate = ({
             <Form.Group as={Col} md="4" controlId="validationCustom01">
               <Form.Label>Title</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 required
                 type="text"
                 placeholder="task title"
@@ -266,7 +267,7 @@ const TaskUpdate = ({
               <Form.Label>Status</Form.Label>
               <Form.Select
                 aria-label="Default select example"
-                className=" form-control "
+                className=" form-control mt-2 "
                 name="status"
                 value={taskItem.status}
                 onChange={onValueChange}
@@ -280,7 +281,7 @@ const TaskUpdate = ({
               <Form.Label>Priority</Form.Label>
               <Form.Select
                 aria-label="Default select example"
-                className=" form-control "
+                className=" form-control mt-2 "
                 name="priority"
                 value={taskItem.priority}
                 onChange={onValueChange}
@@ -303,7 +304,7 @@ const TaskUpdate = ({
                 isMulti
                 name="tags"
                 options={options}
-                className="basic-multi-select"
+                className="basic-multi-select mt-2 "
                 classNamePrefix="select"
               />
               {errors.tags && (
@@ -313,8 +314,8 @@ const TaskUpdate = ({
             <Form.Group as={Col} md="4" controlId="validationCustom05">
               <Form.Label>Start date</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 type="date"
-                placeholder="init date"
                 required
                 name="initDate"
                 value={taskItem.initDate}
@@ -327,8 +328,8 @@ const TaskUpdate = ({
             <Form.Group as={Col} md="4" controlId="validationCustom06">
               <Form.Label>End date</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 type="date"
-                placeholder="end date"
                 required
                 name="dueDate"
                 value={taskItem.dueDate}
@@ -343,6 +344,7 @@ const TaskUpdate = ({
             <Form.Group as={Col} md="6" controlId="validationCustom04">
               <Form.Label>Description</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 placeholder="Description"
                 as="textarea"
                 rows={3}
@@ -362,7 +364,7 @@ const TaskUpdate = ({
                 isMulti
                 name="collaborators"
                 options={users}
-                className="basic-multi-select"
+                className="basic-multi-select mt-2 "
                 classNamePrefix="select"
               />
               {errors.collaborators && (

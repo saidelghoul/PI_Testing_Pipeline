@@ -24,13 +24,16 @@ const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
       errors.title = "Title length must be between 2 and 50";
     }
     if (!inputValues.initDate) {
-      errors.initDate = "initDate is required";
+      errors.initDate = "Initial Date is required";
     }
     if (
       !inputValues.dueDate ||
       new Date(inputValues.dueDate) < new Date(inputValues.initDate)
     ) {
-      errors.dueDate = "dueDate is required & must be greater than initDate";
+      errors.dueDate = "Due Date is required & must be greater than initDate";
+    }
+    if (new Date() > new Date(inputValues.initDate)) {
+      errors.initDate = "Initial Date must be greater than today";
     }
     if (new Date(inputValues.initDate) < new Date(activity.startDate)) {
       errors.initDate =
@@ -68,9 +71,9 @@ const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
     if (inputValues.collaborators.length < 1) {
       errors.collaborators = "Please specify at least one collaborator";
     }
-    if (inputValues.description.length > 1500) {
+    if (inputValues.description.length > 200) {
       errors.description =
-        "Description exceeds maximum length of 1500 characters";
+        "Description exceeds maximum length of 200 characters";
     }
     return errors;
   };
@@ -251,7 +254,6 @@ const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
               <Form.Control
                 className=" mt-2 "
                 type="date"
-                placeholder="init date"
                 required
                 name="initDate"
                 value={taskItem.initDate}
@@ -266,7 +268,6 @@ const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
               <Form.Control
                 className=" mt-2 "
                 type="date"
-                placeholder="end date"
                 required
                 name="dueDate"
                 value={taskItem.dueDate}

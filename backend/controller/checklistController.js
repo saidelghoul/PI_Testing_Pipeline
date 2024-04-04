@@ -3,7 +3,21 @@ const Task = require("../model/task");
 
 async function getCheckLists(req, res) {
   try {
-    const checkLists = await CheckList.find({}).populate("holder");
+    const checkLists = await CheckList.find({});
+
+    if (!checkLists)
+      res.status(404).json({ title: "error", message: "No checkLists found" });
+    else res.status(200).json({ title: "success", message: checkLists });
+  } catch (err) {
+    res.status(500).json({ title: "error", message: err.message });
+  }
+}
+
+async function getCheckListByTaskId(req, res) {
+  try {
+    const checkLists = await CheckList.find({
+      id_task: req.params.id_task,
+    }).populate("holder");
 
     if (!checkLists)
       res.status(404).json({ title: "error", message: "No checkLists found" });
@@ -44,7 +58,10 @@ async function getCheckListByHolder(req, res) {
     if (!checkList)
       res.status(404).json({ title: "error", message: "No checkLists found" });
     else {
-      res.status(200).json({ title: "success", message: checkList });
+      const current = checkList.filter(
+        (checklist) => checklist.archived === false
+      );
+      res.status(200).json({ title: "success", message: current });
     }
   } catch (err) {
     res.status(500).json({ title: "error", message: err.message });
@@ -187,6 +204,7 @@ module.exports = {
   createCheckList,
   removeChecklist,
   getCheckLists,
+  getCheckListByTaskId,
   getCheckListById,
   getCheckListByHolder,
   updateChecklist,

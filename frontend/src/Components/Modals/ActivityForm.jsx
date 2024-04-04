@@ -21,14 +21,16 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
       errors.name = "Name length must be between 2 and 50";
     }
     if (!inputValues.startDate) {
-      errors.startDate = "startDate is required";
+      errors.startDate = "Start Date is required";
     }
     if (
       !inputValues.endDate ||
       new Date(inputValues.endDate) < new Date(inputValues.startDate)
     ) {
-      errors.endDate = "endDate is required & must be greater than startDate";
-      errors.startDate = "";
+      errors.endDate = "End Date is required & must be greater than startDate";
+    }
+    if (new Date() > new Date(inputValues.startDate)) {
+      errors.startDate = "Start Date must be greater than today";
     }
     if (
       Math.round(
@@ -50,9 +52,9 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
       errors.endDate =
         "Difference in start date & end date must be less than 9 months";
     }
-    if (inputValues.description.length > 2500) {
+    if (inputValues.description.length > 200) {
       errors.description =
-        "Description exceeds maximum length of 2500 characters";
+        "Description exceeds maximum length of 200 characters";
     }
     return errors;
   };
@@ -130,6 +132,7 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
             <Form.Group as={Col} md="6" controlId="validationCustom01">
               <Form.Label>Name</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 required
                 type="text"
                 placeholder="activity name"
@@ -146,7 +149,7 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
               <Form.Select
                 required
                 aria-label="Default select example"
-                className=" form-control "
+                className=" form-control mt-2 "
                 name="category"
                 value={activityItem.category}
                 onChange={onValueChange}
@@ -162,6 +165,7 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
             <Form.Group as={Col} md="6" controlId="validationCustom03">
               <Form.Label>Description</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 placeholder="Description"
                 as="textarea"
                 rows={3}
@@ -176,8 +180,8 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
             <Form.Group as={Col} md="3" controlId="validationCustom04">
               <Form.Label>Start date</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 type="date"
-                placeholder="start date"
                 required
                 name="startDate"
                 value={activityItem.startDate}
@@ -190,8 +194,8 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
             <Form.Group as={Col} md="3" controlId="validationCustom05">
               <Form.Label>End date</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 type="date"
-                placeholder="end date"
                 required
                 name="endDate"
                 value={activityItem.endDate}

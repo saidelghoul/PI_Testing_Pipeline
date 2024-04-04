@@ -34,7 +34,7 @@ const ChecklistDelete = ({
 
       <Modal.Body>
         <div className=" text-danger text-center  ">
-          Are you sure you want to delete this checklist
+          Are you sure you want to delete/archive this checklist
         </div>
         <div className=" text-danger text-center  ">({checklist.title})</div>
       </Modal.Body>
@@ -43,9 +43,9 @@ const ChecklistDelete = ({
           <Button
             style={{ backgroundColor: "#e44d3a" }}
             onClick={() => {
-              upChecklist(checklist._id, checklist);
-              handleClose();
+              upChecklist(checklist._id, checklist, true);
               refresh();
+              handleClose();
             }}
           >
             Archive
@@ -55,8 +55,8 @@ const ChecklistDelete = ({
             style={{ backgroundColor: "#e44d3a" }}
             onClick={() => {
               upChecklist(checklist._id);
-              handleClose();
               refresh();
+              handleClose();
             }}
           >
             Delete

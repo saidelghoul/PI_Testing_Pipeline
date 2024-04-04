@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getChecklistByTask, getTasks } from "../../services/task-service";
+import { getTasks } from "../../services/task-service";
 import Checklist from "./Checklist";
 import ChecklistForm from "../Modals/ChecklistForm";
 import { Badge, Button, Spinner, Table } from "react-bootstrap";
 import {
   deleteChecklist,
   getAssignedUsersForChecklist,
+  getChecklistByTaskWithHolder,
   updateChecklist,
 } from "../../services/checklist-service";
 import ChecklistDelete from "../Modals/ChecklistDelete";
@@ -25,7 +26,7 @@ const TaskDetails = () => {
   const [users, setUsers] = useState([]);
 
   const fetchChecklist = async (id) => {
-    const data = await getChecklistByTask(id);
+    const data = await getChecklistByTaskWithHolder(id);
 
     const current = data.data.message.filter(
       (checklist) => checklist.archived === false
@@ -36,8 +37,6 @@ const TaskDetails = () => {
       (checklist) => checklist.archived === true
     );
     setArchived(archived);
-
-    console.log(archived);
   };
 
   const refreshTable = async () => {
@@ -91,9 +90,9 @@ const TaskDetails = () => {
   };
   /** */
 
-  const editChecklist = async (id, checklist) => {
+  const editChecklist = async (id, checklist, isArchived) => {
     try {
-      checklist.archived = true;
+      checklist.archived = isArchived;
       const result = await updateChecklist(id, checklist);
       if (result.status === 200) {
         alert("Checklist has been archived successfully!");
@@ -136,9 +135,13 @@ const TaskDetails = () => {
 
   if (loading) {
     return (
-      <Spinner animation="border" role="output" variant="danger">
-        <span className="visually-hidden container p-0">Loading...</span>
-      </Spinner>
+      <main className="content">
+        <div className=" text-center ">
+          <Spinner animation="border" role="output" variant="danger">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
+      </main>
     );
   }
 
@@ -262,7 +265,7 @@ const TaskDetails = () => {
                   <th>Checklist title</th>
                   <th>Holder</th>
                   <th>Description</th>
-
+                  <th>Restore?</th>
                   <th>Delete?</th>
                 </tr>
               </thead>
@@ -275,6 +278,27 @@ const TaskDetails = () => {
                       {checklist?.holder?.name} ( {checklist?.holder?.role} )
                     </td>
                     <td>{checklist?.description}</td>
+                    <td>
+                      <Button
+                        className="btn btn-outline-light btn-sm btn-primary "
+                        onClick={() => {
+                          editChecklist(checklist?._id, checklist, false);
+                        }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          className="bi bi-trash"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                          <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                        </svg>
+                        Restore
+                      </Button>
+                    </td>
                     <td>
                       <Button
                         className="btn btn-outline-light btn-sm"

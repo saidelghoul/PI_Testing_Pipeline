@@ -27,7 +27,7 @@ const TaskDelete = ({ upTask, refresh, show, handleClose, task, deleting }) => {
 
       <Modal.Body>
         <div className=" text-danger text-center ">
-          Are you sure you want to delete this task
+          Are you sure you want to delete/archive this task
         </div>
         <div className=" text-danger text-center ">({task.title})</div>
       </Modal.Body>
@@ -36,7 +36,7 @@ const TaskDelete = ({ upTask, refresh, show, handleClose, task, deleting }) => {
           <Button
             style={{ backgroundColor: "#e44d3a" }}
             onClick={() => {
-              upTask(task._id, task);
+              upTask(task._id, task, true);
               refresh();
               handleClose();
             }}
