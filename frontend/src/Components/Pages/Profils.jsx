@@ -16,11 +16,15 @@ import axios from "axios";
 
 import SocialSkillService from "../../services/socialSkill-service";
 import AddSkillForm from "../Modals/Skills/AssignSkillForm";
-import SkillModal from "../Modals/Skills/SkillModal";
+import { Link } from "react-router-dom";
+import SocialSkillAffect from "./Skills/SocialSkills/SocialSkillAffect";
+
 
 
 export default function profil() {
+  const [isLoading, setIsLoading] = useState(true);
   const { user } = useContext(UserContext);
+  console.log(user);
   const [departements, setDepartements] = useState([]);
   const [unites, setUnités] = useState([]);
 
@@ -36,12 +40,29 @@ export default function profil() {
   });
 
 
+
+
   useEffect(() => {
-    if(user){
-    fetchDepartements();
-    fetchUnités();
-    fetchUserData();
-  }}, [user]);
+    if (user) {
+      fetchDepartements();
+      fetchUnités();
+      fetchUserData();
+
+      fetchSkills();
+      getAssigned();
+      setIsLoading(false)
+    }
+  }, [user]);
+
+
+
+  const [skills, setSkills] = useState([]);
+
+  const fetchSkills = async () => {
+    const result = await SocialSkillService.getAvailableSocialSkills(user.id);
+    setSkills(result);
+    setSkills([...result, user.id]);
+  };
 
   const fetchDepartements = async () => {
     try {
@@ -144,6 +165,20 @@ const handleEditUnit = async (id) => {
     gender: "",
   });
 
+  const [assigned,setAssigned] = useState([]);
+
+  const getAssigned = async () => {
+    try {
+      const skillsData = SocialSkillService.getSocialSkillsByUser(user.id);
+      if (skillsData) {
+        // Si l'utilisateur existe, mettez à jour l'état userData avec les données de l'utilisateur
+        setAssigned(skillsData)
+      }
+    } catch (error) {
+      console.error("Error fetching user skills:", error);
+    }
+  };
+
 
   const fetchUserData = async () => {
     try {
@@ -151,6 +186,7 @@ const handleEditUnit = async (id) => {
       if (userResponse.data) {
         // Si l'utilisateur existe, mettez à jour l'état userData avec les données de l'utilisateur
         setUpdatedUser(userResponse.data);
+        
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -289,12 +325,11 @@ if (Object.keys(validationErrors).length > 0) {
   useEffect(() => {
     // Fonction asynchrone pour récupérer les compétences sociales
     const fetchSocialSkills = async () => {
-      console.log(user);
       try {
         if (user && user.id) {
           //const skills = await SocialSkillService.getSocialSkillsByUser(user.id);
           //setSocialSkills(skills);
-        }
+        }   
       } catch (error) {
         console.error(
           "Une erreur s'est produite lors de la récupération des compétences sociales:",
@@ -307,17 +342,17 @@ if (Object.keys(validationErrors).length > 0) {
     fetchSocialSkills();
   }, []);
 
+
+  if(isLoading) {return (<div>Loading...</div>)}
+
   return (
     <>
+    
       <section className="cover-sec">
         <img src="/assets/images/resources/cover-img.jpg" alt="" />
         <div className="add-pic-box">
           <div className="container">
             <div className="row no-gutters">
-              <div className="col-lg-12 col-sm-12">
-                <input type="file" id="file" />
-                <label htmlFor="file">Change Image</label>
-              </div>
             </div>
           </div>
         </div>
@@ -338,10 +373,6 @@ if (Object.keys(validationErrors).length > 0) {
                         />
                 
                         <div className="add-dp" id="OpenImgUpload">
-                          <input type="file" id="file" />
-                          <label htmlFor="file">
-                            <i className="fas fa-camera"></i>
-                          </label>
                         </div>
                       </div>
                       <div className="user_pro_status">
@@ -617,16 +648,21 @@ if (Object.keys(validationErrors).length > 0) {
                         <a href="#" title="">
                           Status
                         </a>
+
+                        
+
+                        {<SocialSkillAffect userId={user._id} />}
+
                       </div>
                       <div className="tab-feed st2 settingjb">
                         <ul>
-                          <li data-tab="feed-dd" className="active">
+                          <li data-tab="feed-dd" >
                             <a href="#" title="">
                               <img src="/assets/images/ic1.png" alt="" />
                               <span>Feed</span>
                             </a>
                           </li>
-                          <li data-tab="info-dd">
+                          <li data-tab="info-dd" className="active">
                             <a href="#" title="">
                               <img src="/assets/images/ic2.png" alt="" />
                               <span>Info</span>
@@ -1646,7 +1682,7 @@ if (Object.keys(validationErrors).length > 0) {
                         </div>
                       </div>
                     </div>
-                    <div className="product-feed-tab current" id="feed-dd">
+                    <div className="product-feed-tab " id="feed-dd">
                       <div className="posts-section">
                         <div className="post-bar">
                           <div className="post_topbar">
@@ -3115,8 +3151,8 @@ if (Object.keys(validationErrors).length > 0) {
                         </div>
                       </div>
                     </div>
-
-                   <div className="product-feed-tab" id="info-dd">
+                     
+                   <div className="product-feed-tab current" id="info-dd">
                       <div className="user-profile-ov">
                         <h3>
                           <a href="#" title="" className="overview-open">
@@ -3199,11 +3235,17 @@ if (Object.keys(validationErrors).length > 0) {
                           <a href="#" title="" className="skills-open">
                             <i className="fa fa-pencil"></i>
                           </a>{" "}
-                          <a onClick={handleShow}>
-                            <i className="fa fa-plus-square"></i>
-                          </a>
+
+
+                          
+                         
+                          <Link to={`/affectSkill/${user?.id}` }>
+                          <i className="fa fa-plus-square"></i>
+                  </Link>
+                        
                         </h3>
-                        {/* ... Votre autre contenu ... */}
+                        
+                        {/* */}
 
                         {user?.socialSkills?.length > 0 ? (
                           <>
@@ -3226,15 +3268,10 @@ if (Object.keys(validationErrors).length > 0) {
                             personnaliszer votre profil !
                           </div>
                         )}
-                        <SkillModal
-                          skill={selectedSkill}
-                          show={showSkillModal}
-                          handleClose={handleCloseSkillModal}
-                          handleRemove={handleRemove}
-                        />
+                        
                       </div>
 
-                      <AddSkillForm show={show} handleClose={handleClose} />
+                      <AddSkillForm show={show} handleClose={handleClose} skills={skills} assignSocialSkills={assigned} />
                     </div>
                     <div className="product-feed-tab" id="rewivewdata">
                       <section></section>
@@ -3328,11 +3365,6 @@ if (Object.keys(validationErrors).length > 0) {
                                 <img
                                   src="/assets/images/resources/bg-img4.png"
                                   alt=""
-                                />
-                                <input
-                                  className="reply"
-                                  type="text"
-                                  placeholder="Reply"
                                 />
                                 <a className="replybtn" href="#">
                                   Send
@@ -3437,11 +3469,6 @@ if (Object.keys(validationErrors).length > 0) {
                                   alt=""
                                 />
 
-                                <input
-                                  className="reply"
-                                  type="text"
-                                  placeholder="Reply"
-                                />
                                 <a className="replybtn" href="#">
                                   Send
                                 </a>
@@ -4564,6 +4591,7 @@ if (Object.keys(validationErrors).length > 0) {
           </div>
         </div>
       </main>
+      
     </>
   );
 }

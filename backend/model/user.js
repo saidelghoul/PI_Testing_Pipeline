@@ -40,13 +40,13 @@ const userSchema = new Schema({
   },
   socialSkills: [
     {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "socialSkills",
     },
   ],
   technicalSkills: [
     {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "technicalSkills",
     },
   ],

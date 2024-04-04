@@ -12,6 +12,32 @@ async function getallSocialSkills(req, res) {
     });
 }
 
+/*async function getallSocialSkills(req, res) {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
+  try {
+    const totalSocialSkills = await SocialSkill.countDocuments();
+    const totalPages = Math.ceil(totalSocialSkills / limit);
+    const offset = (page - 1) * limit;
+
+    const socialSkills = await SocialSkill.find({})
+      .skip(offset)
+      .limit(limit)
+      .exec();
+
+    res.status(200).json({
+      totalSocialSkills,
+      totalPages,
+      currentPage: page,
+      socialSkills
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Erreur du serveur: " + error.message });
+  }
+}*/
+
+
 async function getSocialSkillbyid(req, res) {
   SocialSkill.findById(req.params.id)
     .exec()
@@ -110,6 +136,44 @@ async function assignSocialSkillToUser(req, res) {
 }
 
 
+/*async function assignSocialSkillToUser(req, res) {
+  try {
+    const userId = req.params.userId;
+    const { skillId } = req.body;
+
+    const user = await User.findById(userId);
+    const socialSkill = await SocialSkill.findById(skillId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur non trouvé' });
+    }
+
+    if (!socialSkill) {
+      return res.status(404).json({ error: 'Compétence sociale non trouvée' });
+    }
+
+    // Vérifie si l'utilisateur est déjà assigné à cette compétence sociale
+    if (socialSkill.users.includes(userId)) {
+      return res.status(400).json({ error: 'L\'utilisateur est déjà assigné à cette compétence sociale' });
+    }
+
+    // Ajoute l'utilisateur à la liste des utilisateurs de la compétence sociale
+    socialSkill.users.push(userId);
+    // Met à jour la date d'attribution de la compétence sociale
+    socialSkill.dateAttribution = new Date();
+    // Sauvegarde la compétence sociale mise à jour
+    await socialSkill.save();
+
+    return res.status(200).json({ message: 'Utilisateur assigné à la compétence sociale avec succès' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Une erreur est survenue lors de l\'assignation de l\'utilisateur à la compétence sociale' + error.message });
+  }
+}*/
+
+
+
+
 async function unassignSocialSkillFromUser(req, res, next) {
   try {
     const userId = req.params.userId;
@@ -154,6 +218,9 @@ async function getSocialSkillsByUser(req, res, next) {
 
 async function getAvailableSocialSkills(req, res) {
   try {
+    if (!req.params.userId) {
+      return res.status(400).json({ error: "userId est requis" });
+    }
     const userId = req.params.userId;
 
     // Recherche de l'utilisateur par son ID

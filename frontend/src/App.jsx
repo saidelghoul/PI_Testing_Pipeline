@@ -18,6 +18,12 @@ import ActivityDetails from "./Components/Pages/ActivityDetails";
 import TaskDetails from "./Components/Pages/TaskDetails";
 import AccountUpdate from "./Components/Pages/AccountUpdate";
 import Section from "./Components/Pages/Section";
+import AffectSkill from "./Components/Modals/Skills/AffectSkill";
+import SocialSkills from "./Components/Pages/Skills/SocialSkills/SocialSkills";
+import TechnicalSkills from "./Components/Pages/Skills/TechnicalSkills/TechnicalSkills";
+import AddSocialSkill from "./Components/Pages/Skills/SocialSkills/AddSocialSkill";
+import EditSocialSkill from "./Components/Pages/Skills/SocialSkills/EditSocialSkill";
+import DeleteSocialSkill from "./Components/Pages/Skills/SocialSkills/DeleteSocialSkill";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -89,6 +95,73 @@ function App() {
                 </>
               }
             />
+
+            <Route
+              path="/affectSkill/:id"
+              element={
+                <>
+                  <Navbar />
+                  <AffectSkill/>
+                  <Footer />
+                </>
+              }
+            />
+
+            <Route
+              path="/socialSkills/"
+              element={
+                <>
+                  <Navbar />
+                  <SocialSkills/>
+                  <Footer />
+                </>
+              }
+            />
+            <Route
+              path="/socialSkills/add"
+              element={
+                <>
+                  <Navbar />
+                  <AddSocialSkill/>
+                  <Footer />
+                </>
+              }
+            />
+
+            <Route
+              path="/socialSkills/edit/:id"
+              element={
+                <>
+                  <Navbar />
+                  <EditSocialSkill/>
+                  <Footer />
+                </>
+              }
+            />
+
+            <Route
+              path="/socialSkills/delete/:id"
+              element={
+                <>
+                  <Navbar />
+                  <DeleteSocialSkill/>
+                  <Footer />
+                </>
+              }
+            />
+
+            <Route
+              path="/technicalSkills/"
+              element={
+                <>
+                  <Navbar />
+                  <TechnicalSkills/>
+                  <Footer />
+                </>
+              }
+            />
+
+            
             <Route
               path=":id_activity"
               element={

@@ -102,7 +102,7 @@ export default function Navbar() {
             <div className="user-info">
               <img src="/assets/images/resources/user.png" alt="" />
               <a href="#" title="">
-                <> {!!user && <h1>{user.name}</h1>}</>
+                {!!user && <h1>{user.name}</h1>}
               </a>
               <i className="la la-sort-down"></i>
             </div>
@@ -141,38 +141,107 @@ export default function Navbar() {
                   <button type="submit">Ok</button>
                 </form>
               </div>
-              <h3>Setting</h3>
-              <ul className="us-links">
+
+              <div className="user-account-settingss" id="users">
+                <h3 className="tc">
+                <a href="/profil" title="">
+                    Profil
+                  </a>
+                </h3>
+                {user?.role ==="Directeur d'étude" && ( // Afficher les liens uniquement pour le Directeur d'étude
+                <>
+                <h3>Skills</h3>
+                <ul className="us-links">
+              
                 <li>
                   <Link to="/settings" title="">
                     Account Setting
-                  </Link>
+                    </Link>
                 </li>
-                <li>
-                  <a href="#" title="">
-                    Privacy
-                  </a>
-                </li>
-                <li>
-                  <a href="#" title="">
-                    Faqs
-                  </a>
-                </li>
-                <li>
-                  <a href="#" title="">
-                    Terms & Conditions
-                  </a>
-                </li>
-              </ul>
-              <h3 className="tc">
-                <Link to="/" title="" onClick={handleLogout}>
-                  Logout
-                </Link>
+
+
+                  <li>
+                    <div className="fgt-sec">
+                      <Link to={`/socialSkills/`}>
+                        <p>Social Skills</p>
+                      </Link>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="fgt-sec">
+                      <Link to={`/technicalSkills/`}>
+                        <p>Technical Skills</p>
+                      </Link>
+                    </div>
+                  </li>
+                </ul>
+                </>
+                
+              )}
+
+
+                <h3>Online Status</h3>
+                <ul className="on-off-status">
+                  <li>
+                    <div className="fgt-sec">
+                      <input type="radio" name="cc" id="c5" />
+                      <label htmlFor="c5">
+                        <span></span>
+                      </label>
+                      <small>Online</small>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="fgt-sec">
+                      <input type="radio" name="cc" id="c6" />
+                      <label htmlFor="c6">
+                        <span></span>
+                      </label>
+                      <small>Offline</small>
+                    </div>
+                  </li>
+                </ul>
+                <h3>Custom Status</h3>
+                <div className="search_form">
+                  <form>
+                    <input type="text" name="search" />
+                    <button type="submit">Ok</button>
+                  </form>
+                </div>
+                <h3>Setting</h3>
+                <ul className="us-links">
+                  <li>
+                    <Link to="/settings" title="">
+                      Account Setting
+                    </Link>
+                  </li>
+                  <li>
+                    <a href="#" title="">
+                      Privacy
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" title="">
+                      Faqs
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" title="">
+                      Terms & Conditions
+                    </a>
+                  </li>
+                </ul>
+                <h3 className="tc">
+                  <Link to="/" title="" onClick={handleLogout}>
+                    Logout
+                    </Link>
               </h3>
             </div>
           </div>
         </div>
-      </div>
-    </header>
+        <div className="margin-bottom: 20px;"></div>
+        </div>
+        </div>
+      </header>
   );
 }
