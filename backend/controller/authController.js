@@ -97,7 +97,11 @@ const loginUser = async (req, res) => {
     // Vérifier si l'utilisateur existe
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({ error: "No user found" });
+      return res.json({ error: "Aucun utilisateur trouvé" });
+    }
+    // Vérifier si le compte de l'utilisateur est actif
+    if (!user.isActive) {
+      return res.json({ error: "compte désactivé" });
     }
 
     // Vérifier si les mots de passe correspondent

@@ -156,11 +156,48 @@ const handleEditUnit = async (id) => {
       console.error('Error fetching user data:', error);
     }
   };
+  const [errors, setErrors] = useState({}); // State to hold form validation errors
 
   
   const handleSubmit1 = async (e) => {
     e.preventDefault();
-    try {
+   // Obtain the current date
+   const currentDate = new Date();
+    
+   // Calculate the date 25 years ago
+   const minDate = new Date(currentDate.getFullYear() - 25, currentDate.getMonth(), currentDate.getDate());
+
+   const validationErrors = {};
+
+   // Check if the date of birth is provided
+   if (!updatedUser.dateNaissance) {
+     validationErrors.dateNaissance = "Veuillez fournir votre date de naissance.";
+   } else {
+     // Check if the entered date is valid
+     const userDateOfBirth = new Date(updatedUser.dateNaissance);
+     if (isNaN(userDateOfBirth.getTime())) {
+       validationErrors.dateNaissance = "Veuillez entrer une date de naissance valide.";
+     } else {
+       // Check if the user is at least 25 years old
+       if (userDateOfBirth > minDate) {
+         validationErrors.dateNaissance = "Vous devez avoir au moins 25 ans.";
+       }
+     }
+   }
+// Vérifiez si le numéro de téléphone est numérique
+if (isNaN(updatedUser.telephone)) {
+  validationErrors.telephone = "Le numéro de téléphone doit être numérique.";
+}
+
+// Update state with errors, if any
+setErrors(validationErrors);
+
+// If there are validation errors, do not proceed with form submission
+if (Object.keys(validationErrors).length > 0) {
+  return;
+}
+  try {
+    
       const response = await axios.put(`/user/${user.id}`, updatedUser);
 
       console.log('Profil utilisateur mis à jour avec succès:', response.data);
@@ -212,6 +249,8 @@ const handleEditUnit = async (id) => {
     }
   };
 
+
+  
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -268,8 +307,6 @@ const handleEditUnit = async (id) => {
     fetchSocialSkills();
   }, []);
 
-
-
   return (
     <>
       <section className="cover-sec">
@@ -285,7 +322,6 @@ const handleEditUnit = async (id) => {
           </div>
         </div>
       </section>
-
       <main>
         <div className="main-section">
           <div className="container">
@@ -295,10 +331,12 @@ const handleEditUnit = async (id) => {
                   <div className="main-left-sidebar">
                     <div className="user_profile">
                       <div className="user-pro-img">
+
                         <img
                           src="/assets/images/resources/user-pro-img.png"
                           alt=""
                         />
+                
                         <div className="add-dp" id="OpenImgUpload">
                           <input type="file" id="file" />
                           <label htmlFor="file">
@@ -404,13 +442,15 @@ const handleEditUnit = async (id) => {
 							<div className="col-lg-12">
                 <label htmlFor="telephone">Téléphone :</label>
 								<input type="text" id="telephone" name="telephone" placeholder="telephone" value={updatedUser.telephone} onChange={handleChange}/>
+                {errors.telephone && <span className="error-message">{errors.telephone}</span>}
 							</div>
 							<div className="col-lg-12">
 								<div className="price-sec">
                     <label htmlFor="dateNaissance">Date de Naissance :</label>
 
 										<input type="date" id="dateNaissance" name="dateNaissance" placeholder="Price" value={updatedUser.dateNaissance} onChange={handleChange}/>
-										<i className="la la-dollar"></i>
+                    {errors.dateNaissance && <span className="error-message">{errors.dateNaissance}</span>}
+
 								</div>
 							</div>
 							<div className="col-lg-12">

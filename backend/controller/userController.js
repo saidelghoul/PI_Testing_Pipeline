@@ -4,6 +4,9 @@ const User = require('../model/user');
 const Departement = require('../model/departement');
 const Unite = require('../model/unite');
 const jwt = require('jsonwebtoken');
+const { comparePassword, hashPassword } = require("../helpers/auth");
+const bcrypt = require('bcrypt');
+const multer = require('multer');
 
 // Route pour la mise à jour d'un utilisateur
 // router.put('/:userId', async (req, res) => {
@@ -27,6 +30,37 @@ const jwt = require('jsonwebtoken');
 //     res.status(500).json({ error: 'Erreur lors de la mise à jour de l\'utilisateur' });
 //   }
 // });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/imagesUser/'); // Dossier où les fichiers seront enregistrés
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // Renommer le fichier avec un horodatage pour éviter les conflits de noms
+  }
+});
+
+const upload = multer({ storage: storage });
+
+
+router.put('/:userId/profile-image', upload.single('profileImage'), async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    user.profileImage = req.file.path; // Sauvegarde du chemin de l'image dans la base de données
+    await user.save();
+
+    res.status(200).json({ message: 'Image de profil mise à jour avec succès' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur interne du serveur' });
+  }
+});
+
 
 router.put('/:userId', async (req, res) => {
   const { userId } = req.params;
@@ -89,6 +123,28 @@ router.get("/getbyid/:userId", async (req, res) => {
   }
 });
 
+router.put("/activate/:userId", async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findByIdAndUpdate(userId, { isActive: true }, { new: true });
+    if (!user) res.status(404).json({ error: "Couldn't find User" });
+    else res.status(200).json({ message: "User activated successfully", user });
+  } catch (error) {
+    res.status(500).json({ error: "Server error: " + error.message });
+  }
+});
+
+router.put("/deactivate/:userId", async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findByIdAndUpdate(userId, { isActive: false }, { new: true });
+    if (!user) res.status(404).json({ error: "Couldn't find User" });
+    else res.status(200).json({ message: "User deactivated successfully", user });
+  } catch (error) {
+    res.status(500).json({ error: "Server error: " + error.message });
+  }
+});
+
 //lister tous les enseignant pour les chefs unité
 router.get('/enseignant/test', async (req, res) => {
   try {
@@ -135,15 +191,6 @@ router.get('/chef', async (req, res) => {
   }
 });
 
-// router.get('/chefunite', async (req, res) => {
-//   try {
-//     const chefUsers = await User.find({ role: "Chef unité" }).populate('unite', 'name');
-//     res.json(chefUsers);
-//   } catch (error) {
-//     console.error('Erreur lors de la récupération des utilisateurs :', error);
-//     res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
-//   }
-// });
 
 router.get('/chefunite', async (req, res) => {
   try {
@@ -204,6 +251,42 @@ router.get('/enseignantsbydep', async (req, res) => {
     res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
   }
 });
+
+router.put("/changePassword/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const { oldPassword, newPassword, confirmedNewPassword } = req.body;
+
+  try {
+    // Trouver l'utilisateur par son ID
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "Aucun utilisateur trouvé" });
+    }
+
+    // Vérifier si l'ancien mot de passe correspond
+    const isPasswordValid = await comparePassword(oldPassword, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ error: "Ancien mot de passe incorrect" });
+    }
+
+    // Vérifier si le nouveau mot de passe et la confirmation correspondent
+    if (newPassword !== confirmedNewPassword) {
+      return res.status(400).json({ error: "Les nouveaux mots de passe ne correspondent pas" });
+    }
+
+    // Mettre à jour le mot de passe dans la base de données
+    user.password = await hashPassword(newPassword);
+    await user.save();
+
+    res.status(200).json({ message: "Mot de passe mis à jour avec succès" });
+  } catch (error) {
+    console.error("Erreur lors de la modification du mot de passe:", error);
+    res.status(500).json({ error: "Server error: " + error.message });
+  }
+});
+
+
+
 
 
 module.exports = router;

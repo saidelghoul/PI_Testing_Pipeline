@@ -50,7 +50,12 @@ const userSchema = new Schema({
       ref: "technicalSkills",
     },
   ],
-
+  isActive: {
+    type: Boolean,
+    default: true, // Le compte est activé par défaut
+  },
+  profileImage: String,
+  coverImage:String,
 });
 
 const UserModel = mongoose.model("User", userSchema);
