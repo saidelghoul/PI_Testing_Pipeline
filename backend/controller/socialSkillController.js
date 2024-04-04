@@ -12,6 +12,32 @@ async function getallSocialSkills(req, res) {
     });
 }
 
+/*async function getallSocialSkills(req, res) {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
+  try {
+    const totalSocialSkills = await SocialSkill.countDocuments();
+    const totalPages = Math.ceil(totalSocialSkills / limit);
+    const offset = (page - 1) * limit;
+
+    const socialSkills = await SocialSkill.find({})
+      .skip(offset)
+      .limit(limit)
+      .exec();
+
+    res.status(200).json({
+      totalSocialSkills,
+      totalPages,
+      currentPage: page,
+      socialSkills
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Erreur du serveur: " + error.message });
+  }
+}*/
+
+
 async function getSocialSkillbyid(req, res) {
   SocialSkill.findById(req.params.id)
     .exec()

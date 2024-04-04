@@ -105,21 +105,32 @@ export default function Navbar() {
                     Profil
                   </a>
                 </h3>
-
+                {user?.role ==="Directeur d'étude" && ( // Afficher les liens uniquement pour le Directeur d'étude
+                <>
                 <h3>Skills</h3>
                 <ul className="us-links">
+              
+                <>
                   <li>
                     <div className="fgt-sec">
-                      <Link to={`/socialSkills/`}><p>Social Skills</p></Link>
+                      <Link to={`/socialSkills/`}>
+                        <p>Social Skills</p>
+                      </Link>
                     </div>
                   </li>
                   <li>
                     <div className="fgt-sec">
-                    <Link to={`/technicalSkills/`}><p>Technical Skills</p></Link>
-
+                      <Link to={`/technicalSkills/`}>
+                        <p>Technical Skills</p>
+                      </Link>
                     </div>
                   </li>
+                </>
                 </ul>
+                </>
+                
+              )}
+
 
                 <h3>Online Status</h3>
                 <ul className="on-off-status">
