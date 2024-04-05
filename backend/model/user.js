@@ -55,7 +55,13 @@ const userSchema = new Schema({
     default: true, // Le compte est activé par défaut
   },
   profileImage: String,
-  coverImage:String,
+  coverImage: String,
+  conversations: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Conversation",
+    },
+  ],
 });
 
 const UserModel = mongoose.model("User", userSchema);

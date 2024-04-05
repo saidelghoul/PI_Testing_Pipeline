@@ -289,4 +289,7 @@ router.put("/changePassword/:userId", async (req, res) => {
 
 
 
+// Utilisation de la fonction dans une route
+
+
 module.exports = router;
