@@ -60,6 +60,10 @@ const userSchema = new Schema({
     ref: "Unite", // Référence au modèle Unite
     required: false,
   },
+  conversations: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Conversation'
+  }],
 });
 
 const UserModel = mongoose.model("User", userSchema);
