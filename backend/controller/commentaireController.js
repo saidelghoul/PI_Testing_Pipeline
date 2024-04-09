@@ -1,6 +1,6 @@
 const Evenement = require("../model/Evenement");
-var Commentaire = require("../model/commentair");
-var Publication = require("../model/publication");
+const Commentaire = require("../model/commentair");
+const Publication = require("../model/publication");
 const User = require("../model/user");
 
 async function getCommentsByEvent(req, res) {

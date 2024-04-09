@@ -1,6 +1,6 @@
-var express = require("express");
-var router = express.Router();
-var evenementController = require("../controller/evenementController");
+const express = require("express");
+const router = express.Router();
+const evenementController = require("../controller/evenementController");
 
 router.get("/getall", evenementController.getall);
 
@@ -11,10 +11,6 @@ router.post("/add", evenementController.add);
 router.delete("/remove/:id", evenementController.remove);
 
 router.put("/update/:id", evenementController.update);
-router.post('/reservations/:eventId', evenementController.createReservation);
-
-router.delete("/remove2/:id", evenementController.remove2);
-
-router.post("/:id/commentaires", evenementController.addComment);
+router.post("/reservations/:eventId", evenementController.createReservation);
 
 module.exports = router;

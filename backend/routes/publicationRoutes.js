@@ -1,6 +1,6 @@
-var express = require("express");
-var router = express.Router();
-var publicationController = require("../controller/publicationController");
+const express = require("express");
+const router = express.Router();
+const publicationController = require("../controller/publicationController");
 
 router.get("/getall", publicationController.getall);
 
@@ -12,6 +12,6 @@ router.delete("/delete/:id", publicationController.remove);
 
 router.put("/update/:id", publicationController.update);
 
-router.post("/:id/commentaires",publicationController.addComment);
+router.post("/:id/commentaires", publicationController.add);
 
 module.exports = router;

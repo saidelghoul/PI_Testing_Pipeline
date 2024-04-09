@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-var Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-var Commentaire = new Schema({
+const Commentaire = new Schema({
   contenu: String,
   DateCreation: { type: Date, default: Date.now },
   publicationId: { type: Schema.Types.ObjectId, ref: "Publication" },

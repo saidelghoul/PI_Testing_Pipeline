@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-var Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-var Evenement = new Schema({
+const Evenement = new Schema({
   Titre: String,
   Contenu: String,
   DatePublication: { type: Date, default: Date.now },

@@ -1,4 +1,4 @@
-var Evenement = require("../model/Evenement");
+const Evenement = require("../model/Evenement");
 const moment = require("moment");
 const User = require("../model/user");
 const Reservation = require("../model/Reservation");
@@ -107,11 +107,9 @@ async function createReservation(req, res) {
     });
   } catch (error) {
     console.error("Erreur lors de la création de la réservation:", error);
-    res
-      .status(500)
-      .json({
-        error: "Erreur du serveur lors de la création de la réservation.",
-      });
+    res.status(500).json({
+      error: "Erreur du serveur lors de la création de la réservation.",
+    });
   }
 }
 async function getbyid(req, res) {
@@ -124,11 +122,9 @@ async function getbyid(req, res) {
     res.status(200).json(pub);
   } catch (error) {
     console.error("Erreur lors de la récupération du groupe par ID :", error);
-    res
-      .status(500)
-      .json({
-        error: "Une erreur s'est produite lors de la récupération du groupe",
-      });
+    res.status(500).json({
+      error: "Une erreur s'est produite lors de la récupération du groupe",
+    });
   }
 }
 
@@ -213,5 +209,4 @@ module.exports = {
   add,
   remove,
   update,
-  removeCondition,
 };

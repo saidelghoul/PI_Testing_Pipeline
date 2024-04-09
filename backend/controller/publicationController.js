@@ -1,4 +1,4 @@
-var Publication = require("../model/publication");
+const Publication = require("../model/publication");
 const User = require("../model/user");
 
 async function add(req, res) {
@@ -57,11 +57,9 @@ async function getbyid(req, res) {
     res.status(200).json(pub);
   } catch (error) {
     console.error("Erreur lors de la récupération du groupe par ID :", error);
-    res
-      .status(500)
-      .json({
-        error: "Une erreur s'est produite lors de la récupération du groupe",
-      });
+    res.status(500).json({
+      error: "Une erreur s'est produite lors de la récupération du groupe",
+    });
   }
 }
 
