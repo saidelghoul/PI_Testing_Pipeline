@@ -19,7 +19,7 @@ import AddSkillForm from "../Modals/Skills/AssignSkillForm";
 import { Link } from "react-router-dom";
 import SocialSkillAffect from "./Skills/SocialSkills/SocialSkillAffect";
 
-export default function profil() {
+export default function Profils() {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useContext(UserContext);
   const [departements, setDepartements] = useState([]);
@@ -272,6 +272,7 @@ export default function profil() {
     }
   };
 
+  //TODO remove or update below code
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -306,6 +307,8 @@ export default function profil() {
     setSelectedSkill(null);
     setShowSkillModal(false);
   };
+
+  //TODO remove or update above code
 
   useEffect(() => {
     // Fonction asynchrone pour récupérer les compétences sociales
@@ -391,24 +394,24 @@ export default function profil() {
                       <div>
                         {isAdmin && (
                           <div>
-                            <a href="/completerProfil" title="">
+                            <Link to="/completerProfil" title="">
                               <i className="la la-user"></i> Mes chefs
                               département
-                            </a>
+                            </Link>
                           </div>
                         )}
                         {isChefDep && (
                           <div>
-                            <a href="/completerProfil" title="">
+                            <Link to="/completerProfil" title="">
                               <i className="la la-user"></i> Mes chefs unité
-                            </a>
+                            </Link>
                           </div>
                         )}
                         {isChefUnite && (
                           <div>
-                            <a href="/completerProfil" title="">
+                            <Link to="/completerProfil" title="">
                               <i className="la la-user"></i> Mes enseignants
-                            </a>
+                            </Link>
                           </div>
                         )}
                       </div>
@@ -3287,20 +3290,18 @@ export default function profil() {
                         {/* */}
 
                         {user?.socialSkills?.length > 0 ? (
-                          <>
-                            <ul className="skill-tags">
-                              {user?.socialSkills?.map((skill) => (
-                                <li key={skill?._id}>
-                                  <a
-                                    title={skill?.name}
-                                    onClick={() => handleShowSkillModal(skill)}
-                                  >
-                                    {skill?.name}
-                                  </a>
-                                </li>
-                              ))}
-                            </ul>
-                          </>
+                          <ul className="skill-tags">
+                            {user?.socialSkills?.map((skill) => (
+                              <li key={skill?._id}>
+                                <a
+                                  title={skill?.name}
+                                  onClick={() => handleShowSkillModal(skill)}
+                                >
+                                  {skill?.name}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
                         ) : (
                           <div>
                             vous navez encore aucun skills. Rajoutez-en pour
@@ -4174,9 +4175,7 @@ export default function profil() {
                       <div className="portfolio-gallery-sec">
                         <h3>Portfolio</h3>
                         <div className="portfolio-btn">
-                          <a href="#" title="">
-                            <i className="fas fa-plus-square"></i> Add Portfolio
-                          </a>
+                          <i className="fas fa-plus-square"></i> Add Portfolio
                         </div>
                         <div className="gallery_pf">
                           <div className="row">
@@ -4186,12 +4185,7 @@ export default function profil() {
                                   src="/assets/images/resources/pf-img1.jpg"
                                   alt=""
                                 />
-                                <a href="#" title="">
-                                  <img
-                                    src="/assets/images/all-out.png"
-                                    alt=""
-                                  />
-                                </a>
+                                <img src="/assets/images/all-out.png" alt="" />
                               </div>
                             </div>
                             <div className="col-lg-4 col-md-4 col-sm-6 col-6">
@@ -4200,12 +4194,7 @@ export default function profil() {
                                   src="/assets/images/resources/pf-img2.jpg"
                                   alt=""
                                 />
-                                <a href="#" title="">
-                                  <img
-                                    src="/assets/images/all-out.png"
-                                    alt=""
-                                  />
-                                </a>
+                                <img src="/assets/images/all-out.png" alt="" />
                               </div>
                             </div>
                             <div className="col-lg-4 col-md-4 col-sm-6 col-6">
@@ -4214,12 +4203,7 @@ export default function profil() {
                                   src="/assets/images/resources/pf-img3.jpg"
                                   alt=""
                                 />
-                                <a href="#" title="">
-                                  <img
-                                    src="/assets/images/all-out.png"
-                                    alt=""
-                                  />
-                                </a>
+                                <img src="/assets/images/all-out.png" alt="" />
                               </div>
                             </div>
                             <div className="col-lg-4 col-md-4 col-sm-6 col-6">
@@ -4228,12 +4212,7 @@ export default function profil() {
                                   src="/assets/images/resources/pf-img4.jpg"
                                   alt=""
                                 />
-                                <a href="#" title="">
-                                  <img
-                                    src="/assets/images/all-out.png"
-                                    alt=""
-                                  />
-                                </a>
+                                <img src="/assets/images/all-out.png" alt="" />
                               </div>
                             </div>
                             <div className="col-lg-4 col-md-4 col-sm-6 col-6">
@@ -4242,12 +4221,7 @@ export default function profil() {
                                   src="/assets/images/resources/pf-img5.jpg"
                                   alt=""
                                 />
-                                <a href="#" title="">
-                                  <img
-                                    src="/assets/images/all-out.png"
-                                    alt=""
-                                  />
-                                </a>
+                                <img src="/assets/images/all-out.png" alt="" />
                               </div>
                             </div>
                             <div className="col-lg-4 col-md-4 col-sm-6 col-6">
@@ -4256,12 +4230,7 @@ export default function profil() {
                                   src="/assets/images/resources/pf-img6.jpg"
                                   alt=""
                                 />
-                                <a href="#" title="">
-                                  <img
-                                    src="/assets/images/all-out.png"
-                                    alt=""
-                                  />
-                                </a>
+                                <img src="/assets/images/all-out.png" alt="" />
                               </div>
                             </div>
                             <div className="col-lg-4 col-md-4 col-sm-6 col-6">
@@ -4270,12 +4239,7 @@ export default function profil() {
                                   src="/assets/images/resources/pf-img7.jpg"
                                   alt=""
                                 />
-                                <a href="#" title="">
-                                  <img
-                                    src="/assets/images/all-out.png"
-                                    alt=""
-                                  />
-                                </a>
+                                <img src="/assets/images/all-out.png" alt="" />
                               </div>
                             </div>
                             <div className="col-lg-4 col-md-4 col-sm-6 col-6">
@@ -4284,12 +4248,7 @@ export default function profil() {
                                   src="/assets/images/resources/pf-img8.jpg"
                                   alt=""
                                 />
-                                <a href="#" title="">
-                                  <img
-                                    src="/assets/images/all-out.png"
-                                    alt=""
-                                  />
-                                </a>
+                                <img src="/assets/images/all-out.png" alt="" />
                               </div>
                             </div>
                             <div className="col-lg-4 col-md-4 col-sm-6 col-6">
@@ -4298,12 +4257,7 @@ export default function profil() {
                                   src="/assets/images/resources/pf-img9.jpg"
                                   alt=""
                                 />
-                                <a href="#" title="">
-                                  <img
-                                    src="/assets/images/all-out.png"
-                                    alt=""
-                                  />
-                                </a>
+                                <img src="/assets/images/all-out.png" alt="" />
                               </div>
                             </div>
                             <div className="col-lg-4 col-md-4 col-sm-6 col-6">
@@ -4312,12 +4266,7 @@ export default function profil() {
                                   src="/assets/images/resources/pf-img10.jpg"
                                   alt=""
                                 />
-                                <a href="#" title="">
-                                  <img
-                                    src="/assets/images/all-out.png"
-                                    alt=""
-                                  />
-                                </a>
+                                <img src="/assets/images/all-out.png" alt="" />
                               </div>
                             </div>
                           </div>
@@ -4330,9 +4279,7 @@ export default function profil() {
                           <ul>
                             <li>
                               <h3>Ajouter Departement</h3>
-                              <a href="#" title="">
-                                <i className="fa fa-plus-circle"></i>
-                              </a>
+                              <i className="fa fa-plus-circle"></i>
                             </li>
                             {/* <li>
                             <h3>voir unites</h3>
@@ -4477,9 +4424,7 @@ export default function profil() {
                           <ul>
                             <li>
                               <h3>Ajouter Unité</h3>
-                              <a href="#" title="">
-                                <i className="fa fa-plus-circle"></i>
-                              </a>
+                              <i className="fa fa-plus-circle"></i>
                             </li>
                           </ul>
                           <div className="lt-sec">
@@ -4583,9 +4528,9 @@ export default function profil() {
                 <div className="col-lg-3">
                   <div className="right-sidebar">
                     <div className="message-btn">
-                      <a href="/settings" title="">
+                      <Link to="/settings" title="">
                         <i className="fas fa-cog"></i> Setting
-                      </a>
+                      </Link>
                     </div>
                     <div className="widget widget-portfolio">
                       <div className="wd-heady">
@@ -4595,100 +4540,76 @@ export default function profil() {
                       <div className="pf-gallery">
                         <ul>
                           <li>
-                            <a href="#" title="">
-                              <img
-                                src="/assets/images/resources/pf-gallery1.png"
-                                alt=""
-                              />
-                            </a>
+                            <img
+                              src="/assets/images/resources/pf-gallery1.png"
+                              alt=""
+                            />
                           </li>
                           <li>
-                            <a href="#" title="">
-                              <img
-                                src="/assets/images/resources/pf-gallery2.png"
-                                alt=""
-                              />
-                            </a>
+                            <img
+                              src="/assets/images/resources/pf-gallery2.png"
+                              alt=""
+                            />
                           </li>
                           <li>
-                            <a href="#" title="">
-                              <img
-                                src="/assets/images/resources/pf-gallery3.png"
-                                alt=""
-                              />
-                            </a>
+                            <img
+                              src="/assets/images/resources/pf-gallery3.png"
+                              alt=""
+                            />
                           </li>
                           <li>
-                            <a href="#" title="">
-                              <img
-                                src="/assets/images/resources/pf-gallery4.png"
-                                alt=""
-                              />
-                            </a>
+                            <img
+                              src="/assets/images/resources/pf-gallery4.png"
+                              alt=""
+                            />
                           </li>
                           <li>
-                            <a href="#" title="">
-                              <img
-                                src="/assets/images/resources/pf-gallery5.png"
-                                alt=""
-                              />
-                            </a>
+                            <img
+                              src="/assets/images/resources/pf-gallery5.png"
+                              alt=""
+                            />
                           </li>
                           <li>
-                            <a href="#" title="">
-                              <img
-                                src="/assets/images/resources/pf-gallery6.png"
-                                alt=""
-                              />
-                            </a>
+                            <img
+                              src="/assets/images/resources/pf-gallery6.png"
+                              alt=""
+                            />
                           </li>
                           <li>
-                            <a href="#" title="">
-                              <img
-                                src="/assets/images/resources/pf-gallery7.png"
-                                alt=""
-                              />
-                            </a>
+                            <img
+                              src="/assets/images/resources/pf-gallery7.png"
+                              alt=""
+                            />
                           </li>
                           <li>
-                            <a href="#" title="">
-                              <img
-                                src="/assets/images/resources/pf-gallery8.png"
-                                alt=""
-                              />
-                            </a>
+                            <img
+                              src="/assets/images/resources/pf-gallery8.png"
+                              alt=""
+                            />
                           </li>
                           <li>
-                            <a href="#" title="">
-                              <img
-                                src="/assets/images/resources/pf-gallery9.png"
-                                alt=""
-                              />
-                            </a>
+                            <img
+                              src="/assets/images/resources/pf-gallery9.png"
+                              alt=""
+                            />
                           </li>
                           <li>
-                            <a href="#" title="">
-                              <img
-                                src="/assets/images/resources/pf-gallery10.png"
-                                alt=""
-                              />
-                            </a>
+                            <img
+                              src="/assets/images/resources/pf-gallery10.png"
+                              alt=""
+                            />
                           </li>
                           <li>
-                            <a href="#" title="">
-                              <img
-                                src="/assets/images/resources/pf-gallery11.png"
-                                alt=""
-                              />
-                            </a>
+                            <img
+                              src="/assets/images/resources/pf-gallery11.png"
+                              alt=""
+                            />
                           </li>
                           <li>
-                            <a href="#" title="">
-                              <img
-                                src="/assets/images/resources/pf-gallery12.png"
-                                alt=""
-                              />
-                            </a>
+                            <img
+                              src="/assets/images/resources/pf-gallery12.png"
+                              alt=""
+                            />
                           </li>
                         </ul>
                       </div>

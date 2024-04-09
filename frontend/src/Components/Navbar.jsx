@@ -108,9 +108,9 @@ export default function Navbar() {
             </div>
             <div className="user-account-settingss" id="users">
               <h3 className="tc">
-                <a href="/profil" title="">
+                <Link to="/profil" title="">
                   Profil
-                </a>
+                </Link>
               </h3>
 
               <h3>Online Status</h3>
