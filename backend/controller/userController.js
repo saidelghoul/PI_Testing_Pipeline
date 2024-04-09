@@ -3,29 +3,147 @@ const router = express.Router();
 const User = require('../model/user');
 const Departement = require('../model/departement');
 const Unite = require('../model/unite');
+const jwt = require('jsonwebtoken');
+const { comparePassword, hashPassword } = require("../helpers/auth");
+const bcrypt = require('bcrypt');
+const multer = require('multer');
 
 // Route pour la mise à jour d'un utilisateur
+// router.put('/:userId', async (req, res) => {
+//   //const decodedToken = jwt.verify(token,payload.env.JWT_SECRET);
+//   //const userId = decodedToken.userId;
+//   const { userId } = req.params;
+//   const updates = req.body;
+
+//   try {
+//     // Recherchez l'utilisateur par son ID et mettez à jour ses informations
+//     const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
+
+//     if (!updatedUser) {
+//       return res.status(404).json({ error: 'Utilisateur non trouvé' });
+//     }
+
+
+//     res.json(updatedUser);
+//   } catch (error) {
+//     console.error('Erreur lors de la mise à jour de l\'utilisateur :', error);
+//     res.status(500).json({ error: 'Erreur lors de la mise à jour de l\'utilisateur' });
+//   }
+// });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/imagesUser/'); // Dossier où les fichiers seront enregistrés
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // Renommer le fichier avec un horodatage pour éviter les conflits de noms
+  }
+});
+
+const upload = multer({ storage: storage });
+
+
+router.put('/:userId/profile-image', upload.single('profileImage'), async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    user.profileImage = req.file.path; // Sauvegarde du chemin de l'image dans la base de données
+    await user.save();
+
+    res.status(200).json({ message: 'Image de profil mise à jour avec succès' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur interne du serveur' });
+  }
+});
+
+
 router.put('/:userId', async (req, res) => {
-  //const decodedToken = jwt.verify(token,payload.env.JWT_SECRET);
-  //const userId = decodedToken.userId;
   const { userId } = req.params;
   const updates = req.body;
 
   try {
-    // Recherchez l'utilisateur par son ID et mettez à jour ses informations
-    const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
+      // Recherchez l'utilisateur par son ID et mettez à jour ses informations
+      const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
 
-    if (!updatedUser) {
-      return res.status(404).json({ error: 'Utilisateur non trouvé' });
-    }
+      if (!updatedUser) {
+          return res.status(404).json({ error: 'Utilisateur non trouvé' });
+      }
 
-    res.json(updatedUser);
+      // Récupérer les détails du département associé à l'utilisateur
+      const departement = await Departement.findById(updatedUser.departement);
+      // Récupérer les détails de l'unité associée à l'utilisateur
+      const unite = await Unite.findById(updatedUser.unite);
+
+      // Créer le nouveau payload du token avec les informations mises à jour
+      const tokenPayload = {
+          id: updatedUser._id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          role: updatedUser.role,
+          addresse: updatedUser.addresse,
+          gouvernorat: updatedUser.gouvernorat,
+          telephone: updatedUser.telephone,
+          dateNaissance: updatedUser.dateNaissance,
+          gender: updatedUser.gender,
+          departement: departement.name, // inclure seulement le nom du département
+          unite: unite.name, // Inclure seulement le nom de l'unité
+          socialSkills: updatedUser.socialSkills,
+        technicalSkills: updatedUser.technicalSkills,
+      };
+
+      // Générer un nouveau token avec les informations mises à jour
+      jwt.sign(tokenPayload, process.env.JWT_SECRET, {}, (err, token) => {
+          if (err) throw err;
+          // Mettre à jour le cookie du token avec le nouveau token
+          res.cookie('token', token, { httpOnly: true, secure: true });
+          // Renvoyer la réponse avec l'utilisateur mis à jour
+          res.json(updatedUser);
+      });
+
   } catch (error) {
-    console.error('Erreur lors de la mise à jour de l\'utilisateur :', error);
-    res.status(500).json({ error: 'Erreur lors de la mise à jour de l\'utilisateur' });
+      console.error('Erreur lors de la mise à jour de l\'utilisateur :', error);
+      res.status(500).json({ error: 'Erreur lors de la mise à jour de l\'utilisateur' });
   }
 });
 
+
+router.get("/getbyid/:userId", async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    if (!user) res.status(404).json({ error: "Couldn't find User" });
+    else res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Server error: " + error.message });
+  }
+});
+
+router.put("/activate/:userId", async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findByIdAndUpdate(userId, { isActive: true }, { new: true });
+    if (!user) res.status(404).json({ error: "Couldn't find User" });
+    else res.status(200).json({ message: "User activated successfully", user });
+  } catch (error) {
+    res.status(500).json({ error: "Server error: " + error.message });
+  }
+});
+
+router.put("/deactivate/:userId", async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findByIdAndUpdate(userId, { isActive: false }, { new: true });
+    if (!user) res.status(404).json({ error: "Couldn't find User" });
+    else res.status(200).json({ message: "User deactivated successfully", user });
+  } catch (error) {
+    res.status(500).json({ error: "Server error: " + error.message });
+  }
+});
 
 //lister tous les enseignant pour les chefs unité
 router.get('/enseignant/test', async (req, res) => {
@@ -73,15 +191,6 @@ router.get('/chef', async (req, res) => {
   }
 });
 
-// router.get('/chefunite', async (req, res) => {
-//   try {
-//     const chefUsers = await User.find({ role: "Chef unité" }).populate('unite', 'name');
-//     res.json(chefUsers);
-//   } catch (error) {
-//     console.error('Erreur lors de la récupération des utilisateurs :', error);
-//     res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
-//   }
-// });
 
 router.get('/chefunite', async (req, res) => {
   try {
@@ -123,6 +232,64 @@ router.get('/enseignants', async (req, res) => {
   }
 });
 
+router.get('/enseignantsbydep', async (req, res) => {
+  try {
+    const { departementName } = req.query;
+
+    // Recherche du departement par nom
+    const departement = await Departement.findOne({ name: departementName });
+    if (!departement) {
+      return res.status(404).json({ error: 'Departement non trouvé' });
+    }
+
+    // Recherche des utilisateurs avec le rôle "Enseignant" et le département trouvé
+    const ensUsers = await User.find({ role: "Enseignant", departement: departement._id })
+                                    .populate('departement', 'name');
+    res.json(ensUsers);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des utilisateurs :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
+  }
+});
+
+router.put("/changePassword/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const { oldPassword, newPassword, confirmedNewPassword } = req.body;
+
+  try {
+    // Trouver l'utilisateur par son ID
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "Aucun utilisateur trouvé" });
+    }
+
+    // Vérifier si l'ancien mot de passe correspond
+    const isPasswordValid = await comparePassword(oldPassword, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ error: "Ancien mot de passe incorrect" });
+    }
+
+    // Vérifier si le nouveau mot de passe et la confirmation correspondent
+    if (newPassword !== confirmedNewPassword) {
+      return res.status(400).json({ error: "Les nouveaux mots de passe ne correspondent pas" });
+    }
+
+    // Mettre à jour le mot de passe dans la base de données
+    user.password = await hashPassword(newPassword);
+    await user.save();
+
+    res.status(200).json({ message: "Mot de passe mis à jour avec succès" });
+  } catch (error) {
+    console.error("Erreur lors de la modification du mot de passe:", error);
+    res.status(500).json({ error: "Server error: " + error.message });
+  }
+});
+
+
+
+
+
+// Utilisation de la fonction dans une route
 
 
 module.exports = router;

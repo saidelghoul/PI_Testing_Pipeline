@@ -6,6 +6,18 @@ export const getChecklists = async (id) => {
   return await axios.get(`${url}/${id}`);
 };
 
+export const getAssignedUsersForChecklist = async (id) => {
+  return await axios.get(`${url}/${id}/users`);
+};
+
+export const getChecklistByHolder = async (id) => {
+  return await axios.get(`${url}/${id}/checklist`);
+};
+
+export const getChecklistByTaskWithHolder = async (id) => {
+  return await axios.get(`${url}/${id}/oftask`);
+};
+
 export const addChecklist = async (checklist, id) => {
   return await axios.post(`${url}/${id}`, checklist);
 };

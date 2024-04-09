@@ -1,18 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { addChecklist } from "../../services/checklist-service";
+import PropTypes from "prop-types";
+import Select from "react-select";
 
-const ChecklistForm = ({ refresh, show, handleClose, id_task }) => {
-  const [validated, setValidated] = useState(false);
-
+const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
+  //retrieve the collaborators from the current task into a proper list
+  const [holders, setHolders] = useState([]);
   const [checklistItem, setChecklistItem] = useState({
     title: "",
-    holder: "65df6f7a904814fc0404a57a",
+    holder: "",
     description: "",
   });
 
+  //form errors validation
+  const [errors, setErrors] = useState({});
+
+  const validateValues = (inputValues) => {
+    let errors = {};
+    if (inputValues.title.length < 2 || inputValues.title.length > 50) {
+      errors.title = "Title length must be between 2 and 50";
+    }
+    if (!inputValues.holder) {
+      errors.holder = "Please specify a task holder";
+    }
+    if (inputValues.description.length > 200) {
+      errors.description =
+        "Description exceeds maximum length of 200 characters";
+    }
+    return errors;
+  };
+
+  // end of form errors validation
+  useEffect(() => {
+    const retrieveUsers = async () => {
+      let options = [];
+
+      await users?.map((user) =>
+        options.push({
+          value: user?.id,
+          label: user?.name + " (" + user?.role + ")",
+        })
+      );
+
+      setHolders(options);
+    };
+
+    retrieveUsers();
+
+    setErrors(validateValues(checklistItem));
+  }, [checklistItem]);
+
   const onValueChange = (e) => {
     setChecklistItem({ ...checklistItem, [e.target.name]: e.target.value });
+    setErrors(validateValues(checklistItem));
   };
 
   const handleSubmit = (event) => {
@@ -22,19 +63,25 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task }) => {
       event.stopPropagation();
     }
 
-    handleChecklist();
+    if (Object.keys(errors).length === 0) handleAddChecklist();
   };
 
-  const handleChecklist = async () => {
-    const result = await addChecklist(checklistItem, id_task);
-    if (result.status == 201) {
-      alert("checklist added successfully");
-      refresh(checklistItem);
+  const handleAddChecklist = async () => {
+    try {
+      const result = await addChecklist(checklistItem, id_task);
+      if (result.status === 201) {
+        alert("Checklist added successfully");
+        refresh();
+        handleClose();
+      }
+    } catch (error) {
+      alert(error.message);
     }
   };
 
-  const validateForm = (e) => {
-    return e.target.value ? setValidated(true) : setValidated(false);
+  const onHolderChange = (name, value) => {
+    setChecklistItem({ ...checklistItem, [name]: value?.value });
+    setErrors(validateValues(checklistItem));
   };
 
   return (
@@ -48,7 +95,7 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task }) => {
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1>Add checklist</h1>
+            <h1 className=" text-white ">Add checklist</h1>
           </Modal.Title>
           <Button
             as={Col}
@@ -70,40 +117,37 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task }) => {
         <Form
           className=" container-fluid p-4  "
           noValidate
-          validated={validated}
+          validated={Object.keys(errors).length === 0}
         >
           <Row className="mb-3">
-            <Form.Group as={Col} md="4" controlId="validationCustom01">
+            <Form.Group as={Col} md="6" controlId="validationCustom01">
               <Form.Label>Title</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 required
                 type="text"
                 placeholder="checklist title"
                 name="title"
                 value={checklistItem.title}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               />
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+              {errors.title && (
+                <small className=" text-danger ">{errors.title}</small>
+              )}
             </Form.Group>
-            <Form.Group as={Col} md="4" controlId="validationCustom02">
-              <Form.Label>holder</Form.Label>
-              <Form.Select
-                aria-label="Default select example"
-                className=" form-control "
+            <Form.Group as={Col} md="6" controlId="validationCustom02">
+              <Form.Label>Holder</Form.Label>
+              <Select
+                required
+                onChange={(value) => onHolderChange("holder", value)}
                 name="holder"
-                value={checklistItem.holder}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
-              >
-                <option>Open this select menu</option>
-                <option value="65df6f7a904814fc0404a57a">Rami</option>
-              </Form.Select>
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                options={holders}
+                className="basic-multi-select mt-2 "
+                classNamePrefix="select"
+              />
+              {errors.holder && (
+                <small className=" text-danger ">{errors.holder}</small>
+              )}
             </Form.Group>
           </Row>
 
@@ -111,24 +155,24 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task }) => {
             <Form.Group as={Col} md="6" controlId="validationCustom04">
               <Form.Label>Description</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 placeholder="Description"
-                required
                 as="textarea"
                 rows={3}
                 name="description"
                 value={checklistItem.description}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               />
+              {errors.description && (
+                <small className=" text-danger ">{errors.description}</small>
+              )}
             </Form.Group>
           </Row>
         </Form>
       </Modal.Body>
       <Modal.Footer>
         <Button
-          className={validated ? "disabled" : ""}
+          disabled={Object.keys(errors).length !== 0}
           style={{ backgroundColor: "#e44d3a" }}
           onClick={handleSubmit}
         >
@@ -137,6 +181,14 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task }) => {
       </Modal.Footer>
     </Modal>
   );
+};
+
+ChecklistForm.propTypes = {
+  refresh: PropTypes.func,
+  show: PropTypes.bool,
+  handleClose: PropTypes.func,
+  id_task: PropTypes.string,
+  users: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default ChecklistForm;

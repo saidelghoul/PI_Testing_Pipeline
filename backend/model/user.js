@@ -40,26 +40,28 @@ const userSchema = new Schema({
   },
   socialSkills: [
     {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "socialSkills",
     },
   ],
   technicalSkills: [
     {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "technicalSkills",
     },
   ],
-  departement: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Departement", // Référence au modèle Departement
-    required: false,
+  isActive: {
+    type: Boolean,
+    default: true, // Le compte est activé par défaut
   },
-  unite: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Unite", // Référence au modèle Unite
-    required: false,
-  },
+  profileImage: String,
+  coverImage: String,
+  conversations: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Conversation",
+    },
+  ],
 });
 
 const UserModel = mongoose.model("User", userSchema);

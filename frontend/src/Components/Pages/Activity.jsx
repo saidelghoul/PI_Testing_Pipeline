@@ -1,13 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { Button } from "react-bootstrap";
+import { Badge, Button } from "react-bootstrap";
 import DeleteForm from "../Modals/DeleteForm";
 import UpdateForm from "../Modals/UpdateForm";
 
-const Activity = ({ activity, rmActivity, refresh }) => {
-  const [toggleButton, setToggleButton] = useState(false);
-
+const Activity = ({ activity, upActivity, refresh }) => {
   /* pop up*/
   const [showDelete, setShowDelete] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
@@ -20,66 +18,100 @@ const Activity = ({ activity, rmActivity, refresh }) => {
   const handleShowUpdate = () => setShowUpdate(true);
 
   /* pop up end*/
+  let bg;
+
+  switch (activity.category) {
+    case "course":
+      bg = "danger";
+      break;
+    case "workshop":
+      bg = "success";
+      break;
+    case "project":
+      bg = "primary";
+      break;
+    default:
+      bg = "warning";
+      break;
+  }
 
   return (
     <div className="card mb-3 bg-light">
       <div className="card-body p-3">
-        <div className="float-right mr-n2">
-          <label className="custom-control custom-checkbox">
-            <input
-              type="checkbox"
-              className="custom-control-input"
-              onChange={() => setToggleButton(!toggleButton)}
-            />
-            <span className="custom-control-label"></span>
-          </label>
+        <div className="float-right mr-n2 gap-2 ">
+          <Badge className=" text-white " pill bg={bg}>
+            {activity.category}
+          </Badge>
         </div>
         <h1 className="text-bold">{activity.name}</h1>
-        <b>/#{activity.category}</b>
-        <p>{activity.description}</p>
+        {activity.description !== "" && (
+          <p>Description: {activity.description}</p>
+        )}
 
-        {/*<p>Tasks: {activity.tasks.length}</p>*/}
         <p>
           {activity.startDate.substr(0, 10)} - {activity.endDate.substr(0, 10)}
         </p>
-        <div className="float-right mt-n1">
-          <img
-            src="/assets/images/resources/user-pro-img.png"
-            width="32"
-            height="32"
-            className="rounded-circle"
-            alt="Avatar"
-          />
-        </div>
-        <Link to={`/activities/${activity._id}`}>
+        <p>Tasks: {activity?.tasks?.length}</p>
+        <div className=" d-flex flex-row row-gap-2 ">
+          <Link to={`/activities/${activity._id}`}>
+            <Button
+              className="btn btn-outline-danger btn-sm"
+              style={{ backgroundColor: "#fff", color: "#e44d3a" }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-eye-fill"
+                viewBox="0 0 16 16"
+              >
+                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+                <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
+              </svg>
+            </Button>
+          </Link>
           <Button
-            className="btn btn-outline-primary btn-sm"
-            style={{ backgroundColor: "#e44d3a", color: "#fff" }}
+            className="btn btn-outline-danger btn-sm"
+            style={{ backgroundColor: "#fff", color: "#e44d3a" }}
+            onClick={handleShowUpdate}
           >
-            View
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              className="bi bi-pencil"
+              viewBox="0 0 16 16"
+            >
+              <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325" />
+            </svg>
           </Button>
-        </Link>
-        <Button
-          className="btn btn-outline-primary btn-sm"
-          style={{ backgroundColor: "#e44d3a", color: "#fff" }}
-          onClick={handleShowDelete}
-        >
-          Remove
-        </Button>
 
-        <Button
-          className="btn btn-outline-primary btn-sm"
-          style={{ backgroundColor: "#fff", color: "#e44d3a" }}
-          onClick={handleShowUpdate}
-        >
-          Update
-        </Button>
-
+          <Button
+            className="btn btn-outline-light btn-sm"
+            style={{ backgroundColor: "#e44d3a", color: "#fff" }}
+            onClick={handleShowDelete}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              className="bi bi-trash"
+              viewBox="0 0 16 16"
+            >
+              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+              <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+            </svg>
+          </Button>
+        </div>
         <DeleteForm
-          rmActivity={rmActivity}
+          upActivity={upActivity}
           show={showDelete}
           handleClose={handleCloseDelete}
           activity={activity}
+          deleting={true}
         />
 
         <UpdateForm
@@ -95,7 +127,7 @@ const Activity = ({ activity, rmActivity, refresh }) => {
 
 Activity.propTypes = {
   activity: PropTypes.object,
-  rmActivity: PropTypes.func,
+  upActivity: PropTypes.func,
   refresh: PropTypes.func,
 };
 

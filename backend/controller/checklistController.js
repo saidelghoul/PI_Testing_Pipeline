@@ -1,10 +1,24 @@
 const CheckList = require("../model/checklist");
 const Task = require("../model/task");
-const UserModel = require("../model/user");
 
 async function getCheckLists(req, res) {
   try {
     const checkLists = await CheckList.find({});
+
+    if (!checkLists)
+      res.status(404).json({ title: "error", message: "No checkLists found" });
+    else res.status(200).json({ title: "success", message: checkLists });
+  } catch (err) {
+    res.status(500).json({ title: "error", message: err.message });
+  }
+}
+
+async function getCheckListByTaskId(req, res) {
+  try {
+    const checkLists = await CheckList.find({
+      id_task: req.params.id_task,
+    }).populate("holder");
+
     if (!checkLists)
       res.status(404).json({ title: "error", message: "No checkLists found" });
     else res.status(200).json({ title: "success", message: checkLists });
@@ -15,11 +29,40 @@ async function getCheckLists(req, res) {
 
 async function getCheckListById(req, res) {
   try {
-    const checkList = await CheckList.findById(req.params.id_checklist);
+    const checkList = await CheckList.findById(
+      req.params.id_checklist
+    ).populate("holder");
 
     if (!checkList)
       res.status(404).json({ title: "error", message: "No checkLists found" });
-    else res.status(200).json({ title: "success", message: checkList });
+    else {
+      const newHolder = {
+        _id: checkList.holder._id,
+        name: checkList.holder.name,
+        role: checkList.holder.role,
+      };
+      checkList.holder = newHolder;
+      res.status(200).json({ title: "success", message: checkList });
+    }
+  } catch (err) {
+    res.status(500).json({ title: "error", message: err.message });
+  }
+}
+
+async function getCheckListByHolder(req, res) {
+  try {
+    const checkList = await CheckList.find({
+      holder: req.params.id_user,
+    }).populate("holder");
+
+    if (!checkList)
+      res.status(404).json({ title: "error", message: "No checkLists found" });
+    else {
+      const current = checkList.filter(
+        (checklist) => checklist.archived === false
+      );
+      res.status(200).json({ title: "success", message: current });
+    }
   } catch (err) {
     res.status(500).json({ title: "error", message: err.message });
   }
@@ -36,6 +79,7 @@ async function createCheckList(req, res, next) {
       checklist.done = false;
 
       task.checkList.push(checklist);
+      task.status = "active";
 
       const updatedTask = await Task.findByIdAndUpdate(
         req.params.id_task,
@@ -52,8 +96,8 @@ async function createCheckList(req, res, next) {
         });
       } else
         res.status(201).json({
-          title: "added checklist successfully to parent task: " + task.title,
-          message: result,
+          title: "success",
+          message: "added checklist successfully to parent task: " + task.title,
         });
     }
   } catch (err) {
@@ -72,16 +116,19 @@ async function removeChecklist(req, res) {
         message: "error finding & deleting checklist",
       });
     else {
-      const updatedTask = Task.updateOne(
+      const updatedTask = await Task.updateOne(
         { _id: checklist.id_task },
-        { $pull: { checklist: req.params.id_checklist } }
+        { $pull: { checkList: req.params.id_checklist } }
       );
       if (!updatedTask)
         res.status(404).json({
           title: "error",
           message: "error removing checklist from its parent task",
         });
-      else res.status(200).json({ title: "deleted", message: updatedTask });
+      else
+        res
+          .status(200)
+          .json({ title: "deleted", message: "deleted successfully" });
     }
   } catch (err) {
     res.status(500).json({ title: "error", message: err.message });
@@ -99,23 +146,57 @@ async function updateChecklist(req, res) {
       res
         .status(500)
         .json({ title: "error", message: "error updating checklist" });
-    else
-      res
-        .status(200)
-        .json({ title: "updated", message: "Checklist updated successfully" });
+    else {
+      const task = await Task.findById(checklist.id_task).populate("checkList");
+      // for task status update, this checks if all the checklists inside a task are done
+      let total = 0;
+      const current = task.checkList.filter(
+        (checklist) => checklist.archived === false
+      );
+      current.forEach((checklist) => {
+        if (checklist.done) total++;
+      });
+      if (current.length === total) task.status = "complete";
+      else if (total === 0) task.status = "planned";
+      else task.status = "active";
+      const saved = await task.save();
+      //
+      if (!saved)
+        res
+          .status(500)
+          .json({ title: "error", message: "error updating task status" });
+      else
+        res.status(200).json({
+          title: "updated",
+          message: "Checklist updated successfully",
+        });
+    }
   } catch (err) {
     res.status(500).json({ title: "error", message: err.message });
   }
 }
 
-async function getUsersForChecklist() {
+async function getAssignedUsersForChecklist(req, res) {
   try {
-    const users = await UserModel.aggregate([{ $project: { id: $_id } }]);
-    if (users.length > 0)
+    const task = await Task.findById(req.params.id_task).populate(
+      "collaborators"
+    );
+
+    if (!task)
+      res.status(500).json({ title: "error", message: "no such task" });
+    else {
+      let users = [];
+      task.collaborators.map((collaborator) =>
+        users.push({
+          id: collaborator._id,
+          name: collaborator.name,
+          role: collaborator.role,
+        })
+      );
       res.status(200).json({ title: "success", message: users });
-    else res.status(404).json({ title: "error", message: "no users found" });
+    }
   } catch (err) {
-    res.status(500).json({ title: "error", message: err });
+    res.status(500).json({ title: "error", message: err.message });
   }
 }
 
@@ -123,7 +204,9 @@ module.exports = {
   createCheckList,
   removeChecklist,
   getCheckLists,
+  getCheckListByTaskId,
   getCheckListById,
+  getCheckListByHolder,
   updateChecklist,
-  getUsersForChecklist,
+  getAssignedUsersForChecklist,
 };

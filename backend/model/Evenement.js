@@ -6,13 +6,19 @@ var Evenement = new Schema({
   Contenu: String,
   DatePublication: { type: Date, default: Date.now },
   DateDebut: { type: Date, required: true },
-  DateFin: {type: Date,required: true,},
+  DateFin: { type: Date, required: true },
   Capacite: { type: Number, required: true },
   Prix: Number,
-  Creator: { 
+  creator: {
     type: mongoose.Schema.Types.ObjectId,
-     ref: 'User' 
+    ref: "User",
+  },
+  comments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "commentaire", // Référence à un modèle de commentaire
     },
+  ],
 });
 
 module.exports = mongoose.model("Evenement", Evenement);

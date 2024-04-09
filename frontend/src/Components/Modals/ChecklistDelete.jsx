@@ -1,12 +1,20 @@
-import React from "react";
 import { Button, Modal, Row, Col } from "react-bootstrap";
-const ChecklistDelete = ({ rmChecklist, show, handleClose, checklist }) => {
+import PropTypes from "prop-types";
+
+const ChecklistDelete = ({
+  refresh,
+  upChecklist,
+  show,
+  handleClose,
+  checklist,
+  deleting,
+}) => {
   return (
     <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1>Delete checklist</h1>
+            <h1 className=" text-white ">Delete checklist</h1>
           </Modal.Title>
           <Button
             as={Col}
@@ -25,22 +33,47 @@ const ChecklistDelete = ({ rmChecklist, show, handleClose, checklist }) => {
       </Modal.Header>
 
       <Modal.Body>
-        <b className=" text-danger ">
-          Are you sure you want to delete this checklist ({checklist.title})
-        </b>
+        <div className=" text-danger text-center  ">
+          Are you sure you want to delete/archive this checklist
+        </div>
+        <div className=" text-danger text-center  ">({checklist.title})</div>
       </Modal.Body>
       <Modal.Footer>
-        <Button
-          style={{ backgroundColor: "#e44d3a" }}
-          onClick={() => {
-            rmChecklist(checklist._id);
-          }}
-        >
-          Delete
-        </Button>
+        {deleting === true ? (
+          <Button
+            style={{ backgroundColor: "#e44d3a" }}
+            onClick={() => {
+              upChecklist(checklist._id, checklist, true);
+              refresh();
+              handleClose();
+            }}
+          >
+            Archive
+          </Button>
+        ) : (
+          <Button
+            style={{ backgroundColor: "#e44d3a" }}
+            onClick={() => {
+              upChecklist(checklist._id);
+              refresh();
+              handleClose();
+            }}
+          >
+            Delete
+          </Button>
+        )}
       </Modal.Footer>
     </Modal>
   );
+};
+
+ChecklistDelete.propTypes = {
+  refresh: PropTypes.func,
+  upChecklist: PropTypes.func,
+  show: PropTypes.bool,
+  handleClose: PropTypes.func,
+  checklist: PropTypes.object,
+  deleting: PropTypes.bool,
 };
 
 export default ChecklistDelete;

@@ -6,6 +6,10 @@ export const getTasks = async (id) => {
   return await axios.get(`${url}/${id}`);
 };
 
+export const getUsersForTask = async () => {
+  return await axios.get(`${url}/users`);
+};
+
 export const getChecklistByTask = async (id) => {
   return await axios.get(`${url}/${id}/checklists`);
 };

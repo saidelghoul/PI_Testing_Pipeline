@@ -13,6 +13,18 @@ const SocialSkillService = {
     }
   },
 
+
+    /*getAllSocialSkills: async (page, limit) => {
+      try {
+        const response = await axios.get(`${apiUrl}/getall?page=${page}&limit=${limit}`);
+        return response.data;
+      } catch (error) {
+        console.error('Erreur lors de la récupération des compétences sociales:', error.message);
+        throw error;
+      }
+    },*/
+  
+
   getSocialSkillById: async (id) => {
     try {
       const response = await axios.get(`${apiUrl}/getbyid/${id}`);

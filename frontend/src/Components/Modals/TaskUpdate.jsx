@@ -1,12 +1,21 @@
-import React from "react";
-import { useState } from "react";
-import { Button, Col, Row, Form, Modal } from "react-bootstrap";
-import { updateTask } from "../../services/task-service";
+import { useState, useEffect } from "react";
+import { Button, Col, Row, Form, Modal, Spinner } from "react-bootstrap";
+import {
+  updateTask,
+  getUsersForTask,
+  getTasks,
+} from "../../services/task-service";
+import Select from "react-select";
 import PropTypes from "prop-types";
 
-const TaskUpdate = ({ refresh, show, handleClose, task }) => {
-  const [validated, setValidated] = useState(false);
-
+const TaskUpdate = ({
+  refresh,
+  show,
+  handleClose,
+  task,
+  options,
+  activity,
+}) => {
   const [taskItem, setTaskItem] = useState({
     title: task.title,
     initDate: task.initDate.substr(0, 10),
@@ -19,8 +28,129 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
     description: task.description,
   });
 
+  //form errors validation
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  const validateValues = (inputValues) => {
+    let errors = {};
+    if (inputValues.title.length < 2 || inputValues.title.length > 50) {
+      errors.title = "Title length must be between 2 and 50";
+    }
+    if (!inputValues.initDate) {
+      errors.initDate = "Initial Date is required";
+    }
+    if (
+      !inputValues.dueDate ||
+      new Date(inputValues.dueDate) < new Date(inputValues.initDate)
+    ) {
+      errors.dueDate = "Due Date is required & must be greater than initDate";
+    }
+    if (new Date(inputValues.initDate) < new Date(activity.startDate)) {
+      errors.initDate =
+        "Initial date must be more than activity start date: " +
+        activity.startDate.substring(0, 10);
+    }
+    if (new Date(inputValues.dueDate) > new Date(activity.endDate)) {
+      errors.dueDate =
+        "Due date must be less than activity end date: " +
+        activity.endDate.substring(0, 10);
+    }
+
+    if (
+      Math.round(
+        (new Date(inputValues.dueDate).getTime() -
+          new Date(inputValues.initDate).getTime()) /
+          (1000 * 3600 * 24)
+      ) < 3
+    ) {
+      errors.initDate =
+        "Difference in Initial date & Due date must be more than 3 days";
+    }
+    if (
+      Math.round(
+        (new Date(inputValues.dueDate).getTime() -
+          new Date(inputValues.initDate).getTime()) /
+          (1000 * 3600 * 24)
+      ) > 180
+    ) {
+      errors.dueDate =
+        "Difference in Initial date & Due date must be less than 6 months";
+    }
+    if (inputValues.tags.length < 1 || inputValues.tags.length > 5) {
+      errors.tags = "Please specify number of tags between 1 and 5";
+    }
+    if (inputValues.collaborators.length < 1) {
+      errors.collaborators = "Please specify at least one collaborator";
+    }
+    if (inputValues.description.length > 200) {
+      errors.description =
+        "Description exceeds maximum length of 200 characters";
+    }
+    return errors;
+  };
+
+  // end of form errors validation
+
+  const [users, setUsers] = useState([]);
+  const [assignedTags, setAssignedTags] = useState([]);
+  const [collaborators, setCollaborators] = useState([]);
+
+  const fetchAssignedCollaboratorsAndTags = async () => {
+    const dbtask = await getTasks(task._id);
+
+    let collaboptions = [];
+
+    dbtask.data.message.collaborators?.map((user) =>
+      collaboptions.push({
+        value: user._id,
+        label: user.name + " (" + user.role + ")",
+      })
+    );
+
+    setCollaborators(collaboptions);
+
+    let tagoptions = [];
+
+    dbtask.data.message.tags?.map((tag) =>
+      tagoptions.push({
+        value: tag,
+        label: tag,
+      })
+    );
+
+    setAssignedTags(tagoptions);
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    // fetch users(potential collabs) into proper list for the react select
+    const fetchUsers = async () => {
+      const dbusers = await getUsersForTask();
+      let options = [];
+
+      dbusers.data.message.map((user) =>
+        options.push({
+          value: user._id,
+          label: user.name + " (" + user.role + ")",
+        })
+      );
+
+      setUsers(options);
+    };
+
+    // fetch tags from task into proper list for the react select
+
+    fetchUsers();
+    fetchAssignedCollaboratorsAndTags();
+
+    setErrors(validateValues(taskItem));
+  }, [taskItem]);
+
   const onValueChange = (e) => {
     setTaskItem({ ...taskItem, [e.target.name]: e.target.value });
+    setErrors(validateValues(taskItem));
   };
 
   const handleSubmit = (event) => {
@@ -30,20 +160,57 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
       event.stopPropagation();
     }
 
-    handleUpdateTask();
+    if (Object.keys(errors).length === 0) handleUpdateTask();
   };
 
   const handleUpdateTask = async () => {
-    const result = await updateTask(task._id, taskItem);
-    if (result.status == 200) {
-      alert("task updated successfully");
-      refresh(taskItem);
+    try {
+      const result = await updateTask(task._id, taskItem);
+      if (result.status == 200) {
+        alert("Task updated successfully");
+        refresh();
+        handleClose();
+        fetchAssignedCollaboratorsAndTags();
+      }
+    } catch (error) {
+      alert(error.message);
     }
   };
 
-  const validateForm = (e) => {
-    return e.target.value ? setValidated(true) : setValidated(false);
+  //user field selection change validation
+
+  const onUserChange = (name, value) => {
+    let collabs = [];
+    value.forEach((element) => {
+      collabs.push(element.value);
+    });
+
+    setTaskItem({ ...taskItem, [name]: collabs });
   };
+  //end of user field selection change validation
+
+  //tag field validation
+  const onTagChange = (name, value) => {
+    let tags = [];
+    value.forEach((element) => {
+      tags.push(element.value);
+    });
+
+    setTaskItem({ ...taskItem, [name]: tags });
+  };
+  // end of tagfiled for testing purposes
+
+  if (loading) {
+    return (
+      <main className="content">
+        <div className="container p-0">
+          <Spinner animation="border" role="output" variant="danger">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <Modal
@@ -56,7 +223,7 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1>Add task</h1>
+            <h1 className=" text-white ">Update task</h1>
           </Modal.Title>
           <Button
             as={Col}
@@ -78,140 +245,142 @@ const TaskUpdate = ({ refresh, show, handleClose, task }) => {
         <Form
           className=" container-fluid p-4  "
           noValidate
-          validated={validated}
+          validated={Object.keys(errors).length === 0}
         >
           <Row className="mb-3">
             <Form.Group as={Col} md="4" controlId="validationCustom01">
               <Form.Label>Title</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 required
                 type="text"
                 placeholder="task title"
                 name="title"
                 value={taskItem.title}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               />
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+              {errors.title && (
+                <small className=" text-danger ">{errors.title}</small>
+              )}
             </Form.Group>
             <Form.Group as={Col} md="4" controlId="validationCustom02">
               <Form.Label>Status</Form.Label>
               <Form.Select
                 aria-label="Default select example"
-                className=" form-control "
+                className=" form-control mt-2 "
                 name="status"
                 value={taskItem.status}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               >
-                <option>Open this select menu</option>
                 <option value="planned">Planned</option>
                 <option value="active">Active</option>
                 <option value="complete">Completed</option>
               </Form.Select>
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
             <Form.Group as={Col} md="4" controlId="validationCustom03">
               <Form.Label>Priority</Form.Label>
               <Form.Select
                 aria-label="Default select example"
-                className=" form-control "
+                className=" form-control mt-2 "
                 name="priority"
                 value={taskItem.priority}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               >
-                <option>Open this select menu</option>
                 <option value="high">High</option>
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
               </Form.Select>
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+              {errors.priority && (
+                <small className=" text-danger ">{errors.priority}</small>
+              )}
             </Form.Group>
           </Row>
           <Row className="mb-3">
             <Form.Group as={Col} md="4" controlId="validationCustom010">
               <Form.Label>Tags</Form.Label>
-              <Form.Control
-                required
-                type="text"
-                placeholder="tags"
+              <Select
+                onChange={(value) => onTagChange("tags", value)}
+                defaultValue={assignedTags}
+                isMulti
                 name="tags"
-                value={taskItem.tags}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                options={options}
+                className="basic-multi-select mt-2 "
+                classNamePrefix="select"
               />
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+              {errors.tags && (
+                <small className=" text-danger ">{errors.tags}</small>
+              )}
             </Form.Group>
             <Form.Group as={Col} md="4" controlId="validationCustom05">
               <Form.Label>Start date</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 type="date"
-                placeholder="init date"
                 required
                 name="initDate"
                 value={taskItem.initDate}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               />
-              <Form.Control.Feedback type="invalid">
-                Please provide a valid start date.
-              </Form.Control.Feedback>
+              {errors.initDate && (
+                <small className=" text-danger ">{errors.initDate}</small>
+              )}
             </Form.Group>
             <Form.Group as={Col} md="4" controlId="validationCustom06">
               <Form.Label>End date</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 type="date"
-                placeholder="end date"
                 required
                 name="dueDate"
                 value={taskItem.dueDate}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               />
-              <Form.Control.Feedback type="invalid">
-                Please provide a valid end date.
-              </Form.Control.Feedback>
+              {errors.dueDate && (
+                <small className=" text-danger ">{errors.dueDate}</small>
+              )}
             </Form.Group>
           </Row>
           <Row>
             <Form.Group as={Col} md="6" controlId="validationCustom04">
               <Form.Label>Description</Form.Label>
               <Form.Control
+                className=" mt-2 "
                 placeholder="Description"
-                required
                 as="textarea"
                 rows={3}
                 name="description"
                 value={taskItem.description}
-                onChange={(e) => {
-                  validateForm(e);
-                  onValueChange(e);
-                }}
+                onChange={onValueChange}
               />
+              {errors.description && (
+                <small className=" text-danger ">{errors.description}</small>
+              )}
+            </Form.Group>
+            <Form.Group as={Col} md="6" controlId="validationCustom11">
+              <Form.Label>Collaborators</Form.Label>
+              <Select
+                onChange={(value) => onUserChange("collaborators", value)}
+                defaultValue={collaborators}
+                isMulti
+                name="collaborators"
+                options={users}
+                className="basic-multi-select mt-2 "
+                classNamePrefix="select"
+              />
+              {errors.collaborators && (
+                <small className=" text-danger ">{errors.collaborators}</small>
+              )}
             </Form.Group>
           </Row>
         </Form>
       </Modal.Body>
       <Modal.Footer>
         <Button
-          className={validated ? "disabled" : ""}
+          disabled={Object.keys(errors).length !== 0}
           style={{ backgroundColor: "#e44d3a" }}
           onClick={handleSubmit}
         >
-          Add
+          Update
         </Button>
       </Modal.Footer>
     </Modal>
@@ -223,6 +392,8 @@ TaskUpdate.propTypes = {
   show: PropTypes.bool,
   handleClose: PropTypes.func,
   task: PropTypes.object,
+  options: PropTypes.arrayOf(PropTypes.object),
+  activity: PropTypes.object,
 };
 
 export default TaskUpdate;

@@ -113,6 +113,19 @@ export default function SignIn() {
       return;
   }
 
+  if (!name || !email || !password || !confirmedPassword || !role || !selectedDepartementId || !selectedUnitId) {
+    toast.error("Tous les champs sont obligatoires.");
+    return;
+  }
+  if (!email.endsWith("@esprit.tn")) {
+    toast.error("L'e-mail doit se terminer par @esprit.tn");
+    return;
+  }
+  if (password.length < 6) {
+    toast.error("Le mot de passe doit avoir au moins 6 caractères.");
+    return;
+  }
+
     try {
       const { data1 } = await axios.post("/register", {
         name,

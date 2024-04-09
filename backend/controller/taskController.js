@@ -1,5 +1,6 @@
 const Task = require("../model/task");
 const Activity = require("../model/activity");
+const UserModel = require("../model/user");
 
 async function getTasks(req, res, next) {
   try {
@@ -14,10 +15,15 @@ async function getTasks(req, res, next) {
 
 async function getTaskById(req, res) {
   try {
-    const task = await Task.findById(req.params.id_task);
+    const task = await Task.findById(req.params.id_task).populate(
+      "collaborators"
+    );
+
     if (!task)
-      res.status(400).json({ title: "error", message: "Task not found" });
-    else res.status(200).json({ title: "got", message: task });
+      res.status(404).json({ title: "error", message: "Task not found" });
+    else {
+      res.status(200).json({ title: "success", message: task });
+    }
   } catch (err) {
     res.status(500).json({ title: "error", message: err.message });
   }
@@ -26,9 +32,10 @@ async function getTaskById(req, res) {
 async function getCheckListsByTask(req, res) {
   try {
     const task = await Task.findById(req.params.id_task).populate("checkList");
-    if (task) res.status(200).json({ title: "success", message: task });
+    if (task)
+      res.status(200).json({ title: "success", message: task.checkList });
     else
-      res.status(400).json({ title: "error", message: "checkList not found" });
+      res.status(404).json({ title: "error", message: "checkList not found" });
   } catch (err) {
     res.status(500).json({ title: "error", message: err.message });
   }
@@ -65,7 +72,7 @@ async function addTaskToActivity(req, res) {
         else
           res
             .status(201)
-            .json({ title: "Task saved successfully", message: savedTask });
+            .json({ title: "success", message: "Task saved successfully" });
       } else {
         res.status(404).json({ title: "error", error: "no activity found" });
       }
@@ -94,7 +101,10 @@ async function updateTask(req, res, next) {
       );
       if (!updatedTask)
         res.status(404).json({ title: "error", error: "Task not found" });
-      else res.status(200).json({ title: "updated", message: updatedTask });
+      else
+        res
+          .status(200)
+          .json({ title: "updated", message: "task updated successfully" });
     }
   } catch (err) {
     res.status(500).json({ title: "error", error: err.message });
@@ -119,7 +129,7 @@ async function deleteTask(req, res, next) {
           title: "error",
           message: "Failed to delete task ref from activity",
         });
-      else if (updatedActivity.checkList.length > 0) {
+      else if (updatedActivity?.checkList?.length > 0) {
         res
           .status(500)
           .json({ title: "error", message: "this task has checklists in it" });
@@ -133,6 +143,19 @@ async function deleteTask(req, res, next) {
   }
 }
 
+async function getUsersForTask(req, res) {
+  try {
+    const users = await UserModel.aggregate([
+      { $project: { id: 1, name: 1, role: 1 } },
+    ]);
+    if (users.length > 0)
+      res.status(200).json({ title: "success", message: users });
+    else res.status(404).json({ title: "error", message: "no users found" });
+  } catch (err) {
+    res.status(500).json({ title: "error", message: err.message });
+  }
+}
+
 module.exports = {
   getTasks,
   getTaskById,
@@ -140,4 +163,5 @@ module.exports = {
   addTaskToActivity,
   updateTask,
   deleteTask,
+  getUsersForTask,
 };

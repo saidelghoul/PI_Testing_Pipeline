@@ -11,6 +11,7 @@ router.post("/add", evenementController.add);
 router.delete("/remove/:id", evenementController.remove);
 
 router.put("/update/:id", evenementController.update);
+router.post('/reservations/:eventId', evenementController.createReservation);
 
 router.delete("/remove2/:id", evenementController.remove2);
 

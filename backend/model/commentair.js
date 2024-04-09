@@ -6,10 +6,10 @@ var Commentaire = new Schema({
   DateCreation: { type: Date, default: Date.now },
   publicationId: { type: Schema.Types.ObjectId, ref: "Publication" },
   evenementId: { type: Schema.Types.ObjectId, ref: "Evenement" },
-  Creator: { 
+  creator: {
     type: mongoose.Schema.Types.ObjectId,
-     ref: 'User' 
-    },
+    ref: "User",
+  },
 });
 
 module.exports = mongoose.model("commentaire", Commentaire);

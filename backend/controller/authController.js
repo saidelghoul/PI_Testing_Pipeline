@@ -58,6 +58,19 @@ const registerUser = async (req, res) => {
       });
     }
 
+    if (!email) {
+      return res.json({
+        error: "Email is required",
+      });
+    }
+    
+    // Vérifier si l'email se termine par @esprit.tn
+    if (!email.endsWith("@esprit.tn")) {
+      return res.json({
+        error: "Email must end with @esprit.tn",
+      });
+    }
+    
     const hashedPassword = await hashPassword(password);
     const hashedConfirmedPassword = await hashPassword(confirmedPassword);
 
@@ -84,7 +97,11 @@ const loginUser = async (req, res) => {
     // Vérifier si l'utilisateur existe
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({ error: "No user found" });
+      return res.json({ error: "Aucun utilisateur trouvé" });
+    }
+    // Vérifier si le compte de l'utilisateur est actif
+    if (!user.isActive) {
+      return res.json({ error: "compte désactivé" });
     }
 
     // Vérifier si les mots de passe correspondent
@@ -144,6 +161,8 @@ const getProfile = async (req, res) => {
         dateNaissance,
         telephone,
         gender,
+        departement, 
+        unite,
         socialSkills,
         technicalSkills,
       } = decodedToken;
@@ -174,6 +193,8 @@ const getProfile = async (req, res) => {
           dateNaissance,
           telephone,
           gender,
+          departement, 
+          unite,
           socialSkills: socialSkillsList,
           technicalSkills,
         });
@@ -193,9 +214,14 @@ const getProfile = async (req, res) => {
   }
 };
 
+const logout = (req, res) => {
+  res.clearCookie('token').json({ message: 'Déconnexion réussie' });
+};
+
 module.exports = {
   test,
   registerUser,
   loginUser,
   getProfile,
+  logout
 };

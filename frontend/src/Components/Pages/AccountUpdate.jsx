@@ -26,6 +26,7 @@ export default function AccountUpdate() {
   const [chefDep, setChefDeps] = useState([]);
   const [chefunite, setChefUnits] = useState([]);
   const [ens, setEns] = useState([]);
+  const [ensDep, setEnsDep] = useState([]);
 
   const isAdmin = user && user.role === "Directeur d'étude"; 
   const isChefDep = user && user.role === "Chef département";
@@ -37,6 +38,7 @@ export default function AccountUpdate() {
       }
       if (isChefDep) {
         fetchChefUnite();
+        fetchDepEns();
       }
       if (isChefUnite) {
         fetchEns();
@@ -54,14 +56,6 @@ export default function AccountUpdate() {
     }
   };
 
-  // const fetchChefUnite = async () => {
-  //   try {
-  //     const response = await axios.get("/user/chefunite");
-  //     setChefUnits(response.data);
-  //   } catch (error) {
-  //     console.error("Error fetching users:", error);
-  //   }
-  // };
   const fetchChefUnite = async () => {
     try {
       // Ajoutez le departementId de l'utilisateur connecté à la requête
@@ -83,6 +77,27 @@ export default function AccountUpdate() {
       setEns(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
+    }
+  };
+
+  const fetchDepEns = async () => {
+    try {
+      // Ajoutez le unitéId de l'utilisateur connecté à la requête
+      const response = await axios.get("/user/enseignantsbydep", {
+        params: { departementName: user.departement }
+      });
+      setEnsDep(response.data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+  const toggleUserActivation = async (userId, isActive) => {
+    try {
+      await axios.put(`/user/${isActive ? 'activate' : 'deactivate'}/${userId}`);
+      // Actualiser les données après l'activation ou la désactivation de l'utilisateur
+      fetchChefsDep();
+    } catch (error) {
+      console.error("Error toggling user activation:", error);
     }
   };
   
@@ -111,20 +126,35 @@ export default function AccountUpdate() {
                   </div>)}
 
                   {isChefDep && (
-                  <div className="nav nav-tabs" id="nav-tab" role="tablist">
-                    <a
-                      className="nav-item nav-link active"
-                      id="nav-acc-tab"
-                      data-toggle="tab"
-                      href="#nav-acc"
-                      role="tab"
-                      aria-controls="nav-acc"
-                      aria-selected="true"
-                    >
-                      <i className="la la-cogs"></i>Liste des chefs unité 
-                    </a>
-                    
-                  </div>)}
+               <div className="nav nav-tabs" id="nav-tab" role="tablist">
+               <a
+                 className="nav-item nav-link active"
+                 id="nav-chef-tab"
+                 data-toggle="tab"
+                 href="#nav-chef"
+                 role="tab"
+                 aria-controls="nav-chef"
+                 aria-selected="true"
+               >
+                 <i className="la la-cogs"></i>Liste des chefs unité 
+               </a>
+           
+               <a
+                 className="nav-item nav-link"
+                 id="nav-ens-tab"
+                 data-toggle="tab"
+                 href="#nav-ens"
+                 role="tab"
+                 aria-controls="nav-ens"
+                 aria-selected="false"
+               >
+                 <i className="la la-cogs"></i>Liste des enseignants 
+               </a>
+             </div>
+                  
+                  
+                
+              )}
 
                   {isChefUnite && (
                   <div className="nav nav-tabs" id="nav-tab" role="tablist">
@@ -174,38 +204,91 @@ export default function AccountUpdate() {
                                   <td>{user.name}</td>
                                   <td>{user.email}</td> 
                                   <td>{user.departement.name}</td> 
-                                  <td></td>  
+                                  <td>
+                                  {user.isActive ? (
+                                  <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
+                                ) : (
+                                  <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
+                                )}
+</td>  
                                 </tr>
                               ))}
                             </tbody>
                           </table>
                        </div> )}
 
-                       {isChefDep && (  <div className="lt-sec">
-                          <img src="/assets/images/lt-icon.png" alt="" />
-                          <h4>liste des chefs unité </h4>
+                       {isChefDep && ( <>  <>
+    <div className="tab-content">
+      <div className="tab-pane fade show active" id="nav-chef" role="tabpanel" aria-labelledby="nav-chef-tab">
+        <div className="lt-sec">
+          <img src="/assets/images/lt-icon.png" alt="" />
+          <h4>liste des chefs unité </h4>
 
-                          <table className="table table-sm">
-                            <thead>
-                              <tr>
-                                <th scope="col">nom et prenom</th>
-                                <th scope="col">email</th>
-                                <th scope="col">nom unité </th>
-                                <th scope="col">activer/désactiver</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {chefunite.map((user) => (
-                                <tr key={user._id}>
-                                  <td>{user.name}</td>
-                                  <td>{user.email}</td> 
-                                  <td>{user.unite.name}</td>  
-                                  <td></td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                       </div> )}
+          <table className="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">nom et prenom</th>
+                <th scope="col">email</th>
+                <th scope="col">nom unité </th>
+                <th scope="col">activer/désactiver</th>
+              </tr>
+            </thead>
+            <tbody>
+              {chefunite.map((user) => (
+                <tr key={user._id}>
+                  <td>{user.name}</td>
+                  <td>{user.email}</td> 
+                  <td>{user.unite.name}</td>  
+                  <td>
+                  {user.isActive ? (
+                                  <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
+                                ) : (
+                                  <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
+                                )}
+
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="tab-pane fade" id="nav-ens" role="tabpanel" aria-labelledby="nav-ens-tab">
+        <div className="lt-sec">
+          <img src="/assets/images/lt-icon.png" alt="" />
+          <h4>liste des enseignants </h4>
+
+          <table className="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">nom et prenom</th>
+                <th scope="col">email</th>
+                <th scope="col">activer/désactiver</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ensDep.map((user) => (
+                <tr key={user._id}>
+                  <td>{user.name}</td>
+                  <td>{user.email}</td> 
+                  <td>
+                  {user.isActive ? (
+                                  <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
+                                ) : (
+                                  <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
+                                )}
+
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </>
+                      </> )}
 
                        {isChefUnite && (  <div className="lt-sec">
                           <img src="/assets/images/lt-icon.png" alt="" />
@@ -224,66 +307,19 @@ export default function AccountUpdate() {
                                 <tr key={user._id}>
                                   <td>{user.name}</td>
                                   <td>{user.email}</td> 
-                                  <td></td>
+                                  <td>
+                                  {user.isActive ? (
+                                  <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
+                                ) : (
+                                  <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
+                                )}
+
+                                  </td>
                                 </tr>
                               ))}
                             </tbody>
                           </table>
                        </div> )}
-                    {/* <div className="acc-setting">
-                      <h3>liste des départements </h3>
-                      <form >
-      <div>
-        <label htmlFor="addresse">Adresse :</label>
-        <input
-          type="text"
-          id="addresse"
-          name="addresse"
-         
-        />
-      </div>
-      <div>
-        <label htmlFor="gouvernorat">Gouvernorat :</label>
-        <input
-          type="text"
-          id="gouvernorat"
-          name="gouvernorat"
-        
-        />
-      </div>
-      <div>
-        <label htmlFor="telephone">Téléphone :</label>
-        <input
-          type="text"
-          id="telephone"
-          name="telephone"
-       
-        />
-      </div>
-      <div>
-        <label htmlFor="dateNaissance">Date de Naissance :</label>
-        <input
-          type="date"
-          id="dateNaissance"
-          name="dateNaissance"
-         
-        />
-      </div>
-      <div>
-        <label htmlFor="gender">Genre :</label>
-        <select
-          id="gender"
-          name="gender"
-        
-        >
-          <option value="male">Homme</option>
-          <option value="female">Femme</option>
-          <option value="other">Autre</option>
-        </select>
-      </div>
-      <button type="submit">Mettre à jour</button>
-    </form>
-                    </div> */}
                   </div>
                 </div>
               </div>

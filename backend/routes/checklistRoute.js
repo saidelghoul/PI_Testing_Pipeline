@@ -1,12 +1,16 @@
-var express = require("express");
-var router = express.Router();
-var checkListController = require("../controller/checklistController");
+const express = require("express");
+const router = express.Router();
+const checkListController = require("../controller/checklistController");
 
 router.get("/", checkListController.getCheckLists);
 
-router.get("/:id_checklist", checkListController.getCheckListById);
+router.get("/:id_task/users", checkListController.getAssignedUsersForChecklist);
 
-router.get("/users", checkListController.getUsersForChecklist);
+router.get("/:id_task/oftask", checkListController.getCheckListByTaskId);
+
+router.get("/:id_user/checklist", checkListController.getCheckListByHolder);
+
+router.get("/:id_checklist", checkListController.getCheckListById);
 
 router.post("/:id_task", checkListController.createCheckList);
 
