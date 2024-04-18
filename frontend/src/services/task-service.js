@@ -14,6 +14,10 @@ export const getChecklistByTask = async (id) => {
   return await axios.get(`${url}/${id}/checklists`);
 };
 
+export const getTasksByActivityWithChecklist = async (id) => {
+  return await axios.get(`${url}/${id}/ofactivity`);
+};
+
 export const addTask = async (task, id) => {
   return await axios.post(`${url}/${id}`, task);
 };

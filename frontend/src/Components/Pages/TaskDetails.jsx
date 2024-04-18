@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { getTasks } from "../../services/task-service";
 import Checklist from "./Checklist";
 import ChecklistForm from "../Modals/ChecklistForm";
-import { Badge, Button, Spinner, Table } from "react-bootstrap";
+import { Badge, Button, ProgressBar, Spinner, Table } from "react-bootstrap";
 import {
   deleteChecklist,
   getAssignedUsersForChecklist,
@@ -11,6 +11,7 @@ import {
   updateChecklist,
 } from "../../services/checklist-service";
 import ChecklistDelete from "../Modals/ChecklistDelete";
+import toast from "react-hot-toast";
 
 const TaskDetails = () => {
   const { id_task } = useParams();
@@ -25,6 +26,20 @@ const TaskDetails = () => {
 
   const [users, setUsers] = useState([]);
 
+  const [progress, setProgress] = useState(0);
+
+  const getProgress = (current) => {
+    if (current?.length > 0) {
+      setProgress(
+        Math.floor(
+          (current?.filter((checklist) => checklist?.done === true)?.length /
+            current?.length) *
+            100
+        )
+      );
+    } else setProgress(0);
+  };
+
   const fetchChecklist = async (id) => {
     const data = await getChecklistByTaskWithHolder(id);
 
@@ -32,6 +47,8 @@ const TaskDetails = () => {
       (checklist) => checklist.archived === false
     );
     setChecklists(current);
+
+    getProgress(current);
 
     const archived = data.data.message.filter(
       (checklist) => checklist.archived === true
@@ -42,6 +59,7 @@ const TaskDetails = () => {
   const refreshTable = async () => {
     setShow(false);
     fetchChecklist(id_task);
+    getProgress(checklists);
   };
 
   useEffect(() => {
@@ -81,11 +99,11 @@ const TaskDetails = () => {
     try {
       const result = await deleteChecklist(id);
       if (result.status === 204) {
-        alert("Deleted successfully");
+        toast.success("Deleted successfully");
         fetchChecklist(id_task);
       }
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
   /** */
@@ -95,11 +113,11 @@ const TaskDetails = () => {
       checklist.archived = isArchived;
       const result = await updateChecklist(id, checklist);
       if (result.status === 200) {
-        alert("Checklist has been archived successfully!");
+        toast.success("Checklist has been archived successfully!");
         fetchChecklist(id_task);
       }
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -137,9 +155,7 @@ const TaskDetails = () => {
     return (
       <main className="content">
         <div className=" text-center ">
-          <Spinner animation="border" role="output" variant="danger">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
+          <Spinner animation="border" role="output" variant="danger"></Spinner>
         </div>
       </main>
     );
@@ -190,10 +206,21 @@ const TaskDetails = () => {
               </p>
             ))}
           </div>
-          <div className=" col-auto ">
-            <small className=" text-bg-primary "> Description: </small>
-            <p className=" text-body-emphasis ">{task.description}</p>
-          </div>
+          {task.description !== "" && (
+            <div className=" col-auto ">
+              <small className=" text-bg-primary "> Description: </small>
+              <p className=" text-body-emphasis ">{task.description}</p>
+            </div>
+          )}
+        </div>
+        <div className=" row-cols-1 mt-2">
+          <ProgressBar
+            striped
+            variant="success"
+            animated
+            now={progress}
+            label={`${progress}%`}
+          />
         </div>
         <hr />
 

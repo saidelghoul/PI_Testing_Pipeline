@@ -29,6 +29,24 @@ async function getTaskById(req, res) {
   }
 }
 
+//this method is different from the one in activityController
+//as the model task has the id of its parent(activity)
+//we can use it and populate the checklist at the same time
+//without having to get the tasks from the parent(activity) and populate tasks & populate checklist which is under tasks
+async function getTasksByActivityId(req, res) {
+  try {
+    const tasks = await Task.find({
+      id_activity: req.params.id_activity,
+    }).populate("checkList");
+
+    if (!tasks)
+      res.status(404).json({ title: "error", message: "No tasks found" });
+    else res.status(200).json({ title: "success", message: tasks });
+  } catch (err) {
+    res.status(500).json({ title: "error", message: err.message });
+  }
+}
+
 async function getCheckListsByTask(req, res) {
   try {
     const task = await Task.findById(req.params.id_task).populate("checkList");
@@ -160,6 +178,7 @@ module.exports = {
   getTasks,
   getTaskById,
   getCheckListsByTask,
+  getTasksByActivityId,
   addTaskToActivity,
   updateTask,
   deleteTask,

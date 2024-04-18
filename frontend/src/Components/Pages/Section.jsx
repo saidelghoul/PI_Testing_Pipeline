@@ -6,6 +6,7 @@ import {
 import Checklist from "./Checklist";
 import { useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
+import toast from "react-hot-toast";
 
 const Section = () => {
   const { id_user } = useParams();
@@ -32,20 +33,18 @@ const Section = () => {
       checklist.archived = true;
       const result = await updateChecklist(id, checklist);
       if (result.status === 200) {
-        alert("Checklist has been archived successfully!");
+        toast.success("Checklist has been archived successfully!");
         fetchChecklistByUser(id_user);
       }
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
   if (loading) {
     return (
       <div className=" text-center">
-        <Spinner animation="border" role="output" variant="danger">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
+        <Spinner animation="border" role="output" variant="danger"></Spinner>
       </div>
     );
   }

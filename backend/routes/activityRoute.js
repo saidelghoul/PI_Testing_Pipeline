@@ -6,6 +6,8 @@ router.get("/", activityController.getActivities);
 
 router.get("/:id_activity", activityController.getActivityById);
 
+//below is unused, it has been put in task router to hold more data
+//about the task's checklist holder(optimization)
 router.get("/:id_activity/tasks", activityController.getTasksByActivity);
 
 router.post("/", activityController.addActivity);

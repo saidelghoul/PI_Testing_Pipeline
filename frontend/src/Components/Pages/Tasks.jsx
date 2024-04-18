@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import Task from "./Task";
-import { getTasksByActivity } from "../../services/activity-service";
 import { Button, Spinner, Table } from "react-bootstrap";
 import TaskForm from "../Modals/TaskForm";
-import { deleteTask, updateTask } from "../../services/task-service";
+import {
+  deleteTask,
+  getTasksByActivityWithChecklist,
+  updateTask,
+} from "../../services/task-service";
 import PropTypes from "prop-types";
 import TaskDelete from "../Modals/TaskDelete";
+import toast from "react-hot-toast";
 
 const Tasks = ({ activity }) => {
   const [tasks, setTasks] = useState([]);
@@ -35,7 +39,7 @@ const Tasks = ({ activity }) => {
 
   /* pop up end*/
   const fetchTasks = async (id) => {
-    const data = await getTasksByActivity(id);
+    const data = await getTasksByActivityWithChecklist(id);
 
     const current = data.data.message.filter((task) => task.archived === false);
 
@@ -138,11 +142,11 @@ const Tasks = ({ activity }) => {
     try {
       const result = await deleteTask(id);
       if (result.status === 204) {
-        alert("Deleted successfully");
+        toast.success("Deleted successfully");
         fetchTasks(activity._id);
       }
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     }
   };
   /** */
@@ -152,12 +156,12 @@ const Tasks = ({ activity }) => {
       task.archived = isArchived;
       const result = await updateTask(id, task);
       if (result.status === 200) {
-        alert("Task has been archived successfully!");
+        toast.success("Task has been archived successfully!");
 
         fetchTasks(activity._id);
       }
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -170,9 +174,7 @@ const Tasks = ({ activity }) => {
     return (
       <main className="content">
         <div className=" text-center ">
-          <Spinner animation="border" role="output" variant="danger">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
+          <Spinner animation="border" role="output" variant="danger"></Spinner>
         </div>
       </main>
     );

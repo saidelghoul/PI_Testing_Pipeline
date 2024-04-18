@@ -3,6 +3,7 @@ import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { addTask, getUsersForTask } from "../../services/task-service";
 import Select from "react-select";
 import PropTypes from "prop-types";
+import toast from "react-hot-toast";
 
 const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
   const [users, setUsers] = useState([]);
@@ -120,12 +121,12 @@ const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
     try {
       const result = await addTask(taskItem, activity._id);
       if (result.status === 201) {
-        alert("Task added successfully");
+        toast.success("Task added successfully");
         refresh();
         handleClose();
       }
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 

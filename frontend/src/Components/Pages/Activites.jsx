@@ -9,6 +9,7 @@ import Activity from "./Activity";
 import ActivityForm from "../Modals/ActivityForm";
 import { Button, Spinner, Table } from "react-bootstrap";
 import DeleteForm from "../Modals/DeleteForm";
+import toast from "react-hot-toast";
 
 export default function Activites() {
   const [activities, setActivities] = useState([]);
@@ -77,11 +78,11 @@ export default function Activites() {
     try {
       const result = await deleteActivity(id);
       if (result.status === 204) {
-        alert("Deleted successfully");
+        toast.success("Deleted successfully");
         fetchData();
       }
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -90,11 +91,11 @@ export default function Activites() {
       activity.archived = isArchived;
       const result = await updateActivity(id, activity);
       if (result.status === 200) {
-        alert("Activity has been archived successfully!");
+        toast.success("Activity has been archived successfully!");
         fetchData();
       }
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
   /** */
@@ -109,9 +110,7 @@ export default function Activites() {
     return (
       <main className="content">
         <div className=" text-center ">
-          <Spinner animation="border" role="output" variant="danger">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
+          <Spinner animation="border" role="output" variant="danger"></Spinner>
         </div>
       </main>
     );

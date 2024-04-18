@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { updateActivity } from "../../services/activity-service";
 import PropTypes from "prop-types";
+import toast from "react-hot-toast";
 
 const UpdateForm = ({ refresh, show, handleClose, activity }) => {
   const [activityItem, setActivityItem] = useState({
@@ -79,12 +80,12 @@ const UpdateForm = ({ refresh, show, handleClose, activity }) => {
     try {
       const result = await updateActivity(activity._id, activityItem);
       if (result.status == 200) {
-        alert("Activity updated successfully");
+        toast.success("Activity updated successfully");
         refresh();
         handleClose();
       }
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 

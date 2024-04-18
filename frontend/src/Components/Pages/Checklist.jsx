@@ -12,6 +12,7 @@ const Checklist = ({ refresh, checkList, index, upChecklist }) => {
     const response = await updateChecklist(checkList._id, checkList);
     if (response.status === 200) {
       setToggle(!toggle);
+      refresh();
     }
   };
 
@@ -27,12 +28,12 @@ const Checklist = ({ refresh, checkList, index, upChecklist }) => {
   return (
     <>
       <Card
-        bg={toggle ? "success" : "secondary"}
+        bg={checkList.done ? "success" : "secondary"}
         style={{ width: "18rem" }}
         className=" shadow shadow-sm m-3 "
       >
         <Card.Header>
-          <Row bg={toggle ? "success" : "secondary"}>
+          <Row bg={checkList.done ? "success" : "secondary"}>
             <Col md="8">Todo N°{index}</Col>
             <Col md="2">
               <label className="custom-control custom-checkbox">
