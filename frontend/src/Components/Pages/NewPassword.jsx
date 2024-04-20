@@ -1,15 +1,16 @@
 import  { useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom'; // Importez useParams
+import { useParams,useNavigate } from 'react-router-dom'; // Importez useParams
 
 const NewPassword = () => { // Supprimez { match } de la déstructuration des props
     const { token } = useParams(); // Utilisez useParams pour obtenir le token
     const [newPassword, setNewPassword] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-  
+    const navigate = useNavigate();
+
     const handleResetPassword = async () => {
-  
+
       try {
         const response = await axios.post('/resetPassword', {
           token,
@@ -18,6 +19,8 @@ const NewPassword = () => { // Supprimez { match } de la déstructuration des pr
         
         setMessage(response.data.message);
         setError('');
+        navigate('/');
+
       } catch (err) {
         if (err.response && err.response.data) {
           setError(err.response.data.error);

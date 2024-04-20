@@ -258,7 +258,7 @@ const forgotPassword = async (req, res) => {
       from: 'marwakb4@gmail.com',
       to: email,
       subject: 'Demande de réinitialisation du mot de passe',
-      text: `Cliquez sur ce lien pour réinitialiser votre mot de passe : ${process.env.CLIENT_URL}/reset/${resetToken}`,
+      text: `Cliquez sur ce lien pour réinitialiser votre mot de passe : ${process.env.CLIENT_URL}/reset/${resetToken}  ou bien cliquer ce lien ${process.env.CLIENT_URL1}/reset/${resetToken}`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -296,7 +296,8 @@ const resetPassword = async (req, res) => {
     res.json({ message: 'Password updated successfully' });
 
     // Delete the reset token
-    await resetPasswordToken.remove();
+    await ResetPasswordToken.deleteOne({ token });
+    
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Server error' });
