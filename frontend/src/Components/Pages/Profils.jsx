@@ -24,6 +24,17 @@ export default function Profils() {
   const { user } = useContext(UserContext);
   const [departements, setDepartements] = useState([]);
   const [unites, setUnités] = useState([]);
+  const userId = user ? user.id : null;
+  //const imageUrl = userId ? `http://localhost:8000/user/${userId}/profile` : "/assets/images/resources/user-pro-img.png";
+  const imageUrl = userId && user && user.profileImage 
+  ? `http://localhost:8000/user/${userId}/profile` 
+  : "/assets/images/resources/user-pro-img.png";
+
+  // const coverImageUrl = userId ? `http://localhost:8000/user/${userId}/cover` : "/assets/images/resources/cover-img.jpg";
+
+  const coverImageUrl = userId && user && user.coverImage 
+  ? `http://localhost:8000/user/${userId}/cover` 
+  : "/assets/images/resources/cover-img.jpg";
 
   const isAdmin = user && user.role === "Directeur d'étude";
   const isChefDep = user && user.role === "Chef département";
@@ -337,7 +348,7 @@ export default function Profils() {
   return (
     <>
       <section className="cover-sec">
-        <img src="/assets/images/resources/cover-img.jpg" alt="" />
+      <img src={coverImageUrl} alt="Cover" width="100%" height="300px" />
         <div className="add-pic-box">
           <div className="container">
             <div className="row no-gutters"></div>
@@ -353,15 +364,15 @@ export default function Profils() {
                   <div className="main-left-sidebar">
                     <div className="user_profile">
                       <div className="user-pro-img">
-                        <img
-                          src="/assets/images/resources/user-pro-img.png"
-                          alt=""
-                        />
+                      <img src={imageUrl} alt="Image de profil" />
+
 
                         <div className="add-dp" id="OpenImgUpload"></div>
                       </div>
                       <div className="user_pro_status">
+                  
                         <ul className="flw-status">
+                      
                           <li>
                             <span>Following</span>
                             <b>34</b>
@@ -377,9 +388,9 @@ export default function Profils() {
                         <br />
                         <ul>
                           <li>
-                            <a
+                          <a
                               className="post_project"
-                              href="#"
+                              href="/updateProfil"
                               title=""
                               onClick={fetchUserData}
                             >
@@ -394,24 +405,24 @@ export default function Profils() {
                       <div>
                         {isAdmin && (
                           <div>
-                            <Link to="/completerProfil" title="">
+                            <a href="/completerProfil" title="">
                               <i className="la la-user"></i> Mes chefs
                               département
-                            </Link>
+                            </a>
                           </div>
                         )}
                         {isChefDep && (
                           <div>
-                            <Link to="/completerProfil" title="">
+                            <a href="/completerProfil" title="">
                               <i className="la la-user"></i> Mes chefs unité
-                            </Link>
+                            </a>
                           </div>
                         )}
                         {isChefUnite && (
                           <div>
-                            <Link to="/completerProfil" title="">
+                            <a href="/completerProfil" title="">
                               <i className="la la-user"></i> Mes enseignants
-                            </Link>
+                            </a>
                           </div>
                         )}
                       </div>

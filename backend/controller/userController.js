@@ -7,29 +7,10 @@ const jwt = require('jsonwebtoken');
 const { comparePassword, hashPassword } = require("../helpers/auth");
 const bcrypt = require('bcrypt');
 const multer = require('multer');
-
-// Route pour la mise à jour d'un utilisateur
-// router.put('/:userId', async (req, res) => {
-//   //const decodedToken = jwt.verify(token,payload.env.JWT_SECRET);
-//   //const userId = decodedToken.userId;
-//   const { userId } = req.params;
-//   const updates = req.body;
-
-//   try {
-//     // Recherchez l'utilisateur par son ID et mettez à jour ses informations
-//     const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
-
-//     if (!updatedUser) {
-//       return res.status(404).json({ error: 'Utilisateur non trouvé' });
-//     }
+const path = require('path'); 
+const fs = require('fs');
 
 
-//     res.json(updatedUser);
-//   } catch (error) {
-//     console.error('Erreur lors de la mise à jour de l\'utilisateur :', error);
-//     res.status(500).json({ error: 'Erreur lors de la mise à jour de l\'utilisateur' });
-//   }
-// });
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/imagesUser/'); // Dossier où les fichiers seront enregistrés
@@ -39,10 +20,28 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage});
 
 
-router.put('/:userId/profile-image', upload.single('profileImage'), async (req, res) => {
+// router.put('/:userId/profileimage', upload.single('profileImage'), async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+//     const user = await User.findById(userId);
+
+//     if (!user) {
+//       return res.status(404).json({ message: 'Utilisateur non trouvé' });
+//     }
+
+//     user.profileImage = req.file.path;
+//     await user.save();
+   
+//     res.status(200).json({ message: 'Image de profil mise à jour avec succès' });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Erreur interne du serveur' });
+//   }
+// });
+router.put('/:userId/profileimage', upload.fields([{ name: 'profileImage', maxCount: 1 }, { name: 'coverImage', maxCount: 1 }]), async (req, res) => {
   try {
     const userId = req.params.userId;
     const user = await User.findById(userId);
@@ -51,15 +50,117 @@ router.put('/:userId/profile-image', upload.single('profileImage'), async (req, 
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
 
-    user.profileImage = req.file.path; // Sauvegarde du chemin de l'image dans la base de données
-    await user.save();
+    // Vérifier et mettre à jour l'image de profil
+    if (req.files['profileImage'] && req.files['profileImage'][0]) {
+      user.profileImage = req.files['profileImage'][0].path;
+    }
 
-    res.status(200).json({ message: 'Image de profil mise à jour avec succès' });
+    // Vérifier et mettre à jour l'image de couverture
+    if (req.files['coverImage'] && req.files['coverImage'][0]) {
+      user.coverImage = req.files['coverImage'][0].path;
+    }
+
+    await user.save();
+   
+    res.status(200).json({ message: 'Images de profil et de couverture mises à jour avec succès' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Erreur interne du serveur' });
   }
 });
+
+
+router.get('/:userId/profile', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+
+    if (!user || !user.profileImage ) {
+      return res.status(404).json({ message: 'Image de profil non trouvée' });
+    }
+
+    // Construire le chemin absolu du fichier
+    const imagePath = path.join(__dirname, '..', user.profileImage);
+
+    // Vérifier si le fichier existe
+    if (!fs.existsSync(imagePath)) {
+      return res.status(404).json({ message: 'Image de profil non trouvée' });
+    }
+
+    // Envoyer l'image en tant que fichier
+    res.sendFile(imagePath);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur interne du serveur' });
+  }
+});
+
+
+
+router.get('/:userId/cover', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+
+    if (!user || !user.coverImage ) {
+      return res.status(404).json({ message: 'Image de coverture non trouvée' });
+    }
+
+    // Construire le chemin absolu du fichier
+    const imagecoverPath = path.join(__dirname, '..', user.coverImage);
+
+    // Vérifier si le fichier existe
+    if (!fs.existsSync(imagecoverPath)) {
+      return res.status(404).json({ message: 'Image de couverture non trouvée' });
+    }
+
+    // Envoyer l'image en tant que fichier
+    res.sendFile(imagecoverPath);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur interne du serveur' });
+  }
+});
+// router.get('/:userId/profile', async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+//     const user = await User.findById(userId);
+
+//     if (!user || (!user.profileImage && !user.coverImage)) {
+//       return res.status(404).json({ message: 'Images non trouvées' });
+//     }
+
+//     // Récupérer les chemins absolus des fichiers
+//     const profileImagePath = user.profileImage ? path.join(__dirname, '..', user.profileImage) : null;
+//     const coverImagePath = user.coverImage ? path.join(__dirname, '..', user.coverImage) : null;
+
+//     // Fonction pour vérifier et envoyer un fichier
+//     const sendFileIfExists = (filePath) => {
+//       if (filePath && fs.existsSync(filePath)) {
+//         res.sendFile(filePath);
+//         return true;
+//       }
+//       return false;
+//     };
+
+//     // Envoyer d'abord l'image de profil, si elle existe
+//     if (sendFileIfExists(profileImagePath)) {
+//       return;
+//     }
+
+//     // Si l'image de profil n'existe pas ou n'a pas été envoyée, envoyer l'image de couverture
+//     if (sendFileIfExists(coverImagePath)) {
+//       return;
+//     }
+
+//     // Si aucune des deux images n'a été trouvée, renvoyer une erreur
+//     res.status(404).json({ message: 'Images non trouvées' });
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Erreur interne du serveur' });
+//   }
+// });
 
 
 router.put('/:userId', async (req, res) => {
@@ -93,7 +194,8 @@ router.put('/:userId', async (req, res) => {
           departement: departement.name, // inclure seulement le nom du département
           unite: unite.name, // Inclure seulement le nom de l'unité
           socialSkills: updatedUser.socialSkills,
-        technicalSkills: updatedUser.technicalSkills,
+          technicalSkills: updatedUser.technicalSkills,
+       
       };
 
       // Générer un nouveau token avec les informations mises à jour
@@ -288,8 +390,6 @@ router.put("/changePassword/:userId", async (req, res) => {
 
 
 
-
-// Utilisation de la fonction dans une route
 
 
 module.exports = router;

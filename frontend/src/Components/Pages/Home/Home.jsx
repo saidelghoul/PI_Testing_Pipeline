@@ -18,8 +18,10 @@ import { Button } from "react-bootstrap";
 
 export default function Home() {
   const { user } = useContext(UserContext);
-
-  const [currentPublicationId, setCurrentPublicationId] = useState(null);
+  const userId = user ? user.id : null;
+  const imageUrl = userId && user && user.profileImage 
+  ? `http://localhost:8000/user/${userId}/profile` 
+  : "/assets/images/resources/user-pro-img.png";  const [currentPublicationId, setCurrentPublicationId] = useState(null);
   const [currentEventId, setCurrentEventId] = useState(null);
 
   const [publication, setPublication] = useState([]);
@@ -174,10 +176,8 @@ export default function Home() {
                     <div className="user-profile">
                       <div className="username-dt">
                         <div className="usr-pic">
-                          <img
-                            src="/assets/images/resources/user-pic.png"
-                            alt=""
-                          />
+                        <img src={imageUrl} alt="Image de profil" />
+
                         </div>
                       </div>
                       <div className="user-specs">
@@ -196,7 +196,7 @@ export default function Home() {
                 <div className="main-ws-sec">
                   <div className="post-topbar">
                     <div className="user-picy">
-                      <img src="/assets/images/resources/user-pic.png" alt="" />
+                    <img src={imageUrl} alt="Image de profil" />
                     </div>
                     {/* ajout evenemtn / publication */}
                     <div className="post-st">

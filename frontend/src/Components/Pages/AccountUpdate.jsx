@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import "../../../public/assets/css/animate.css";
 import "../../../public/assets/css/bootstrap.min.css";
 import "../../../public/assets/css/line-awesome.css";
@@ -31,6 +32,8 @@ export default function AccountUpdate() {
   const isAdmin = user && user.role === "Directeur d'étude"; 
   const isChefDep = user && user.role === "Chef département";
   const isChefUnite = user && user.role === "Chef unité";
+  //const tableRef = useRef(null);
+
   useEffect(() => {
     if (user) {
       if (isAdmin) {
@@ -43,6 +46,8 @@ export default function AccountUpdate() {
       if (isChefUnite) {
         fetchEns();
       }
+    //  $(tableRef.current).DataTable();
+
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isAdmin, isChefDep, isChefUnite]);
@@ -100,6 +105,137 @@ export default function AccountUpdate() {
       console.error("Error toggling user activation:", error);
     }
   };
+  const [departements, setDepartements] = useState([]);
+  const [unites, setUnités] = useState([]);
+
+
+  const [departement, setDepartement] = useState({
+    name: "",
+    description: "",
+    nbrUnite: 0,
+  });
+
+  useEffect(() => {
+    if (user) {
+      fetchDepartements();
+      fetchUnités();
+    }
+  }, [user]);
+
+  
+  const fetchDepartements = async () => {
+    try {
+      const response = await axios.get("/departement/getAlldep");
+      setDepartements(response.data);
+    } catch (error) {
+      console.error("Error fetching departements:", error);
+    }
+  };
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleSubmitDep = async (e) => {
+    e.preventDefault();
+    try {
+      if (isEditing) {
+        await axios.put(`/departement/update/${departement._id}`, departement);
+        setIsEditing(false);
+      } else {
+        await axios.post("/departement/add", departement);
+      }
+      fetchDepartements();
+      setDepartement({ name: "", description: "", nbrUnite: 0 });
+    } catch (error) {
+      console.error("Error adding/updating departement:", error);
+    }
+  };
+  const handleEditDep = async (id) => {
+    try {
+      const response = await axios.get(`/departement/getbyid/${id}`);
+      const { _id, name, description, nbrUnite } = response.data;
+      setDepartement({ _id, name, description, nbrUnite });
+      setIsEditing(true);
+    } catch (error) {
+      console.error("Error fetching departement for editing:", error);
+    }
+  };
+
+  const [unite, setUnite] = useState({
+    name: "",
+  });
+
+  const fetchUnités = async () => {
+    try {
+      const response = await axios.get("/unite/getAll", {
+        params: { departementName: user.departement },
+      });
+      setUnités(response.data);
+    } catch (error) {
+      console.error("Error fetching unités:", error);
+    }
+  };
+
+  const [isEditingUnit, setIsEditingUnit] = useState(false);
+
+  const handleSubmit2 = async (e) => {
+    e.preventDefault();
+    try {
+      if (isEditingUnit) {
+        await axios.put(`/unite/update/${unite._id}`, unite);
+        setIsEditingUnit(false);
+      } else {
+        const departementName = user.departement;
+        const uniteData = { ...unite, departementName };
+        await axios.post("/unite/adding", uniteData);
+      }
+      fetchUnités();
+      setUnite({ name: "" });
+    } catch (error) {
+      console.error("Error adding/updating unit:", error);
+    }
+  };
+
+  const handleEditUnit = async (id) => {
+    try {
+      const response = await axios.get(`/unite/getbyid/${id}`);
+      const { _id, name } = response.data;
+      setUnite({ _id, name });
+      setIsEditingUnit(true);
+    } catch (error) {
+      console.error("Error fetching unit for editing:", error);
+    }
+  };
+
+  const handleChange2 = (e) => {
+    const { name, value } = e.target;
+    setUnite({ ...unite, [name]: value });
+  };
+
+  const handleDeleteUnit = async (id) => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer cette unité ?")) {
+      try {
+        await axios.delete(`/unite/remove/${id}`);
+        fetchUnités();
+      } catch (error) {
+        console.error(
+          "Erreur lors de la suppression de l'unité:",
+          error.message
+        );
+      }
+    }
+  };
+
+  const handleDeleteDep = async (id) => {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer ?")) {
+      try {
+        await axios.delete(`/unite/removedep/${id}`);
+        fetchDepartements();
+      } catch (error) {
+        console.error("Erreur lors de la suppression ", error.message);
+      }
+    }
+  };
+ 
   
   return (
     <>
@@ -122,8 +258,20 @@ export default function AccountUpdate() {
                     >
                       <i className="la la-cogs"></i>Liste des chef département 
                     </a>
+                    <a
+                 className="nav-item nav-link"
+                 id="nav-dep-tab"
+                 data-toggle="tab"
+                 href="#nav-dep"
+                 role="tab"
+                 aria-controls="nav-dep"
+                 aria-selected="false"
+               >
+                 <i className="la la-cogs"></i>Liste des departements 
+               </a>
                     
-                  </div>)}
+                  </div>
+                )}
 
                   {isChefDep && (
                <div className="nav nav-tabs" id="nav-tab" role="tablist">
@@ -149,6 +297,18 @@ export default function AccountUpdate() {
                  aria-selected="false"
                >
                  <i className="la la-cogs"></i>Liste des enseignants 
+               </a>
+
+               <a
+                 className="nav-item nav-link"
+                 id="nav-unite-tab"
+                 data-toggle="tab"
+                 href="#nav-unite"
+                 role="tab"
+                 aria-controls="nav-unite"
+                 aria-selected="false"
+               >
+                 <i className="la la-cogs"></i>Liste des unités 
                </a>
              </div>
                   
@@ -185,52 +345,169 @@ export default function AccountUpdate() {
                     aria-labelledby="nav-acc-tab"
                   >
                     
-                    {isAdmin && (  <div className="lt-sec">
-                          <img src="/assets/images/lt-icon.png" alt="" />
-                          <h4>liste des chefs departement </h4>
-
-                          <table className="table table-sm">
-                            <thead>
-                              <tr>
-                                <th scope="col">nom et prenom</th>
-                                <th scope="col">email</th>
-                                <th scope="col">nom departement </th>
-                                <th scope="col">activer/désactiver</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {chefDep.map((user) => (
-                                <tr key={user._id}>
-                                  <td>{user.name}</td>
-                                  <td>{user.email}</td> 
-                                  <td>{user.departement.name}</td> 
-                                  <td>
-                                  {user.isActive ? (
-                                  <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
-                                ) : (
-                                  <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
-                                )}
-</td>  
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                       </div> )}
-
-                       {isChefDep && ( <>  <>
+                    {isAdmin && (
+  <>
     <div className="tab-content">
+      {/* Onglet des chefs de département */}
       <div className="tab-pane fade show active" id="nav-chef" role="tabpanel" aria-labelledby="nav-chef-tab">
         <div className="lt-sec">
           <img src="/assets/images/lt-icon.png" alt="" />
-          <h4>liste des chefs unité </h4>
+          <h4>Liste des chefs département</h4>
 
           <table className="table table-sm">
             <thead>
               <tr>
-                <th scope="col">nom et prenom</th>
-                <th scope="col">email</th>
-                <th scope="col">nom unité </th>
-                <th scope="col">activer/désactiver</th>
+                <th scope="col">Nom et Prénom</th>
+                <th scope="col">Email</th>
+                <th scope="col">Nom du département</th>
+                <th scope="col">Activer/Désactiver</th>
+              </tr>
+            </thead>
+            <tbody>
+              {chefDep.map((user) => (
+                <tr key={user._id}>
+                  <td>{user.name}</td>
+                  <td>{user.email}</td> 
+                  <td>{user.departement.name}</td> 
+                  <td>
+                    {user.isActive ? (
+                      <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
+                    ) : (
+                      <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Onglet des départements */}
+      <div className="tab-pane fade" id="nav-dep" role="tabpanel" aria-labelledby="nav-dep-tab">
+        <div className="lt-sec">
+          <img src="/assets/images/lt-icon.png" alt="" />
+          <h4>Liste des départements</h4>
+          <table className="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Nom du département</th>
+                <th scope="col">Description</th>
+                <th scope="col">Nombre d'unités</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {departements.map((departement) => (
+                <tr key={departement._id}>
+                  <td>{departement.name}</td>
+                  <td>{departement.description}</td>
+                  <td>{departement.nbrUnite}</td>
+                  <td>
+                    <i
+                      className="fa fa-edit"
+                      style={{
+                        color: "orange",
+                        cursor: "pointer",
+                        marginRight: "10px",
+                      }}
+                      onClick={() => handleEditDep(departement._id)}
+                    ></i>
+                    <i
+                      className="fa fa-trash"
+                      style={{
+                        color: "red",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => handleDeleteDep(departement._id)}
+                    ></i>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {/* Formulaire d'ajout/modification de département */}
+        <div className="add-billing-method">
+          <h3>{isEditing ? "Modifier le département" : "Ajouter un département"}</h3>
+          <div className="payment_methods">
+            <form onSubmit={handleSubmitDep}>
+              <div className="row">
+                <div className="col-lg-12">
+                  <div className="cc-head">
+                    <h5>Nom du département</h5>
+                  </div>
+                  <div className="inpt-field pd-moree">
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Nom du département ..."
+                      value={departement.name}
+                      onChange={(e) => setDepartement({ ...departement, name: e.target.value })}
+                    />
+                    <i className="fa fa-university"></i>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="cc-head">
+                    <h5>Description</h5>
+                  </div>
+                  <div className="inpt-field pd-moree">
+                    <input
+                      type="text"
+                      name="description"
+                      placeholder="Description ..."
+                      value={departement.description}
+                      onChange={(e) => setDepartement({ ...departement, description: e.target.value })}
+                    />
+                    <i className="fa fa-university"></i>
+                  </div>
+                </div>
+                <div className="col-lg-6">
+                  <div className="cc-head">
+                    <h5>Nombre d'unités</h5>
+                  </div>
+                  <div className="inpt-field">
+                    <input
+                      type="number"
+                      name="nbrUnite"
+                      placeholder=""
+                      value={departement.nbrUnite}
+                      onChange={(e) => setDepartement({ ...departement, nbrUnite: parseInt(e.target.value) })}
+                    />
+                  </div>
+                </div>
+                <div className="col-lg-12">
+                  <button type="submit">
+                    {isEditing ? "Modifier" : "Ajouter"}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </>
+)}
+
+
+                    {isChefDep && (
+  <>
+    <div className="tab-content">
+      {/* Onglet des chefs d'unité */}
+      <div className="tab-pane fade show active" id="nav-chef" role="tabpanel" aria-labelledby="nav-chef-tab">
+        <div className="lt-sec">
+          <img src="/assets/images/lt-icon.png" alt="" />
+          <h4>Liste des chefs d'unité</h4>
+
+          <table className="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Nom et Prénom</th>
+                <th scope="col">Email</th>
+                <th scope="col">Nom de l'unité</th>
+                <th scope="col">Activer/Désactiver</th>
               </tr>
             </thead>
             <tbody>
@@ -240,12 +517,11 @@ export default function AccountUpdate() {
                   <td>{user.email}</td> 
                   <td>{user.unite.name}</td>  
                   <td>
-                  {user.isActive ? (
-                                  <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
-                                ) : (
-                                  <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
-                                )}
-
+                    {user.isActive ? (
+                      <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
+                    ) : (
+                      <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -254,17 +530,18 @@ export default function AccountUpdate() {
         </div>
       </div>
 
+      {/* Onglet des enseignants */}
       <div className="tab-pane fade" id="nav-ens" role="tabpanel" aria-labelledby="nav-ens-tab">
         <div className="lt-sec">
           <img src="/assets/images/lt-icon.png" alt="" />
-          <h4>liste des enseignants </h4>
+          <h4>Liste des enseignants</h4>
 
           <table className="table table-sm">
             <thead>
               <tr>
-                <th scope="col">nom et prenom</th>
-                <th scope="col">email</th>
-                <th scope="col">activer/désactiver</th>
+                <th scope="col">Nom et Prénom</th>
+                <th scope="col">Email</th>
+                <th scope="col">Activer/Désactiver</th>
               </tr>
             </thead>
             <tbody>
@@ -273,12 +550,11 @@ export default function AccountUpdate() {
                   <td>{user.name}</td>
                   <td>{user.email}</td> 
                   <td>
-                  {user.isActive ? (
-                                  <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
-                                ) : (
-                                  <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
-                                )}
-
+                    {user.isActive ? (
+                      <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
+                    ) : (
+                      <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -286,9 +562,82 @@ export default function AccountUpdate() {
           </table>
         </div>
       </div>
+
+      {/* Onglet des unités */}
+      <div className="tab-pane fade" id="nav-unite" role="tabpanel" aria-labelledby="nav-unite-tab">
+        <div className="lt-sec">
+          <img src="/assets/images/lt-icon.png" alt="" />
+          <h4>Liste des unités</h4>
+
+          <table  className="table table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Nom de l'unité</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {unites.map((unite) => (
+                <tr key={unite._id}>
+                  <td>{unite.name}</td>
+                  <td>
+                    <i
+                      className="fa fa-edit"
+                      style={{
+                        color: "orange",
+                        cursor: "pointer",
+                        marginRight: "10px",
+                      }}
+                      onClick={() => handleEditUnit(unite._id)}
+                    ></i>
+                    <i
+                      className="fa fa-trash"
+                      style={{
+                        color: "red",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => handleDeleteUnit(unite._id)}
+                    ></i>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {/* Formulaire d'ajout/modification d'unité */}
+        <div className="add-billing-method">
+          <h3>{isEditingUnit ? "Modifier l'unité" : "Ajouter une unité"}</h3>
+          <div className="payment_methods">
+            <form onSubmit={handleSubmit2}>
+              <div className="row">
+                <div className="col-lg-12">
+                  <div className="cc-head">
+                    <h5>Nom de l'unité</h5>
+                  </div>
+                  <div className="inpt-field pd-moree">
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Nom de l'unité ..."
+                      value={unite.name}
+                      onChange={handleChange2}
+                    />
+                    <i className="fa fa-university"></i>
+                  </div>
+                </div>
+                <div className="col-lg-12">
+                  <button type="submit">
+                    {isEditingUnit ? "Modifier" : "Ajouter"}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </>
-                      </> )}
+)}
 
                        {isChefUnite && (  <div className="lt-sec">
                           <img src="/assets/images/lt-icon.png" alt="" />

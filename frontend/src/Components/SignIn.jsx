@@ -231,7 +231,7 @@ export default function SignIn() {
                               </label>
                               <small>Remember me</small>
                             </div>
-                            <a href="#" title="">
+                            <a href="/forgotPassword" title="">
                               Forgot Password?
                             </a>
                           </div>
@@ -376,50 +376,7 @@ export default function SignIn() {
                               <i className="fa fa-ellipsis-h"></i>
                             </span>
                           </div>
-                          {/*<div className="col-lg-12 no-pdd">
-                            <div className="sn-field">
-                              <select
-                                name="gouvernorat"
-                                value={registerdata.gouvernorat}
-                                onChange={(e) =>
-                                  setRegisterData({
-                                    ...registerdata,
-                                    gouvernorat: e.target.value,
-                                  })
-                                }
-                              >
-                                <option>Choisir votre gouvernorat</option>
-                                <option value="Ariana">Ariana</option>
-                                <option value="Béja">Béja</option>
-                                <option value="Ben Arous">Ben Arous</option>
-                                <option value="Bizerte">Bizerte</option>
-                                <option value="Gabès">Gabès</option>
-                                <option value="Gafsa">Gafsa</option>
-                                <option value="Jendouba">Jendouba</option>
-                                <option value="Kairouan">Kairouan</option>
-                                <option value="Kasserine">Kasserine</option>
-                                <option value="Kébili">Kébili</option>
-                                <option value="Le Kef">Le Kef</option>
-                                <option value="Mahdia">Mahdia</option>
-                                <option value="La Manouba">La Manouba</option>
-                                <option value="Médenine">Médenine</option>
-                                <option value="Monastir">Monastir</option>
-                                <option value="Nabeul">Nabeul</option>
-                                <option value="Sfax">Sfax</option>
-                                <option value="Sidi Bouzid">Sidi Bouzid</option>
-                                <option value="Siliana">Siliana</option>
-                                <option value="Sousse">Sousse</option>
-                                <option value="Tataouine">Tataouine</option>
-                                <option value="Tozeur">Tozeur</option>
-                                <option value="Tunis">Tunis</option>
-                                <option value="Zaghouan">Zaghouan</option>
-                              </select>
-                              <i className="la la-globe"></i>
-                              <span>
-                                <i className="fa fa-ellipsis-h"></i>
-                              </span>
-                            </div>
-                          </div>*/}
+                         
                           <div className="col-lg-12 no-pdd">
                             <div className="sn-field">
                               <input
@@ -454,17 +411,7 @@ export default function SignIn() {
                               <i className="la la-lock"></i>
                             </div>
                           </div>
-                          {/*<div className="col-lg-12 no-pdd">
-													<div className="checky-sec st2">
-														<div className="fgt-sec">
-															<input type="checkbox" name="cc" id="c2"/>
-															<label htmlFor="c2">
-																<span></span>
-															</label>
-															<small>Yes, I understand and agree to the workwise Terms & Conditions.</small>
-														</div>
-													</div>
-											</div>*/}
+                         
                           <div className="col-lg-12 no-pdd">
                             <button type="submit" value="submit">
                               Enregistrer

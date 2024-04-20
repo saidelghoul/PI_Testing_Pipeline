@@ -37,11 +37,18 @@ import Home from "./Components/Pages/Home/Home";
 import AddEvent from "./Components/Pages/Home/Evenement/AddEvent";
 import Update from "./Components/Pages/Home/Pub/Update";
 import UpdateEvent from "./Components/Pages/Home/Evenement/UpdateEvent";
+import UpdateProfil from "./Components/Pages/UpdateProfil";
+import ResetPassword from "./Components/Pages/ResetPassword";
+import NewPassword from './Components/Pages/NewPassword';
+
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
 function App() {
+  const NewPasswordWrapper = ({ location, history, match }) => {
+    return <NewPassword match={match} />;
+  };
   return (
     <UserContextProvider>
       <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
@@ -300,6 +307,34 @@ function App() {
               </>
             }
           />
+
+<Route
+            path="/updateProfil"
+            element={
+              <>
+                <Navbar />
+                <UpdateProfil />
+                <Footer />
+              </>
+            }
+          />
+
+          <Route
+            path="/forgotPassword"
+            element={
+              <>
+                <ResetPassword />
+              </>
+            }
+          />
+
+<Route 
+  path="/reset/:token" 
+  element={<NewPasswordWrapper />} 
+/>
+
+
+
 
           <Route
             path="/affectSkill/:id"
