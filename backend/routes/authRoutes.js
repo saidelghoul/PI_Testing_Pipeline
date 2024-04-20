@@ -8,7 +8,8 @@ const {
   getProfile,
   logout,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  confirmEmail
 } = require("../controller/authController");
 
 //middleware
@@ -30,5 +31,7 @@ router.get("/profile", getProfile);
 router.get('/logout',logout);
 router.post("/forgotPassword",forgotPassword);
 router.post("/resetPassword",resetPassword);
+router.get('/confirm/:token', confirmEmail);
+
 
 module.exports = router;

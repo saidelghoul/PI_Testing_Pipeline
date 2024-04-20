@@ -23,24 +23,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage});
 
 
-// router.put('/:userId/profileimage', upload.single('profileImage'), async (req, res) => {
-//   try {
-//     const userId = req.params.userId;
-//     const user = await User.findById(userId);
-
-//     if (!user) {
-//       return res.status(404).json({ message: 'Utilisateur non trouvé' });
-//     }
-
-//     user.profileImage = req.file.path;
-//     await user.save();
-   
-//     res.status(200).json({ message: 'Image de profil mise à jour avec succès' });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Erreur interne du serveur' });
-//   }
-// });
 router.put('/:userId/profileimage', upload.fields([{ name: 'profileImage', maxCount: 1 }, { name: 'coverImage', maxCount: 1 }]), async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -61,7 +43,31 @@ router.put('/:userId/profileimage', upload.fields([{ name: 'profileImage', maxCo
     }
 
     await user.save();
-   
+    const tokenPayload = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      addresse: user.addresse,
+      gouvernorat: user.gouvernorat,
+      telephone: user.telephone,
+      dateNaissance: user.dateNaissance,
+      gender: user.gender,
+      socialSkills: user.socialSkills,
+      technicalSkills: user.technicalSkills,
+      profileImage: user.profileImage, 
+      coverImage: user.coverImage, 
+    };
+
+    // Générer un nouveau token avec les informations mises à jour
+    jwt.sign(tokenPayload, process.env.JWT_SECRET, {}, (err, token) => {
+      if (err) throw err;
+      // Mettre à jour le cookie du token avec le nouveau token
+      res.cookie('token', token, { httpOnly: true, secure: true });
+      // Renvoyer la réponse avec un message de succès
+      res.status(200).json({ message: 'Images de profil et de couverture mises à jour avec succès' });
+    });
+
     res.status(200).json({ message: 'Images de profil et de couverture mises à jour avec succès' });
   } catch (error) {
     console.error(error);
@@ -121,46 +127,6 @@ router.get('/:userId/cover', async (req, res) => {
     res.status(500).json({ message: 'Erreur interne du serveur' });
   }
 });
-// router.get('/:userId/profile', async (req, res) => {
-//   try {
-//     const userId = req.params.userId;
-//     const user = await User.findById(userId);
-
-//     if (!user || (!user.profileImage && !user.coverImage)) {
-//       return res.status(404).json({ message: 'Images non trouvées' });
-//     }
-
-//     // Récupérer les chemins absolus des fichiers
-//     const profileImagePath = user.profileImage ? path.join(__dirname, '..', user.profileImage) : null;
-//     const coverImagePath = user.coverImage ? path.join(__dirname, '..', user.coverImage) : null;
-
-//     // Fonction pour vérifier et envoyer un fichier
-//     const sendFileIfExists = (filePath) => {
-//       if (filePath && fs.existsSync(filePath)) {
-//         res.sendFile(filePath);
-//         return true;
-//       }
-//       return false;
-//     };
-
-//     // Envoyer d'abord l'image de profil, si elle existe
-//     if (sendFileIfExists(profileImagePath)) {
-//       return;
-//     }
-
-//     // Si l'image de profil n'existe pas ou n'a pas été envoyée, envoyer l'image de couverture
-//     if (sendFileIfExists(coverImagePath)) {
-//       return;
-//     }
-
-//     // Si aucune des deux images n'a été trouvée, renvoyer une erreur
-//     res.status(404).json({ message: 'Images non trouvées' });
-
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Erreur interne du serveur' });
-//   }
-// });
 
 
 router.put('/:userId', async (req, res) => {

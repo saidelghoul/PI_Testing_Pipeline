@@ -77,7 +77,8 @@ const registerUser = async (req, res) => {
     const hashedPassword = await hashPassword(password);
     const hashedConfirmedPassword = await hashPassword(confirmedPassword);
 
-    //create user in database
+    const emailToken = crypto.randomBytes(20).toString('hex');
+
     const user = await User.create({
       name,
       email,
@@ -86,12 +87,62 @@ const registerUser = async (req, res) => {
       departement,
       role,
       unite,
+      emailToken,
     });
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: 'marwakb4@gmail.com',
+      to: email,
+      subject: 'Confirmation de votre inscription',
+      text: `Cliquez sur ce lien pour confirmer votre inscription : ${process.env.CLIENT_URL}/confirm/${emailToken} ou bien cliquer sur  ${process.env.CLIENT_URL1}/confirm/${emailToken}`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        return res.json({ error: 'Échec d envoi de l\'e-mail de confirmation' });
+      }
+      console.log('Email envoyé: ' + info.response);
+      res.json({ message: 'Un e-mail de confirmation a été envoyé' });
+    });
+
+
     return res.json(user);
   } catch (error) {
     console.log(error);
   }
 };
+
+const confirmEmail = async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    const user = await User.findOne({ emailToken: token });
+
+    if (!user) {
+      return res.json({ error: 'Token invalide ou expiré' });
+    }
+
+    user.isEmailVerified = true;
+    user.emailToken = ''; 
+    await user.save();
+
+    res.json({ message: 'Votre compte a été activé avec succès' });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+};
+
 
 const loginUser = async (req, res) => {
   try {
@@ -107,6 +158,10 @@ const loginUser = async (req, res) => {
       return res.json({ error: "compte désactivé" });
     }
 
+    if (!user.emailToken && !user.isEmailVerified ) {
+      return res.json({ error: "Veuillez vérifier votre adresse e-mail pour activer votre compte" });
+    }
+  
     // Vérifier si les mots de passe correspondent
     const match = await comparePassword(password, user.password);
     if (match) {
@@ -312,5 +367,6 @@ module.exports = {
   getProfile,
   logout,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  confirmEmail
 };
