@@ -54,6 +54,14 @@ export default function Navbar() {
                 </a>
               </li>
               <li>
+                <Link to="/friends" title="">
+                  <span>
+                    <img src="/assets/images/icon4.png" alt="" />
+                  </span>
+                  Friends
+                </Link>
+              </li>
+              <li>
                 <Link to="/groupes" title="">
                   <span>
                     <img src="/assets/images/icon2.png" alt="" />

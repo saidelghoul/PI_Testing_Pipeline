@@ -353,9 +353,96 @@ router.put("/changePassword/:userId", async (req, res) => {
   }
 });
 
+router.get('/usersGetAll', async (req, res) => {
+  try {
+    const users = await User.find({});
 
+ 
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Server error: " + error.message });
+  }
+});
 
+router.get('/usersget', async (req, res) => {
+  try {
+    const users = await User.find();
+    router.get('/usersGetAll', async (req, res) => {
+      try {
+        const users = await User.find({});
+        if (!users || !users.profileImage ) {
+          return res.status(404).json({ message: 'Image de profil non trouvée' });
+        }
+    
+        // Construire le chemin absolu du fichier
+        const imagePath = path.join(__dirname, '..', users.profileImage);
+    
+        // Vérifier si le fichier existe
+        if (!fs.existsSync(imagePath)) {
+          return res.status(404).json({ message: 'Image de profil non trouvée' });
+        }
+    
+        // Envoyer l'image en tant que fichier
+        res.sendFile(imagePath);
+     
+        res.status(200).json(users);
+      } catch (error) {
+        res.status(500).json({ error: "Server error: " + error.message });
+      }
+    });
+ 
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs', error });
+  }
+});
 
+router.get('/profile-image/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
 
+    if (!user || !user.profileImage) {
+      return res.status(404).json({ message: 'Image de profil non trouvée' });
+    }
+
+    // Construire le chemin absolu du fichier
+    const imagePath = path.join(__dirname, '..', 'public/imagesUser', user.profileImage);
+
+    // Vérifier si le fichier existe
+    if (!fs.existsSync(imagePath)) {
+      return res.status(404).json({ message: 'Image de profil non trouvée' });
+    }
+
+    // Envoyer l'image en tant que fichier
+    res.sendFile(imagePath);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur interne du serveur' });
+  }
+});
+
+// Route pour récupérer tous les utilisateurs
+router.get('/users', async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs', error });
+  }
+});
+router.get('/userbyid/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la récupération de l\'utilisateur', error });
+  }
+});
 
 module.exports = router;

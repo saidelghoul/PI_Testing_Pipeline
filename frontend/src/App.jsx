@@ -41,7 +41,8 @@ import UpdateProfil from "./Components/Pages/UpdateProfil";
 import ResetPassword from "./Components/Pages/ResetPassword";
 import NewPassword from './Components/Pages/NewPassword';
 import ConfirmEmail from "./Components/Pages/ConfirmEmail";
-
+import AddFriends from "./Components/Pages/Friends/AddFriends";
+import ProfileFriend from "./Components/Pages/Friends/ProfileFriend";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -313,6 +314,27 @@ function App() {
             }
           />
 
+<Route
+            path="/friends"
+            element={
+              <>
+                <Navbar />
+                <AddFriends />
+                <Footer />
+              </>
+            }
+          />
+
+<Route
+            path="/profileuser/:id"
+            element={
+              <>
+                <Navbar />
+                <ProfileFriend />
+                <Footer />
+              </>
+            }
+          />
 <Route
             path="/updateProfil"
             element={

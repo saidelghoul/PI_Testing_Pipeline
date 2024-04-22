@@ -32,7 +32,6 @@ export default function AccountUpdate() {
   const isAdmin = user && user.role === "Directeur d'étude"; 
   const isChefDep = user && user.role === "Chef département";
   const isChefUnite = user && user.role === "Chef unité";
-  //const tableRef = useRef(null);
 
   useEffect(() => {
     if (user) {
@@ -46,7 +45,6 @@ export default function AccountUpdate() {
       if (isChefUnite) {
         fetchEns();
       }
-    //  $(tableRef.current).DataTable();
 
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -246,14 +244,14 @@ export default function AccountUpdate() {
               <div className="col-lg-3">
                 <div className="acc-leftbar">
                 {isAdmin && (
-                  <div className="nav nav-tabs" id="nav-tab" role="tablist">
+                  <div className="nav nav-tabs" id="nav-chef-tab" role="tablist">
                     <a
                       className="nav-item nav-link active"
                       id="nav-acc-tab"
                       data-toggle="tab"
-                      href="#nav-acc"
+                      href="#nav-chef"
                       role="tab"
-                      aria-controls="nav-acc"
+                      aria-controls="nav-chef"
                       aria-selected="true"
                     >
                       <i className="la la-cogs"></i>Liste des chef département 
