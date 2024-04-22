@@ -22,7 +22,7 @@ import SocialSkillAffect from "./Skills/SocialSkills/SocialSkillAffect";
 export default function Profils() {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useContext(UserContext);
- 
+  
   const userId = user ? user.id : null;
   //const imageUrl = userId ? `http://localhost:8000/user/${userId}/profile` : "/assets/images/resources/user-pro-img.png";
   const imageUrl = userId && user && user.profileImage 
@@ -43,7 +43,8 @@ export default function Profils() {
 
   useEffect(() => {
     if (user) {
-    
+     
+      fetchUserData();
 
       fetchSkills();
       getAssigned();
@@ -59,7 +60,7 @@ export default function Profils() {
     setSkills([...result, user.id]);
   };
 
- 
+
 
   const [assigned, setAssigned] = useState([]);
 
@@ -80,12 +81,12 @@ export default function Profils() {
       const userResponse = await axios.get(`/user/getbyid/${user.id}`);
       if (userResponse.data) {
         // Si l'utilisateur existe, mettez à jour l'état userData avec les données de l'utilisateur
+        setUpdatedUser(userResponse.data);
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
   };
-  
 
 
   //TODO remove or update below code
@@ -232,7 +233,38 @@ export default function Profils() {
                         )}
                       </div>
                       <br />
-                  
+                      
+                      <ul className="social_links">
+                        {!!user && user.gouvernorat && (
+                          <li>
+                            <i className="la la-globe"> Gouvernorat : </i>
+                            <h3>{user.gouvernorat}</h3>
+                          </li>
+                        )}
+                        {!!user && user.addresse && (
+                          <li>
+                            <i className="la la-globe"> Ville : </i>
+                            <h3>{user.addresse}</h3>
+                          </li>
+                        )}
+                        {!!user && user.dateNaissance && (
+                          <li>
+                            <i className="la la-globe"> Date de naissance : </i>
+                            <h3>
+                              {new Date(user.dateNaissance).toLocaleDateString(
+                                "fr-FR"
+                              )}
+                            </h3>
+                          </li>
+                        )}
+                        {!!user && user.telephone && (
+                          <li>
+                            <i className="la la-globe"> Telephone : </i>
+                            <h3>{user.telephone}</h3>
+                          </li>
+                        )}
+                       
+                      </ul>
                     </div>
                     <div className="suggestions full-width">
                       <div className="sd-title">
