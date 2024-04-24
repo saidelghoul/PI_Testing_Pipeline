@@ -1,24 +1,8 @@
-/* eslint-disable react/no-unescaped-entities */
-import "../../../public/assets/css/animate.css";
-import "../../../public/assets/css/bootstrap.min.css";
-import "../../../public/assets/css/line-awesome.css";
-import "../../../public/assets/css/line-awesome-font-awesome.min.css";
-import "../../../public/assets/vendor/fontawesome-free/css/all.min.css";
-import "../../../public/assets/css/font-awesome.min.css";
-import "../../../public/assets/css/jquery.mCustomScrollbar.min.css";
-import "../../../public/assets/css/style.css";
-import "../../../public/assets/css/responsive.css";
-import "../../../public/assets/lib/slick/slick.css";
-import "../../../public/assets/lib/slick/slick-theme.css";
-import "../../../public/assets/js/jquery.min.js";
-import "../../../public/assets/js/bootstrap.min.js";
-import "../../../public/assets/js/jquery.mCustomScrollbar.js";
-import "../../../public/assets/lib/slick/slick.min.js";
-import "../../../public/assets/js/scrollbar.js";
-import "../../../public/assets/js/script.js";
+
 import { useContext, useState,useEffect } from "react";
 import axios from "axios";
 import { UserContext } from "../../../context/userContext.jsx";
+import ReactPaginate from "react-paginate";
 
 
 export default function AccountUpdate() {
@@ -32,6 +16,10 @@ export default function AccountUpdate() {
   const isAdmin = user && user.role === "Directeur d'étude"; 
   const isChefDep = user && user.role === "Chef département";
   const isChefUnite = user && user.role === "Chef unité";
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 8; 
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     if (user) {
@@ -47,18 +35,54 @@ export default function AccountUpdate() {
       }
 
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isAdmin, isChefDep, isChefUnite]);
 
   const fetchChefsDep = async () => {
     try {
       const response = await axios.get("/user/chef");
       setChefDeps(response.data);
+      setTotalPages(Math.ceil(response.data.length / itemsPerPage));
     } catch (error) {
       console.error("Error fetching users:", error);
     }
   };
+  const handlePageChange = ({ selected }) => {
+    setCurrentPage(selected);
+  };
 
+ const displayUsersForPage = () => {
+    const startIndex = currentPage * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+   
+    //return users.slice(startIndex, endIndex);
+    return chefDep.slice(startIndex, endIndex);
+    
+  };
+  const displayUserForPage = () => {
+    const startIndex = currentPage * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+   
+    //return users.slice(startIndex, endIndex);
+    return chefunite.slice(startIndex, endIndex);
+    
+  };
+  const displayEnsForPage = () => {
+    const startIndex = currentPage * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+   
+    //return users.slice(startIndex, endIndex);
+    return ens.slice(startIndex, endIndex);
+    
+  };
+
+  const displayEnsDepForPage = () => {
+    const startIndex = currentPage * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+   
+    //return users.slice(startIndex, endIndex);
+    return ensDep.slice(startIndex, endIndex);
+    
+  };
   const fetchChefUnite = async () => {
     try {
       // Ajoutez le departementId de l'utilisateur connecté à la requête
@@ -66,6 +90,7 @@ export default function AccountUpdate() {
         params: { departementName: user.departement }
       });
       setChefUnits(response.data);
+      setTotalPages(Math.ceil(response.data.length / itemsPerPage));
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -78,6 +103,7 @@ export default function AccountUpdate() {
         params: { uniteName: user.unite }
       });
       setEns(response.data);
+      setTotalPages(Math.ceil(response.data.length / itemsPerPage));
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -90,6 +116,7 @@ export default function AccountUpdate() {
         params: { departementName: user.departement }
       });
       setEnsDep(response.data);
+      setTotalPages(Math.ceil(response.data.length / itemsPerPage));
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -99,6 +126,7 @@ export default function AccountUpdate() {
       await axios.put(`/user/${isActive ? 'activate' : 'deactivate'}/${userId}`);
       // Actualiser les données après l'activation ou la désactivation de l'utilisateur
       fetchChefsDep();
+
     } catch (error) {
       console.error("Error toggling user activation:", error);
     }
@@ -106,7 +134,23 @@ export default function AccountUpdate() {
   const [departements, setDepartements] = useState([]);
   const [unites, setUnités] = useState([]);
 
+  const displayUnitesForPage = () => {
+    const startIndex = currentPage * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+   
+    //return users.slice(startIndex, endIndex);
+    return unites.slice(startIndex, endIndex);
+    
+  };
 
+  const displayDepForPage = () => {
+    const startIndex = currentPage * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+   
+    //return users.slice(startIndex, endIndex);
+    return departements.slice(startIndex, endIndex);
+    
+  };
   const [departement, setDepartement] = useState({
     name: "",
     description: "",
@@ -125,6 +169,7 @@ export default function AccountUpdate() {
     try {
       const response = await axios.get("/departement/getAlldep");
       setDepartements(response.data);
+      setTotalPages(Math.ceil(response.data.length / itemsPerPage));
     } catch (error) {
       console.error("Error fetching departements:", error);
     }
@@ -168,6 +213,7 @@ export default function AccountUpdate() {
         params: { departementName: user.departement },
       });
       setUnités(response.data);
+      setTotalPages(Math.ceil(response.data.length / itemsPerPage));
     } catch (error) {
       console.error("Error fetching unités:", error);
     }
@@ -362,7 +408,7 @@ export default function AccountUpdate() {
               </tr>
             </thead>
             <tbody>
-              {chefDep.map((user) => (
+              {displayUsersForPage().map((user) => (
                 <tr key={user._id}>
                   <td>{user.name}</td>
                   <td>{user.email}</td> 
@@ -374,8 +420,17 @@ export default function AccountUpdate() {
                       <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
                     )}
                   </td>
+              
                 </tr>
-              ))}
+                
+              ))}    <ReactPaginate
+              pageCount={totalPages}
+              pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
+              marginPagesDisplayed={2} // Nombre de pages à afficher avant et après les ellipses
+              onPageChange={handlePageChange}
+              containerClassName={"pagination"}
+              activeClassName={"active"}
+            />
             </tbody>
           </table>
         </div>
@@ -396,7 +451,7 @@ export default function AccountUpdate() {
               </tr>
             </thead>
             <tbody>
-              {departements.map((departement) => (
+              {displayDepForPage().map((departement) => (
                 <tr key={departement._id}>
                   <td>{departement.name}</td>
                   <td>{departement.description}</td>
@@ -424,6 +479,14 @@ export default function AccountUpdate() {
               ))}
             </tbody>
           </table>
+          <ReactPaginate
+              pageCount={totalPages}
+              pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
+              marginPagesDisplayed={2} // Nombre de pages à afficher avant et après les ellipses
+              onPageChange={handlePageChange}
+              containerClassName={"pagination"}
+              activeClassName={"active"}
+            />
         </div>
         {/* Formulaire d'ajout/modification de département */}
         <div className="add-billing-method">
@@ -509,7 +572,7 @@ export default function AccountUpdate() {
               </tr>
             </thead>
             <tbody>
-              {chefunite.map((user) => (
+              { displayUserForPage().map((user) => (
                 <tr key={user._id}>
                   <td>{user.name}</td>
                   <td>{user.email}</td> 
@@ -525,6 +588,14 @@ export default function AccountUpdate() {
               ))}
             </tbody>
           </table>
+          <ReactPaginate
+              pageCount={totalPages}
+              pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
+              marginPagesDisplayed={2} // Nombre de pages à afficher avant et après les ellipses
+              onPageChange={handlePageChange}
+              containerClassName={"pagination"}
+              activeClassName={"active"}
+            />
         </div>
       </div>
 
@@ -543,7 +614,7 @@ export default function AccountUpdate() {
               </tr>
             </thead>
             <tbody>
-              {ensDep.map((user) => (
+              {displayEnsDepForPage().map((user) => (
                 <tr key={user._id}>
                   <td>{user.name}</td>
                   <td>{user.email}</td> 
@@ -559,6 +630,14 @@ export default function AccountUpdate() {
             </tbody>
           </table>
         </div>
+        <ReactPaginate
+              pageCount={totalPages}
+              pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
+              marginPagesDisplayed={2} // Nombre de pages à afficher avant et après les ellipses
+              onPageChange={handlePageChange}
+              containerClassName={"pagination"}
+              activeClassName={"active"}
+            />
       </div>
 
       {/* Onglet des unités */}
@@ -575,7 +654,7 @@ export default function AccountUpdate() {
               </tr>
             </thead>
             <tbody>
-              {unites.map((unite) => (
+              {displayUnitesForPage().map((unite) => (
                 <tr key={unite._id}>
                   <td>{unite.name}</td>
                   <td>
@@ -601,6 +680,14 @@ export default function AccountUpdate() {
               ))}
             </tbody>
           </table>
+          <ReactPaginate
+              pageCount={totalPages}
+              pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
+              marginPagesDisplayed={2} // Nombre de pages à afficher avant et après les ellipses
+              onPageChange={handlePageChange}
+              containerClassName={"pagination"}
+              activeClassName={"active"}
+            />
         </div>
         {/* Formulaire d'ajout/modification d'unité */}
         <div className="add-billing-method">
@@ -650,7 +737,7 @@ export default function AccountUpdate() {
                               </tr>
                             </thead>
                             <tbody>
-                              {ens.map((user) => (
+                              {displayEnsForPage().map((user) => (
                                 <tr key={user._id}>
                                   <td>{user.name}</td>
                                   <td>{user.email}</td> 
@@ -666,7 +753,18 @@ export default function AccountUpdate() {
                               ))}
                             </tbody>
                           </table>
-                       </div> )}
+                          <ReactPaginate
+              pageCount={totalPages}
+              pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
+              marginPagesDisplayed={2} // Nombre de pages à afficher avant et après les ellipses
+              onPageChange={handlePageChange}
+              containerClassName={"pagination"}
+              activeClassName={"active"}
+            />
+                       </div>
+                      
+                      )}
+                       
                   </div>
                 </div>
               </div>

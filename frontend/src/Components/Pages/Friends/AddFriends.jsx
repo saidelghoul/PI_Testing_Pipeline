@@ -9,7 +9,7 @@ export default function AddFriends() {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 8; // Nombre d'éléments par page
+  const itemsPerPage = 8; 
   const [totalPages, setTotalPages] = useState(0);
   const userId = user ? user.id : null;
   //const imageUrl = userId ? `http://localhost:8000/user/${userId}/profile` : "/assets/images/resources/user-pro-img.png";
