@@ -49,38 +49,51 @@ export default function AccountUpdate() {
   const handlePageChange = ({ selected }) => {
     setCurrentPage(selected);
   };
+  const [searchTerm, setSearchTerm] = useState("");
 
  const displayUsersForPage = () => {
     const startIndex = currentPage * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-   
+    const chefDep2 = chefDep.filter(user => 
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()),      
+    );
     //return users.slice(startIndex, endIndex);
-    return chefDep.slice(startIndex, endIndex);
+    return chefDep2.slice(startIndex, endIndex);
     
   };
   const displayUserForPage = () => {
     const startIndex = currentPage * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-   
+    const chefunite1 = chefunite.filter(user => 
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()),      
+    );
     //return users.slice(startIndex, endIndex);
-    return chefunite.slice(startIndex, endIndex);
+    return chefunite1.slice(startIndex, endIndex);
     
   };
   const displayEnsForPage = () => {
     const startIndex = currentPage * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-   
+    const ens1 = ens.filter(user => 
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()),      
+    );
     //return users.slice(startIndex, endIndex);
-    return ens.slice(startIndex, endIndex);
+    return ens1.slice(startIndex, endIndex);
     
   };
 
   const displayEnsDepForPage = () => {
     const startIndex = currentPage * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-   
+    const ensDep1 = ensDep.filter(user => 
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()),      
+    );
     //return users.slice(startIndex, endIndex);
-    return ensDep.slice(startIndex, endIndex);
+    return ensDep1.slice(startIndex, endIndex);
     
   };
   const fetchChefUnite = async () => {
@@ -137,18 +150,22 @@ export default function AccountUpdate() {
   const displayUnitesForPage = () => {
     const startIndex = currentPage * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-   
+    const filteredUnite = unites.filter(unite => 
+      unite.name.toLowerCase().includes(searchTerm.toLowerCase()),      
+    );
     //return users.slice(startIndex, endIndex);
-    return unites.slice(startIndex, endIndex);
+    return filteredUnite.slice(startIndex, endIndex);
     
   };
 
   const displayDepForPage = () => {
     const startIndex = currentPage * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-   
+    const filteredDeps = departements.filter(departement => 
+      departement.name.toLowerCase().includes(searchTerm.toLowerCase()),      
+    );
     //return users.slice(startIndex, endIndex);
-    return departements.slice(startIndex, endIndex);
+    return filteredDeps.slice(startIndex, endIndex);
     
   };
   const [departement, setDepartement] = useState({
@@ -291,6 +308,7 @@ export default function AccountUpdate() {
                 <div className="acc-leftbar">
                 {isAdmin && (
                   <div className="nav nav-tabs" id="nav-chef-tab" role="tablist">
+                    
                     <a
                       className="nav-item nav-link active"
                       id="nav-acc-tab"
@@ -394,10 +412,21 @@ export default function AccountUpdate() {
     <div className="tab-content">
       {/* Onglet des chefs de département */}
       <div className="tab-pane fade show active" id="nav-chef" role="tabpanel" aria-labelledby="nav-chef-tab">
+        
         <div className="lt-sec">
+          
           <img src="/assets/images/lt-icon.png" alt="" />
           <h4>Liste des chefs département</h4>
-
+          <div className="search-bar">
+            <form>
+              <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)} />
+              <button type="submit">
+                <i className="la la-search"></i>
+              </button>
+            </form>
+          </div>
+          <br/>
           <table className="table table-sm">
             <thead>
               <tr>
@@ -441,6 +470,16 @@ export default function AccountUpdate() {
         <div className="lt-sec">
           <img src="/assets/images/lt-icon.png" alt="" />
           <h4>Liste des départements</h4>
+          <div className="search-bar">
+            <form>
+              <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)} />
+              <button type="submit">
+                <i className="la la-search"></i>
+              </button>
+            </form>
+          </div>
+
           <table className="table table-sm">
             <thead>
               <tr>
@@ -561,7 +600,15 @@ export default function AccountUpdate() {
         <div className="lt-sec">
           <img src="/assets/images/lt-icon.png" alt="" />
           <h4>Liste des chefs d'unité</h4>
-
+<div className="search-bar">
+            <form>
+              <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)} />
+              <button type="submit">
+                <i className="la la-search"></i>
+              </button>
+            </form>
+          </div>
           <table className="table table-sm">
             <thead>
               <tr>
@@ -604,7 +651,15 @@ export default function AccountUpdate() {
         <div className="lt-sec">
           <img src="/assets/images/lt-icon.png" alt="" />
           <h4>Liste des enseignants</h4>
-
+          <div className="search-bar">
+            <form>
+              <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)} />
+              <button type="submit">
+                <i className="la la-search"></i>
+              </button>
+            </form>
+          </div>
           <table className="table table-sm">
             <thead>
               <tr>
@@ -645,7 +700,15 @@ export default function AccountUpdate() {
         <div className="lt-sec">
           <img src="/assets/images/lt-icon.png" alt="" />
           <h4>Liste des unités</h4>
-
+          <div className="search-bar">
+            <form>
+              <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)} />
+              <button type="submit">
+                <i className="la la-search"></i>
+              </button>
+            </form>
+          </div>
           <table  className="table table-sm">
             <thead>
               <tr>
@@ -727,7 +790,15 @@ export default function AccountUpdate() {
                        {isChefUnite && (  <div className="lt-sec">
                           <img src="/assets/images/lt-icon.png" alt="" />
                           <h4>liste des enseignants </h4>
-
+                          <div className="search-bar">
+            <form>
+              <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)} />
+              <button type="submit">
+                <i className="la la-search"></i>
+              </button>
+            </form>
+          </div>
                           <table className="table table-sm">
                             <thead>
                               <tr>
