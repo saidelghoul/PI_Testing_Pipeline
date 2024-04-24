@@ -32,11 +32,11 @@ import ListNotification from "./Components/Pages/groups/ListNotification";
 import AddConversation from "./Components/Pages/chats/AddConversation";
 import UpdateConversation from "./Components/Pages/chats/UpdateConversation";
 import AddUsers from "./Components/Pages/chats/AddUsers";
-import AddPub from "./Components/Pages/Home/Pub/AddPub";
+import AddPub from "./Components/Pages/Home/Posts/Add/AddPub";
 import Home from "./Components/Pages/Home/Home";
-import AddEvent from "./Components/Pages/Home/Evenement/AddEvent";
-import Update from "./Components/Pages/Home/Pub/Update";
-import UpdateEvent from "./Components/Pages/Home/Evenement/UpdateEvent";
+import AddEvent from "./Components/Pages/Home/Posts/Add/AddEvent";
+import Update from "./Components/Pages/Home/Posts/Update/Update";
+import UpdateEvent from "./Components/Pages/Home/Posts/Update/UpdateEvent";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
