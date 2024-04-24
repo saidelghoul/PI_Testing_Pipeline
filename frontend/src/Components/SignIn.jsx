@@ -136,10 +136,14 @@ export default function SignIn() {
         departement: selectedDepartementId, // Passer l'ID du département sélectionné
         unite: selectedUnitId, // Passer l'ID de l'unité sélectionnée
       });
+      navigate('/success')
       if (data1.error) {
         toast.error(data1.error);
       } else {
+
         setRegisterData({});
+        navigate('/success')
+
         setActiveTab("tab-1");
 
         // window.location.reload();

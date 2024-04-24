@@ -43,6 +43,7 @@ import NewPassword from './Components/Pages/NewPassword';
 import ConfirmEmail from "./Components/Pages/ConfirmEmail";
 import AddFriends from "./Components/Pages/Friends/AddFriends";
 import ProfileFriend from "./Components/Pages/Friends/ProfileFriend";
+import SuccessPage from './Components/Pages/Friends/SucessPage';
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -324,6 +325,12 @@ function App() {
               </>
             }
           />
+              <Route path="/success" element={
+                <>
+                <SuccessPage />
+                </>
+              } />
+
 
 <Route
             path="/profileuser/:id"

@@ -43,7 +43,8 @@ export default function AddFriends() {
     const endIndex = startIndex + itemsPerPage;
     const filteredUsers = users.filter(user => 
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchTerm.toLowerCase())
+      user.role.toLowerCase().includes(searchTerm.toLowerCase()),
+      
     );
     //return users.slice(startIndex, endIndex);
     return filteredUsers.slice(startIndex, endIndex);
@@ -64,12 +65,16 @@ export default function AddFriends() {
       <div className="container">
         <div className="company-title d-flex justify-content-between align-items-center">
           <h3>All Users</h3>
-          <input 
-            type="text" 
-            placeholder="Search by name or role..." 
-            value={searchTerm} 
-            onChange={(e) => setSearchTerm(e.target.value)} 
-          />
+          
+           <div className="search-bar">
+            <form>
+              <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
+            onChange={(e) => setSearchTerm(e.target.value)} />
+              <button type="submit">
+                <i className="la la-search"></i>
+              </button>
+            </form>
+          </div>
         </div>
         <br></br>
         <div className="companies-list">
