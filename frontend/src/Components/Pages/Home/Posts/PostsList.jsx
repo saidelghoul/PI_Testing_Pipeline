@@ -16,7 +16,6 @@ function BasicExample() {
 export default function PostsList() {
   const [allPosts, setAllPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  console.log({ allPosts });
 
   useEffect(() => {
     fetchPosts();
@@ -27,7 +26,6 @@ export default function PostsList() {
       const textPostsRes = await axios.get("/publications/getall");
       const eventPostsRes = await axios.get("/evenemnt/getall");
 
-      console.log({ textPostsRes, eventPostsRes });
 
       const textPosts = textPostsRes.data.map((post) => ({
         ...post, // copying all the proerties from the object
@@ -40,7 +38,6 @@ export default function PostsList() {
       }));
 
       const combinedPosts = [...textPosts, ...eventPosts];
-
       // Sort combinedPosts by DatePublication
       combinedPosts.sort(
         (a, b) => new Date(b.DatePublication) - new Date(a.DatePublication)
@@ -66,7 +63,7 @@ export default function PostsList() {
             <PostContainer
               key={postContent._id}
               postContent={postContent}
-              fetchPosts={fetchPosts} // needed for updating 
+              fetchPosts={fetchPosts} // needed for updating
             />
           ))}
         </div>

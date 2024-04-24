@@ -12,7 +12,6 @@ export default function PostFooter({ postContent, fetchPosts }) {
 
   const [currentPublicationId, setCurrentPublicationId] = useState();
 
-
   const [commentData, setCommentData] = useState({
     contenu: "",
   });
@@ -46,8 +45,6 @@ export default function PostFooter({ postContent, fetchPosts }) {
   const handleCommentClick = (id) => {
     setCurrentPublicationId(id);
   };
-
- 
 
   return (
     <>

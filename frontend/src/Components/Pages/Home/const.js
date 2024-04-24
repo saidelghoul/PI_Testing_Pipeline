@@ -1,4 +1,4 @@
 export const postTypes = {
-    TEXT: 'textPost',
-    EVENT : 'eventPost'
-}
+  TEXT: "textPost",
+  EVENT: "eventPost",
+};

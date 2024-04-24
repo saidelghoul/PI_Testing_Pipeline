@@ -1,1 +1,1 @@
-export const isCreator = (userId,creatorId) => userId ===creatorId;
+export const isCreator = (userId, creatorId) => userId === creatorId;

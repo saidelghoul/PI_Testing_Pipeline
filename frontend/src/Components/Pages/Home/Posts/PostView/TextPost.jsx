@@ -1,5 +1,4 @@
 export default function TextPost({ postContent }) {
-  console.log("text post: ", { postContent });
 
   return (
     <div className="job_descp">

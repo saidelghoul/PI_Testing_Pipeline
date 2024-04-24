@@ -1,10 +1,6 @@
 export default function EventPost({ postContent }) {
-
-
-  console.log("event post: ", { postContent });
   return (
     <div className="job-status-bar">
-
       <div className="epi-sec">
         <ul className="descp"></ul>
       </div>
@@ -39,7 +35,6 @@ export default function EventPost({ postContent }) {
         </span>
         <h3>{postContent.Titre}</h3> <p>{postContent.Contenu}</p>
       </div>
-
     </div>
   );
 }
