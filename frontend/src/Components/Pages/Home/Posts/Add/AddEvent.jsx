@@ -126,7 +126,6 @@ export default function AddEvent() {
                 placeholder="Prix"
                 value={formData.prix}
                 onChange={handleChange}
-                required
               />
             </div>
 

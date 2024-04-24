@@ -17,6 +17,7 @@ export default function PostHeader({ postContent, fetchPosts }) {
       }
     }
   };
+  console.log("n",{postContent})
 
   return (
     <>

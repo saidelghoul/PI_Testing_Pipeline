@@ -13,7 +13,13 @@ export default function EventPost({ postContent }) {
           </li>
           <li>
             prix:
-            <span> ${postContent.Prix}</span>
+            <span>
+              {postContent.Prix === null
+                ? "Free"
+                : postContent.Prix === 0
+                ? "Free"
+                : postContent.Prix + " dt"}
+            </span>
           </li>
         </ul>
         <span>
