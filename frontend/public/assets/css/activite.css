@@ -117,3 +117,13 @@ body{
     background-color: #fff;
     border-bottom: 1px solid #e5e9f2;
 }
+
+input[type="radio"] {
+    display: none;
+  }
+
+  .star {
+    cursor: pointer;
+    font-size: 30px;
+    margin: 2px;
+  }

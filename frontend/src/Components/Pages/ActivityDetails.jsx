@@ -32,7 +32,7 @@ const ActivityDetails = () => {
   useEffect(() => {
     fetchActivity(id_activity);
     getProgress(activity?.tasks);
-  }, [activity?.tasks]);
+  }, []);
 
   if (loading) {
     return (
@@ -46,24 +46,45 @@ const ActivityDetails = () => {
 
   return (
     <div className="container p-0 ">
-      <h1 className="h3 mb-3 text-center ">Activity Details</h1>
+      <h1 className="h3 mb-3 text-center ">Activity Details 📈</h1>
       <h1 className="h3 mb-3 text-center ">
         [ {activity.category} ] : ( {activity.name} )
       </h1>
       <div className=" row ">
-        <div className=" col ">
+        <div className=" col text-center h5 ">
           <h1 className=" text-bg-primary ">
             {" "}
-            From: {activity?.startDate?.substr(0, 10)}
+            {activity?.startDate?.substr(0, 10)} ~{" "}
+            {activity?.endDate?.substr(0, 10)} 📅
           </h1>
-          <h1 className=" text-bg-primary ">
-            {" "}
-            To: {activity?.endDate?.substr(0, 10)}
-          </h1>
+          {new Date() > new Date(activity?.endDate) && (
+            <h1 className=" text-bg-primary text-danger ">
+              {" "}
+              (Days passed:{" "}
+              {Math.round(
+                (new Date().getTime() - new Date(activity?.endDate).getTime()) /
+                  (1000 * 3600 * 24)
+              )}
+              )
+            </h1>
+          )}
+          {new Date() < new Date(activity?.endDate) && (
+            <h1 className=" text-bg-primary text-danger ">
+              {" "}
+              (Days left:{" "}
+              {Math.round(
+                (-1 *
+                  (new Date().getTime() -
+                    new Date(activity?.endDate).getTime())) /
+                  (1000 * 3600 * 24)
+              )}
+              )
+            </h1>
+          )}
         </div>
         {activity.description !== "" && (
           <div className=" col-auto ">
-            <small className=" text-bg-primary "> Description: </small>
+            <small className=" text-bg-primary "> Description: ✒️</small>
             <p className=" text-body-emphasis ">{activity.description}</p>
           </div>
         )}

@@ -58,21 +58,22 @@ export default function Navbar() {
                 </Link>
               </li>
               <li>
-                {user?.role === "Enseignant" ? (
-                  <Link to={`/${user?.id}/tasks`} title="">
-                    <span>
-                      <img src="/assets/images/icon3.png" alt="" />
-                    </span>
-                    My Tasks
-                  </Link>
-                ) : (
-                  <Link to="/activities" title="">
+                {user?.role !== "Enseignant" && (
+                  <Link to="/activities" title="Manage activities">
                     <span>
                       <img src="/assets/images/icon5.png" alt="" />
                     </span>
                     Activites
                   </Link>
                 )}
+              </li>
+              <li>
+                <Link to={`/${user?.id}/tasks`} title="My tasks">
+                  <span>
+                    <img src="/assets/images/icon3.png" alt="" />
+                  </span>
+                  My Tasks
+                </Link>
               </li>
 
               <li>

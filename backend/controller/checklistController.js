@@ -200,6 +200,34 @@ async function getAssignedUsersForChecklist(req, res) {
   }
 }
 
+async function getChecklistScoreForUser(req, res) {
+  try {
+    const checklists = await CheckList.find({
+      holder: req.params.id_user,
+    });
+
+    if (!checklists)
+      res.status(500).json({ title: "error", message: "no checklists found" });
+    else {
+      let sum = 0;
+      const doneTasks = checklists.filter(
+        (checklist) => checklist.done === true
+      );
+      doneTasks.forEach((checklist) => (sum += checklist.score));
+      sum = Math.round(sum / doneTasks.length);
+      res.status(200).json({
+        title: "success",
+        message: {
+          moy: sum,
+          numberOfTasks: doneTasks.length,
+        },
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ title: "error", message: err.message });
+  }
+}
+
 module.exports = {
   createCheckList,
   removeChecklist,
@@ -209,4 +237,5 @@ module.exports = {
   getCheckListByHolder,
   updateChecklist,
   getAssignedUsersForChecklist,
+  getChecklistScoreForUser,
 };

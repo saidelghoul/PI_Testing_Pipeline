@@ -238,7 +238,9 @@ const Tasks = ({ activity }) => {
                   <div className="card-actions float-right">
                     <div className="dropdown show"></div>
                   </div>
-                  <h5 className="card-title">Upcoming ( {tasks?.length} )</h5>
+                  <h5 className="card-title">
+                    Upcoming ( {tasks?.length} ) 📌
+                  </h5>
                   <h6 className="card-subtitle text-muted">
                     Tasks that have not reached their period and they are marked
                     as planned
@@ -267,7 +269,7 @@ const Tasks = ({ activity }) => {
                     <div className="dropdown show"></div>
                   </div>
                   <h5 className="card-title">
-                    In Progress ( {progress?.length} )
+                    In Progress ( {progress?.length} )🚀
                   </h5>
                   <h6 className="card-subtitle text-muted">
                     Tasks that are currently in their period or started before &
@@ -297,7 +299,9 @@ const Tasks = ({ activity }) => {
                   <div className="card-actions float-right">
                     <div className="dropdown show"></div>
                   </div>
-                  <h5 className="card-title">On hold ( {overdone?.length} )</h5>
+                  <h5 className="card-title">
+                    On hold ( {overdone?.length} )🚩
+                  </h5>
                   <h6 className="card-subtitle text-muted">
                     Tasks that are past their finish date but still marked as
                     active or they are planned but were not finished in date or
@@ -327,7 +331,7 @@ const Tasks = ({ activity }) => {
                     <div className="dropdown show"></div>
                   </div>
                   <h5 className="card-title">
-                    Completed ( {completed?.length} )
+                    Completed ( {completed?.length} )🎯
                   </h5>
                   <h6 className="card-subtitle text-muted">
                     Tasks that are marked as completed

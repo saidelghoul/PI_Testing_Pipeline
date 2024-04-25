@@ -142,7 +142,7 @@ export default function Activites() {
           <div className=" row ">
             <h1 className="h3 mb-3 col-md-9 ">
               Activites Board (
-              {activities.length + progress.length + completed.length})
+              {activities.length + progress.length + completed.length}) 💼
             </h1>
             <h1 className=" col-md-3 ">
               <Button
@@ -170,7 +170,7 @@ export default function Activites() {
                     <div className="dropdown show"></div>
                   </div>
                   <h5 className="card-title">
-                    Upcoming ( {activities?.length} )
+                    Upcoming ( {activities?.length} )📌
                   </h5>
                   <h6 className="card-subtitle text-muted">
                     Activities that are yet to be achieved due to their duration
@@ -197,7 +197,7 @@ export default function Activites() {
                     <div className="dropdown show"></div>
                   </div>
                   <h5 className="card-title">
-                    In Progress ( {progress?.length} )
+                    In Progress ( {progress?.length} )🚀
                   </h5>
                   <h6 className="card-subtitle text-muted">
                     Activities that are currently marked as in progress due to
@@ -225,7 +225,7 @@ export default function Activites() {
                     <div className="dropdown show"></div>
                   </div>
                   <h5 className="card-title">
-                    Completed ( {completed?.length} )
+                    Completed ( {completed?.length} )🎯
                   </h5>
                   <h6 className="card-subtitle text-muted">
                     Activities that have been marked as completed due to their

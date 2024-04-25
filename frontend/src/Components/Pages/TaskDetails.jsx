@@ -3,7 +3,15 @@ import { useParams } from "react-router-dom";
 import { getTasks } from "../../services/task-service";
 import Checklist from "./Checklist";
 import ChecklistForm from "../Modals/ChecklistForm";
-import { Badge, Button, ProgressBar, Spinner, Table } from "react-bootstrap";
+import {
+  Badge,
+  Button,
+  Form,
+  InputGroup,
+  ProgressBar,
+  Spinner,
+  Table,
+} from "react-bootstrap";
 import {
   deleteChecklist,
   getAssignedUsersForChecklist,
@@ -22,11 +30,12 @@ const TaskDetails = () => {
   //handle showing archived activity
   const [showArchived, setShowArchived] = useState(true);
 
-  const [checklists, setChecklists] = useState({});
+  const [checklists, setChecklists] = useState([]);
 
   const [users, setUsers] = useState([]);
 
   const [progress, setProgress] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const getProgress = (current) => {
     if (current?.length > 0) {
@@ -151,6 +160,21 @@ const TaskDetails = () => {
       break;
   }
 
+  const filtered = checklists?.filter(
+    (checklist) =>
+      checklist?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      checklist?.holder.name
+        .toString()
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      checklist?.holder?.role
+        .toString()
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+  );
+
+  const displayed = searchTerm === "" ? checklists : filtered;
+
   if (loading) {
     return (
       <main className="content">
@@ -164,9 +188,10 @@ const TaskDetails = () => {
   return (
     <main className="content">
       <div className="container p-0 ">
-        <h1 className="h3 mb-3 text-center ">Task Details</h1>
+        <h1 className="h3 mb-3 text-center ">Task Details 💡</h1>
         <h1 className="h3 mb-3 text-center ">( {task.title} )</h1>
         <div className=" d-flex flex-row flex-wrap gap-3 mt-4 text-center ">
+          🔖
           {task?.tags?.map((tag, index) => (
             <span
               key={`${index}-${tag}`}
@@ -188,17 +213,38 @@ const TaskDetails = () => {
             </Badge>
           </div>
           <div className=" col ">
-            <h1 className=" text-bg-primary ">
+            <h1 className=" text-bg-primary h5 ">
               {" "}
-              From: {task?.initDate?.substr(0, 10)}
+              {task?.initDate?.substr(0, 10)} ~ {task?.dueDate?.substr(0, 10)}{" "}
+              📌
             </h1>
-            <h1 className=" text-bg-primary ">
-              {" "}
-              To: {task?.dueDate?.substr(0, 10)}
-            </h1>
+            {new Date() > new Date(task?.dueDate) && (
+              <h1 className=" text-bg-primary text-danger ">
+                {" "}
+                (Days passed:{" "}
+                {Math.round(
+                  (new Date().getTime() - new Date(task?.dueDate).getTime()) /
+                    (1000 * 3600 * 24)
+                )}
+                )
+              </h1>
+            )}
+            {new Date() < new Date(task?.dueDate) && (
+              <h1 className=" text-bg-primary text-danger ">
+                {" "}
+                (Days left:{" "}
+                {Math.round(
+                  (-1 *
+                    (new Date().getTime() -
+                      new Date(task?.dueDate).getTime())) /
+                    (1000 * 3600 * 24)
+                )}
+                )
+              </h1>
+            )}
           </div>
           <div className=" col ">
-            <small className=" text-bg-primary "> Collaborators: </small>
+            <small className=" text-bg-primary "> Collaborators: 🧑‍💼 </small>
             {users.map((user, index) => (
               <p className=" text-body-emphasis " key={index}>
                 {" "}
@@ -208,7 +254,7 @@ const TaskDetails = () => {
           </div>
           {task.description !== "" && (
             <div className=" col-auto ">
-              <small className=" text-bg-primary "> Description: </small>
+              <small className=" text-bg-primary "> Description: ✒️</small>
               <p className=" text-body-emphasis ">{task.description}</p>
             </div>
           )}
@@ -224,7 +270,17 @@ const TaskDetails = () => {
         </div>
         <hr />
 
-        <div className=" d-flex flex-row justify-content-end m-3 ">
+        <div className=" d-flex flex-row m-3 ">
+          <InputGroup className="col-md-6 d-flex flex-row">
+            <InputGroup.Text id="basic-addon1">🔎</InputGroup.Text>
+            <Form.Control
+              placeholder="Search..."
+              aria-label="Search..."
+              aria-describedby="basic-addon1"
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </InputGroup>
+          <div className="col-md-4"></div>
           <Button
             variant="secondary"
             onClick={() => setShowArchived(!showArchived)}
@@ -269,12 +325,13 @@ const TaskDetails = () => {
             </div>
             {checklists.length > 0 && (
               <div className=" d-flex flex-wrap p-3">
-                {checklists.map((checklist, index) => {
+                {displayed.map((checklist, index) => {
                   return (
                     <Checklist
                       refresh={refreshTable}
                       key={index}
                       checkList={checklist}
+                      task={task}
                       index={index + 1}
                       upChecklist={editChecklist}
                     />

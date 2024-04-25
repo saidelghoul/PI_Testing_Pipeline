@@ -10,6 +10,8 @@ router.get("/:id_task/oftask", checkListController.getCheckListByTaskId);
 
 router.get("/:id_user/checklist", checkListController.getCheckListByHolder);
 
+router.get("/:id_user/score", checkListController.getChecklistScoreForUser);
+
 router.get("/:id_checklist", checkListController.getCheckListById);
 
 router.post("/:id_task", checkListController.createCheckList);

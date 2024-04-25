@@ -18,6 +18,10 @@ export const getChecklistByTaskWithHolder = async (id) => {
   return await axios.get(`${url}/${id}/oftask`);
 };
 
+export const getChecklistScoreForUser = async (id) => {
+  return await axios.get(`${url}/${id}/score`);
+};
+
 export const addChecklist = async (checklist, id) => {
   return await axios.post(`${url}/${id}`, checklist);
 };
