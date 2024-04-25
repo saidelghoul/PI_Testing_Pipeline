@@ -245,6 +245,30 @@ async function getAvailableSocialSkills(req, res) {
     return res.status(500).json({ error: "Une erreur est survenue lors de la récupération des compétences sociales disponibles",message:error.message });
   }
 }
+const getUsersForSocialSkills = async (req, res) => {
+  try {
+    const users = await UserModel.aggregate([
+      { $unwind: "$socialSkills" }, // décomposer la liste
+      { 
+        $group: { 
+          _id: "$_id", 
+          name: { $first: "$name" },
+          totalSocialPoints: { $sum: "$socialSkills.pointSocial" } 
+        } 
+      }, // grouper par utilisateur et calculer la somme
+    ]);
+    if (users.length > 0) {
+      res.status(200).json({ title: "success", message: users });
+    } else {
+      res.status(404).json({ title: "error", message: "No users found." });
+    }
+  } catch (err) {
+    res.status(500).json({ title: "error", message: err.message });
+  }
+};
+
+
+
 
 
 
@@ -258,4 +282,5 @@ module.exports = {
   assignSocialSkillToUser,
   unassignSocialSkillFromUser,
   getSocialSkillsByUser,
-  getAvailableSocialSkills };
+  getAvailableSocialSkills,
+  getUsersForSocialSkills };

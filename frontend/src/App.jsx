@@ -37,6 +37,8 @@ import Home from "./Components/Pages/Home/Home";
 import AddEvent from "./Components/Pages/Home/Evenement/AddEvent";
 import Update from "./Components/Pages/Home/Pub/Update";
 import UpdateEvent from "./Components/Pages/Home/Evenement/UpdateEvent";
+import SocialSkillsUser from "./Components/Pages/Skills/SocialSkills/SocialSkillsUser";
+import Leaderboard from "./Components/Pages/Skills/Leaderboard";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -307,6 +309,17 @@ function App() {
               <>
                 <Navbar />
                 <AffectSkill />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/Leaderboard/"
+            element={
+              <>
+                <Navbar />
+                {/*<AffectSkill />*/ }
+                <Leaderboard/>
                 <Footer />
               </>
             }
