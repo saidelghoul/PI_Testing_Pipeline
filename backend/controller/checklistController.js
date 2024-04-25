@@ -214,11 +214,11 @@ async function getChecklistScoreForUser(req, res) {
         (checklist) => checklist.done === true
       );
       doneTasks.forEach((checklist) => (sum += checklist.score));
-      sum = Math.round(sum / doneTasks.length);
+      //sum = Math.round(sum / doneTasks.length);
       res.status(200).json({
         title: "success",
         message: {
-          moy: sum,
+          somme: sum,
           numberOfTasks: doneTasks.length,
         },
       });

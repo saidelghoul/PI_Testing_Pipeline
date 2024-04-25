@@ -68,6 +68,14 @@ export default function Navbar() {
                 )}
               </li>
               <li>
+                <Link to={`/${user?.id}/tasks`} title="My tasks">
+                  <span>
+                    <img src="/assets/images/icon3.png" alt="" />
+                  </span>
+                  My Tasks
+                </Link>
+              </li>
+              <li>
                 <Link to="/Leaderboard" title="" className="not-box-openm">
                   <span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trophy-fill" viewBox="0 0 16 16">
@@ -76,13 +84,8 @@ export default function Navbar() {
                   </span>
                   Leaderboard
                   </Link>
-                <Link to={`/${user?.id}/tasks`} title="My tasks">
-                  <span>
-                    <img src="/assets/images/icon3.png" alt="" />
-                  </span>
-                  My Tasks
-                </Link>
-              </li>
+                  </li>
+
 
               <li>
                 <Link to="/message" title="" className="not-box-openm">
