@@ -20,4 +20,6 @@ router.get('/getbyuser/:userId', socialSkillController.getSocialSkillsByUser);
 
 router.get('/availables/:userId', socialSkillController.getAvailableSocialSkills);
 
+router.get('/users', socialSkillController.getUsersForSocialSkills)
+
 module.exports = router;

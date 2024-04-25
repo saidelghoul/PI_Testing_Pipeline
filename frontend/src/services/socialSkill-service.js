@@ -97,6 +97,8 @@ const SocialSkillService = {
   },
 
   
+
+  
     // Récupérer les compétences sociales disponibles pour un utilisateur
     getAvailableSocialSkills: async (userId) => {
       try {
@@ -108,7 +110,12 @@ const SocialSkillService = {
       }
     },
 
+    getUsersForSocialSkills : async () => {
+      return await axios.get(`${apiUrl}/users`);
+    }
 
 };
 
 export default SocialSkillService;
+
+

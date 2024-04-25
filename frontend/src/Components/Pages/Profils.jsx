@@ -18,6 +18,7 @@ import SocialSkillService from "../../services/socialSkill-service";
 import AddSkillForm from "../Modals/Skills/AssignSkillForm";
 import { Link } from "react-router-dom";
 import SocialSkillAffect from "./Skills/SocialSkills/SocialSkillAffect";
+import SocialSkillsUSer from "./Skills/SocialSkills/SocialSkillsUser";
 
 export default function Profils() {
   const [isLoading, setIsLoading] = useState(true);
@@ -695,10 +696,9 @@ export default function Profils() {
                             <i className="fa fa-star-half-o"></i>
                           </li>
                         </ul>
-                        <a href="#" title="">
-                          Status
-                        </a>
-
+                            
+                        <Link to={`/Leaderboard`}>Skills</Link>{/*`/affectSkill/${user?.id}`*/}
+                        <SocialSkillsUSer/>
                         {<SocialSkillAffect userId={user._id} />}
                       </div>
                       <div className="tab-feed st2 settingjb">
