@@ -9,6 +9,7 @@ import Activity from "./Activity";
 import ActivityForm from "../Modals/ActivityForm";
 import { Button, Spinner, Table } from "react-bootstrap";
 import DeleteForm from "../Modals/DeleteForm";
+import toast from "react-hot-toast";
 
 export default function Activites() {
   const [activities, setActivities] = useState([]);
@@ -77,11 +78,11 @@ export default function Activites() {
     try {
       const result = await deleteActivity(id);
       if (result.status === 204) {
-        alert("Deleted successfully");
+        toast.success("Deleted successfully");
         fetchData();
       }
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -90,11 +91,11 @@ export default function Activites() {
       activity.archived = isArchived;
       const result = await updateActivity(id, activity);
       if (result.status === 200) {
-        alert("Activity has been archived successfully!");
+        toast.success("Activity has been archived successfully!");
         fetchData();
       }
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
   /** */
@@ -109,9 +110,7 @@ export default function Activites() {
     return (
       <main className="content">
         <div className=" text-center ">
-          <Spinner animation="border" role="output" variant="danger">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
+          <Spinner animation="border" role="output" variant="danger"></Spinner>
         </div>
       </main>
     );
@@ -143,7 +142,7 @@ export default function Activites() {
           <div className=" row ">
             <h1 className="h3 mb-3 col-md-9 ">
               Activites Board (
-              {activities.length + progress.length + completed.length})
+              {activities.length + progress.length + completed.length}) 💼
             </h1>
             <h1 className=" col-md-3 ">
               <Button
@@ -171,7 +170,7 @@ export default function Activites() {
                     <div className="dropdown show"></div>
                   </div>
                   <h5 className="card-title">
-                    Upcoming ( {activities?.length} )
+                    Upcoming ( {activities?.length} )📌
                   </h5>
                   <h6 className="card-subtitle text-muted">
                     Activities that are yet to be achieved due to their duration
@@ -198,7 +197,7 @@ export default function Activites() {
                     <div className="dropdown show"></div>
                   </div>
                   <h5 className="card-title">
-                    In Progress ( {progress?.length} )
+                    In Progress ( {progress?.length} )🚀
                   </h5>
                   <h6 className="card-subtitle text-muted">
                     Activities that are currently marked as in progress due to
@@ -226,7 +225,7 @@ export default function Activites() {
                     <div className="dropdown show"></div>
                   </div>
                   <h5 className="card-title">
-                    Completed ( {completed?.length} )
+                    Completed ( {completed?.length} )🎯
                   </h5>
                   <h6 className="card-subtitle text-muted">
                     Activities that have been marked as completed due to their

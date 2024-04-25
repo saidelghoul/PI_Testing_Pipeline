@@ -13,6 +13,7 @@ async function getActivities(req, res) {
 
 async function getActivityById(req, res) {
   Activity.findById(req.params.id_activity)
+    .populate("tasks")
     .exec()
     .then((activity) => {
       if (!activity)

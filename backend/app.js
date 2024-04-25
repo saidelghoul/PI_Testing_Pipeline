@@ -10,8 +10,8 @@ const { mongoose } = require("mongoose");
 const socketIo = require("socket.io");
 const multer = require("multer");
 
-var messageRoute = require("./routes/ConversationRoute");
-var notificationRoute = require("./routes/NotificationRoute");
+const messageRoute = require("./routes/ConversationRoute");
+const notificationRoute = require("./routes/NotificationRoute");
 
 //activities management routes
 const activitiesRoute = require("./routes/activityRoute");
@@ -22,13 +22,12 @@ const publicationRoute = require("./routes/publicationRoutes");
 const evenementRoutes = require("./routes/EvenementRoutes");
 const commentaireRoutes = require("./routes/ComentaireRoute");
 const PageRoute = require("./routes/PageRoute");
-const activitiesRouter = require("./routes/activityRoute");
 const socialSkillsRouter = require("./routes/socialSkillsRoute");
 const technicalSkillsRouter = require("./routes/technicalSkillsRoute");
 
 const app = express();
 
-var server = http.createServer(app); // Créez un serveur HTTP en utilisant Express
+const server = http.createServer(app); // Créez un serveur HTTP en utilisant Express
 
 const isAuthenticated = (req, res, next) => {
   if (req.user) {

@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
-import { Badge, Button } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Badge, Button, ProgressBar } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import TaskDelete from "../Modals/TaskDelete";
 import TaskUpdate from "../Modals/TaskUpdate";
@@ -18,6 +18,28 @@ const Task = ({ task, upTask, refresh, options, activity }) => {
   const handleShowUpdate = () => setShowUpdate(true);
 
   /* pop up end*/
+
+  const [progress, setProgress] = useState(0);
+
+  const getProgress = (checklists) => {
+    if (checklists?.length > 0) {
+      const current = checklists?.filter(
+        (checklist) => checklist?.archived === false
+      );
+
+      setProgress(
+        Math.floor(
+          (current?.filter((checklist) => checklist?.done)?.length /
+            current?.length) *
+            100
+        )
+      );
+    } else setProgress(0);
+  };
+
+  useEffect(() => {
+    getProgress(task.checkList);
+  }, [task.checkList]);
 
   //define priority bg color
   let bgpriority;
@@ -71,6 +93,16 @@ const Task = ({ task, upTask, refresh, options, activity }) => {
         <div className=" row-cols-2 ">
           <p>Collaborators: {task?.collaborators?.length}</p>
           <p>Checklist: {task?.checkList?.length}</p>
+        </div>
+
+        <div className="mb-2">
+          <ProgressBar
+            striped
+            variant="success"
+            animated
+            now={progress}
+            label={`${progress}%`}
+          />
         </div>
         <div className=" d-flex flex-row row-gap-2 ">
           <Link to={`/tasks/${task._id}`}>

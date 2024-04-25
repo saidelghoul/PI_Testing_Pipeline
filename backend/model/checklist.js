@@ -13,6 +13,18 @@ const checkListSchema = new Schema(
       required: true,
     },
     done: Boolean,
+    doneDate: {
+      type: Date,
+      default: null,
+    },
+    score: {
+      type: Number,
+      default: 0,
+    },
+    rating: {
+      type: Number,
+      default: 0,
+    },
     description: String,
     id_task: {
       type: Schema.Types.ObjectId,

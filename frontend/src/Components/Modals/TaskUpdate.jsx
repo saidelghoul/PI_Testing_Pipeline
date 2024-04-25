@@ -7,6 +7,7 @@ import {
 } from "../../services/task-service";
 import Select from "react-select";
 import PropTypes from "prop-types";
+import toast from "react-hot-toast";
 
 const TaskUpdate = ({
   refresh,
@@ -167,13 +168,13 @@ const TaskUpdate = ({
     try {
       const result = await updateTask(task._id, taskItem);
       if (result.status == 200) {
-        alert("Task updated successfully");
+        toast.success("Task updated successfully");
         refresh();
         handleClose();
         fetchAssignedCollaboratorsAndTags();
       }
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -204,9 +205,7 @@ const TaskUpdate = ({
     return (
       <main className="content">
         <div className="container p-0">
-          <Spinner animation="border" role="output" variant="danger">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
+          <Spinner animation="border" role="output" variant="danger"></Spinner>
         </div>
       </main>
     );

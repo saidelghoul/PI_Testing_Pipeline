@@ -3,6 +3,7 @@ import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { addChecklist } from "../../services/checklist-service";
 import PropTypes from "prop-types";
 import Select from "react-select";
+import toast from "react-hot-toast";
 
 const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
   //retrieve the collaborators from the current task into a proper list
@@ -70,12 +71,12 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
     try {
       const result = await addChecklist(checklistItem, id_task);
       if (result.status === 201) {
-        alert("Checklist added successfully");
+        toast.success("Checklist added successfully");
         refresh();
         handleClose();
       }
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 

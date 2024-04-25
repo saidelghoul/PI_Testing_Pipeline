@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { addActivity } from "../../services/activity-service";
 import PropTypes from "prop-types";
+import toast from "react-hot-toast";
 
 const ActivityForm = ({ refresh, show, handleClose }) => {
   const [activityItem, setActivityItem] = useState({
@@ -84,12 +85,12 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
     try {
       const result = await addActivity(activityItem);
       if (result.status === 201) {
-        alert("Activity added successfully");
+        toast.success("Activity added successfully");
         refresh();
         handleClose();
       }
     } catch (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   };
 
