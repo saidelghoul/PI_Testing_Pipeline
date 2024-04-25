@@ -35,24 +35,25 @@ const Section = () => {
     } else setProgress(0);
   };
 
-  const fetchChecklistByUser = async (id) => {
-    const data = await getChecklistByHolder(id);
-    setChecklists(data.data.message);
-    getProgress(checklists);
-    setLoading(false);
-  };
-  const fetchScoreByUser = async () => {
-    const data = await getChecklistScoreForUser(id_user);
-    setScore(data.data.message);
-  };
   useEffect(() => {
+    const fetchChecklistByUser = async (id) => {
+      const data = await getChecklistByHolder(id);
+      setChecklists(data.data.message);
+    };
+    const fetchScoreByUser = async () => {
+      const data = await getChecklistScoreForUser(id_user);
+      setScore(data.data.message);
+      setLoading(false);
+    };
     fetchChecklistByUser(id_user);
     fetchScoreByUser();
-  }, []);
+    getProgress(checklists);
+  }, [checklists]);
 
   const refreshTable = async () => {
     fetchChecklistByUser(id_user);
 
+    getProgress(checklists);
     fetchScoreByUser();
   };
 
@@ -102,7 +103,7 @@ const Section = () => {
           <h1 className="h3 mb-3 col-md-3 ">
             {score.numberOfTasks} completed tasks ✅
           </h1>
-          <h1 className="h3 mb-3 col-md-3 ">My Score: {score.moy} ⚡</h1>
+          <h1 className="h3 mb-3 col-md-3 ">My Score: {score.somme} ⚡</h1>
         </div>
         <div className=" row-cols-1 mt-2">
           <ProgressBar
