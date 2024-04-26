@@ -17,7 +17,7 @@ export default function Home() {
                     <div className="user-profile">
                       <div className="username-dt">
                         <div className="usr-pic">
-                        <img src={imageUrl} alt="Image de profil" />
+                        {/* <img src={imageUrl} alt="Image de profil" /> */}
 
                         </div>
                       </div>
