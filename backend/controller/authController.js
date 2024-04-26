@@ -2,6 +2,9 @@ const SocialSkill = require("../model/socialSkill");
 const User = require("../model/user");
 const Departement = require("../model/departement");
 const Unite = require("../model/unite");
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+const ResetPasswordToken = require('../model/ResetPasswordToken');
 
 const { hashPassword, comparePassword } = require("../helpers/auth");
 const jwt = require("jsonwebtoken");
@@ -74,7 +77,8 @@ const registerUser = async (req, res) => {
     const hashedPassword = await hashPassword(password);
     const hashedConfirmedPassword = await hashPassword(confirmedPassword);
 
-    //create user in database
+    const emailToken = crypto.randomBytes(20).toString('hex');
+
     const user = await User.create({
       name,
       email,
@@ -83,12 +87,62 @@ const registerUser = async (req, res) => {
       departement,
       role,
       unite,
+      emailToken,
     });
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: 'marwakb4@gmail.com',
+      to: email,
+      subject: 'Confirmation de votre inscription',
+      text: `Cliquez sur ce lien pour confirmer votre inscription : ${process.env.CLIENT_URL}/confirm/${emailToken} ou bien cliquer sur  ${process.env.CLIENT_URL1}/confirm/${emailToken}`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        return res.json({ error: 'Échec d envoi de l\'e-mail de confirmation' });
+      }
+      console.log('Email envoyé: ' + info.response);
+      res.json({ message: 'Un e-mail de confirmation a été envoyé' });
+    });
+
+
     return res.json(user);
   } catch (error) {
     console.log(error);
   }
 };
+
+const confirmEmail = async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    const user = await User.findOne({ emailToken: token });
+
+    if (!user) {
+      return res.json({ error: 'Token invalide ou expiré' });
+    }
+
+    user.isEmailVerified = true;
+    user.emailToken = ''; 
+    await user.save();
+
+    res.json({ message: 'Votre compte a été activé avec succès' });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+};
+
 
 const loginUser = async (req, res) => {
   try {
@@ -104,6 +158,10 @@ const loginUser = async (req, res) => {
       return res.json({ error: "compte désactivé" });
     }
 
+    if (!user.emailToken && !user.isEmailVerified ) {
+      return res.json({ error: "Veuillez vérifier votre adresse e-mail pour activer votre compte" });
+    }
+  
     // Vérifier si les mots de passe correspondent
     const match = await comparePassword(password, user.password);
     if (match) {
@@ -127,6 +185,8 @@ const loginUser = async (req, res) => {
         unite: unite.name, // Inclure seulement le nom de l'unité
         socialSkills: user.socialSkills,
         technicalSkills: user.technicalSkills,
+        profileImage: user.profileImage, 
+        coverImage: user.coverImage, 
       };
 
       jwt.sign(tokenPayload, process.env.JWT_SECRET, {}, (err, token) => {
@@ -165,6 +225,9 @@ const getProfile = async (req, res) => {
         unite,
         socialSkills,
         technicalSkills,
+        profileImage,
+        coverImage
+
       } = decodedToken;
       if (!id) {
         return res
@@ -197,6 +260,8 @@ const getProfile = async (req, res) => {
           unite,
           socialSkills: socialSkillsList,
           technicalSkills,
+          profileImage,
+        coverImage,
         });
       } catch (error) {
         console.error(
@@ -218,10 +283,90 @@ const logout = (req, res) => {
   res.clearCookie('token').json({ message: 'Déconnexion réussie' });
 };
 
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.json({ error: 'Aucun utilisateur trouvé avec cet e-mail' });
+    }
+
+    // Generate reset token
+    const resetToken = crypto.randomBytes(20).toString('hex');
+    const resetPasswordToken = await ResetPasswordToken.create({
+      userId: user._id,
+      token: resetToken,
+      expires: Date.now() + 3600000, // 1 hour
+    });
+
+    // Send reset token to user's email
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: 'marwakb4@gmail.com',
+      to: email,
+      subject: 'Demande de réinitialisation du mot de passe',
+      text: `Cliquez sur ce lien pour réinitialiser votre mot de passe : ${process.env.CLIENT_URL}/reset/${resetToken}  ou bien cliquer ce lien ${process.env.CLIENT_URL1}/reset/${resetToken}`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        return res.json({ error: 'Échec d envoi de e-mail' });
+      }
+      console.log('Email envoyé: ' + info.response);
+      res.json({ message: 'E-mail envoyé avec les instructions de réinitialisation du mot de passe' });
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    const resetPasswordToken = await ResetPasswordToken.findOne({ token });
+    if (!resetPasswordToken || resetPasswordToken.expires < Date.now()) {
+      return res.json({ error: 'Invalid or expired token' });
+    }
+
+    const user = await User.findById(resetPasswordToken.userId);
+    if (!user) {
+      return res.json({ error: 'No user found' });
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: 'Password updated successfully' });
+
+    // Delete the reset token
+    await ResetPasswordToken.deleteOne({ token });
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+
 module.exports = {
   test,
   registerUser,
   loginUser,
   getProfile,
-  logout
+  logout,
+  forgotPassword,
+  resetPassword,
+  confirmEmail
 };

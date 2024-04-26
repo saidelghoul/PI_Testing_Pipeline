@@ -109,6 +109,10 @@ app.use("/socialSkills", socialSkillsRouter);
 app.use("/technicalSkills", technicalSkillsRouter);
 app.use("/user", require("./controller/userController"));
 
+
+app.use('/imagesUser', express.static(path.join(__dirname, 'public/imagesUser')));
+
+
 const port = 8000;
 
 // Remplacez app.listen par server.listen pour utiliser le serveur HTTP créé

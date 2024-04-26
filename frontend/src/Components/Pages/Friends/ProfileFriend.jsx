@@ -1,161 +1,42 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import "../../../public/assets/css/animate.css";
-import "../../../public/assets/css/bootstrap.min.css";
-import "../../../public/assets/css/line-awesome.css";
-import "../../../public/assets/css/line-awesome-font-awesome.min.css";
-import "../../../public/assets/vendor/fontawesome-free/css/all.min.css";
-import "../../../public/assets/css/font-awesome.min.css";
-import "../../../public/assets/css/jquery.mCustomScrollbar.min.css";
-import "../../../public/assets/css/style.css";
-import "../../../public/assets/css/responsive.css";
-import "../../../public/assets/lib/slick/slick.css";
-import "../../../public/assets/lib/slick/slick-theme.css";
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../../context/userContext";
-import axios from "axios";
-
-import SocialSkillService from "../../services/socialSkill-service";
-import AddSkillForm from "../Modals/Skills/AssignSkillForm";
-import { Link } from "react-router-dom";
-import SocialSkillAffect from "./Skills/SocialSkills/SocialSkillAffect";
-import SocialSkillsUSer from "./Skills/SocialSkills/SocialSkillsUser";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 export default function Profils() {
-  const [isLoading, setIsLoading] = useState(true);
-  const { user } = useContext(UserContext);
-  
-  const userId = user ? user.id : null;
-  //const imageUrl = userId ? `http://localhost:8000/user/${userId}/profile` : "/assets/images/resources/user-pro-img.png";
-  const imageUrl = userId && user && user.profileImage 
-  ? `http://localhost:8000/user/${userId}/profile` 
+const { id } = useParams();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  //const userId = user ? user.id : null;
+  const imageUrl = user && user.profileImage 
+  ? `http://localhost:8000/user/${id}/profile` 
   : "/assets/images/resources/user-pro-img.png";
 
-  // const coverImageUrl = userId ? `http://localhost:8000/user/${userId}/cover` : "/assets/images/resources/cover-img.jpg";
-
-  const coverImageUrl = userId && user && user.coverImage 
-  ? `http://localhost:8000/user/${userId}/cover` 
+const coverImageUrl = user && user.coverImage 
+  ? `http://localhost:8000/user/${id}/cover` 
   : "/assets/images/resources/cover-img.jpg";
 
-  const isAdmin = user && user.role === "Directeur d'étude";
-  const isChefDep = user && user.role === "Chef département";
-  const isChefUnite = user && user.role === "Chef unité";
-
- 
-
   useEffect(() => {
-    if (user) {
-     
-      fetchUserData();
+    axios
+      .get(`/user/userbyid/${id}`)
+      .then((response) => {
+        setUser(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Erreur lors de la récupération de l\'utilisateur:', error);
+      });
+  }, [id]);
 
-      fetchSkills();
-      getAssigned();
-      setIsLoading(false);
-    }
-  }, [user]);
-
-  const [skills, setSkills] = useState([]);
-
-  const fetchSkills = async () => {
-    const result = await SocialSkillService.getAvailableSocialSkills(user.id);
-    setSkills(result);
-    setSkills([...result, user.id]);
-  };
-
-
-
-  const [assigned, setAssigned] = useState([]);
-
-  const getAssigned = async () => {
-    try {
-      const skillsData = SocialSkillService.getSocialSkillsByUser(user.id);
-      if (skillsData) {
-        // Si l'utilisateur existe, mettez à jour l'état userData avec les données de l'utilisateur
-        setAssigned(skillsData);
-      }
-    } catch (error) {
-      console.error("Error fetching user skills:", error);
-    }
-  };
-
-  const fetchUserData = async () => {
-    try {
-      const userResponse = await axios.get(`/user/getbyid/${user.id}`);
-      if (userResponse.data) {
-        // Si l'utilisateur existe, mettez à jour l'état userData avec les données de l'utilisateur
-        setUpdatedUser(userResponse.data);
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
-
-
-  //TODO remove or update below code
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
-  const id = "65df6f7a904814fc0404a57a";
-
-  const handleRemove = async (skillid) => {
-    const resp = await SocialSkillService.unassignSocialSkillFromUser(
-      id,
-      skillid
-    );
-
-    if (resp.status === 200) {
-      alert(" socialSkill deleted successfully");
-      handleClose();
-      user.socialSkills.filter((element) => element._id !== skillid);
-    }
-  };
-
-  const [showSkillModal, setShowSkillModal] = useState(false);
-  const [selectedSkill, setSelectedSkill] = useState(null);
-
-  // Fonction pour ouvrir le modal SkillModal
-  const handleShowSkillModal = (skill) => {
-    setSelectedSkill(skill);
-    setShowSkillModal(true);
-  };
-
-  // Fonction pour fermer le modal SkillModal
-  const handleCloseSkillModal = () => {
-    setSelectedSkill(null);
-    setShowSkillModal(false);
-  };
-
-  //TODO remove or update above code
-
-  useEffect(() => {
-    // Fonction asynchrone pour récupérer les compétences sociales
-    const fetchSocialSkills = async () => {
-      try {
-        if (user && user.id) {
-          //const skills = await SocialSkillService.getSocialSkillsByUser(user.id);
-          //setSocialSkills(skills);
-        }
-      } catch (error) {
-        console.error(
-          "Une erreur s'est produite lors de la récupération des compétences sociales:",
-          error.message
-        );
-      }
-    };
-
-    // Appeler la fonction de récupération des compétences sociales
-    fetchSocialSkills();
-  }, []);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return <div>Chargement...</div>;
   }
-
   return (
     <>
       <section className="cover-sec">
-      <img src={coverImageUrl} alt="Cover" width="100%" height="300px" />
+      {/* <img src={coverImageUrl} alt="Cover" width="100%" height="300px" /> */}
+    
+    <img src={coverImageUrl} alt="Image de profil" width="100%" height="300px" />
+ 
         <div className="add-pic-box">
           <div className="container">
             <div className="row no-gutters"></div>
@@ -171,8 +52,10 @@ export default function Profils() {
                   <div className="main-left-sidebar">
                     <div className="user_profile">
                       <div className="user-pro-img">
-                      <img src={imageUrl} alt="Image de profil" />
-
+                      {/* <img src={imageUrl} alt="Image de profil" /> */}
+                    
+    <img src={imageUrl} alt="Image de profil" />
+  
 
                         <div className="add-dp" id="OpenImgUpload"></div>
                       </div>
@@ -191,81 +74,16 @@ export default function Profils() {
                         </ul>
                       </div>
                       <br />
-                      <div>
-                        <br />
-                        <ul>
-                          <li>
-                          <a
-                              className="post_project"
-                              href="/updateProfil"
-                              title=""
-                              onClick={fetchUserData}
-                            >
-                              mettre a jour mon profil
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
+                     
                       <div>
                         <br></br>
                       </div>
-                      <div>
-                        {isAdmin && (
-                          <div>
-                            <a href="/completerProfil" title="">
-                              <i className="la la-user"></i> Mes chefs
-                              département
-                            </a>
-                          </div>
-                        )}
-                        {isChefDep && (
-                          <div>
-                            <a href="/completerProfil" title="">
-                              <i className="la la-user"></i> Mes chefs unité
-                            </a>
-                          </div>
-                        )}
-                        {isChefUnite && (
-                          <div>
-                            <a href="/completerProfil" title="">
-                              <i className="la la-user"></i> Mes enseignants
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                      <br />
                       
-                      <ul className="social_links">
-                        {!!user && user.gouvernorat && (
-                          <li>
-                            <i className="la la-globe"> Gouvernorat : </i>
-                            <h3>{user.gouvernorat}</h3>
-                          </li>
-                        )}
-                        {!!user && user.addresse && (
-                          <li>
-                            <i className="la la-globe"> Ville : </i>
-                            <h3>{user.addresse}</h3>
-                          </li>
-                        )}
-                        {!!user && user.dateNaissance && (
-                          <li>
-                            <i className="la la-globe"> Date de naissance : </i>
-                            <h3>
-                              {new Date(user.dateNaissance).toLocaleDateString(
-                                "fr-FR"
-                              )}
-                            </h3>
-                          </li>
-                        )}
-                        {!!user && user.telephone && (
-                          <li>
-                            <i className="la la-globe"> Telephone : </i>
-                            <h3>{user.telephone}</h3>
-                          </li>
-                        )}
+                      <br />
+                      <div className="post-popup pst-pj">
                        
-                      </ul>
+                      </div>
+                     
                     </div>
                     <div className="suggestions full-width">
                       <div className="sd-title">
@@ -345,9 +163,12 @@ export default function Profils() {
                 <div className="col-lg-6">
                   <div className="main-ws-sec">
                     <div className="user-tab-sec rewivew">
-                      <h3> {!!user && <>{user.name}</>}</h3>
+                      {/* <h3> {!!user && <>{user.name}</>}</h3> */}
+                      <h3>{user.name}</h3>
                       <div className="star-descp">
-                        <span> {!!user && <>{user.role}</>}</span>
+                      <span>Rôle: {user.role}</span>
+
+                        {/* <span> {!!user && <>{user.role}</>}</span> */}
                         <ul>
                           <li>
                             <i className="fa fa-star"></i>
@@ -365,10 +186,11 @@ export default function Profils() {
                             <i className="fa fa-star-half-o"></i>
                           </li>
                         </ul>
-                            
-                        <Link to={`/Leaderboard`}>Skills</Link>{/*`/affectSkill/${user?.id}`*/}
-                        <SocialSkillsUSer/>
-                        {<SocialSkillAffect userId={user._id} />}
+                        <a href="#" title="">
+                          Status
+                        </a>
+
+                    
                       </div>
                       <div className="tab-feed st2 settingjb">
                         <ul>
@@ -2925,24 +2747,7 @@ export default function Profils() {
                           lectus commodo viverra.{" "}
                         </p>
                       </div>
-                      {/*<div className="user-profile-ov">
-											<h3><a href="#" title="" className="lct-box-open">Location</a> <a href="#" title="" className="lct-box-open"><i className="fa fa-pencil"></i></a> <a href="#" title=""><i className="fa fa-plus-square"></i></a></h3>
-											<h4>India</h4>
-											<p>151/4 BT Chownk, Delhi </p>
-  											</div>*/}
-                      {/*<div className="user-profile-ov">
-											<h3><a href="#" title="" className="skills-open">Skills</a> <a href="#" title="" className="skills-open"><i className="fa fa-pencil"></i></a> <a href="#"><i className="fa fa-plus-square"></i></a></h3>
-											<ul>
-												<li><a href="#" title="">HTML</a></li>
-												<li><a href="#" title="">PHP</a></li>
-												<li><a href="#" title="">CSS</a></li>
-												<li><a href="#" title="">Javascript</a></li>
-												<li><a href="#" title="">Wordpress</a></li>
-												<li><a href="#" title="">Photoshop</a></li>
-												<li><a href="#" title="">Illustrator</a></li>
-												<li><a href="#" title="">Corel Draw</a></li>
-											</ul>
-										</div>*/}
+
                       <div className="user-profile-ov">
                         <h3>
                           <a href="#" title="" className="skills-open">
@@ -2951,40 +2756,14 @@ export default function Profils() {
                           <a href="#" title="" className="skills-open">
                             <i className="fa fa-pencil"></i>
                           </a>{" "}
-                          <Link to={`/affectSkill/${user?.id}`}>
-                            <i className="fa fa-plus-square"></i>
-                          </Link>
+                        
                         </h3>
 
                         {/* */}
 
-                        {user?.socialSkills?.length > 0 ? (
-                          <ul className="skill-tags">
-                            {user?.socialSkills?.map((skill) => (
-                              <li key={skill?._id}>
-                                <a
-                                  title={skill?.name}
-                                  onClick={() => handleShowSkillModal(skill)}
-                                >
-                                  {skill?.name}
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <div>
-                            vous navez encore aucun skills. Rajoutez-en pour
-                            personnaliszer votre profil !
-                          </div>
-                        )}
                       </div>
 
-                      <AddSkillForm
-                        show={show}
-                        handleClose={handleClose}
-                        skills={skills}
-                        assignSocialSkills={assigned}
-                      />
+                     
                     </div>
                     <div className="product-feed-tab" id="rewivewdata">
                       <section></section>
@@ -3067,7 +2846,7 @@ export default function Profils() {
                                     <p>
                                       <i className="la la-clock-o"></i>3 min ago
                                     </p>
-                                    <p className="tahnks">Thanks :)</p>
+                                    <p className="tahnks">Thanks </p>
                                   </div>
                                 </div>
                               </div>
@@ -3948,9 +3727,9 @@ export default function Profils() {
                 <div className="col-lg-3">
                   <div className="right-sidebar">
                     <div className="message-btn">
-                      <Link to="/settings" title="">
+                      {/* <Link to="/settings" title="">
                         <i className="fas fa-cog"></i> Setting
-                      </Link>
+                      </Link> */}
                     </div>
                     <div className="widget widget-portfolio">
                       <div className="wd-heady">

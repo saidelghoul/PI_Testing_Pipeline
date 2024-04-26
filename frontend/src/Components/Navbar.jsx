@@ -16,6 +16,10 @@ import axios from "axios";
 
 export default function Navbar() {
   const { user } = useContext(UserContext);
+  const userId = user ? user.id : null;
+  const imageUrl = userId && user && user.profileImage 
+  ? `http://localhost:8000/user/${userId}/profile` 
+  : "/assets/images/resources/user-pro-img.png";
   const handleLogout = async () => {
     try {
       await axios.get("/logout");
@@ -48,6 +52,14 @@ export default function Navbar() {
                   </span>
                   Home
                 </a>
+              </li>
+              <li>
+                <Link to="/friends" title="">
+                  <span>
+                    <img src="/assets/images/icon4.png" alt="" />
+                  </span>
+                  Friends
+                </Link>
               </li>
               <li>
                 <Link to="/groupes" title="">
@@ -112,7 +124,7 @@ export default function Navbar() {
           </div>
           <div className="user-account">
             <div className="user-info">
-              <img src="/assets/images/resources/user.png" alt="" />
+            <img src={imageUrl} alt="Image de profil" width="40px" height="40px" />
               <a href="#" title="">
                 {!!user && <h1>{user.name}</h1>}
               </a>

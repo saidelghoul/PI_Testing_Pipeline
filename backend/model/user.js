@@ -62,6 +62,16 @@ const userSchema = new Schema({
       ref: "Conversation",
     },
   ],
+  emailToken: {
+    type: String,
+    default: '',
+  },
+  
+  isEmailVerified: {
+    type: Boolean,
+    default: false,
+  },
+ 
 });
 
 const UserModel = mongoose.model("User", userSchema);
