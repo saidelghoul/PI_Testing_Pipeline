@@ -6,27 +6,24 @@ const User = require("../model/user");
 async function getCommentsByEvent(req, res) {
   const eventId = req.params.id;
   try {
-    const comments = await getCommentsByEventId(eventId);
-    res.json(comments);
-    console.log(comments);
-  } catch (error) {
-    res.status(500).json({ error: "Server error: " + error.message });
+    const commentaires = await Commentaire.find({ eventId })
+      .populate("comments")
+      .exec();
+    res.json(commentaires);
+  } catch (err) {
+    console.error("Erreur lors de la récupération des commentaires :", err);
+    res.status(500).json({ error: "Server error" });
   }
 }
 
 async function getCommentByPub(req, res) {
   const publicationId = req.params.id;
-
   try {
-    // Recherchez tous les commentaires associés à la publication spécifique
     const commentaires = await Commentaire.find({ publicationId })
       .populate("comments")
       .exec();
-
-    // Renvoie la liste des commentaires en réponse à la demande
     res.json(commentaires);
   } catch (err) {
-    // Gérez les erreurs
     console.error("Erreur lors de la récupération des commentaires :", err);
     res.status(500).json({ error: "Server error" });
   }
@@ -96,6 +93,7 @@ async function addToEvent(req, res) {
     res.status(500).json({ error: "Server error: " + err.message });
   }
 }
+
 async function remove(req, res) {
   const id = req.params.id;
   try {
@@ -108,7 +106,6 @@ async function remove(req, res) {
   }
 }
 
-//update commentaire
 async function update(req, res) {
   const id = req.params.id;
   try {
@@ -123,4 +120,4 @@ async function update(req, res) {
   }
 }
 
-module.exports = { getCommentByPub, addToPub, addToEvent, remove, update };
+module.exports = { getCommentByPub,getCommentsByEvent, addToPub, addToEvent, remove, update };

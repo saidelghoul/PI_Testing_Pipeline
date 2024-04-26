@@ -36,6 +36,7 @@ export default function Home() {
               </div>
               {/* Feed */}
               <Feed />
+              
             </div>
           </div>
         </div>

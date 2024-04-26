@@ -1,11 +1,7 @@
 import axios from "axios";
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { UserContext } from "../../../../../../context/userContext";
-import { Link } from "react-router-dom";
 import moment from "moment";
-import TextPost from "./TextPost";
-import { isCreator } from "../../utils";
-import PostHeader from "./PostHeader";
 
 export default function PostFooter({ postContent, fetchPosts }) {
   const { user } = useContext(UserContext);
@@ -78,7 +74,7 @@ export default function PostFooter({ postContent, fetchPosts }) {
                       <img src="/assets/images/resources/bg-img3.png" alt="" />
                     </div>
                     <div className="comment">
-                      <h3>{comment.creator.name}</h3>
+                      <h3>{comment.creator?.name}</h3>
                       <span>
                         <img src="/assets/images/clock.png" alt="" />{" "}
                         {moment(comment.DateCreation).format("lll")}

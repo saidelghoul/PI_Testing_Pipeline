@@ -28,23 +28,36 @@ async function add(req, res) {
 }
 
 async function getall(req, res) {
-  Publication.find({})
-    .populate({
-      path: "comments",
-      select: "contenu creator DateCreation",
-      // Sélectionnez les champs de commentaire nécessaires
-      populate: {
-        path: "creator", // Chemin vers le modèle d'utilisateur associé
-        select: "name", // Sélectionnez le champ de nom d'utilisateur
-      },
-    })
-    .exec()
-    .then((publication) => {
-      res.status(200).json(publication);
-    })
-    .catch((error) => {
+  try {
+    const publications = await Publication.find({})
+        .populate({
+          path: "comments",
+          select: "contenu creator DateCreation",
+          // Sélectionnez les champs de commentaire nécessaires
+          populate: {
+            path: "creator", // Chemin vers le modèle d'utilisateur associé
+            select: "name", // Sélectionnez le champ de nom d'utilisateur
+          },
+        })
+        .exec();
+    
+        const mappedPublications = await Promise.all(publications.map(async (publication) => {
+          const creatorId = publication.creator;
+          const user = await User.findById(creatorId)
+          const mappedPublication = {
+            ...publication.toObject(),
+              creator: {
+                _id: user._id,
+                name: user.name
+              }
+          };
+          return mappedPublication;
+        }));
+
+      res.status(200).json(mappedPublications);
+    } catch(error) {
       res.status(500).json({ error: "Server error: " + error.message });
-    });
+    };
 }
 
 async function getbyid(req, res) {

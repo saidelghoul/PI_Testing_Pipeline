@@ -12,6 +12,4 @@ router.delete("/delete/:id", publicationController.remove);
 
 router.put("/update/:id", publicationController.update);
 
-router.post("/:id/commentaires", publicationController.add);
-
 module.exports = router;
