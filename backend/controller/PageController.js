@@ -20,34 +20,45 @@ async function participerAuGroupe(req, res) {
     }
 
     // Vérifier si l'utilisateur est déjà participant au groupe
-    if (group.participants.includes(userId)) {
+    if (group.participants && group.participants.includes(userId)) {
       return res.status(400).json({ error: "L'utilisateur participe déjà à ce groupe" });
     }
 
     // Ajouter l'utilisateur à la liste des participants
+    if (!group.participants) {
+      group.participants = [];
+    }
     group.participants.push(userId);
-    await group.save();
 
-    // Créer et sauvegarder la notification pour le créateur du groupe
+    // Créer une nouvelle notification pour le créateur du groupe
     const notification = new Notification({
-      userId: group.creator,
+      userCreator: group.creator,
       groupId: groupId,
       type: 'demande_participation',
-      details:  userId, // Assurez-vous que userId est bien un ObjectId valide
-      
+      details: userId,
     });
     await notification.save();
+
+    // Ajouter l'identifiant de la notification à la liste des notifications du groupe
+    if (!group.notifications) {
+      group.notifications = [];
+    }
+    group.notifications.push(notification._id);
+
+    // Sauvegarder les modifications apportées au groupe
+    await group.save();
 
     // Envoyer une réponse avec un message de succès
     res.status(200).json({ message: "Participation réussie" });
 
     // Envoyer la notification au créateur du groupe (à implémenter)
-    // Par exemple, vous pouvez utiliser des sockets pour envoyer la notification en temps réel au créateur
-   // envoyerNotificationAuCreateur(notification);
+    // envoyerNotificationAuCreateur(notification);
   } catch (error) {
     res.status(500).json({ error: "Erreur du serveur: " + error.message });
   }
 }
+
+
 async function add(req, res) {
   try {
     const profileImage = req.files.profileImage[0];

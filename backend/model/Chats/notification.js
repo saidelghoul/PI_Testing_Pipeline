@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const notificationSchema = new mongoose.Schema({
-  userId: {
+  userCreator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User', // Référence vers le modèle d'utilisateur si nécessaire
   },
@@ -14,11 +14,19 @@ const notificationSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  isAccept:{
+     type: Boolean,
+  default: true,
+}, 
   details: {
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User', // Référence vers le modèle d'utilisateur si nécessaire
     // Utilisez le type ObjectId pour stocker l'ID de l'utilisateur
     required: true
+  },
+  isActive: {
+    type: Boolean,
+    default: true // Par défaut, la notification est active
   },
   isRead: {
     type: Boolean,
