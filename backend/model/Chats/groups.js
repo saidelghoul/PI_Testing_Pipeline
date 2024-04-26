@@ -20,8 +20,13 @@ const GroupsSchema = new mongoose.Schema({
        profileImage: String,
        coverImage: String,
 
-       
+       notifications:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Notification' 
+
+       }]
   });
+
   const Groups = mongoose.model('groups', GroupsSchema);
 
 module.exports = Groups;

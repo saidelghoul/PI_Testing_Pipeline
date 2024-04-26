@@ -37,6 +37,8 @@ import Home from "./Components/Pages/Home/Home";
 import AddEvent from "./Components/Pages/Home/Evenement/AddEvent";
 import Update from "./Components/Pages/Home/Pub/Update";
 import UpdateEvent from "./Components/Pages/Home/Evenement/UpdateEvent";
+import Notifications from "./Components/Historiques";
+import Historiques from "./Components/Historiques";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -114,6 +116,15 @@ function App() {
                 <Navbar />
                 <AddConversation />
                 <Footer />
+              </>
+            }
+          />
+           <Route
+            path="/Historiques/:id"
+            element={
+              <>
+                <Navbar />
+                <Historiques />
               </>
             }
           />

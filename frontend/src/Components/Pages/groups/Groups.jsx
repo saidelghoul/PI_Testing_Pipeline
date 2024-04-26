@@ -28,6 +28,8 @@ export default function Groups() {
       .then((response) => {
         setPage(response.data);
         setIsParticipating(response.data.participants.includes(user.id));
+        setUserIsCreator(response.data.creator === user.id);
+
       })
       .catch((error) => {
         console.error(
@@ -71,6 +73,7 @@ export default function Groups() {
   // Exécuter cet effet chaque fois que l'ID change
   return (
     <>
+  
       <section className="cover-sec">
         <img
           src={`http://localhost:8000/images/${page.coverImage}`}
@@ -94,20 +97,22 @@ export default function Groups() {
                         />
                       </div>
                       <div className="user_pro_status">
-                        {user.id !== page.creator && !isParticipating && (
-                          <ul className="flw-hr">
-                            <li>
-                              <a
-                                href="#"
-                                onClick={participerPage}
-                                title=""
-                                className="flww"
-                              >
-                                <i className="la la-plus"></i> Regoindre
-                              </a>
-                            </li>
-                          </ul>
-                        )}
+                      {user.id !== page.creator && !isParticipating && (
+        <div>
+          {user.id !== page.creator && page.notifications && page.notifications.isAccept === false && (
+            <div className="alert alert-danger" role="alert">
+              Le créateur a refusé la notification.
+            </div>
+          )}
+          <ul className="flw-hr">
+            <li>
+              <a href="#" onClick={participerPage} title="" className="flww">
+                <i className="la la-plus"></i> Regoindre
+              </a>
+            </li>
+          </ul>
+        </div>
+      )}
                         <ul className="flw-status">
                           <li>
                             <span>Membres</span>

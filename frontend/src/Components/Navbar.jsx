@@ -84,11 +84,11 @@ export default function Navbar() {
                 </Link>
               </li>
               <li>
-                <Link to="#" title="" className="not-box-open">
+                <Link to={`/Historiques/${user?.id}`} title="" className="not-box-open">
                   <span>
                     <img src="/assets/images/icon7.png" alt="" />
                   </span>
-                  Notification
+                  Historiques
                 </Link>
               </li>
             </ul>

@@ -4,6 +4,7 @@ const PageSchema = new mongoose.Schema({
   id: Number,
   nomPage: String,
   dateCreation: { type: Date, default: Date.now },
+
   Creator: { 
     type: mongoose.Schema.Types.ObjectId,
      ref: 'User' 
@@ -14,7 +15,11 @@ const PageSchema = new mongoose.Schema({
 
     }],
     visibilte:Boolean,
-});
+   
+
+}
+
+);
 
 
 const Page = mongoose.model('Page', PageSchema);
