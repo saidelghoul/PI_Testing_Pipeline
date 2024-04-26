@@ -2,9 +2,10 @@ import TextPost from "./TextPost";
 import PostHeader from "./PostHeader";
 import PostFooter from "./PostFooter";
 import EventPost from "./EventPost";
-import { postTypes } from "../../const";
+import { postTypes } from "../../utils/const";
 
 export default function PostContainer({ postContent, fetchPosts }) {
+
   return (
     <div className="job-status-bar">
       <PostHeader postContent={postContent} fetchPosts={fetchPosts} />

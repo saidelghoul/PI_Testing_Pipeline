@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Spinner from "react-bootstrap/Spinner";
 
 import PostContainer from "./PostView/PostContainer";
-import { postTypes } from "../const";
+import { postTypes } from "../utils/const";
 
 function BasicExample() {
   return (

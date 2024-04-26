@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { UserContext } from "../../../../../../context/userContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
 export default function AddEvent() {
   const { user } = useContext(UserContext); // Obtenez les données de l'utilisateur depuis le contexte
   const navigate = useNavigate(); // Utilisation de useNavigate pour la navigation
