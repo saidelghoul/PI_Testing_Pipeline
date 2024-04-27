@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useContext } from "react";
 import { UserContext } from "../../../../../../context/userContext";
 import moment from "moment";
+import { postTypes } from "../../utils/const";
 
 export default function PostFooter({ postContent, fetchPosts }) {
   const { user } = useContext(UserContext);
@@ -22,13 +23,23 @@ export default function PostFooter({ postContent, fetchPosts }) {
       return;
     }
     try {
-      const response = await axios.post(
-        `/commentaire/addToPub/${currentPublicationId}`,
-        {
-          ...commentData,
-          creator: user.id, // Utilisez l'ID de l'utilisateur connecté
-        }
-      );
+      if (postContent?.postType === postTypes.TEXT) {
+        const response = await axios.post(
+          `/commentaire/addToPub/${currentPublicationId}`,
+          {
+            ...commentData,
+            creator: user.id,
+          }
+        );
+      } else if (postContent?.postType === postTypes.EVENT) {
+        const response = await axios.post(
+          `/commentaire/addToEvent/${currentPublicationId}`,
+          {
+            ...commentData,
+            creator: user.id,
+          }
+        );
+      }
       setCommentData({
         contenu: "",
       });

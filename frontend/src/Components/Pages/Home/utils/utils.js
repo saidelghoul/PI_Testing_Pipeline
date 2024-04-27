@@ -12,7 +12,7 @@ export const getUpdateEndpoint = (eventType) => {
   switch (eventType) {
     case postTypes.TEXT:
       return "/evenemnt/update";
-    case postTypes.POST:
+    case postTypes.EVENT:
       return "/publications/update";
     default:
       console.log(`Sorry, we are out of ${eventType}.`);
@@ -23,7 +23,7 @@ export const getAllDataEndpoint = (eventType) => {
   switch (eventType) {
     case postTypes.TEXT:
       return "evenemnt";
-    case postTypes.POST:
+    case postTypes.EVENT:
       return "";
     default:
       console.log(`Sorry, we are out of ${eventType}.`);
