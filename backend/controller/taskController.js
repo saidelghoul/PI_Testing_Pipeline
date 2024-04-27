@@ -161,10 +161,10 @@ async function deleteTask(req, res, next) {
   }
 }
 
-async function getUsersForTask(req, res) {
+/*async function getUsersForTask(req, res) {
   try {
     const users = await UserModel.aggregate([
-      { $project: { id: 1, name: 1, role: 1 } },
+      { $project: { id: 1, name: 1, role: 1,departement: 1,unite: 1 } },
     ]);
     if (users.length > 0)
       res.status(200).json({ title: "success", message: users });
@@ -172,7 +172,46 @@ async function getUsersForTask(req, res) {
   } catch (err) {
     res.status(500).json({ title: "error", message: err.message });
   }
+}*/
+async function getUsersForTask(req, res) {
+  try {
+    const users = await UserModel.aggregate([
+      {
+        $lookup: {
+          from: "departements", // Nom de la collection des départements
+          localField: "departement",
+          foreignField: "_id",
+          as: "departmentDetails",
+        },
+      },
+      {
+        $lookup: {
+          from: "unites", // Nom de la collection des unités
+          localField: "unite",
+          foreignField: "_id",
+          as: "uniteDetails",
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          role: 1,
+          "departmentDetails.name": 1, // Extraire le nom du département
+          "uniteDetails.name": 1, // Extraire le nom de l'unité
+        },
+      },
+    ]);
+
+    if (users.length > 0) {
+      res.status(200).json({ title: "success", message: users });
+    } else {
+      res.status(404).json({ title: "error", message: "No users found" });
+    }
+  } catch (err) {
+    res.status(500).json({ title: "error", message: err.message });
+  }
 }
+
 
 module.exports = {
   getTasks,

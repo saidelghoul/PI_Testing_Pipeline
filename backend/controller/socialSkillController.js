@@ -1,5 +1,7 @@
 var SocialSkill = require("../model/socialSkill");
 var User = require("../model/user");
+const DepartmentModel = require('../model/departement'); // Assurez-vous que le chemin est correct
+const UniteModel = require('../model/unite'); // Assurez-vous que le chemin est correct
 
 async function getallSocialSkills(req, res) {
   SocialSkill.find({})
@@ -140,7 +142,6 @@ const assignSocialSkillToUser = async (req, res) => {
   try {
     // Rechercher le SocialSkill par ID
     let socialSkill = await SocialSkill.findById(req.params.socialSkillId);
-    console.log("l'id du socialSkill est :",socialSkill);
     if (!socialSkill) {
       throw new Error('SocialSkill non trouvé');
     }
@@ -417,6 +418,39 @@ const getUsersForSocialSkills = async (req, res) => {
   }
 };
 
+// Méthode pour obtenir le nom du département par ID
+async function GetDepartmentNameById(req, res) {
+  try {
+    const departmentId = req.params.id; // Récupérer l'ID du département
+    const department = await DepartmentModel.findById(departmentId); // Chercher le département par ID
+
+    if (!department) {
+      res.status(404).json({ message: "Département non trouvé" }); // Réponse si le département n'est pas trouvé
+    } else {
+      res.status(200).json({ name: department.name }); // Réponse avec le nom du département
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la récupération du département", error: error.message }); // Gestion des erreurs
+  }
+}
+
+// Méthode pour obtenir le nom de l'unité par ID
+async function GetUniteNameById(req, res) {
+  try {
+    const uniteId = req.params.id; // Récupérer l'ID de l'unité
+    const unite = await UniteModel.findById(uniteId); // Chercher l'unité par ID
+
+    if (!unite) {
+      res.status(404).json({ message: "Unité non trouvée" }); // Réponse si l'unité n'est pas trouvée
+    } else {
+      res.status(200).json({ name: unite.name }); // Réponse avec le nom de l'unité
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la récupération de l'unité", error: error.message }); // Gestion des erreurs
+  }
+}
+
+
 
 
 
@@ -433,5 +467,7 @@ module.exports = {
   unassignSocialSkillFromUser,
   getSocialSkillsByUser,
   getAvailableSocialSkills,
-  getUsersForSocialSkills
+  getUsersForSocialSkills,
+  GetDepartmentNameById,
+  GetUniteNameById
    };

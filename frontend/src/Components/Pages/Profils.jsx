@@ -378,6 +378,7 @@ export default function Profils() {
                         <Link to={`/Leaderboard`}>Skills</Link>{/*`/affectSkill/${user?.id}`*/}
                         <SocialSkillsUSer/>
                         {<SocialSkillAffect userId={user._id} />}
+                        
                       </div>
                       <div className="tab-feed st2 settingjb">
                         <ul>

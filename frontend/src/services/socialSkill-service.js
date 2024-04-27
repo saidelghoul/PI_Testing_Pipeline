@@ -78,7 +78,6 @@ const SocialSkillService = {
   assignSocialSkillToUser: async (socialSkillId, userId) => {
     try {
       const response = await axios.put(`${apiUrl}/assign/${socialSkillId}/${userId}`);
-      console.log(response.data.socialSkill)
       return response.data.socialSkill;
       
     } catch (error) {
@@ -100,7 +99,6 @@ const SocialSkillService = {
   unassignSocialSkillFromUser: async (socialSkillId, userId) => {
     try {
       const response = await axios.put(`${apiUrl}/unassign/${socialSkillId}/${userId}`);
-      console.log(response)
       return response.data.socialSkills;
     } catch (error) {
       console.error('Erreur lors de la désaffectation de la compétence sociale de l\'utilisateur:', error.message);
@@ -123,7 +121,6 @@ const SocialSkillService = {
   getSocialSkillsByUser: async (userId) => {
     try {
       const response = await axios.get(`${apiUrl}/getbyuser/${userId}`);
-      console.log(response);
       return response.data; // Assurez-vous que la structure de la réponse correspond à vos besoins
       
     } catch (error) {
@@ -140,7 +137,6 @@ const SocialSkillService = {
       try {
         const response = await axios.get(`${apiUrl}/availables/${userId}`);
         const Data = response.data.socialSkills;
-        console.log("Skills dispo",Data);
     
         if (Array.isArray(Data)) {
           return Data; // S'assurer que la réponse est un tableau
@@ -163,7 +159,31 @@ const SocialSkillService = {
       console.error('Erreur lors de la récupération des utilisateurs pour les compétences sociales:', error.message);
       throw error;
     }
-  }
+  },
+
+
+  GetDepartmentNameById: async (departmentId) => {
+    try {
+      const response = await axios.get(`${apiUrl}/department/${departmentId}`); // URL de votre route
+      console.log(response)
+      return response.data.name; // Renvoie le nom du département
+
+    } catch (error) {
+      console.error("Erreur lors de la récupération du nom du département:", error.message);
+      throw error;
+    }
+  },
+
+  // Récupérer le nom de l'unité par ID
+  GetUniteNameById: async (uniteId) => {
+    try {
+      const response = await axios.get(`${apiUrl}/unite/${uniteId}`); // URL de votre route
+      return response.data.name; // Renvoie le nom de l'unité
+    } catch (error) {
+      console.error("Erreur lors de la récupération du nom de l'unité:", error.message);
+      throw error;
+    }
+  },
 };
 
 

@@ -20,6 +20,12 @@ router.get('/getbyuser/:userId', socialSkillController.getSocialSkillsByUser);
 
 router.get('/availables/:userId', socialSkillController.getAvailableSocialSkills);
 
-router.get('/users', socialSkillController.getUsersForSocialSkills)
+router.get('/users', socialSkillController.getUsersForSocialSkills);
+
+// Route pour obtenir le nom du département par ID
+router.get('/department/:idDepartement', socialSkillController.GetDepartmentNameById);
+
+// Route pour obtenir le nom de l'unité par ID
+router.get('/unite/:idUnite', socialSkillController.GetUniteNameById);
 
 module.exports = router;

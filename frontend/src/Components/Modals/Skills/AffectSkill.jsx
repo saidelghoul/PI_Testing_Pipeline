@@ -42,7 +42,6 @@ const AffectSkill = () => {
 
     try {
       await SocialSkillService.assignSocialSkillToUser(socialSkillItem, id); // Appeler la méthode du service pour affecter
-      console.log(socialSkillItem, id);
       alert("Compétence sociale ajoutée avec succès"); // Message de succès
     } catch (error) {
       console.error("Erreur lors de l'ajout de la compétence sociale :", error.message);

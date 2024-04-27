@@ -13,6 +13,7 @@ import { useContext } from "react";
 import { UserContext } from "../../context/userContext";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import ODDSocialSkillPopup from "./Pages/Skills/utils/ODDSocialSkillPopup";
 
 export default function Navbar() {
   const { user } = useContext(UserContext);
@@ -35,7 +36,10 @@ export default function Navbar() {
           <div className="logo">
             <img src="/assets/images/esprit.png" alt="" width="100em" />
           </div>
-          <div className="search-bar">
+          <div className="logo">
+            <ODDSocialSkillPopup></ODDSocialSkillPopup>
+          </div>
+          <div className="search-bar col-2">
             <form>
               <input type="text" name="search" placeholder="Search..." />
               <button type="submit">
@@ -216,11 +220,15 @@ export default function Navbar() {
                     Logout
                   </Link>
                 </h3>
+                
               </div>
             </div>
+            
           </div>
+          
           <div className="margin-bottom: 20px;"></div>
         </div>
+        
       </div>
     </header>
   );
