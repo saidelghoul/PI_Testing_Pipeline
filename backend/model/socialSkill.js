@@ -9,7 +9,13 @@ var SocialSkill = new Schema({
     enum: ["bas", "intermédiaire", "élevé"],
   },
   dateAttribution: { type: Date , required: false},
-  description: { type: String , required: false}
+  description: { type: String , required: false},
+  users:[
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ]
     
 });
 

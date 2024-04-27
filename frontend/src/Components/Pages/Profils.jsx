@@ -56,10 +56,19 @@ export default function Profils() {
   const [skills, setSkills] = useState([]);
 
   const fetchSkills = async () => {
-    const result = await SocialSkillService.getAvailableSocialSkills(user.id);
-    setSkills(result);
-    setSkills([...result, user.id]);
+    try {
+      const result = await SocialSkillService.getAvailableSocialSkills(user.id);
+  
+      if (Array.isArray(result)) {
+        setSkills([...result, user.id]); // Maintenant, vous êtes sûr que 'result' est un tableau
+      } else {
+        console.error("Les données reçues ne sont pas un tableau"); // Gestion d'erreur
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération des compétences disponibles:", error); // Gestion des exceptions
+    }
   };
+  
 
 
 
@@ -115,7 +124,7 @@ export default function Profils() {
   const [selectedSkill, setSelectedSkill] = useState(null);
 
   // Fonction pour ouvrir le modal SkillModal
-  const handleShowSkillModal = (skill) => {
+  {/*const handleShowSkillModal = (skill) => {
     setSelectedSkill(skill);
     setShowSkillModal(true);
   };
@@ -124,7 +133,7 @@ export default function Profils() {
   const handleCloseSkillModal = () => {
     setSelectedSkill(null);
     setShowSkillModal(false);
-  };
+  };*/}
 
   //TODO remove or update above code
 
@@ -2925,66 +2934,7 @@ export default function Profils() {
                           lectus commodo viverra.{" "}
                         </p>
                       </div>
-                      {/*<div className="user-profile-ov">
-											<h3><a href="#" title="" className="lct-box-open">Location</a> <a href="#" title="" className="lct-box-open"><i className="fa fa-pencil"></i></a> <a href="#" title=""><i className="fa fa-plus-square"></i></a></h3>
-											<h4>India</h4>
-											<p>151/4 BT Chownk, Delhi </p>
-  											</div>*/}
-                      {/*<div className="user-profile-ov">
-											<h3><a href="#" title="" className="skills-open">Skills</a> <a href="#" title="" className="skills-open"><i className="fa fa-pencil"></i></a> <a href="#"><i className="fa fa-plus-square"></i></a></h3>
-											<ul>
-												<li><a href="#" title="">HTML</a></li>
-												<li><a href="#" title="">PHP</a></li>
-												<li><a href="#" title="">CSS</a></li>
-												<li><a href="#" title="">Javascript</a></li>
-												<li><a href="#" title="">Wordpress</a></li>
-												<li><a href="#" title="">Photoshop</a></li>
-												<li><a href="#" title="">Illustrator</a></li>
-												<li><a href="#" title="">Corel Draw</a></li>
-											</ul>
-										</div>*/}
-                      <div className="user-profile-ov">
-                        <h3>
-                          <a href="#" title="" className="skills-open">
-                            Skills
-                          </a>{" "}
-                          <a href="#" title="" className="skills-open">
-                            <i className="fa fa-pencil"></i>
-                          </a>{" "}
-                          <Link to={`/affectSkill/${user?.id}`}>
-                            <i className="fa fa-plus-square"></i>
-                          </Link>
-                        </h3>
-
-                        {/* */}
-
-                        {user?.socialSkills?.length > 0 ? (
-                          <ul className="skill-tags">
-                            {user?.socialSkills?.map((skill) => (
-                              <li key={skill?._id}>
-                                <a
-                                  title={skill?.name}
-                                  onClick={() => handleShowSkillModal(skill)}
-                                >
-                                  {skill?.name}
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <div>
-                            vous navez encore aucun skills. Rajoutez-en pour
-                            personnaliszer votre profil !
-                          </div>
-                        )}
-                      </div>
-
-                      <AddSkillForm
-                        show={show}
-                        handleClose={handleClose}
-                        skills={skills}
-                        assignSocialSkills={assigned}
-                      />
+                      
                     </div>
                     <div className="product-feed-tab" id="rewivewdata">
                       <section></section>

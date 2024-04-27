@@ -12,9 +12,9 @@ router.delete("/remove/:id", socialSkillController.removeSocialSkill);
 
 router.put("/update/:id", socialSkillController.updateSocialSkill);
 
-router.put('/assign/:userId', socialSkillController.assignSocialSkillToUser);
+router.put('/assign/:socialSkillId/:userId', socialSkillController.assignSocialSkillToUser);
 
-router.put('/unassign/:userId', socialSkillController.unassignSocialSkillFromUser);
+router.put('/unassign/:socialSkillId/:userId', socialSkillController.unassignSocialSkillFromUser);
 
 router.get('/getbyuser/:userId', socialSkillController.getSocialSkillsByUser);
 

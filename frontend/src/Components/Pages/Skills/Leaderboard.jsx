@@ -29,6 +29,7 @@ function Leaderboard() {
       await Promise.all(
         listUsers.data.message.map(async (user) => {
           const socialResult = await socialSkillService.getSocialSkillsByUser(user._id);
+          console.log("le social Result est : ",socialResult);
           const checklistResult = await getChecklistScoreForUser(user._id);
 
           let socialScore = 0;

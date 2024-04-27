@@ -65,7 +65,7 @@ const SocialSkillService = {
     }
   },
 
-  assignSocialSkillToUser: async (userId, skillIds) => {
+  /*assignSocialSkillToUser: async (userId, skillIds) => {
     try {
       const response = await axios.put(`${apiUrl}/assign/${userId}`, { skillIds });
       return response.data;
@@ -73,9 +73,21 @@ const SocialSkillService = {
       console.error('Erreur lors de l"affectation de compétences sociales à l\'utilisateur:', error.message);
       throw error;
     }
+  },*/
+
+  assignSocialSkillToUser: async (socialSkillId, userId) => {
+    try {
+      const response = await axios.put(`${apiUrl}/assign/${socialSkillId}/${userId}`);
+      console.log(response.data.socialSkill)
+      return response.data.socialSkill;
+      
+    } catch (error) {
+      console.error('Erreur lors de l"affectation de compétences sociales à l\'utilisateur:', error.message);
+      throw error;
+    }
   },
 
-  unassignSocialSkillFromUser: async (userId, skillId) => {
+  /*unassignSocialSkillFromUser: async (userId, skillId) => {
     try {
       const response = await axios.put(`${apiUrl}/unassign/${userId}`, { skillId });
       return response.data;
@@ -83,13 +95,37 @@ const SocialSkillService = {
       console.error('Erreur lors de la désaffectation de la compétence sociale de l\'utilisateur:', error.message);
       throw error;
     }
+  },*/
+
+  unassignSocialSkillFromUser: async (socialSkillId, userId) => {
+    try {
+      const response = await axios.put(`${apiUrl}/unassign/${socialSkillId}/${userId}`);
+      console.log(response)
+      return response.data.socialSkills;
+    } catch (error) {
+      console.error('Erreur lors de la désaffectation de la compétence sociale de l\'utilisateur:', error.message);
+      throw error;
+    }
   },
 
  // Récupérer les compétences sociales par utilisateur
- getSocialSkillsByUser: async (userId) => {
+ /*getSocialSkillsByUser: async (userId) => {
     try {
       const response = await axios.get(`${apiUrl}/getbyuser/${userId}`);
       return response.data; // Assurez-vous que la structure de la réponse correspond à vos besoins
+    } catch (error) {
+      console.error('Erreur lors de la récupération des compétences sociales par utilisateur:', error.message);
+      throw error;
+    }
+  },*/
+
+  // Récupérer les compétences sociales assignées à un utilisateur
+  getSocialSkillsByUser: async (userId) => {
+    try {
+      const response = await axios.get(`${apiUrl}/getbyuser/${userId}`);
+      console.log(response);
+      return response.data; // Assurez-vous que la structure de la réponse correspond à vos besoins
+      
     } catch (error) {
       console.error('Erreur lors de la récupération des compétences sociales par utilisateur:', error.message);
       throw error;
@@ -103,18 +139,34 @@ const SocialSkillService = {
     getAvailableSocialSkills: async (userId) => {
       try {
         const response = await axios.get(`${apiUrl}/availables/${userId}`);
-        return response.data;
+        const Data = response.data.socialSkills;
+        console.log("Skills dispo",Data);
+    
+        if (Array.isArray(Data)) {
+          return Data; // S'assurer que la réponse est un tableau
+        } else {
+          throw new Error("Les données reçues ne sont pas un tableau"); // Gestion d'erreur
+        }
       } catch (error) {
-        console.error('Erreur lors de la récupération des compétences sociales disponibles:', error.message);
-        throw error;
+        console.error("Erreur lors de la récupération des compétences sociales disponibles:", error.message);
+        throw error; // Renvoyer l'erreur pour qu'elle soit gérée
       }
     },
+    
 
-    getUsersForSocialSkills : async () => {
-      return await axios.get(`${apiUrl}/users`);
+    // Calculer la somme des points sociaux pour un utilisateur
+  getUsersForSocialSkills: async (userId) => {
+    try {
+      const response = await axios.get(`${apiUrl}/users/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des utilisateurs pour les compétences sociales:', error.message);
+      throw error;
     }
-
+  }
 };
+
+
 
 export default SocialSkillService;
 
