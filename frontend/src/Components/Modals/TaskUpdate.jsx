@@ -222,7 +222,7 @@ const TaskUpdate = ({
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1 className=" text-white ">Update task</h1>
+            <h1 className=" text-white h3 ">Update task</h1>
           </Modal.Title>
           <Button
             as={Col}

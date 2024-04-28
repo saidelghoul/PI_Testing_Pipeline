@@ -17,6 +17,7 @@ const notificationRoute = require("./routes/NotificationRoute");
 const activitiesRoute = require("./routes/activityRoute");
 const tasksRoute = require("./routes/taskRoute");
 const checklistsRoute = require("./routes/checklistRoute");
+const documentRoute = require("./routes/documentRoute");
 
 const publicationRoute = require("./routes/publicationRoutes");
 const evenementRoutes = require("./routes/EvenementRoutes");
@@ -105,13 +106,16 @@ app.use("/messages", messageRoute);
 app.use("/activities", activitiesRoute);
 app.use("/tasks", tasksRoute);
 app.use("/checklists", checklistsRoute);
+
+app.use("/documents", documentRoute);
 app.use("/socialSkills", socialSkillsRouter);
 app.use("/technicalSkills", technicalSkillsRouter);
 app.use("/user", require("./controller/userController"));
 
-
-app.use('/imagesUser', express.static(path.join(__dirname, 'public/imagesUser')));
-
+app.use(
+  "/imagesUser",
+  express.static(path.join(__dirname, "public/imagesUser"))
+);
 
 const port = 8000;
 

@@ -7,7 +7,7 @@ const TaskDelete = ({ upTask, refresh, show, handleClose, task, deleting }) => {
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1 className=" text-white ">Delete task</h1>
+            <h1 className=" text-white h3 ">Delete task</h1>
           </Modal.Title>
           <Button
             as={Col}

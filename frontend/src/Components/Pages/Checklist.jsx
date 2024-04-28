@@ -5,6 +5,8 @@ import ChecklistDelete from "../Modals/ChecklistDelete";
 import PropTypes from "prop-types";
 import { UserContext } from "../../../context/userContext";
 import toast from "react-hot-toast";
+import ViewFile from "../Modals/ViewFile";
+import DepositFile from "../Modals/DepositFile";
 
 const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
   const { user } = useContext(UserContext);
@@ -38,6 +40,19 @@ const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
   const [totalStars] = useState(10);
 
   /* pop up end*/
+
+  /* pop up*/
+  const [showFile, setShowFile] = useState(false);
+
+  const handleCloseFile = () => setShowFile(false);
+  const handleShowFile = () => setShowFile(true);
+
+  /* pop up*/
+
+  const [showDeposit, setShowDeposit] = useState(false);
+
+  const handleCloseDeposit = () => setShowDeposit(false);
+  const handleShowDeposit = () => setShowDeposit(true);
 
   const setScore = async (currentRating) => {
     setRating(currentRating);
@@ -123,16 +138,64 @@ const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
               </Button>
             </Col>
           </Row>
+
+          <Row>
+            {checkList?.doneDate !== null ? (
+              <p>Turned in: {checkList?.doneDate?.substr(0, 10)}</p>
+            ) : (
+              <p>Not turned in</p>
+            )}
+          </Row>
         </Card.Header>
         <Card.Body>
           <Card.Title className=" text-white ">{checkList.title}</Card.Title>
           <Card.Text className=" text-white ">
             -Assigned to:{checkList?.holder?.name} ( {checkList?.holder?.role} )
-            <br />
             {checkList?.description !== "" && (
-              <>-Description: {checkList?.description}</>
+              <>
+                <br />
+                -Description: {checkList?.description}
+              </>
             )}
+            <br />
+            -Rating :{checkList?.rating}
+            <br />
+            -Score :{checkList?.score}
           </Card.Text>
+          <Button variant="light" onClick={handleShowFile}>
+            Show{" "}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              className="bi bi-file-earmark-richtext"
+              viewBox="0 0 16 16"
+            >
+              <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z" />
+              <path d="M4.5 12.5A.5.5 0 0 1 5 12h3a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5m0-2A.5.5 0 0 1 5 10h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5m1.639-3.708 1.33.886 1.854-1.855a.25.25 0 0 1 .289-.047l1.888.974V8.5a.5.5 0 0 1-.5.5H5a.5.5 0 0 1-.5-.5V8s1.54-1.274 1.639-1.208M6.25 6a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" />
+            </svg>
+          </Button>
+          {user?.id === checkList?.holder?._id && (
+            <Button
+              variant="light"
+              onClick={handleShowDeposit}
+              className="ml-3"
+            >
+              Deposit{" "}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-upload"
+                viewBox="0 0 16 16"
+              >
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
+                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z" />
+              </svg>
+            </Button>
+          )}
           {toggle && user?.id !== checkList?.holder?._id ? (
             <div>
               {[...Array(totalStars)].map((star, index) => {
@@ -176,6 +239,13 @@ const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
         handleClose={handleCloseDelete}
         checklist={checkList}
         deleting={true}
+      />
+
+      <ViewFile show={showFile} handleClose={handleCloseFile} />
+      <DepositFile
+        show={showDeposit}
+        handleClose={handleCloseDeposit}
+        checkList={checkList}
       />
     </>
   );
