@@ -5,7 +5,6 @@ import EventPost from "./EventPost";
 import { postTypes } from "../../utils/const";
 
 export default function PostContainer({ postContent, fetchPosts }) {
-
   return (
     <div className="job-status-bar">
       <PostHeader postContent={postContent} fetchPosts={fetchPosts} />

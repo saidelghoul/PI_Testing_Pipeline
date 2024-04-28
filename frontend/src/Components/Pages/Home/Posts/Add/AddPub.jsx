@@ -49,10 +49,10 @@ export default function AddPub() {
     <>
       <div className="col-12" style={{ alignContent: "center" }}>
         <div className="acc-setting">
-          <h3>Création d'une publication</h3>
+          <h3>Create a new Post</h3>
           <form onSubmit={handleSubmit}>
             <div className="cp-field">
-              <h5>Sujet</h5>
+              <h5>Subject</h5>
               <div className="cpp-fiel">
                 <input
                   type="text"
@@ -61,22 +61,24 @@ export default function AddPub() {
                   name="sujet"
                   value={formData.sujet}
                   onChange={handleChange}
+                  required
                 />{" "}
               </div>
             </div>
             <div className="cp-field">
-              <h5>Contenu</h5>
+              <h5>Content</h5>
               <textarea
                 id="Contenue"
                 name="contenu"
                 value={formData.contenu}
                 onChange={handleChange}
+                required
               />
             </div>
             <div className="save-stngs pd3">
               <ul>
                 <li>
-                  <button type="submit">Ajouter</button>
+                  <button type="submit">Create</button>
                 </li>
               </ul>
             </div>

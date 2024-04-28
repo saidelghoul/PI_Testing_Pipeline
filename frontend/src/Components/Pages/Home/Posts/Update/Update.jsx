@@ -57,10 +57,10 @@ export default function Update() {
     <>
       <div className="col-12" style={{ alignContent: "center" }}>
         <div className="acc-setting">
-          <h3>Modification d'une publication</h3>
+          <h3>Update your Post</h3>
           <form onSubmit={handleSubmit}>
             <div className="cp-field">
-              <h5>Sujet</h5>
+              <h5>Subject</h5>
               <div className="cpp-fiel">
                 <input
                   type="text"
@@ -73,7 +73,7 @@ export default function Update() {
               </div>
             </div>
             <div className="cp-field">
-              <h5>Contenu</h5>
+              <h5>Content</h5>
               <textarea
                 id="Contenue"
                 name="Contenue"
@@ -84,7 +84,7 @@ export default function Update() {
             <div className="save-stngs pd3">
               <ul>
                 <li>
-                  <button type="submit">Modifier</button>
+                  <button type="submit">Update</button>
                 </li>
               </ul>
             </div>

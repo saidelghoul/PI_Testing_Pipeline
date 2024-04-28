@@ -5,6 +5,7 @@ import Feed from "./Feed/Feed.jsx";
 export default function Home() {
   const { user } = useContext(UserContext);
 
+
   return (
     <main>
       <div className="main-section">
@@ -17,8 +18,7 @@ export default function Home() {
                     <div className="user-profile">
                       <div className="username-dt">
                         <div className="usr-pic">
-                        {/* <img src={imageUrl} alt="Image de profil" /> */}
-
+                          {/* <img src={imageUrl} alt="Image de profil" /> */}
                         </div>
                       </div>
                       <div className="user-specs">
@@ -32,9 +32,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              {/* Feed */}
               <Feed />
-              
             </div>
           </div>
         </div>

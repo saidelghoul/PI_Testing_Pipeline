@@ -40,7 +40,6 @@ export default function UpdateEvent() {
   const formatDateString = (dateString) => {
     const date = new Date(dateString);
     return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`; // Format "jour/mois/année"
-    // Vous pouvez personnaliser le format de date selon vos besoins
   };
   const handleChange = (e) => {
     setFormData({
@@ -51,6 +50,18 @@ export default function UpdateEvent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { DateDebut, DateFin } = formData;
+
+    if (new Date(DateDebut) >= new Date(DateFin)) {
+      alert("La date de début doit être avant la date de fin.");
+      return;
+    }
+    const today = new Date();
+    if (new Date(DateDebut) <= today) {
+      alert("La date de début doit être ultérieure à aujourd'hui.");
+      return;
+    }
+
     try {
       await axios.put(`/evenemnt/update/${id}`, formData);
       alert("L'événement a été modifié avec succès");
@@ -65,10 +76,10 @@ export default function UpdateEvent() {
     <>
       <div className="col-12" style={{ alignContent: "center" }}>
         <div className="acc-setting">
-          <h3>Modifier un Événement</h3>
+          <h3>Update your Event</h3>
           <form onSubmit={handleSubmit}>
             <div className="cp-field">
-              <h5>Titre</h5>
+              <h5>Title</h5>
               <div className="cpp-fiel">
                 <input
                   type="text"
@@ -82,7 +93,7 @@ export default function UpdateEvent() {
             </div>
 
             <div className="cp-field">
-              <h5>Contenu</h5>
+              <h5>Content</h5>
               <textarea
                 id="description"
                 name="Contenu"
@@ -91,7 +102,7 @@ export default function UpdateEvent() {
               />
             </div>
             <div className="cp-field">
-              <h5>Date Début </h5>
+              <h5>Start Date </h5>
               <input
                 type="datetime-local"
                 name="DateDebut"
@@ -102,7 +113,7 @@ export default function UpdateEvent() {
               />
             </div>
             <div className="cp-field">
-              <h5>Date Fin</h5>
+              <h5> Finish Date </h5>
               <input
                 type="datetime-local"
                 name="DateFin"
@@ -113,7 +124,7 @@ export default function UpdateEvent() {
               />
             </div>
             <div className="cp-field">
-              <h5>Capacité</h5>
+              <h5>Capacite</h5>
               <input
                 type="number"
                 name="Capacite"
@@ -124,7 +135,7 @@ export default function UpdateEvent() {
               />
             </div>
             <div className="cp-field">
-              <h5>Prix</h5>
+              <h5>Price</h5>
               <input
                 type="number"
                 name="Prix"
@@ -138,7 +149,7 @@ export default function UpdateEvent() {
             <div className="save-stngs pd3">
               <ul>
                 <li>
-                  <button type="submit">Modifier</button>
+                  <button type="submit">Update</button>
                 </li>
               </ul>
             </div>

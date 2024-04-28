@@ -61,10 +61,10 @@ export default function AddEvent() {
     <>
       <div className="col-12" style={{ alignContent: "center" }}>
         <div className="acc-setting">
-          <h3>Création un Evenement</h3>
+          <h3>Create your event</h3>
           <form onSubmit={handleSubmit}>
             <div className="cp-field">
-              <h5>Titre</h5>
+              <h5>Title</h5>
               <div className="cpp-fiel">
                 <input
                   type="text"
@@ -78,7 +78,7 @@ export default function AddEvent() {
             </div>
 
             <div className="cp-field">
-              <h5>Contenu</h5>
+              <h5>Content</h5>
               <textarea
                 id="description"
                 name="contenu"
@@ -87,7 +87,7 @@ export default function AddEvent() {
               />
             </div>
             <div className="cp-field">
-              <h5>Date Début </h5>
+              <h5>Start Date </h5>
               <input
                 type="datetime-local"
                 name="datedeb"
@@ -98,7 +98,7 @@ export default function AddEvent() {
               />
             </div>
             <div className="cp-field">
-              <h5>Date Fin</h5>
+              <h5>Finish Date</h5>
               <input
                 type="datetime-local"
                 name="datefin"
@@ -109,7 +109,7 @@ export default function AddEvent() {
               />
             </div>
             <div className="cp-field">
-              <h5>Capacité</h5>
+              <h5>Places Available</h5>
               <input
                 type="number"
                 name="cap"
@@ -120,7 +120,7 @@ export default function AddEvent() {
               />
             </div>
             <div className="cp-field">
-              <h5>Prix</h5>
+              <h5>Price</h5>
               <input
                 type="number"
                 name="prix"
@@ -133,7 +133,7 @@ export default function AddEvent() {
             <div className="save-stngs pd3">
               <ul>
                 <li>
-                  <button type="submit">Ajouter</button>
+                  <button type="submit">Create</button>
                 </li>
               </ul>
             </div>
