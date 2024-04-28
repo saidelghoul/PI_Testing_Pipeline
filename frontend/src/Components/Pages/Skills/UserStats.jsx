@@ -54,19 +54,20 @@ function UserStats() {
   };
 
   return (
-    <div style={{ textAlign: "center" }}>
+    <div style={{ textAlign: "center" }}  >
+      <p>--------------------------------------</p>
       <h3>
         Vos statistiques vous permettent de connaître vos points forts et faibles.
       </h3>
-      <br />
-      <h2>
+      
+      <p>
         <b>Cela vous permettra de connaître vos points forts et faibles.</b>
-      </h2>
+      </p>
       <br />
       <br />
       <br />
       <div
-        className='col-6'
+        
         id="pie-chart" // Identifiant unique
         style={{
           ...chartSize,

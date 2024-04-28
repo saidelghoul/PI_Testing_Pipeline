@@ -24,6 +24,7 @@ function Leaderboard() {
   const [TaskPoints, setTaskPoints] = useState({});
   const [nbrTasksPoints, setNbrTasksPoints] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
+  
 
 
   const departmentName = user?.departement || "N/A";
@@ -39,80 +40,99 @@ function Leaderboard() {
     const fetchUsers = async () => {
       const listUsers = await getUsersForTask();
       let filteredUsers = listUsers.data.message;
+  
       const roleUserActuel = user.role;
       const departmentUserActuel = user.departement;
       const uniteUserActuel = user.unite;
-
-      
-
-
-// Conditions de filtrage selon le rôle de l'utilisateur actuel
-if (roleUserActuel === "Directeur d'étude") {
-  // Pas de filtre spécial, le directeur d'étude voit tout le monde
-} else if (roleUserActuel === 'Chef département') {
-  filteredUsers = filteredUsers.filter((usr) => {
-    
-    return (
-      ((usr.role === 'Enseignant' || usr.role === 'Chef unité') &&
-      usr.departmentDetails?.[0]?.name === departmentUserActuel) ||
-      usr._id === user.id
-    ); // Comparaison avec le nom du département
-  });
-} else if (roleUserActuel === 'Chef unité') {
-  filteredUsers = filteredUsers.filter((usr) => {
   
-    return (
-      (usr.role === 'Enseignant' &&
-      usr.departmentDetails?.[0]?.name === departmentUserActuel &&
-      usr.uniteDetails?.[0]?.name === uniteUserActuel) ||
-      usr._id === user.id
-    ); // Comparaison avec le nom du département et de l'unité
-  });
-} else if (roleUserActuel === 'Enseignant') {
-  filteredUsers = filteredUsers.filter((usr) => {
-    return usr._id === user.id;
-  }); // Afficher uniquement le user actuel
-}
-
-console.log("Liste finale des utilisateurs filtrés:", filteredUsers); // Pour vérifier le résultat final du filtrage
-
-
-
-
-
-      setUsers(filteredUsers);
-
+      // Conditions de filtrage selon le rôle de l'utilisateur actuel
+      if (roleUserActuel === "Directeur d'étude") {
+        // Le directeur d'étude voit tout le monde
+      } else if (roleUserActuel === 'Chef département') {
+        filteredUsers = filteredUsers.filter((usr) => (
+          (usr.role === 'Enseignant' || usr.role === 'Chef unité') &&
+          usr.departmentDetails?.[0]?.name === departmentUserActuel
+        ));
+      } else if (roleUserActuel === 'Chef unité') {
+        filteredUsers = filteredUsers.filter((usr) => (
+          usr.role === 'Enseignant' &&
+          usr.departmentDetails?.[0]?.name === departmentUserActuel &&
+          usr.uniteDetails?.[0]?.name === uniteUserActuel
+        ));
+      } else if (roleUserActuel === 'Enseignant') {
+        filteredUsers = filteredUsers.filter((usr) => usr._id === user.id);
+        console.log("Filtre",filteredUsers);
+      }
+  
+      console.log("Liste finale des utilisateurs filtrés:", filteredUsers);
+  
+      // Obtenir les scores sociaux, les scores des tâches et les scores finaux
       const socialScores = {};
       const taskScores = {};
       const nbrTasksScores = {};
-
+  
       await Promise.all(
         filteredUsers.map(async (usr) => {
           const socialResult = await socialSkillService.getSocialSkillsByUser(usr._id);
-          let socialScore = 0;
-          const socialSkills = Array.isArray(socialResult.socialSkills) ? socialResult.socialSkills : [];
-          socialSkills.forEach((skill) => {
-            socialScore += skill.pointSocial || 0; // Additionner les points sociaux
-          });
-
-          socialScores[usr._id] = socialScore*100;
-
+          const socialScore = socialResult.socialSkills.reduce(
+            (sum, skill) => sum + (skill.pointSocial || 0),
+            0
+          );
+          socialScores[usr._id] = socialScore * 100;
+  
           const checklistResult = await getChecklistScoreForUser(usr._id);
           const taskScore = checklistResult.data.message.somme || 1;
           const nbrTasks = checklistResult.data.message.numberOfTasks || 0;
-
+  
           taskScores[usr._id] = taskScore;
           nbrTasksScores[usr._id] = nbrTasks;
         })
       );
-
+  
+      // Calcul du score final pour chaque utilisateur
+      const finalUsers = filteredUsers.map((usr) => {
+        const finalScore = (socialScores[usr._id] || 0) + (TaskPoints[usr._id] || 0);
+        return {
+          ...usr,
+          finalScore,
+        };
+      });
+  
+      // Trouver Xmax et Xmin
+      const Xmax = Math.max(...finalUsers.map((usr) => usr.finalScore));
+      const Xmin = Math.min(...finalUsers.map((usr) => usr.finalScore));
+  
+      // Déterminer le rating pour chaque utilisateur
+      const ratedUsers = finalUsers.map((usr) => {
+        const Fi = (Xmax - usr.finalScore) / (Xmax - Xmin);
+        let rating;
+        if (Fi >= 0.8) {
+          rating = '⭐'; // 5 étoiles
+        } else if (Fi >= 0.6) {
+          rating = '⭐⭐'; // 4 étoiles
+        } else if (Fi >= 0.4) {
+          rating = '⭐⭐⭐'; // 3 étoiles
+        } else if (Fi >= 0.2) {
+          rating = '⭐⭐⭐⭐'; // 2 étoiles
+        } else {
+          rating = '⭐⭐⭐⭐⭐'; // 1 étoile
+        }
+  
+        return {
+          ...usr,
+          rating,
+        };
+      });
+  
+      setUsers(ratedUsers);
       setSocialPoints(socialScores);
       setTaskPoints(taskScores);
       setNbrTasksPoints(nbrTasksScores);
     };
-
+  
     fetchUsers(); // Appeler la fonction de récupération des utilisateurs
   }, [user]);
+  
 
   // Filtrer les utilisateurs selon le terme de recherche
   const filteredUsers = users.filter((usr) => {
@@ -171,28 +191,52 @@ sortedUsers.sort((a, b) => {
     pdf.setFont("Helvetica", "normal");
     pdf.text("Score des tâches = somme des points obtenus", 10, 45);
     
+    const getRowBackgroundColor = (index) => {
+      if (index < topQuartileIndex) {
+        return "lightgreen"; // Top 25%
+      } else if (index >= middleHalfIndex) {
+        return "lightcoral"; // Derniers 25%
+      } else {
+        return "white"; // 50% du milieu
+      }
+    };
+
     pdf.autoTable({
       startY: 70,
-      head: [['Rang', 'Nom', 'Rôle', 'Points sociaux', 'Score des tâches', 'Score final']],
+      head: [['Rang', 'Nom', 'Rôle', 'Points sociaux', 'Score des tâches','Score final','Rating']],
       body: sortedUsers.map((usr, index) => [
-        index + 1,
+        {
+          content: index + 1,
+          styles: { fillColor: getRowBackgroundColor(index) }, // Appliquer la couleur
+        },
         usr.name,
-        `${usr.role} (${usr.departmentDetails?.[0]?.name || "N/A"} / ${usr.uniteDetails?.[0]?.name || "N/A"})`, 
+        {
+          content: `${usr.role} (${usr.departmentDetails?.[0]?.name || "N/A"} / ${usr.uniteDetails?.[0]?.name || "N/A"})`,
+          styles: { fontStyle: 'bold' }, // Rendre le texte en gras
+        },
         socialPoints[usr._id] || 0,
         `${TaskPoints[usr._id] || 0} (/ ${nbrTasksPoints[usr._id]})`, 
         (socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0),
+        {
+          content : usr.rating.length,
+          styles: { fontStyle: 'bold' }
+        },
       ]),
     });
-    
+
     const pageHeight = pdf.internal.pageSize.getHeight();
-    pdf.setTextColor(255, 0, 0); 
+
+        pdf.setTextColor(255, 0, 0); 
     pdf.text("Ces données sont strictement confidentielles !", 10, pageHeight - 10); 
+    
+   
+
     
     const logoWidth = 30;
     const logoHeight = 30;
     pdf.addImage(espritLogo, 'PNG', 180, 10, logoWidth, logoHeight); 
     
-    const pdfFileName = `Leaderboard_${moment().format('DDMMYYYY')}.pdf`; 
+    const pdfFileName = `Leaderboard_${moment().format('DD-MM-YYYY')}.pdf`; 
     pdf.save(pdfFileName); 
   };
   
@@ -275,7 +319,7 @@ sortedUsers.sort((a, b) => {
     // Vérifier si le rang doit être affiché
     const shouldDisplayRank = isDirectorOfStudies || isChefDepartement || isChefUnite;
     const shouldDisplaySearchBar = isDirectorOfStudies || isChefDepartement || isChefUnite; // Condition pour afficher la barre de recherche
-    const shouldDisplayCamembert =  isEnseignant || isDirectorOfStudies; //condition pour afficher le camembert
+    const shouldDisplayCamembert =  isEnseignant || isDirectorOfStudies || isChefDepartement || isChefUnite; //condition pour afficher le camembert
 
 
      // Déterminer les indices pour les différentes parties
@@ -334,8 +378,9 @@ const getRowBackgroundColor = (index, userId) => {
             <th className="text-center">Nom 🙎‍♂️(❌ : vous)</th>
             <th className="text-center">Rôle 💼(Département/Unité)</th>
             <th className="text-center">Points sociaux 🗣️</th>
-            <th className="text-center">Score des tâches 📋</th>
+            <th className="text-center">Score des tâches 📋(/nbr de tâches📚)</th>
             <th className="text-center">Score final 🎯</th>
+            <th className="text-center">Rating⭐</th>
             <th className="text-center">Télécharger 📥</th>
           </tr>
         </thead>
@@ -360,6 +405,7 @@ const getRowBackgroundColor = (index, userId) => {
               <td className="text-center">{socialPoints[usr._id] || 0}</td>
               <td className="text-center">{TaskPoints[usr._id]} (/ {nbrTasksPoints[usr._id]})</td>
               <td className="text-center">{(socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0)}</td>
+              <td className="text-center">{usr.rating}</td>
               <td className="text-center">
                 <Button variant="secondary" onClick={() => downloadUserPDF(usr)}>Télécharger</Button>
               </td>
@@ -367,7 +413,7 @@ const getRowBackgroundColor = (index, userId) => {
           ))}
         </tbody>
       </Table>
-      {shouldDisplayCamembert &&<div className="text-center"> {/* Pour centrer le camembert */}
+      {shouldDisplayCamembert &&<div className="d-flex justify-content-center "> {/* Pour centrer le camembert */}
           <UserStats />
         </div>}
     </div>
