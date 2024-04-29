@@ -101,17 +101,17 @@ const registerUser = async (req, res) => {
     const mailOptions = {
       from: 'marwakb4@gmail.com',
       to: email,
-      subject: 'Confirmation de votre inscription',
-      text: `Cliquez sur ce lien pour confirmer votre inscription : ${process.env.CLIENT_URL}/confirm/${emailToken} ou bien cliquer sur  ${process.env.CLIENT_URL1}/confirm/${emailToken}`,
+      subject: 'Confirmation of your registration',
+      text: `Please confirm your registration by clicking on the provided link.  : ${process.env.CLIENT_URL}/confirm/${emailToken} or this  ${process.env.CLIENT_URL1}/confirm/${emailToken}`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log(error);
-        return res.json({ error: 'Échec d envoi de l\'e-mail de confirmation' });
+        return res.json({ error: 'Failed to send confirmation email!' });
       }
-      console.log('Email envoyé: ' + info.response);
-      res.json({ message: 'Un e-mail de confirmation a été envoyé' });
+      console.log('Email sent: ' + info.response);
+      res.json({ message: 'A confirmation email has been sent' });
     });
 
 
@@ -128,18 +128,18 @@ const confirmEmail = async (req, res) => {
     const user = await User.findOne({ emailToken: token });
 
     if (!user) {
-      return res.json({ error: 'Token invalide ou expiré' });
+      return res.json({ error: 'Invalid or expired token' });
     }
 
     user.isEmailVerified = true;
     user.emailToken = ''; 
     await user.save();
 
-    res.json({ message: 'Votre compte a été activé avec succès' });
+    res.json({ message: 'Your account has been successfully activated' });
 
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: 'Erreur serveur' });
+    res.status(500).json({ error: 'Server Error' });
   }
 };
 
@@ -151,15 +151,15 @@ const loginUser = async (req, res) => {
     // Vérifier si l'utilisateur existe
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({ error: "Aucun utilisateur trouvé" });
+      return res.json({ error: "No users found" });
     }
     // Vérifier si le compte de l'utilisateur est actif
     if (!user.isActive) {
-      return res.json({ error: "compte désactivé" });
+      return res.json({ error: "Account Disabled" });
     }
 
     if (!user.emailToken && !user.isEmailVerified ) {
-      return res.json({ error: "Veuillez vérifier votre adresse e-mail pour activer votre compte" });
+      return res.json({ error: "Please verify your email address to activate your account!" });
     }
   
     // Vérifier si les mots de passe correspondent
@@ -206,10 +206,10 @@ const getProfile = async (req, res) => {
   if (token) {
     jwt.verify(token, process.env.JWT_SECRET, {}, async (err, decodedToken) => {
       if (err) {
-        console.error("Erreur lors du décodage du token :", err);
+        console.error("Error while decoding the token:", err);
         return res
           .status(500)
-          .json({ error: "Erreur lors du décodage du token" });
+          .json({ error: "Error while decoding the token" });
       }
       const {
         id,
@@ -232,7 +232,7 @@ const getProfile = async (req, res) => {
       if (!id) {
         return res
           .status(400)
-          .json({ error: "ID d'utilisateur non trouvé dans le token" });
+          .json({ error: "User ID not found in token" });
       }
       // L'ID de l'utilisateur est disponible ici
       res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // désactive la mise en cache
@@ -280,7 +280,7 @@ const getProfile = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  res.clearCookie('token').json({ message: 'Déconnexion réussie' });
+  res.clearCookie('token').json({ message: 'Logout successful' });
 };
 
 const forgotPassword = async (req, res) => {
@@ -289,7 +289,7 @@ const forgotPassword = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({ error: 'Aucun utilisateur trouvé avec cet e-mail' });
+      return res.json({ error: 'No users found with this email' });
     }
 
     // Generate reset token
@@ -312,17 +312,17 @@ const forgotPassword = async (req, res) => {
     const mailOptions = {
       from: 'marwakb4@gmail.com',
       to: email,
-      subject: 'Demande de réinitialisation du mot de passe',
-      text: `Cliquez sur ce lien pour réinitialiser votre mot de passe : ${process.env.CLIENT_URL}/reset/${resetToken}  ou bien cliquer ce lien ${process.env.CLIENT_URL1}/reset/${resetToken}`,
+      subject: 'Password reset request',
+      text: ` Click this link to reset your password: ${process.env.CLIENT_URL}/reset/${resetToken} or click this link  ${process.env.CLIENT_URL1}/reset/${resetToken}`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log(error);
-        return res.json({ error: 'Échec d envoi de e-mail' });
+        return res.json({ error: 'Failed to send email' });
       }
-      console.log('Email envoyé: ' + info.response);
-      res.json({ message: 'E-mail envoyé avec les instructions de réinitialisation du mot de passe' });
+      console.log('Email sent: ' + info.response);
+      res.json({ message: 'Email sent with password reset instructions' });
     });
   } catch (error) {
     console.log(error);

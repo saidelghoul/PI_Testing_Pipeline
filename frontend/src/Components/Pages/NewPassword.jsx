@@ -62,13 +62,13 @@ const NewPassword = () => { // Supprimez { match } de la déstructuration des pr
                   <br/>
                   <br/>
                   <br/>
-        <h2>Entrez votre nouveau mot de passe</h2>
+        <h2>Enter your new password</h2>
         
         {message && <p className="success">{message}</p>}
         {error && <p className="error">{error}</p>}
         
         <div className="form-group">
-          <label>Nouveau mot de passe :</label>
+          <label>New Password:</label>
           <input
             type="password"
             value={newPassword}
@@ -78,7 +78,7 @@ const NewPassword = () => { // Supprimez { match } de la déstructuration des pr
         </div>
         
         <button onClick={handleResetPassword} className="btn btn-primary">
-          Réinitialiser le mot de passe
+        Reset password
         </button>
         </div>
               </div>

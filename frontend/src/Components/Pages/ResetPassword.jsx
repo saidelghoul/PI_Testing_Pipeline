@@ -64,13 +64,13 @@ export default function ResetPassword() {
                   <br/>
                   <br/>
                 
-              <h2>Mot de passe oublié ?</h2>
+              <h2>Forgot your password ?</h2>
       <br/>
       {message && <p className="success">{message}</p>}
       {error && <p className="error">{error}</p>}
       
       <div className="form-group">
-        <label>Veuillez ecriver votre Email :  </label>
+        <label> Please write your Email: </label>
         <br/>   <br/>
      
         <input
@@ -82,7 +82,7 @@ export default function ResetPassword() {
       </div>
       
       <button onClick={handleForgotPassword} className="btn btn-primary">
-        Envoyer le lien de réinitialisation
+      Send reset link
       </button>
               </div>
               </div>

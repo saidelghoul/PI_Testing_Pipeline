@@ -201,7 +201,7 @@ export default function Profils() {
                               title=""
                               onClick={fetchUserData}
                             >
-                              mettre a jour mon profil
+                             update my profile 
                             </a>
                           </li>
                         </ul>
@@ -213,22 +213,21 @@ export default function Profils() {
                         {isAdmin && (
                           <div>
                             <a href="/completerProfil" title="">
-                              <i className="la la-user"></i> Mes chefs
-                              département
+                              <i className="la la-user"></i> My department heads 
                             </a>
                           </div>
                         )}
                         {isChefDep && (
                           <div>
                             <a href="/completerProfil" title="">
-                              <i className="la la-user"></i> Mes chefs unité
+                              <i className="la la-user"></i> My unit leaders
                             </a>
                           </div>
                         )}
                         {isChefUnite && (
                           <div>
                             <a href="/completerProfil" title="">
-                              <i className="la la-user"></i> Mes enseignants
+                              <i className="la la-user"></i> My teachers
                             </a>
                           </div>
                         )}
@@ -238,19 +237,19 @@ export default function Profils() {
                       <ul className="social_links">
                         {!!user && user.gouvernorat && (
                           <li>
-                            <i className="la la-globe"> Gouvernorat : </i>
+                            <i className="la la-globe"> Governorate : </i>
                             <h3>{user.gouvernorat}</h3>
                           </li>
                         )}
                         {!!user && user.addresse && (
                           <li>
-                            <i className="la la-globe"> Ville : </i>
+                            <i className="la la-globe"> City : </i>
                             <h3>{user.addresse}</h3>
                           </li>
                         )}
                         {!!user && user.dateNaissance && (
                           <li>
-                            <i className="la la-globe"> Date de naissance : </i>
+                            <i className="la la-globe"> Birth Date : </i>
                             <h3>
                               {new Date(user.dateNaissance).toLocaleDateString(
                                 "fr-FR"
@@ -260,7 +259,7 @@ export default function Profils() {
                         )}
                         {!!user && user.telephone && (
                           <li>
-                            <i className="la la-globe"> Telephone : </i>
+                            <i className="la la-globe"> Phone number : </i>
                             <h3>{user.telephone}</h3>
                           </li>
                         )}

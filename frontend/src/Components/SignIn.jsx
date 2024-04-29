@@ -29,7 +29,7 @@ export default function SignIn() {
       })
       .catch((error) => {
         console.error(
-          "Erreur lors de la récupération des départements:",
+          "Error retrieving departments:",
           error
         );
       });
@@ -45,7 +45,7 @@ export default function SignIn() {
       })
       .catch((error) => {
         console.error(
-          "Erreur lors de la récupération des unités associées:",
+          "Error retrieving associated units:",
           error
         );
       });
@@ -109,20 +109,20 @@ export default function SignIn() {
 
     // Vérifier si un département a été sélectionné
     if (!selectedDepartementId) {
-      toast.error("Veuillez sélectionner un département.");
+      toast.error("Please select a department.");
       return;
   }
 
   if (!name || !email || !password || !confirmedPassword || !role || !selectedDepartementId || !selectedUnitId) {
-    toast.error("Tous les champs sont obligatoires.");
+    toast.error("All fields are mandatory.");
     return;
   }
   if (!email.endsWith("@esprit.tn")) {
-    toast.error("L'e-mail doit se terminer par @esprit.tn");
+    toast.error("The email must end with @esprit.tn");
     return;
   }
   if (password.length < 6) {
-    toast.error("Le mot de passe doit avoir au moins 6 caractères.");
+    toast.error("The password must be at least 6 characters long.");
     return;
   }
 
@@ -275,7 +275,7 @@ export default function SignIn() {
                         <div className="row">
                           <div className="signup-tab">
                             {/*<i className="fa fa-id-badge"></i>*/}
-                            <h2>Quelle est votre profession</h2>
+                            <h2>What is your profession</h2>
                             <div className="sn-field">
                               <select
                                 name="role"
@@ -288,16 +288,16 @@ export default function SignIn() {
                                 }
                               >
                                 <option >
-                                  choisir votre role
+                                choose your role
                                 </option>
                                 {/* <option value="Directeur d'étude">
                                   Directeur d'étude
                                 </option> */}
                                 <option value="Chef département">
-                                  Chef département
+                                  Chef departement
                                 </option>
-                                <option value="Chef unité">Chef unité</option>
-                                <option value="Enseignant">Enseignant</option>
+                                <option value="Chef unité">Chef unit</option>
+                                <option value="Enseignant">Teacher</option>
                               </select>
                               <i className="fa fa-address-card-o"></i>
                               <span>
@@ -346,7 +346,7 @@ export default function SignIn() {
                               value={registerdata.selectedDepartementId}
                               onChange={handleDepartementChange}
                             >
-                              <option value="">Choisir un département</option>
+                              <option value="Choose a department"></option>
                               {departements.map((departement) => (
                                 <option
                                   key={departement._id}
@@ -368,7 +368,7 @@ export default function SignIn() {
                               onChange={handleUnitChange}
                               disabled={!selectedDepartementId} // Désactiver si aucun département n'est sélectionné
                             >
-                              <option value="">Choisir une unité</option>
+                              <option value="Choose a unit"></option>
                               {units.map((unit) => (
                                 <option key={unit._id} value={unit._id}>
                                   {unit.name}
@@ -386,7 +386,7 @@ export default function SignIn() {
                               <input
                                 type="password"
                                 name="password"
-                                placeholder="mot de passe"
+                                placeholder="password"
                                 value={registerdata.password}
                                 onChange={(e) =>
                                   setRegisterData({
@@ -403,7 +403,7 @@ export default function SignIn() {
                               <input
                                 type="password"
                                 name="repeat-password"
-                                placeholder="confirmer votre mot de passe.."
+                                placeholder="repeat password.."
                                 value={registerdata.confirmedPassword}
                                 onChange={(e) =>
                                   setRegisterData({
@@ -418,7 +418,7 @@ export default function SignIn() {
                          
                           <div className="col-lg-12 no-pdd">
                             <button type="submit" value="submit">
-                              Enregistrer
+                              Submit
                             </button>
                           </div>
                         </div>

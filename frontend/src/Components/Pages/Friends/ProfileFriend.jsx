@@ -23,7 +23,7 @@ const coverImageUrl = user && user.coverImage
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Erreur lors de la récupération de l\'utilisateur:', error);
+        console.error('Error retrieving users : ', error);
       });
   }, [id]);
 
@@ -64,12 +64,11 @@ const coverImageUrl = user && user.coverImage
                         <ul className="flw-status">
                       
                           <li>
-                            <span>Following</span>
-                            <b>34</b>
+                          <h3> city :{user.ville}</h3>
+
                           </li>
                           <li>
-                            <span>Followers</span>
-                            <b>155</b>
+                            
                           </li>
                         </ul>
                       </div>
@@ -166,7 +165,7 @@ const coverImageUrl = user && user.coverImage
                       {/* <h3> {!!user && <>{user.name}</>}</h3> */}
                       <h3>{user.name}</h3>
                       <div className="star-descp">
-                      <span>Rôle: {user.role}</span>
+                      <span>Role : {user.role}</span>
 
                         {/* <span> {!!user && <>{user.role}</>}</span> */}
                         <ul>

@@ -41,13 +41,13 @@ export default function SucessPage() {
    <br/>
   
    <div className="form-group">
-     <label>Merci pour votre inscription  </label>
-     <br/>   un mail de confirmation a été envoyé ! <br/>
-  
-     veuillez consulter votre mail pour confirmer votre inscription
+     <label> Thank you for your registration </label>
+     <br/>  a confirmation email has been sent!  <br/>
+     please check your email to confirm your registration
+    
    </div>
    <button onClick={handleBackToHome} className="btn btn-primary">
-          Retour à l'accueil
+       Signin
         </button>
    
            </div>

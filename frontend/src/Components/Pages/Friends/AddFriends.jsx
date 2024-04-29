@@ -28,7 +28,7 @@ export default function AddFriends() {
         setTotalPages(Math.ceil(response.data.length / itemsPerPage));
       })
       .catch((error) => {
-        console.error("Erreur lors de la récupération des users:", error);
+        console.error("Error retrieving users:", error);
       });
   }, []);
  
