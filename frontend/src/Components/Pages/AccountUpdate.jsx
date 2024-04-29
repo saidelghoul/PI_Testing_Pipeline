@@ -138,9 +138,19 @@ export default function AccountUpdate() {
   const toggleUserActivation = async (userId, isActive) => {
     try {
       await axios.put(`/user/${isActive ? 'activate' : 'deactivate'}/${userId}`);
-      // Actualiser les données après l'activation ou la désactivation de l'utilisateur
-      fetchChefsDep();
-
+      // fetchChefsDep();
+      if (user) {
+        if (isAdmin) {
+          fetchChefsDep();
+        }
+        if (isChefDep) {
+          fetchChefUnite();
+          fetchDepEns();
+        }
+        if (isChefUnite) {
+          fetchEns();
+        }
+      }
     } catch (error) {
       console.error("Error toggling user activation:", error);
     }
