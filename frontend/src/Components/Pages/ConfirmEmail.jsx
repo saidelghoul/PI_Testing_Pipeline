@@ -27,7 +27,7 @@ const ConfirmEmail = () => {
 
       } catch (error) {
         console.error(error.response.data);
-        setMessage('Erreur lors de la confirmation de l\'e-mail');
+        setMessage('Error confirming email');
       }
     };
 
@@ -67,7 +67,7 @@ const ConfirmEmail = () => {
      <div>
       <p>{message}</p>
       <Link to="/">
-        <button  className="btn btn-primary">Confirmer mon inscription</button>
+        <button  className="btn btn-danger">Confirm my registration</button>
       </Link>
     </div>
     </div>

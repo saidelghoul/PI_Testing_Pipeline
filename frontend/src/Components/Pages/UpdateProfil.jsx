@@ -179,7 +179,7 @@ export default function UpdateProfil() {
                       aria-controls="nav-acc"
                       aria-selected="true"
                     >
-                      <i className="la la-cogs"></i>Update my profile
+                      🪪 Update my profile
                     </a>
                     <a
                  className="nav-item nav-link"
@@ -190,7 +190,7 @@ export default function UpdateProfil() {
                  aria-controls="nav-dep"
                  aria-selected="false"
                >
-                 <i className="la la-cogs"></i>Add photos
+                 ⚙️ Add photos
                </a>
                     </div>
                     
@@ -341,16 +341,16 @@ export default function UpdateProfil() {
          <div className="tab-pane fade" id="nav-dep" role="tabpanel" aria-labelledby="nav-dep-tab">
          <div className="post-project-fields">
         <div className="lt-sec">
-        <div>
+        <div className="col-lg-12">
           
-      <label htmlFor="profileImage">Profile picture:</label>
+      <label>Profile picture:</label>
       <input type="file" id="profileImage" onChange={handleFileChange} />
     </div>
     <div>
-      <label htmlFor="coverImage">Cover image:</label>
+      <label>Cover image:</label>
       <input type="file" id="coverImage" onChange={handleCoverFileChange} />
     </div>
-    <button onClick={handleUpload}>Submit</button>
+    <button className="active" type="submit" value="post" onClick={handleUpload}>Submit</button>
   
         </div>
        </div>

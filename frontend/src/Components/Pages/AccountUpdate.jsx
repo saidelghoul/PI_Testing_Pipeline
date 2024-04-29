@@ -3,6 +3,7 @@ import { useContext, useState,useEffect } from "react";
 import axios from "axios";
 import { UserContext } from "../../../context/userContext.jsx";
 import ReactPaginate from "react-paginate";
+import Table from 'react-bootstrap/Table';
 
 
 export default function AccountUpdate() {
@@ -414,19 +415,25 @@ export default function AccountUpdate() {
         
         <div className="lt-sec">
           {/* <img src="/assets/images/about.png" alt="" /> */}
-          <h4>List of chef department</h4>
+          <h1 className="h3 mb-3 col-md-12 ">List of chef department</h1>
           <div className="search-bar1">
             <form>
               <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
             onChange={(e) => setSearchTerm(e.target.value)} />
+            
               <button type="submit">
                 <i className="la la-search"></i>
               </button>
-            </form>
+            </form>          
           </div>
-          <br/>
-          <table className="table table-sm">
-            <thead>
+          <div>
+          <div className="empty-space" style={{ width: '20px', height: '20px' }}></div>
+
+          
+          <div className="add-billing-method">
+
+          <Table striped bordered hover>            
+          <thead>
               <tr>
                 <th scope="col">Name </th>
                 <th scope="col">Email</th>
@@ -450,7 +457,11 @@ export default function AccountUpdate() {
               
                 </tr>
                 
-              ))}    <ReactPaginate
+              ))}  
+            </tbody>
+            
+                        </Table>
+                        <ReactPaginate
               pageCount={totalPages}
               pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
               marginPagesDisplayed={2} // Nombre de pages à afficher avant et après les ellipses
@@ -458,16 +469,15 @@ export default function AccountUpdate() {
               containerClassName={"pagination"}
               activeClassName={"active"}
             />
-            </tbody>
-          </table>
+        </div>
         </div>
       </div>
-
+      </div>
       {/* Onglet des départements */}
       <div className="tab-pane fade" id="nav-dep" role="tabpanel" aria-labelledby="nav-dep-tab">
         <div className="lt-sec">
           {/* <img src="/assets/images/lt-icon.png" alt="" /> */}
-          <h4>List of departments</h4>
+          <h1 className="h3 mb-3 col-md-12 ">List of departments</h1>
           <div className="search-bar1">
             <form>
               <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
@@ -476,9 +486,10 @@ export default function AccountUpdate() {
                 <i className="la la-search"></i>
               </button>
             </form>
+            <br/>
           </div>
-
-          <table className="table table-sm">
+          <div className="add-billing-method">
+          <Table striped bordered hover>            
             <thead>
               <tr>
                 <th scope="col">Department name</th>
@@ -515,7 +526,7 @@ export default function AccountUpdate() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
           <ReactPaginate
               pageCount={totalPages}
               pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
@@ -524,6 +535,7 @@ export default function AccountUpdate() {
               containerClassName={"pagination"}
               activeClassName={"active"}
             />
+            </div>
         </div>
         {/* Formulaire d'ajout/modification de département */}
         <div className="add-billing-method">
@@ -597,7 +609,7 @@ export default function AccountUpdate() {
       <div className="tab-pane fade show active" id="nav-chef" role="tabpanel" aria-labelledby="nav-chef-tab">
         <div className="lt-sec">
           {/* <img src="/assets/images/lt-icon.png" alt="" /> */}
-          <h4>List of chef unit</h4>
+          <h1 className="h3 mb-3 col-md-12 ">List of chef unit</h1>
 <div className="search-bar1">
             <form>
               <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
@@ -607,7 +619,9 @@ export default function AccountUpdate() {
               </button>
             </form>
           </div>
-          <table className="table table-sm">
+          <div className="add-billing-method">
+
+          <Table striped bordered hover>            
             <thead>
               <tr>
                 <th scope="col">Full Name</th>
@@ -632,7 +646,7 @@ export default function AccountUpdate() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
           <ReactPaginate
               pageCount={totalPages}
               pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
@@ -642,13 +656,14 @@ export default function AccountUpdate() {
               activeClassName={"active"}
             />
         </div>
+        </div>
       </div>
 
       {/* Onglet des enseignants */}
       <div className="tab-pane fade" id="nav-ens" role="tabpanel" aria-labelledby="nav-ens-tab">
         <div className="lt-sec">
           {/* <img src="/assets/images/lt-icon.png" alt="" /> */}
-          <h4>List of teachers</h4>
+          <h1 className="h3 mb-3 col-md-12 ">List of teachers</h1>
           <div className="search-bar1">
             <form>
               <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
@@ -658,7 +673,9 @@ export default function AccountUpdate() {
               </button>
             </form>
           </div>
-          <table className="table table-sm">
+          <div className="add-billing-method">
+
+          <Table striped bordered hover>            
             <thead>
               <tr>
                 <th scope="col">Full Name</th>
@@ -681,9 +698,8 @@ export default function AccountUpdate() {
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
-        <ReactPaginate
+          </Table>
+          <ReactPaginate
               pageCount={totalPages}
               pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
               marginPagesDisplayed={2} // Nombre de pages à afficher avant et après les ellipses
@@ -691,13 +707,16 @@ export default function AccountUpdate() {
               containerClassName={"pagination"}
               activeClassName={"active"}
             />
+        </div>
+      
+      </div>
       </div>
 
       {/* Onglet des unités */}
       <div className="tab-pane fade" id="nav-unite" role="tabpanel" aria-labelledby="nav-unite-tab">
         <div className="lt-sec">
           {/* <img src="/assets/images/lt-icon.png" alt="" /> */}
-          <h4>List of units</h4>
+          <h1 className="h3 mb-3 col-md-12 ">List of units</h1>
           <div className="search-bar1">
             <form>
               <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
@@ -707,7 +726,9 @@ export default function AccountUpdate() {
               </button>
             </form>
           </div>
-          <table  className="table table-sm">
+          <div className="add-billing-method">
+
+          <Table striped bordered hover>            
             <thead>
               <tr>
                 <th scope="col">Unit Name</th>
@@ -740,7 +761,7 @@ export default function AccountUpdate() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
           <ReactPaginate
               pageCount={totalPages}
               pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
@@ -749,7 +770,7 @@ export default function AccountUpdate() {
               containerClassName={"pagination"}
               activeClassName={"active"}
             />
-        </div>
+        </div></div>
         {/* Formulaire d'ajout/modification d'unité */}
         <div className="add-billing-method">
           <h3>{isEditingUnit ? "Update unit" : "Add unit"}</h3>
@@ -787,7 +808,7 @@ export default function AccountUpdate() {
 
                        {isChefUnite && (  <div className="lt-sec">
                           {/* <img src="/assets/images/lt-icon.png" alt="" /> */}
-                          <h4>list of teachers</h4>
+                          <h1 className="h3 mb-3 col-md-12 ">list of teachers</h1>
                           <div className="search-bar1">
             <form>
               <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
@@ -797,7 +818,9 @@ export default function AccountUpdate() {
               </button>
             </form>
           </div>
-                          <table className="table table-sm">
+          <div className="add-billing-method">
+
+          <Table striped bordered hover>            
                             <thead>
                               <tr>
                                 <th scope="col">Full Name</th>
@@ -821,7 +844,7 @@ export default function AccountUpdate() {
                                 </tr>
                               ))}
                             </tbody>
-                          </table>
+                          </Table>
                           <ReactPaginate
               pageCount={totalPages}
               pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
@@ -831,9 +854,9 @@ export default function AccountUpdate() {
               activeClassName={"active"}
             />
                        </div>
-                      
+                       </div>  
+
                       )}
-                       
                   </div>
                 </div>
               </div>

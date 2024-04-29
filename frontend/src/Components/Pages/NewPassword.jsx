@@ -42,8 +42,9 @@ const NewPassword = () => { // Supprimez { match } de la déstructuration des pr
                 <div className="cmp-info">
                   <div className="cm-logo">
                     <img src="/assets/images/esprit.png" alt="" />
-                  </div>
+               
                   <img src="/assets/images/cm-main-img.png" alt="" />
+                </div>
                 </div>
               </div>
               <div className="col-lg-6">
@@ -62,8 +63,8 @@ const NewPassword = () => { // Supprimez { match } de la déstructuration des pr
                   <br/>
                   <br/>
                   <br/>
-        <h2>Enter your new password</h2>
-        
+        <h4>Enter your new password </h4>
+        <br/>
         {message && <p className="success">{message}</p>}
         {error && <p className="error">{error}</p>}
         
@@ -77,7 +78,7 @@ const NewPassword = () => { // Supprimez { match } de la déstructuration des pr
           />
         </div>
         
-        <button onClick={handleResetPassword} className="btn btn-primary">
+        <button onClick={handleResetPassword} className="btn btn-danger">
         Reset password
         </button>
         </div>
