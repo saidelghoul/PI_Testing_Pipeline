@@ -135,6 +135,22 @@ export default function AccountUpdate() {
       console.error("Error fetching users:", error);
     }
   };
+
+  const sendSMS = async (to) => {
+    const formattedTo = '+216' + to;
+  
+    try {
+      await axios.post('/send-sms', {
+        to: formattedTo,
+        body: 'Your ESPRIT SOCIAL NETWORK account has been disabled. Please contact your administrator for verification.'
+      });
+      console.log('SMS sent successfully!');
+    } catch (error) {
+      console.error('Error sending SMS:', error);
+    }
+  };
+  
+
   const toggleUserActivation = async (userId, isActive) => {
     try {
       await axios.put(`/user/${isActive ? 'activate' : 'deactivate'}/${userId}`);
@@ -149,6 +165,15 @@ export default function AccountUpdate() {
         }
         if (isChefUnite) {
           fetchEns();
+        }
+      }
+      if (!isActive) {
+        const response = await axios.get(`/user/getbyid/${userId}`); 
+        const user = response.data; 
+        if (user.telephone) {
+          await sendSMS(user.telephone);
+        } else {
+          console.error('No phone number found for the user.');
         }
       }
     } catch (error) {
@@ -308,6 +333,8 @@ export default function AccountUpdate() {
     }
   };
  
+
+  
   
   return (
     <>
@@ -437,11 +464,9 @@ export default function AccountUpdate() {
             </form>          
           </div>
           <div>
-          <div className="empty-space" style={{ width: '20px', height: '20px' }}></div>
-
-          
+          <div className="space-between"></div>
           <div className="add-billing-method">
-
+          
           <Table striped bordered hover>            
           <thead>
               <tr>

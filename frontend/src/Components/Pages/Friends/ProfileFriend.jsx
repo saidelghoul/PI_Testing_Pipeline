@@ -54,16 +54,42 @@ const coverImageUrl = user && user.coverImage
                       <div className="user-pro-img">
                       {/* <img src={imageUrl} alt="Image de profil" /> */}
                     
-    <img src={imageUrl} alt="Image de profil" />
+                       <img src={imageUrl} alt="Image de profil" />
   
 
                         <div className="add-dp" id="OpenImgUpload"></div>
                       </div>
-                      <div className="user_pro_status">
-                  
+                      <ul className="social_links">
+                        {!!user && user.gouvernorat && (
+                          <li>
+                            🌍<span>Governorate : </span> 
+                            <h3>{user.gouvernorat}</h3>
+                          </li>
+                        )}
+                        {!!user && user.addresse && (
+                          <li>
+                          📌<span> City : </span>
+                               <h3>{user.addresse}</h3>
+                          </li>
+                        )}
+                        {!!user && user.dateNaissance && (
+                          <li>
+                            📆<span>Birth Date :</span>  
+                            <h3>
+                              {new Date(user.dateNaissance).toLocaleDateString(
+                                "fr-FR"
+                              )}
+                            </h3>
+                          </li>
+                        )}
+                        {!!user && user.telephone && (
+                          <li>
+                            📲 <span>Phone number :</span> 
+                            <h3>{user.telephone}</h3>
+                          </li>
+                        )}
                        
-                      </div>
-                      <br />
+                      </ul>
                      
                       <div>
                         <br></br>

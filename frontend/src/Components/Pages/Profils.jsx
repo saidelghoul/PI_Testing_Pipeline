@@ -200,14 +200,14 @@ export default function Profils() {
                         {isAdmin && (
                           <div>
                             <a href="/completerProfil" title="">
-                              <i className="la la-user"></i> My department heads 
+                              <i className="la la-user"></i> My chefs department  
                             </a>
                           </div>
                         )}
                         {isChefDep && (
                           <div>
                             <a href="/completerProfil" title="">
-                              <i className="la la-user"></i> My unit leaders
+                              <i className="la la-user"></i> My chefs unit 
                             </a>
                           </div>
                         )}

@@ -9,6 +9,7 @@ const http = require("http"); // Importez le module http de Node.js
 const { mongoose } = require("mongoose");
 const socketIo = require("socket.io");
 const multer = require("multer");
+const twilio = require('twilio');
 
 const messageRoute = require("./routes/ConversationRoute");
 const notificationRoute = require("./routes/NotificationRoute");
@@ -111,6 +112,32 @@ app.use("/user", require("./controller/userController"));
 
 
 app.use('/imagesUser', express.static(path.join(__dirname, 'public/imagesUser')));
+
+
+const accountSid = 'AC123f75a58cfaeaad10128a4d8a8ac843';
+const authToken = '58b03b9ac98cffd551468d55cf18da4f';
+
+const client = twilio(accountSid, authToken);
+
+app.post('/send-sms', (req, res) => {
+  const { to, body } = req.body;
+
+  client.messages
+    .create({
+      body: body,
+      from: '+13343397288',
+      to: to
+    })
+    .then(message => {
+      console.log('SMS sent:', message.sid);
+      res.send('SMS sent successfully!');
+    })
+    .catch(err => {
+      console.error('Error sending SMS:', err);
+      res.status(500).send('Failed to send SMS');
+    });
+});
+
 
 
 const port = 8000;
