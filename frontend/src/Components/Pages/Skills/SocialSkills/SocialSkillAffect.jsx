@@ -63,10 +63,10 @@ function SocialSkillAffect({userId}) {
                         <h3>
                           <a href="#" title="" className="skills-open">
                             Skills
-                          </a>{" "}
+                          </a>
                           <a href="#" title="" className="skills-open">
                             <i className="fa fa-pencil"></i>
-                          </a>{" "}
+                          </a>
                           
                          
                           {/*<Link to={`/affectSkill/${user._id}` }>

@@ -198,6 +198,7 @@ async function getUsersForTask(req, res) {
           role: 1,
           "departmentDetails.name": 1, // Extraire le nom du département
           "uniteDetails.name": 1, // Extraire le nom de l'unité
+          profileImage :1
         },
       },
     ]);

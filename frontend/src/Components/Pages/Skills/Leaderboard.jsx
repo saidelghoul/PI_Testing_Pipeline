@@ -14,6 +14,10 @@ import fiveStars from '../../../../public/assets/images/stars/5Stars.jpg';
 import UserStats, { generatePieChartBase64 } from './UserStats';
 import html2canvas from 'html2canvas'; // Assurez-vous que cela est correct
 import axios from 'axios';
+import ReactPaginate from 'react-paginate';
+import { Link } from 'react-router-dom';
+import * as XLSX from 'xlsx'; // Importez SheetJS
+
 
 
 
@@ -24,6 +28,11 @@ function Leaderboard() {
   const [TaskPoints, setTaskPoints] = useState({});
   const [nbrTasksPoints, setNbrTasksPoints] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentUserRating, setCurrentUserRating] = useState('');
+  const [currentPage, setCurrentPage] = useState(0);
+  //const [totalPages, setTotalPages] = useState(0);
+  const itemsPerPage = 10; // Nombre d'éléments par page (ajustez si nécessaire)
+  //console.log("user Actu",user);
   
 
 
@@ -61,10 +70,15 @@ function Leaderboard() {
         ));
       } else if (roleUserActuel === 'Enseignant') {
         filteredUsers = filteredUsers.filter((usr) => usr._id === user.id);
-        console.log("Filtre",filteredUsers);
+        //console.log("Filtre",filteredUsers);
       }
   
-      console.log("Liste finale des utilisateurs filtrés:", filteredUsers);
+      //console.log("Liste finale des utilisateurs filtrés:", filteredUsers);
+
+      filteredUsers.forEach((usr) => {
+        //console.log(`Utilisateur : ${usr.name}, Image de profil : ${usr.profileImage}`);
+      });
+      
   
       // Obtenir les scores sociaux, les scores des tâches et les scores finaux
       const socialScores = {};
@@ -73,6 +87,7 @@ function Leaderboard() {
   
       await Promise.all(
         filteredUsers.map(async (usr) => {
+          //console.log("ONESTLA",usr)
           const socialResult = await socialSkillService.getSocialSkillsByUser(usr._id);
           const socialScore = socialResult.socialSkills.reduce(
             (sum, skill) => sum + (skill.pointSocial || 0),
@@ -100,8 +115,9 @@ function Leaderboard() {
   
       // Trouver Xmax et Xmin
       const Xmax = Math.max(...finalUsers.map((usr) => usr.finalScore));
+      console.log("xmax", Xmax);
       const Xmin = Math.min(...finalUsers.map((usr) => usr.finalScore));
-  
+      console.log("xmin", Xmin);
       // Déterminer le rating pour chaque utilisateur
       const ratedUsers = finalUsers.map((usr) => {
         const Fi = (Xmax - usr.finalScore) / (Xmax - Xmin);
@@ -123,7 +139,9 @@ function Leaderboard() {
           rating,
         };
       });
-  
+       // Obtenir le rating de l'utilisateur actuel
+       const currentUser = ratedUsers.find((usr) => usr._id === user._id);
+       setCurrentUserRating(currentUser ? currentUser.rating : '');
       setUsers(ratedUsers);
       setSocialPoints(socialScores);
       setTaskPoints(taskScores);
@@ -175,11 +193,16 @@ sortedUsers.sort((a, b) => {
 
 
 
+ //console.log("Imggg",user);
+ const imageUrl = (usrId, usr) => {
+  if (usrId && usr && usr.profileImage) {
+    return `http://localhost:8000/user/${usrId}/profile`;
+  } else {
+    return "/assets/images/resources/user-pro-img.png";
+  }
+};
 
-  const imageUrl = (usrId, usr) =>
-    usrId && usr && usr.profileImage
-      ? `http://localhost:8000/user/${usrId}/profile`
-      : "/assets/images/resources/user-pro-img.png";
+
 
   const downloadPDF = () => {
     const pdf = new jsPDF('p', 'mm', 'a4'); 
@@ -200,6 +223,9 @@ sortedUsers.sort((a, b) => {
         return "white"; // 50% du milieu
       }
     };
+    const logoWidth = 50;
+    const logoHeight = 50;
+    pdf.addImage(espritLogo, 'PNG', 150, 10, logoWidth, logoHeight); 
 
     pdf.autoTable({
       startY: 70,
@@ -232,9 +258,7 @@ sortedUsers.sort((a, b) => {
    
 
     
-    const logoWidth = 30;
-    const logoHeight = 30;
-    pdf.addImage(espritLogo, 'PNG', 180, 10, logoWidth, logoHeight); 
+    
     
     const pdfFileName = `Leaderboard_${moment().format('DD-MM-YYYY')}.pdf`; 
     pdf.save(pdfFileName); 
@@ -283,15 +307,21 @@ sortedUsers.sort((a, b) => {
 
     if (isEnseignant) {
       const pieChartBase64 = await generatePieChartBase64(socialPoints[usr._id], TaskPoints[usr._id]);
+
       pdf.addImage(pieChartBase64, 'JPEG', 200, 40, 80, 80);
     }
 
   
-    const profileImageUrl = `http://localhost:8000/user/${usr._id}/profile`; 
+    const profileImageUrl = imageUrl(usr._id, usr);  
+    console.log("AAAAAA",profileImageUrl);
     try {
       const response = await axios.get(profileImageUrl, { responseType: 'arraybuffer' }); 
-      const base64 = Buffer.from(response.data, 'binary').toString('base64'); 
-      pdf.addImage(`data:image/jpeg;base64,${base64}`, 'JPEG', 180, 10, 30, 30);
+      console.log("RES",response);
+      const base64 = btoa(
+        String.fromCharCode(...new Uint8Array(response.data))
+      ); // Conversion en base64 sans Buffer
+      console.log("Base  64:",base64)
+      pdf.addImage(`data:image/jpeg;base64,${base64}`, 'JPEG', 220, 10, 50, 50);
     } catch (error) {
       console.error("Erreur lors du chargement de la photo de profil:", error);
       pdf.text("Aucune image de profil disponible", 180, 10); 
@@ -324,9 +354,9 @@ sortedUsers.sort((a, b) => {
 
      // Déterminer les indices pour les différentes parties
   const totalUsers = sortedUsers.length;
+  const totalPages = Math.ceil(totalUsers / itemsPerPage);
   const topQuartileIndex = Math.ceil(totalUsers * 0.25); // 25%
   const middleHalfIndex = Math.ceil(totalUsers * 0.75); // 75%
-
 
 
   // Fonction pour déterminer la couleur de fond selon le rang
@@ -341,10 +371,99 @@ const getRowBackgroundColor = (index, userId) => {
     return 'transparent'; // 50% du milieu
   }
 };
+const handlePageChange = (data) => {
+  const selectedPage = data.selected;
+  setCurrentPage(selectedPage);
+};
+
+const startIndex = currentPage * itemsPerPage;
+const endIndex = startIndex + itemsPerPage;
+const usersToDisplay = sortedUsers.slice(startIndex, endIndex);
+
+const applyBordersAndCenter = (worksheet) => {
+  const range = XLSX.utils.decode_range(worksheet['!ref']); // Obtenir la plage des cellules
+  for (let row = range.s.r; row <= range.e.r; row++) { // Parcourir les lignes
+    for (let col = range.s.c; col <= range.e.c; col++) { // Parcourir les colonnes
+      const cellRef = XLSX.utils.encode_cell({ r: row, c: col }); // Référence de la cellule
+      const cell = worksheet[cellRef] || {}; // Obtenir la cellule
+      cell.s = cell.s || {}; // Initialiser le style s'il n'existe pas encore
+      cell.s.border = { // Appliquer les bordures
+        top: { style: 'thin' },
+        bottom: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+      cell.s.alignment = { horizontal: 'center' }; // Centrer le texte horizontalement
+      worksheet[cellRef] = cell; // Mettre à jour la cellule avec les bordures
+    }
+  }
+
+  // Mettre en gras les titres des colonnes (première ligne)
+  const headers = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1'];
+  headers.forEach((header) => {
+    if (worksheet[header]) {
+      worksheet[header].s = worksheet[header].s || {}; // S'assurer que le style existe
+      worksheet[header].s.font = { bold: true }; // Mettre le titre en gras
+    }
+  });
+};
+
+const downloadExcel = () => {
+  const data = sortedUsers.map((usr, index) => ({
+    Rang: startIndex + index + 1,
+    Nom: usr.name,
+    Rôle: `${usr.role} (${usr.departmentDetails?.[0]?.name || "N/A"} / ${usr.uniteDetails?.[0]?.name || "N/A"})`,
+    "Points sociaux": socialPoints[usr._id] || 0,
+    "Score des tâches": `${TaskPoints[usr._id]} (/ ${nbrTasksPoints[usr._id]})`,
+    "Score final": (socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0),
+    Rating: usr.rating,
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(data);
+
+  // Calculer la somme des points sociaux, des scores des tâches, et des scores finaux
+  const totalSocialPoints = data.reduce((total, item) => total + item["Points sociaux"], 0);
+  const totalTaskScores = data.reduce((total, item) => total + parseInt(item["Score des tâches"].split(" ")[0]), 0); // Extraire le score numérique
+  const totalFinalScores = data.reduce((total, item) => total + item["Score final"], 0);
+
+  // Ajouter des lignes pour les sommes
+  XLSX.utils.sheet_add_aoa(worksheet, [
+    ["", "", "", "", "", "","" ],
+    ["", "", "", "", "", "","" ],
+    ["", "", "", "", "", "","" ],
+    [ "Total des Points sociaux:", totalSocialPoints], 
+    [ "Total des Scores des tâches:", totalTaskScores], 
+    [ "Total des Scores finaux:", totalFinalScores]
+  ], {
+    origin: -1, // Ajouter à la fin de la feuille
+  });
+
+
+
+  // Appliquer les bordures et centrer les cellules
+  applyBordersAndCenter(worksheet);
+
+  // Ajustement de la largeur des colonnes
+  worksheet["!cols"] = [{ wch: 25 }, { wch: 25 }, { wch: 40 }, { wch: 20 }, { wch: 20 }, { wch: 10 }, { wch: 15 }]; 
+
+  const workbook = XLSX.utils.book_new(); // Nouveau classeur
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Leaderboard'); // Ajouter la feuille
+
+  // Obtenir la date du jour au format 'YYYY-MM-DD'
+  const today = moment().format('YYYY-MM-DD');
+
+  // Nom du fichier avec la date
+  const fileName = `Leaderboard_${today}.xlsx`;
+
+  XLSX.writeFile(workbook, fileName); // Exporter le fichier Excel avec le nom contenant la date
+};
+
   return (
     <div>
       <h1 className="h2 mb-3 text-center">
+        
         Leaderboard
+        <hr />
         {!isDirectorOfStudies && ` ( Department: ${departmentName} /Unite : ${uniteName})`} 
       </h1>
 
@@ -360,7 +479,8 @@ const getRowBackgroundColor = (index, userId) => {
             </InputGroup>
           </div>
           <div className="col">
-          <Button variant="primary" onClick={downloadPDF}>Télécharger en PDF</Button>
+          <Button variant="danger" onClick={downloadPDF}> PDF 💾</Button>
+          <Button variant="secondary" onClick={downloadExcel}  style={{ marginLeft: '5px' }}>  Excel 📊</Button>
         </div>
         </div>
       )}
@@ -385,18 +505,48 @@ const getRowBackgroundColor = (index, userId) => {
           </tr>
         </thead>
         <tbody>
-          {sortedUsers.map((usr, index) => (
+          {usersToDisplay.map((usr, index) => (
             <tr key={usr._id}>
               {shouldDisplayRank && (
-                <td className="text-center" style={{ backgroundColor: getRowBackgroundColor(index,usr._id) }}>{index + 1}</td> 
+                <td className="text-center" style={{ backgroundColor: getRowBackgroundColor(startIndex + index,usr._id) }}>{startIndex+index + 1}</td> 
               )}
+
               <td className="text-center">
-                <img
-                  src={imageUrl(usr._id, usr)}
-                  alt={usr.name}
-                  style={{ width: '30px', height: '30px', borderRadius: '50%' }}
-                />
-                {usr.name} {usr.isCurrentUser && ' (❌)'}
+                
+              {usr._id === user.id ? (
+                <>
+                {usr.name} (❌) 
+
+              <Link to="/profil" title="Voir votre profil">
+              <img
+                src={imageUrl(usr._id, usr)}
+                alt={usr.name}
+                style={{ width: '40px', height: '40px', borderRadius: '50%' }}
+              />
+              <br />
+              (voir profil) 
+            </Link>
+                
+                </>
+                
+            
+          ) : (
+
+            <>
+            {usr.name}
+            <Link to={`/profileuser/${usr._id}`} title="Voir le profil">
+              <img
+                src={imageUrl(usr._id, usr)}
+                alt={usr.name}
+                style={{ width: '30px', height: '30px', borderRadius: '50%' }}
+              />
+              <br />
+              (voir profile) {/* Lien pour les autres utilisateurs */}
+            </Link>
+            
+            </>
+            
+          )}
               </td>
               <td className="text-center">
                 {usr.role} <br />
@@ -407,15 +557,24 @@ const getRowBackgroundColor = (index, userId) => {
               <td className="text-center">{(socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0)}</td>
               <td className="text-center">{usr.rating}</td>
               <td className="text-center">
-                <Button variant="secondary" onClick={() => downloadUserPDF(usr)}>Télécharger</Button>
+                <Button variant="danger" onClick={() => downloadUserPDF(usr)}>Télécharger</Button>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
-      {shouldDisplayCamembert &&<div className="d-flex justify-content-center "> {/* Pour centrer le camembert */}
-          <UserStats />
-        </div>}
+      {/* Pagination */}
+{/* Pagination */}
+<div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+      <ReactPaginate
+        pageCount={totalPages}
+        pageRangeDisplayed={5}
+        marginPagesDisplayed={2}
+        onPageChange={handlePageChange}
+        containerClassName={"pagination"}
+        activeClassName={"active"}
+      />
+    </div>      
     </div>
   );
 }

@@ -15,10 +15,11 @@ import { UserContext } from "../../../context/userContext";
 import axios from "axios";
 
 import SocialSkillService from "../../services/socialSkill-service";
-import AddSkillForm from "../Modals/Skills/AssignSkillForm";
 import { Link } from "react-router-dom";
 import SocialSkillAffect from "./Skills/SocialSkills/SocialSkillAffect";
 import SocialSkillsUSer from "./Skills/SocialSkills/SocialSkillsUser";
+import UserStats, { generatePieChartBase64 } from '../Pages/Skills/UserStats';
+
 
 export default function Profils() {
   const [isLoading, setIsLoading] = useState(true);
@@ -39,6 +40,9 @@ export default function Profils() {
   const isAdmin = user && user.role === "Directeur d'étude";
   const isChefDep = user && user.role === "Chef département";
   const isChefUnite = user && user.role === "Chef unité";
+  const isEnseignant = user?.role === "Enseignant";
+  const shouldDisplayCamembert =  isEnseignant || isAdmin || isChefDep || isChefUnite; //condition pour afficher le camembert
+
 
  
 
@@ -91,7 +95,7 @@ export default function Profils() {
       const userResponse = await axios.get(`/user/getbyid/${user.id}`);
       if (userResponse.data) {
         // Si l'utilisateur existe, mettez à jour l'état userData avec les données de l'utilisateur
-        setUpdatedUser(userResponse.data);
+        //setUpdatedUser(userResponse.data);
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -100,7 +104,7 @@ export default function Profils() {
 
 
   //TODO remove or update below code
-  const [show, setShow] = useState(false);
+  /*const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -118,22 +122,7 @@ export default function Profils() {
       handleClose();
       user.socialSkills.filter((element) => element._id !== skillid);
     }
-  };
-
-  const [showSkillModal, setShowSkillModal] = useState(false);
-  const [selectedSkill, setSelectedSkill] = useState(null);
-
-  // Fonction pour ouvrir le modal SkillModal
-  {/*const handleShowSkillModal = (skill) => {
-    setSelectedSkill(skill);
-    setShowSkillModal(true);
-  };
-
-  // Fonction pour fermer le modal SkillModal
-  const handleCloseSkillModal = () => {
-    setSelectedSkill(null);
-    setShowSkillModal(false);
-  };*/}
+  };*/
 
   //TODO remove or update above code
 
@@ -374,10 +363,9 @@ export default function Profils() {
                             <i className="fa fa-star-half-o"></i>
                           </li>
                         </ul>
+                        <Link to={`/Leaderboard`}>Show the Leaderboard</Link>{/*`/affectSkill/${user?.id}`*/}
                             
-                        <Link to={`/Leaderboard`}>Skills</Link>{/*`/affectSkill/${user?.id}`*/}
-                        <SocialSkillsUSer/>
-                        {<SocialSkillAffect userId={user._id} />}
+                        
                         
                       </div>
                       <div className="tab-feed st2 settingjb">
@@ -2879,61 +2867,22 @@ export default function Profils() {
                     </div>
 
                     <div className="product-feed-tab current" id="info-dd">
-                      <div className="user-profile-ov">
-                        <h3>
-                          <a href="#" title="" className="overview-open">
-                            Overview
-                          </a>{" "}
-                          <a href="#" title="" className="overview-open">
-                            <i className="fa fa-pencil"></i>
-                          </a>
-                        </h3>
-                        <p>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit. Quisque tempor aliquam felis, nec condimentum
-                          ipsum commodo id. Vivamus sit amet augue nec urna
-                          efficitur tincidunt. Vivamus consectetur aliquam
-                          lectus commodo viverra. Nunc eu augue nec arcu
-                          efficitur faucibus. Aliquam accumsan ac magna
-                          convallis bibendum. Quisque laoreet augue eget augue
-                          fermentum scelerisque. Vivamus dignissim mollis est
-                          dictum blandit. Nam porta auctor neque sed congue.
-                          Nullam rutrum eget ex at maximus. Lorem ipsum dolor
-                          sit amet, consectetur adipiscing elit. Donec eget
-                          vestibulum lorem.
-                        </p>
+                      <div className="star-descp">
+                      
+                        <SocialSkillsUSer/> 
+                        {<SocialSkillAffect userId={user._id} />}
                       </div>
-                      {/*<div className="user-profile-ov st2">
-											<h3><a href="#" title="" className="exp-bx-open">Experience </a><a href="#" title="" className="exp-bx-open"><i className="fa fa-pencil"></i></a> <a href="#" title="" className="exp-bx-open"><i className="fa fa-plus-square"></i></a></h3>
-											<h4>Web designer <a href="#" title=""><i className="fa fa-pencil"></i></a></h4>
-											<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor aliquam felis, nec condimentum ipsum commodo id. Vivamus sit amet augue nec urna efficitur tincidunt. Vivamus consectetur aliquam lectus commodo viverra. </p>
-											<h4>UI / UX Designer <a href="#" title=""><i className="fa fa-pencil"></i></a></h4>
-											<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor aliquam felis, nec condimentum ipsum commodo id.</p>
-											<h4>PHP developer <a href="#" title=""><i className="fa fa-pencil"></i></a></h4>
-											<p className="no-margin">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor aliquam felis, nec condimentum ipsum commodo id. Vivamus sit amet augue nec urna efficitur tincidunt. Vivamus consectetur aliquam lectus commodo viverra. </p>
-										</div>*/}
+                                          
+
 
                       <div className="user-profile-ov">
-                        <h3>
-                          <a href="#" title="" className="ed-box-open">
-                            Education/Technical Skills
-                          </a>{" "}
-                          <a href="#" title="" className="ed-box-open">
-                            <i className="fa fa-pencil"></i>
-                          </a>{" "}
-                          <a href="#" title="">
-                            <i className="fa fa-plus-square"></i>
-                          </a>
-                        </h3>
-                        <h4>Master of Computer Science</h4>
-                        <span>2015 - 2018</span>
-                        <p>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit. Quisque tempor aliquam felis, nec condimentum
-                          ipsum commodo id. Vivamus sit amet augue nec urna
-                          efficitur tincidunt. Vivamus consectetur aliquam
-                          lectus commodo viverra.{" "}
-                        </p>
+                        <div>
+                      {shouldDisplayCamembert &&<div className="d-flex justify-content-center "> {/* Pour centrer le camembert */}
+                        <UserStats />
+                  </div>}
+                        
+                      </div>
+                       
                       </div>
                       
                     </div>

@@ -38,7 +38,7 @@ function UserStats() {
   }, [user]);
 
   const data = {
-    labels: ['Points sociaux', 'Score des tâches'],
+    labels: ['Points sociaux 🗣️', 'Score des tâches 📋'],
     datasets: [
       {
         data: [socialScore, taskScore],
@@ -55,13 +55,12 @@ function UserStats() {
 
   return (
     <div style={{ textAlign: "center" }}  >
-      <p>--------------------------------------</p>
-      <h3>
-        Vos statistiques vous permettent de connaître vos points forts et faibles.
+      <h3 >
+        Vos statistiques 📊
       </h3>
       
       <p>
-        <b>Cela vous permettra de connaître vos points forts et faibles.</b>
+        <b >Cela vous permettra de connaître vos<span className='h6'> points forts 💪</span>  et <span className='h6'>points faibles 🤕</span></b>
       </p>
       <br />
       <br />
@@ -71,8 +70,9 @@ function UserStats() {
         id="pie-chart" // Identifiant unique
         style={{
           ...chartSize,
-          border: "2px solid black", // Encadrement noir
+          //border: "2px solid black", // Encadrement noir
           display: "flex",
+          //marginLeft: "240px",
           justifyContent: "center", // Centre le graphique horizontalement
           alignItems: "center", // Centre le graphique verticalement
         }}

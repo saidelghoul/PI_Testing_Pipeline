@@ -1,15 +1,12 @@
-import { React, useContext, useEffect, useState } from 'react';
-import { UserContext } from "../../../../../context/userContext";
-import { Link } from "react-router-dom";
+import {  useEffect, useState } from 'react';
 import SocialSkillService from "../../../../services/socialSkill-service";
 import { Modal, Button, Badge, OverlayTrigger, Tooltip, DropdownButton , Dropdown } from 'react-bootstrap';
-import { FaUser, FaStar, FaHeart, FaLevelUpAlt, FaInfoCircle, FaTrashAlt } from 'react-icons/fa';
+import {  FaStar, FaHeart,  FaInfoCircle } from 'react-icons/fa';
 
-function SocialSkillsUSer() {
+function SocialSkillsUSer(user) {
+    console.log("userId",user.userId);
   const [isLoading, setIsLoading] = useState(true);
-  const { user } = useContext(UserContext);
   const [assigned, setAssigned] = useState([]);
-  const [skills, setSkills] = useState([]);
   const [showSkillModal, setShowSkillModal] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [displayCount, setDisplayCount] = useState(4); // Initialisez avec 4 compétences à afficher
@@ -18,9 +15,10 @@ function SocialSkillsUSer() {
 
   const getAssigned = async () => {
     try {
-      const skillsData = await SocialSkillService.getSocialSkillsByUser(user.id);
+      const skillsData = await SocialSkillService.getSocialSkillsByUser(user.userId);
       setAssigned(skillsData.socialSkills);
       setFilteredSkills(skillsData.socialSkills); // Initialiser avec toutes les compétences
+      console.log("skills du user "+user+" sont:",skillsData);
 
       
     } catch (error) {
@@ -28,25 +26,13 @@ function SocialSkillsUSer() {
     }
   };
 
-  const totalSocialPoints = assigned.reduce(
-    (total, skill) => total + (skill.pointSocial || 0),
-    0
-  );
 
-  const fetchSkills = async () => {
-    try {
-      const availableSkills = await SocialSkillService.getAvailableSocialSkills(user.id);
-      setSkills(availableSkills);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des compétences disponibles:", error);
-    }
-  };
 
   useEffect(() => {
     if (user) {
       setIsLoading(false);
       getAssigned();
-      fetchSkills();
+      //fetchSkills();
     }
   }, [user]);
   
@@ -92,9 +78,9 @@ function SocialSkillsUSer() {
   const SocialSkillPopup = ({ skill, show, handleClose }) => (
     <Modal show={show} onHide={handleClose} centered animation>
       <Modal.Body>
-      <div style={{ textAlign: 'center' }}>
+      <div style={{ handleRemove }}>
         <br />
-  <Badge pill variant="info" style={{ fontSize: '1.1em' }}> {/* Augmenter la taille du texte */}
+  <Badge pill variant="info" style={{ fontSize: '1.1em',marginBottom: '10px', marginLeft: "200px"  }}> {/* Augmenter la taille du texte */}
     Niveau {skill.niveau}
   </Badge>
 </div>
@@ -139,18 +125,20 @@ function SocialSkillsUSer() {
   return (
     <div>
       <div className="user-profile-ov">
-        <h3>
-          Compétences Sociales (Score Total: <strong style={{ color: 'red' }}>{totalSocialPoints} points</strong>)
-          <Link to={`/affectSkill/${user.id}`}>
-            <i className="fa fa-plus-square"></i>
-          </Link>
+        <h3 style={{textAlign: 'center'}}>
+          Compétences Sociales 🧠
         </h3>
-        <br />
+
         {/* Dropdown pour le filtrage */}
-        <DropdownButton
+        
+
+        {filteredSkills.length > 0 ? (
+            <>
+            <DropdownButton
           id="dropdown-filter-level"
           title={`Filtrer les SocialSkills par niveau (${filterLevel})`}
           onSelect={(eventKey) => applyFilter(eventKey)}
+          style={{textAlign: 'center'}}
         >
           <hr />
           <Dropdown.Item eventKey="Tous"><span>Tous les niveaux</span></Dropdown.Item>
@@ -161,9 +149,7 @@ function SocialSkillsUSer() {
           <hr />
           <Dropdown.Item eventKey="élevé"><span>⭐⭐⭐ </span>niveau élevé</Dropdown.Item>
         </DropdownButton><hr />
-
-        {filteredSkills.length > 0 ? (
-          <ul className="skill-tags" style={{ listStyle: 'none', paddingLeft: '0' }}>
+            <ul className="skill-tags" style={{ listStyle: 'none', paddingLeft: '0' }}>
             {filteredSkills.slice(0, displayCount).map((skill) => ( // Afficher les compétences selon le nombre défini
               <OverlayTrigger
                 key={skill._id}
@@ -181,27 +167,31 @@ function SocialSkillsUSer() {
                     padding: '10px', 
                     marginBottom: '10px', 
                     borderRadius: '5px', 
-                    position: 'relative' 
+                    position: 'relative',
+                    marginLeft: '20px' ,
                   }}
                 >
                   <span 
                     onClick={() => handleShowSkillModal(skill)} 
-                    style={{ cursor: 'pointer', color: '#007bff' }}
+                    style={{ cursor: 'pointer', color: '#007bff' ,textAlign: 'center' }}
+                    
                   >
                     {skill.name}
-                  </span>
-                  <span 
-                    onClick={() => handleRemove(skill._id)} 
-                    style={{ position: 'absolute', top: '10px', right: '-10px', cursor: 'pointer' }}
-                  >
-                    <FaTrashAlt style={{ color: 'red' }} />
                   </span>
                 </li>
               </OverlayTrigger>
             ))}
           </ul>
+            </>
+          
         ) : (
-          <div>Vous n'avez pas encore de compétences sociales.</div>
+            <div style={{textAlign: 'center'}}>
+                <hr />
+                <h1>Aucune compétence sociale n'est disponible pour le moment (*) </h1>
+                <hr />
+                <p> (*) : il est possible que l'utilisateur n'ait pas encore ajouter des socials Skills.</p>
+            </div>
+          
         )}
 
         {assigned.length > displayCount && (

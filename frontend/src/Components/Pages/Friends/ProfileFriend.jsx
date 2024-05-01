@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import SocialSkillsOnlyReading from '../Skills/SocialSkills/SocialSkillsOtherUser';
 
 export default function Profils() {
 const { id } = useParams();
@@ -166,7 +167,7 @@ const coverImageUrl = user && user.coverImage
                       {/* <h3> {!!user && <>{user.name}</>}</h3> */}
                       <h3>{user.name}</h3>
                       <div className="star-descp">
-                      <span>Rôle: {user.role}</span>
+                      <span>Rôle: {user.role}</span> {console.log("ici",user)}
 
                         {/* <span> {!!user && <>{user.role}</>}</span> */}
                         <ul>
@@ -186,9 +187,7 @@ const coverImageUrl = user && user.coverImage
                             <i className="fa fa-star-half-o"></i>
                           </li>
                         </ul>
-                        <a href="#" title="">
-                          Status
-                        </a>
+
 
                     
                       </div>
@@ -2691,29 +2690,9 @@ const coverImageUrl = user && user.coverImage
                     </div>
 
                     <div className="product-feed-tab current" id="info-dd">
-                      <div className="user-profile-ov">
-                        <h3>
-                          <a href="#" title="" className="overview-open">
-                            Overview
-                          </a>{" "}
-                          <a href="#" title="" className="overview-open">
-                            <i className="fa fa-pencil"></i>
-                          </a>
-                        </h3>
-                        <p>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit. Quisque tempor aliquam felis, nec condimentum
-                          ipsum commodo id. Vivamus sit amet augue nec urna
-                          efficitur tincidunt. Vivamus consectetur aliquam
-                          lectus commodo viverra. Nunc eu augue nec arcu
-                          efficitur faucibus. Aliquam accumsan ac magna
-                          convallis bibendum. Quisque laoreet augue eget augue
-                          fermentum scelerisque. Vivamus dignissim mollis est
-                          dictum blandit. Nam porta auctor neque sed congue.
-                          Nullam rutrum eget ex at maximus. Lorem ipsum dolor
-                          sit amet, consectetur adipiscing elit. Donec eget
-                          vestibulum lorem.
-                        </p>
+                      <div className="star-descp">
+                      <SocialSkillsOnlyReading userId={id}/>
+                       
                       </div>
                       {/*<div className="user-profile-ov st2">
 											<h3><a href="#" title="" className="exp-bx-open">Experience </a><a href="#" title="" className="exp-bx-open"><i className="fa fa-pencil"></i></a> <a href="#" title="" className="exp-bx-open"><i className="fa fa-plus-square"></i></a></h3>

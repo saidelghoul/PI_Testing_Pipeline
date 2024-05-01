@@ -21,6 +21,7 @@ import { UserContext } from "../../../context/userContext.jsx";
 
 export default function UpdateProfil() {
     const { user } = useContext(UserContext);
+    console.log("Profil actuel",user.profileImage);
 
     
   useEffect(() => {
