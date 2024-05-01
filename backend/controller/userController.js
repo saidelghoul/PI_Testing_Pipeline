@@ -42,6 +42,10 @@ router.put('/:userId/profileimage', upload.fields([{ name: 'profileImage', maxCo
       user.coverImage = req.files['coverImage'][0].path;
     }
 
+    if (!user.badges.includes("advanced")) {
+      user.badges.push("advanced");
+    }
+
     await user.save();
     const tokenPayload = {
       id: user._id,
@@ -138,6 +142,12 @@ router.put('/:userId', async (req, res) => {
 
       if (!updatedUser) {
           return res.status(404).json({ error: 'User not found' });
+      }
+         // Vérifier si le badge "Profil Completed" n'a pas déjà été ajouté à l'utilisateur
+         if (!updatedUser.badges.includes("Profil Completed")) {
+          // Ajouter le badge "Profil Completed" à l'utilisateur
+          updatedUser.badges.push("Profil Completed");
+          await updatedUser.save();
       }
 
       const departement = await Departement.findById(updatedUser.departement);

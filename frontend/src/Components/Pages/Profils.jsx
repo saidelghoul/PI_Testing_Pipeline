@@ -13,7 +13,7 @@ import "../../../public/assets/lib/slick/slick-theme.css";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../context/userContext";
 import axios from "axios";
-
+import Badges from "./Friends/Badges";
 import SocialSkillService from "../../services/socialSkill-service";
 import AddSkillForm from "../Modals/Skills/AssignSkillForm";
 import { Link } from "react-router-dom";
@@ -254,6 +254,8 @@ export default function Profils() {
                       </ul>
                     </div>
                     <div className="suggestions full-width">
+                    <div >
+                      <div><Badges/></div>  </div> 
                     
                     </div>
                   </div>
