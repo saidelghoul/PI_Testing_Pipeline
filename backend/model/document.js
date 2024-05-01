@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const docSchema = new mongoose.Schema({
-  filename: String,
+  fileName: String,
   contentType: String,
-  buffer: Buffer,
+  fileUrl: String,
   id_checklist: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "CheckList",

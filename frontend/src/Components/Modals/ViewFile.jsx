@@ -1,14 +1,41 @@
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
-import { Button, Modal, Row, Col } from "react-bootstrap";
+import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
+import { Button, Modal, Row, Col, Spinner } from "react-bootstrap";
 import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
+import { getDocumentByChecklist } from "../../services/document-service";
 
-const ViewFile = ({ show, handleClose }) => {
-  const docs = [
+const ViewFile = ({ show, handleClose, checkList }) => {
+  const [files, setFiles] = useState([
     {
-      uri: "assets/images/resources/about.png",
+      uri: "",
+      fileType: "",
+      fileName: "",
     },
+  ]);
+
+  const [loading, setLoading] = useState(true);
+
+  const fetchFile = async () => {
+    const result = await getDocumentByChecklist(checkList?._id);
+    const file = {
+      uri: result.data.message.fileUrl,
+      fileType: result.data.message.contentType,
+      fileName: result.data.message.fileName,
+    };
+    setFiles(file);
+    setLoading(false);
+  };
+  useEffect(() => {
+    if (show) {
+      fetchFile();
+    }
+  }, [show]);
+
+  let docs = [
     {
-      uri: "https://api.core.sowat.dev/v2/assets?url=https://s3.ap-southeast-1.amazonaws.com/internal.gredu.co/dev/lesson_attachments/%282%29%20Aljabar%20Fisika-2-1637294567.pdf",
+      uri: files?.uri,
+      fileType: files?.fileType,
+      fileName: files?.fileName,
     },
   ];
 
@@ -43,18 +70,29 @@ const ViewFile = ({ show, handleClose }) => {
 
       <Modal.Body>
         <div className="App">
-          <DocViewer
-            pluginRenderers={DocViewerRenderers}
-            documents={docs}
-            config={{
-              header: {
-                disableHeader: false,
-                disableFileName: false,
-                retainURLParams: false,
-              },
-            }}
-            style={{ height: 500 }}
-          />
+          {loading ? (
+            <div className=" text-center ">
+              <Spinner
+                animation="border"
+                role="output"
+                variant="danger"
+              ></Spinner>
+            </div>
+          ) : (
+            <DocViewer
+              pluginRenderers={DocViewerRenderers}
+              documents={docs}
+              prefetchMethod="GET"
+              config={{
+                header: {
+                  disableHeader: false,
+                  disableFileName: false,
+                  retainURLParams: true,
+                },
+              }}
+              style={{ height: 500 }}
+            />
+          )}
         </div>
       </Modal.Body>
       <Modal.Footer></Modal.Footer>
@@ -65,6 +103,7 @@ const ViewFile = ({ show, handleClose }) => {
 ViewFile.propTypes = {
   show: PropTypes.bool,
   handleClose: PropTypes.func,
+  checkList: PropTypes.object,
 };
 
 export default ViewFile;
