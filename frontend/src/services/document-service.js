@@ -13,9 +13,7 @@ export const getDocumentByChecklist = async (id) => {
 export const uploadDocumentToChecklist = async (id, document) => {
   return await axios.post(`${url}/upload/${id}`, document);
 };
-/*export const updateDocument = async (id, document) => {
-  return await axios.put(`${url}/${id}`, document);
-};*/
+
 export const deleteDocument = async (id) => {
   return await axios.delete(`${url}/${id}`);
 };

@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import "../assets/drop-file-input.css";
 import { ImageConfig } from "../assets/ImageConfig.js";
 
-const DropFileInput = (props) => {
+const DropFileInput = ({ onFileChange }) => {
   const wrapperRef = useRef(null);
 
   const [file, setFile] = useState(null);
@@ -19,13 +19,13 @@ const DropFileInput = (props) => {
     const newFile = e.target.files[0];
     if (newFile) {
       setFile(newFile);
-      props.onFileChange(file);
+      onFileChange(newFile);
     }
   };
 
-  const fileRemove = (file) => {
+  const fileRemove = () => {
     setFile(null);
-    props.onFileChange(file);
+    onFileChange(null);
   };
 
   return (
@@ -62,10 +62,7 @@ const DropFileInput = (props) => {
               <p>{file.name}</p>
               <p>{file.size}B</p>
             </div>
-            <span
-              className="drop-file-preview__item__del"
-              onClick={() => fileRemove(file)}
-            >
+            <span className="drop-file-preview__item__del" onClick={fileRemove}>
               x
             </span>
           </div>

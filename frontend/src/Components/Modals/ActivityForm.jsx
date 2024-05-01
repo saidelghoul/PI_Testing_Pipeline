@@ -136,7 +136,7 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
                 className=" mt-2 "
                 required
                 type="text"
-                placeholder="activity name"
+                placeholder="Activity name"
                 name="name"
                 value={activityItem.name}
                 onChange={onValueChange}

@@ -30,6 +30,10 @@ const checkListSchema = new Schema(
       default: false,
     },
     description: String,
+    feedback: {
+      type: String,
+      default: "",
+    },
     id_task: {
       type: Schema.Types.ObjectId,
       ref: "Task",

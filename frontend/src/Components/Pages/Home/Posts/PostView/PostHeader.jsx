@@ -9,9 +9,6 @@ import PostUpdate from "../ActionIcons/PostUpdate";
 export default function PostHeader({ postContent, fetchPosts }) {
   const { user } = useContext(UserContext);
 
-  console.log({postContent})
-
-
   return (
     <>
       <div className="post_topbar">
@@ -31,12 +28,12 @@ export default function PostHeader({ postContent, fetchPosts }) {
           </div>
         </div>
         <div className="ed-opts">
-          {isCreator(user.id, postContent.creator?._id) && 
-          <PostDelete postContent={postContent} fetchPosts={fetchPosts} />
-          }
-          {isCreator(user.id, postContent.creator?._id) && 
-          <PostUpdate postContent={postContent} />
-          }
+          {isCreator(user.id, postContent.creator?._id) && (
+            <PostDelete postContent={postContent} fetchPosts={fetchPosts} />
+          )}
+          {isCreator(user.id, postContent.creator?._id) && (
+            <PostUpdate postContent={postContent} />
+          )}
         </div>
       </div>
       <div className="epi-sec">

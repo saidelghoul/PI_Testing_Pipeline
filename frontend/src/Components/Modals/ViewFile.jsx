@@ -3,6 +3,7 @@ import { Button, Modal, Row, Col, Spinner } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { getDocumentByChecklist } from "../../services/document-service";
+import Feedback from "../Pages/Feedback";
 
 const ViewFile = ({ show, handleClose, checkList }) => {
   const [files, setFiles] = useState([
@@ -93,6 +94,8 @@ const ViewFile = ({ show, handleClose, checkList }) => {
               style={{ height: 500 }}
             />
           )}
+          <hr />
+          <Feedback handleClose={handleClose} checkList={checkList} />
         </div>
       </Modal.Body>
       <Modal.Footer></Modal.Footer>

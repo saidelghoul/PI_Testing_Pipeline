@@ -143,9 +143,9 @@ const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
 
           <Row>
             {checkList?.doneDate != null ? (
-              <p>Turned in</p>
+              <p>Turned in ✅</p>
             ) : (
-              <p>Not turned in</p>
+              <p>Not turned in 🔴</p>
             )}
           </Row>
         </Card.Header>
@@ -159,8 +159,6 @@ const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
                 -Description: {checkList?.description}
               </>
             )}
-            <br />
-            -Rating :{checkList?.rating}
             <br />
             -Score :{checkList?.score}
           </Card.Text>
@@ -187,7 +185,7 @@ const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
             </Col>
             <Col md={6}>
               <Button
-                variant="light"
+                variant="outline-light"
                 onClick={handleShowFile}
                 className="ml-3"
                 disabled={!checkList?.hasFile}

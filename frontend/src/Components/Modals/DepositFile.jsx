@@ -15,12 +15,12 @@ import { ImageConfig } from "../../assets/ImageConfig.js";
 const DepositFile = ({ show, handleClose, checkList, refresh }) => {
   const [fileItem, setFileItem] = useState(null);
 
-  //const [showUpload, setShowUpload] = useState(true);
+  const [showUpload, setShowUpload] = useState(false);
   const [file, setFile] = useState({});
 
   const onFileChange = (files) => {
     setFileItem(files);
-    //setShowUpload(files !== null);
+    setShowUpload(files != null);
   };
 
   const fetchFile = async () => {
@@ -108,7 +108,7 @@ const DepositFile = ({ show, handleClose, checkList, refresh }) => {
           {checkList?.hasFile ? (
             <div>
               <p className="h4 text-danger ">
-                This checklist already has a file attached to it, do you want to
+                This checklist has already a file attached to it, do you want to
                 delete it?
               </p>
               {show && (
@@ -132,7 +132,7 @@ const DepositFile = ({ show, handleClose, checkList, refresh }) => {
               )}
             </div>
           ) : (
-            <DropFileInput onFileChange={(files) => onFileChange(files)} />
+            <DropFileInput onFileChange={onFileChange} />
           )}
         </div>
       </Modal.Body>
@@ -145,7 +145,11 @@ const DepositFile = ({ show, handleClose, checkList, refresh }) => {
             Delete file
           </Button>
         ) : (
-          <Button style={{ backgroundColor: "#e44d3a" }} onClick={handleSubmit}>
+          <Button
+            disabled={!showUpload}
+            style={{ backgroundColor: "#e44d3a" }}
+            onClick={handleSubmit}
+          >
             Upload
           </Button>
         )}

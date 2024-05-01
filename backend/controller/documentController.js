@@ -77,6 +77,9 @@ async function removeDocument(req, res) {
       checkList.hasFile = false;
       checkList.done = false;
       checkList.doneDate = null;
+      checkList.score = 0;
+      checkList.rating = 0;
+
       await CheckList.findByIdAndUpdate(document.id_checklist, checkList, {
         next: true,
       });
