@@ -9,10 +9,14 @@ import "../../public/assets/css/responsive.css";
 import "../../public/assets/lib/slick/slick.css";
 import "../../public/assets/lib/slick/slick-theme.css";
 
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/userContext";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import {
+  getChecklistByHolder,
+  getChecklistScoreForUser,
+} from "../services/checklist-service";
 
 export default function Navbar() {
   const { user } = useContext(UserContext);
@@ -29,6 +33,31 @@ export default function Navbar() {
       console.error("Erreur lors de la déconnexion :", error);
     }
   };
+
+  //remaining tasks
+  const [loading, setLoading] = useState(true);
+
+  const [checklists, setChecklists] = useState([]);
+  const [score, setScore] = useState({});
+
+  useEffect(() => {
+    const fetchChecklistByUser = async () => {
+      const data = await getChecklistByHolder(userId);
+      setChecklists(data.data.message);
+    };
+
+    const fetchScoreByUser = async () => {
+      const data = await getChecklistScoreForUser(userId);
+      setScore(data.data.message);
+    };
+
+    if (userId) {
+      fetchChecklistByUser();
+      fetchScoreByUser();
+      setLoading(false);
+    }
+  }, [userId]);
+
   return (
     <header>
       <div className="container">
@@ -85,7 +114,10 @@ export default function Navbar() {
                   <span>
                     <img src="/assets/images/icon3.png" alt="" />
                   </span>
-                  My Tasks
+                  My Tasks{" "}
+                  {loading || (
+                    <>( {checklists.length - score.numberOfTasks} )</>
+                  )}
                 </Link>
               </li>
               <li>

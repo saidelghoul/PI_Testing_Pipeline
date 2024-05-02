@@ -38,6 +38,7 @@ const Section = () => {
   const fetchChecklistByUser = async () => {
     const data = await getChecklistByHolder(id_user);
     setChecklists(data.data.message);
+    getProgress(data.data.message);
   };
   const fetchScoreByUser = async () => {
     const data = await getChecklistScoreForUser(id_user);
@@ -48,13 +49,10 @@ const Section = () => {
   useEffect(() => {
     fetchChecklistByUser();
     fetchScoreByUser();
-    getProgress(checklists);
   }, []);
 
   const refreshTable = async () => {
     fetchChecklistByUser();
-
-    getProgress(checklists);
     fetchScoreByUser();
   };
 
@@ -64,7 +62,7 @@ const Section = () => {
       const result = await updateChecklist(id, checklist);
       if (result.status === 200) {
         toast.success("Checklist has been archived successfully!");
-        fetchChecklistByUser(id_user);
+        fetchChecklistByUser();
       }
     } catch (error) {
       toast.error(error.message);
