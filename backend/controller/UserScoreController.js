@@ -147,8 +147,6 @@ async function getPubReportsbyid(req, res) {
       })
     );
 
-    // nbOfAlertOnPosts = ....
-
     const totalReports = nbOfAlertOnPosts.reduce((acc, val) => acc + val, 0); // + nbOfAlertOnPosts.reduce((acc, val) => acc + val, 0);
     console.log("totalReports : ", totalReports);
 
@@ -239,7 +237,6 @@ module.exports = {
   getEventReportbyid,
   getEventLiketbyid,
   getEventDesliketbyid,
-
   getPubReportsbyid,
   getPubLiketbyid,
   getPubtDesliketbyid,

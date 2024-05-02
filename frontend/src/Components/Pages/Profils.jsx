@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";
 import SocialSkillAffect from "./Skills/SocialSkills/SocialSkillAffect";
 import SocialSkillsUSer from "./Skills/SocialSkills/SocialSkillsUser";
 import UserStats, { generatePieChartBase64 } from '../Pages/Skills/UserStats';
+import PostsList from "./Home/Posts/PostsList";
 
 
 export default function Profils() {
@@ -2754,16 +2755,23 @@ export default function Profils() {
                                           
 
 
-                      <div className="user-profile-ov">
-                      <div style={{ borderRadius: '56px' }}>
+                      
+<div style={{ borderRadius: '56px' }}>
 
-                      {shouldDisplayCamembert &&<div className="d-flex justify-content-center "> {/* Pour centrer le camembert */}
-                        <UserStats />
-                  </div>}
-                        
-                      </div>
-                       
-                      </div>
+
+
+<div>
+<PostsList userProfileId={user.id} />
+
+  </div>
+  
+</div>
+
+
+
+                      
+
+                      
                       
                     </div>
                     <div className="product-feed-tab" id="rewivewdata">
@@ -3733,86 +3741,18 @@ export default function Profils() {
                       </Link>
                     </div>
                     <div className="widget widget-portfolio">
-                      <div className="wd-heady">
-                        <h3>Portfolio</h3>
-                        <img src="/assets/images/photo-icon.png" alt="" />
-                      </div>
-                      <div className="pf-gallery">
-                        <ul>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery1.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery2.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery3.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery4.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery5.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery6.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery7.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery8.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery9.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery10.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery11.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery12.png"
-                              alt=""
-                            />
-                          </li>
-                        </ul>
-                      </div>
+                    <div className="user-profile-ov">
+                      <div >
+                    {shouldDisplayCamembert && (
+                    <div className="d-flex justify-content-center"> {/* Pour centrer le camembert */}
+                      <UserStats />
+                    </div>
+                       )}
+                    </div>
+
+  {/* Nouvelle balise div ajoutée après le code précédent */}
+  
+</div>
                     </div>
                   </div>
                 </div>

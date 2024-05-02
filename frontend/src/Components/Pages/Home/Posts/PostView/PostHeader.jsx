@@ -16,6 +16,14 @@ export default function PostHeader({ postContent, fetchPosts }) {
     ? postContent.reports.includes(user?.id)
     : false;
 
+    const imageUrl = (usrId, usr) => {
+      if (usrId && usr?.profileImage) {
+        return `http://localhost:8000/user/${usrId}/profile`;
+      } else {
+        return "/assets/images/resources/user-pro-img.png";
+      }
+    };
+
   const handleReportClick = async () => {
     try {
       const ReportData = {
@@ -30,11 +38,17 @@ export default function PostHeader({ postContent, fetchPosts }) {
       alert("Error setting up the request: " + error.message);
     }
   };
+
+
   return (
     <>
       <div className="post_topbar">
         <div className="usy-dt">
-          <img src="/assets/images/resources/us-pc2.png" alt="" />
+        {/* <img
+          src={imageUrl(user.id, user)}
+          alt={user.name}
+          style={{ width: '55px', height: '55px', borderRadius: '50%' }}
+        /> */}
           <div className="usy-name">
             <h3>{postContent.creator?.name}</h3>
             <span>
@@ -44,12 +58,6 @@ export default function PostHeader({ postContent, fetchPosts }) {
           </div>
         </div>
         <div className="ed-opts">
-          {isCreator(user.id, postContent.creator?._id) && (
-            <PostDelete postContent={postContent} fetchPosts={fetchPosts} />
-          )}
-          {isCreator(user.id, postContent.creator?._id) && (
-            <PostUpdate postContent={postContent} />
-          )}
           {!isCreator(user.id, postContent.creator?._id) && (
             <Button
               size="sm"

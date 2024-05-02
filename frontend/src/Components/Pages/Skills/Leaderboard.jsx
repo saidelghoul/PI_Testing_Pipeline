@@ -13,6 +13,7 @@ import axios from 'axios';
 import ReactPaginate from 'react-paginate';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx'; // Importez SheetJS
+import userScoreServicePost from '../../../services/userScoreServicePost';
 
 
 
@@ -81,16 +82,24 @@ function Leaderboard() {
       const socialScores = {};
       const taskScores = {};
       const nbrTasksScores = {};
+
+
+    //score des posts
+    const publicationScores = {};
   
       await Promise.all(
         filteredUsers.map(async (usr) => {
           //console.log("ONESTLA",usr)
+
+          //score Sociaux
           const socialResult = await socialSkillService.getSocialSkillsByUser(usr._id);
           const socialScore = socialResult.socialSkills.reduce(
             (sum, skill) => sum + (skill.pointSocial || 0),
             0
           );
           socialScores[usr._id] = socialScore * 100;
+
+          // Récupérer les scores des tâches
   
           const checklistResult = await getChecklistScoreForUser(usr._id);
           const taskScore = checklistResult.data.message.somme || 1;
@@ -98,17 +107,50 @@ function Leaderboard() {
   
           taskScores[usr._id] = taskScore;
           nbrTasksScores[usr._id] = nbrTasks;
+
+
+
+                  // Ajouter les appels API pour les publications
+        const [reports, likes, dislikes] = await Promise.all([
+          userScoreServicePost.getPubReportsById(usr._id),
+          userScoreServicePost.getPubLikesById(usr._id),
+          userScoreServicePost.getPubDislikesById(usr._id),
+
+        ]);
+
+        console.log("likes",likes),
+        console.log("dislikes",dislikes),
+        console.log("reports",reports)
+
+            // Calculer le score des publications
+            const postScore = calculatePostScore(
+            likes,
+             dislikes,
+              reports
+          );
+
+          publicationScores[usr._id] = postScore; // Stocker le score de publication
+          //console.log("Ceci est le score de la publication du user"+usr._id+":",postScore);
         })
       );
   
       // Calcul du score final pour chaque utilisateur
       const finalUsers = filteredUsers.map((usr) => {
-        const finalScore = (socialScores[usr._id] || 0) + (TaskPoints[usr._id] || 0);
+        const finalScore = (socialScores[usr._id] || 0) + (TaskPoints[usr._id] || 0)+ (publicationScores[usr._id] || 0);
         return {
           ...usr,
           finalScore,
+          publicationScore: publicationScores[usr._id],
+
         };
       });
+
+
+
+
+
+
+
   
       // Trouver Xmax et Xmin
       const Xmax = Math.max(...finalUsers.map((usr) => usr.finalScore));
@@ -134,6 +176,8 @@ function Leaderboard() {
         return {
           ...usr,
           rating,
+
+
         };
       });
        // Obtenir le rating de l'utilisateur actuel
@@ -147,6 +191,22 @@ function Leaderboard() {
   
     fetchUsers(); // Appeler la fonction de récupération des utilisateurs
   }, [user]);
+
+  // Fonction pour calculer le score des publications
+const calculatePostScore = (nbrLikes, nbrDislikes, nbrReports) => {
+  const x = nbrLikes - nbrDislikes;
+  const z = nbrReports;
+
+  if (x <= 0) {
+    return 0;
+  } else if (z === 0) {
+    return x;
+  } else if (z > 0 && z <= 3) {
+    return (2 * x - 3 * z) / 3;
+  } else {
+    return (2 * x - 3 * z) / z;
+  }
+}
   
 
   // Filtrer les utilisateurs selon le terme de recherche
@@ -489,6 +549,7 @@ const downloadExcel = () => {
             <th className="text-center">Rôle 💼(Département/Unité)</th>
             <th className="text-center">Points sociaux 🗣️</th>
             <th className="text-center">Score des tâches 📋(/nbr de tâches📚)</th>
+            <th className="text-center">Score des publications ✍️</th>
             <th className="text-center">Score final 🎯</th>
             {!isEnseignant && <th className="text-center">Rating⭐</th>}
             <th className="text-center">Télécharger 📥</th>
@@ -544,7 +605,8 @@ const downloadExcel = () => {
               </td>
               <td className="text-center h5">{socialPoints[usr._id] || 0}</td>
               <td className="text-center h5">{TaskPoints[usr._id]} (/ {nbrTasksPoints[usr._id]})</td>
-              <td className="text-center h4">{(socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0)}</td>
+              <td className="text-center h5">{usr.publicationScore  || 0}</td>
+              <td className="text-center h4">{(socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0)+(usr.publicationScore  || 0)}</td>
               {!isEnseignant &&<td className="text-center h6">{usr.rating}</td>}
               <td className="text-center ">
                 <Button variant="danger" onClick={() => downloadUserPDF(usr)}> <span className='h5'>PDF 💾</span></Button>

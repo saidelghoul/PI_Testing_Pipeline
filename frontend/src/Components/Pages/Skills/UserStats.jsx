@@ -49,8 +49,8 @@ function UserStats() {
   };
 
   const chartSize = {
-    width: '450px',
-    height: '450px',
+    width: '280px',
+    height: '280px',
   };
 
   return (
@@ -59,8 +59,8 @@ function UserStats() {
         Vos statistiques 📊
       </h3>
       
-      <p>
-        <b >Cela vous permettra de connaître vos<span className='h6'> points forts 💪</span>  et <span className='h6'>points faibles 🤕</span></b>
+      <p >
+        <b >Pour connaître vos<span className='h6'><br /> points forts 💪</span>  et <span className='h6'>points faibles 🤕</span></b>
       </p>
       <br />
       <br />
