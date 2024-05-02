@@ -8,6 +8,7 @@ export default function Home() {
   const imageUrl = user && user.profileImage 
   ? `http://localhost:8000/user/${userId}/profile` 
   : "/assets/images/resources/user-pro-img.png";
+  
   return (
     <main>
       <div className="main-section">

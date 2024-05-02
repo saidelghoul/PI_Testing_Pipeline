@@ -89,7 +89,7 @@ const registerUser = async (req, res) => {
       unite,
       emailToken,
     });
-
+    
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {

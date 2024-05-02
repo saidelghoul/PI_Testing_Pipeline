@@ -16,6 +16,7 @@ export default function AddFriends() {
   ? `http://localhost:8000/user/${userId}/profile` 
   : "/assets/images/resources/user-pro-img.png";
   
+  
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {

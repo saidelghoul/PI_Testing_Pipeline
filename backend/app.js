@@ -111,6 +111,7 @@ app.use("/technicalSkills", technicalSkillsRouter);
 app.use("/user", require("./controller/userController"));
 app.use("/badges",require("./controller/badgesController"));
 
+
 app.use('/imagesUser', express.static(path.join(__dirname, 'public/imagesUser')));
 
 

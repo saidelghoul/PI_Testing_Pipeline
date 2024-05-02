@@ -12,4 +12,5 @@ router.get('/:userId/badges', async (req, res) => {
   }
 });
 
+
 module.exports = router;

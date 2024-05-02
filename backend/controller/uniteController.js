@@ -22,6 +22,7 @@ router.get("/getAll", async (req, res) => {
   }
 });
 
+
 router.get('/getunitebydep', async (req, res) => {
   try {
     const { departementName } = req.query;

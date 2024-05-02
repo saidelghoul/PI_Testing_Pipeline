@@ -32,6 +32,7 @@ export default function ResetPassword() {
     }
   };
 
+  
   return (
     <>
        <div className="sign-in-page " style={{ backgroundColor: "#dc3545" }}>

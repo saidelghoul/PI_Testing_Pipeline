@@ -253,7 +253,6 @@ router.get('/enseignant', async (req, res) => {
   }
 });
 
-
 //lister tous les Chef unité pour le chef departement connecté
 router.get('/chef', async (req, res) => {
   try {

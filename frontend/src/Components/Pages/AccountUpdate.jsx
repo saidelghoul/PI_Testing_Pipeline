@@ -466,7 +466,6 @@ export default function AccountUpdate() {
           <div>
           <div className="space-between"></div>
           <div className="add-billing-method">
-          
           <Table striped bordered hover>            
           <thead>
               <tr>

@@ -33,6 +33,8 @@ const ConfirmEmail = () => {
     confirmEmail();
   }, [token]);
 
+  
+
   return (
     <>
      <div className="sign-in-page " style={{ backgroundColor: "#dc3545" }}>

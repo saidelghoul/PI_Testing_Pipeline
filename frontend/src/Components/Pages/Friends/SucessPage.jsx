@@ -7,6 +7,8 @@ export default function SucessPage() {
   const handleBackToHome = () => {
     navigate('/');
   };
+
+  
   return (
     <>
     <div className="sign-in-page " style={{ backgroundColor: "#dc3545" }}>

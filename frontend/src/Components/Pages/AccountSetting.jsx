@@ -52,6 +52,7 @@ export default function AccountSetting() {
       }
     }
   };
+  
   return (
     <>
       <section className="profile-account-setting">

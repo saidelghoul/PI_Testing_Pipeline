@@ -30,6 +30,8 @@ const coverImageUrl = user && user.coverImage
   if (loading) {
     return <div>Chargement...</div>;
   }
+
+  
   return (
     <>
       <section className="cover-sec">
