@@ -2690,7 +2690,7 @@ const coverImageUrl = user && user.coverImage
                     </div>
 
                     <div className="product-feed-tab current" id="info-dd">
-                      <div className="star-descp">
+                      <div className="star-descp border-radius: 56px">
                       <SocialSkillsOnlyReading userId={id}/>
                        
                       </div>
@@ -2704,7 +2704,7 @@ const coverImageUrl = user && user.coverImage
 											<p className="no-margin">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor aliquam felis, nec condimentum ipsum commodo id. Vivamus sit amet augue nec urna efficitur tincidunt. Vivamus consectetur aliquam lectus commodo viverra. </p>
 										</div>*/}
 
-                      <div className="user-profile-ov">
+                      <div className="user-profile-ov ">
                         <h3>
                           <a href="#" title="" className="ed-box-open">
                             Education/Technical Skills
@@ -2727,20 +2727,7 @@ const coverImageUrl = user && user.coverImage
                         </p>
                       </div>
 
-                      <div className="user-profile-ov">
-                        <h3>
-                          <a href="#" title="" className="skills-open">
-                            Skills
-                          </a>{" "}
-                          <a href="#" title="" className="skills-open">
-                            <i className="fa fa-pencil"></i>
-                          </a>{" "}
-                        
-                        </h3>
 
-                        {/* */}
-
-                      </div>
 
                      
                     </div>

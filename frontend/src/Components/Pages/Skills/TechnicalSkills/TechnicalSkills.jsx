@@ -2,7 +2,7 @@ import React from 'react'
 
 function TechnicalSkills() {
   return (
-    <div>TechnicalSkills</div>
+    <div className='h4 text-center'>Coming Soon !!😎</div>
   )
 }
 

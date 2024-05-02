@@ -31,7 +31,7 @@ export default function Navbar() {
   };
   return (
     <header>
-      <div className="container">
+      <div style={{marginTop : '25px' }} className="container">
         <div className="header-data">
           <div className="logo">
             <img src="/assets/images/esprit.png" alt="" width="100em" />
@@ -137,62 +137,36 @@ export default function Navbar() {
             <div className="user-account-settingss" id="users">
               <h3 className="tc">
                 <Link to="/profil" title="">
-                  Profil
+                  Profil 🧑
                 </Link>
               </h3>
+              
 
-              <h3>Online Status</h3>
-              <ul className="on-off-status">
-                <li>
-                  <div className="fgt-sec">
-                    <input type="radio" name="cc" id="c5" />
-                    <label htmlFor="c5">
-                      <span></span>
-                    </label>
-                    <small>Online</small>
-                  </div>
-                </li>
-                <li>
-                  <div className="fgt-sec">
-                    <input type="radio" name="cc" id="c6" />
-                    <label htmlFor="c6">
-                      <span></span>
-                    </label>
-                    <small>Offline</small>
-                  </div>
-                </li>
-              </ul>
-              <h3>Custom Status</h3>
-              <div className="search_form">
-                <form>
-                  <input type="text" name="search" />
-                  <button type="submit">Ok</button>
-                </form>
-              </div>
+
 
               <div className="user-account-settingss" id="users">
                 {user?.role === "Directeur d'étude" && ( // Afficher les liens uniquement pour le Directeur d'étude
                   <>
-                    <h3>Skills</h3>
+                    <h3 className="text-center">Skills 🏆</h3>
                     <ul className="us-links">
                       <li>
-                        <div className="fgt-sec">
+                        <div className="text-center">
                           <Link to={`/socialSkills/`}>
-                            <p>Social Skills</p>
+                            <h4 span className="h6">➡ Social Skills 🗣️</h4>
                           </Link>
                         </div>
                       </li>
-                      <li>
-                        <div className="fgt-sec">
+                      <li> <br />
+                        <div className="text-center">
                           <Link to={`/technicalSkills/`}>
-                            <p>Technical Skills</p>
+                            <h4> ➡Technical Skills<><br /> (COMING SOON )</></h4>
                           </Link>
                         </div>
                       </li>
                     </ul>
                   </>
                 )}
-                <h3>Setting</h3>
+                <h3 className="text-center">Setting ⚙️</h3>
                 <ul className="us-links">
                   <li>
                     <Link to="/settings" title="">
@@ -217,7 +191,7 @@ export default function Navbar() {
                 </ul>
                 <h3 className="tc">
                   <Link to="/" title="" onClick={handleLogout}>
-                    Logout
+                    Logout 🚪 🏃
                   </Link>
                 </h3>
                 
@@ -226,7 +200,7 @@ export default function Navbar() {
             
           </div>
           
-          <div className="margin-bottom: 20px;"></div>
+
         </div>
         
       </div>

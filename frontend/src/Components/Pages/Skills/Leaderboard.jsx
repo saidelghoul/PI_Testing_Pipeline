@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useContext } from 'react';
+import { useEffect, useState,  useContext } from 'react';
 import { Table, Button, Form, InputGroup } from 'react-bootstrap';
 import { getUsersForTask } from '../../../services/task-service';
 import socialSkillService from '../../../services/socialSkill-service';
@@ -8,11 +8,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import moment from 'moment';
 import espritLogo from '../../../../public/assets/images/esprit.png';
-import oneStar from '../../../../public/assets/images/stars/1Star.jpg'; 
-import threeStars from '../../../../public/assets/images/stars/3Stars.jpg';
-import fiveStars from '../../../../public/assets/images/stars/5Stars.jpg';
 import UserStats, { generatePieChartBase64 } from './UserStats';
-import html2canvas from 'html2canvas'; // Assurez-vous que cela est correct
 import axios from 'axios';
 import ReactPaginate from 'react-paginate';
 import { Link } from 'react-router-dom';
@@ -28,9 +24,9 @@ function Leaderboard() {
   const [TaskPoints, setTaskPoints] = useState({});
   const [nbrTasksPoints, setNbrTasksPoints] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentUserRating, setCurrentUserRating] = useState('');
+  const [, setCurrentUserRating] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
-  //const [totalPages, setTotalPages] = useState(0);
+  
   const itemsPerPage = 10; // Nombre d'éléments par page (ajustez si nécessaire)
   //console.log("user Actu",user);
   
@@ -49,6 +45,9 @@ function Leaderboard() {
     const fetchUsers = async () => {
       const listUsers = await getUsersForTask();
       let filteredUsers = listUsers.data.message;
+      console.log("Filtre",filteredUsers);
+
+      console.log("userActuel :",user);
   
       const roleUserActuel = user.role;
       const departmentUserActuel = user.departement;
@@ -59,25 +58,23 @@ function Leaderboard() {
         // Le directeur d'étude voit tout le monde
       } else if (roleUserActuel === 'Chef département') {
         filteredUsers = filteredUsers.filter((usr) => (
-          (usr.role === 'Enseignant' || usr.role === 'Chef unité') &&
-          usr.departmentDetails?.[0]?.name === departmentUserActuel
+          ((usr.role === 'Enseignant' || usr.role === 'Chef unité') &&
+          usr.departmentDetails?.[0]?.name === departmentUserActuel)||
+           usr._id === user.id
         ));
       } else if (roleUserActuel === 'Chef unité') {
         filteredUsers = filteredUsers.filter((usr) => (
-          usr.role === 'Enseignant' &&
+          (usr.role === 'Enseignant' &&
           usr.departmentDetails?.[0]?.name === departmentUserActuel &&
-          usr.uniteDetails?.[0]?.name === uniteUserActuel
+          usr.uniteDetails?.[0]?.name === uniteUserActuel)||
+          usr._id === user.id
         ));
       } else if (roleUserActuel === 'Enseignant') {
         filteredUsers = filteredUsers.filter((usr) => usr._id === user.id);
-        //console.log("Filtre",filteredUsers);
+        
       }
   
-      //console.log("Liste finale des utilisateurs filtrés:", filteredUsers);
-
-      filteredUsers.forEach((usr) => {
-        //console.log(`Utilisateur : ${usr.name}, Image de profil : ${usr.profileImage}`);
-      });
+      
       
   
       // Obtenir les scores sociaux, les scores des tâches et les scores finaux
@@ -193,9 +190,9 @@ sortedUsers.sort((a, b) => {
 
 
 
- //console.log("Imggg",user);
+ 
  const imageUrl = (usrId, usr) => {
-  if (usrId && usr && usr.profileImage) {
+  if (usrId && usr?.profileImage) {
     return `http://localhost:8000/user/${usrId}/profile`;
   } else {
     return "/assets/images/resources/user-pro-img.png";
@@ -265,19 +262,7 @@ sortedUsers.sort((a, b) => {
   };
   
 
-  const getStarImagePath  = (rank, totalUsers) => {
-    console.log("rang",rank)
-  const topQuartileIndex = Math.ceil(totalUsers * 0.25);
-  const middleHalfIndex = Math.ceil(totalUsers * 0.75);
 
-  if (rank < topQuartileIndex) {
-    return fiveStars; // Pour le top 25%
-  } else if (rank >= middleHalfIndex) {
-    return oneStar; // Pour les derniers 25%
-  } else {
-    return threeStars; // Pour le 50% du milieu
-  }
-};
 
 
   const downloadUserPDF = async (usr, rank, totalUsers) => {
@@ -287,12 +272,11 @@ sortedUsers.sort((a, b) => {
       format: 'a4', 
     });
 
-    const starImagePath = getStarImagePath(rank, totalUsers); // Obtenir le chemin de l'image
-    console.log("image",starImagePath);
-    //const response = await axios.get(starImagePath, { responseType: 'arraybuffer' });
-    //const base64Star = Buffer.from(response.data, 'binary').toString('base64');
-  
-    pdf.addImage(starImagePath, 'JPEG', 250, 180, 35, 20); // Ajouter l'image en haut à gauche
+    console.log("OKLM",usr);
+
+    
+    
+    
 
 
     pdf.setFont("Helvetica", "bold");
@@ -305,11 +289,12 @@ sortedUsers.sort((a, b) => {
     pdf.setFont("Helvetica", "bold");
     pdf.text(`Score final = Points sociaux + Score des tâches = ${(socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0)}`, 10, 60);
 
-    if (isEnseignant) {
+    
       const pieChartBase64 = await generatePieChartBase64(socialPoints[usr._id], TaskPoints[usr._id]);
+      console.log("PIE",pieChartBase64);
 
-      pdf.addImage(pieChartBase64, 'JPEG', 200, 40, 80, 80);
-    }
+      pdf.addImage(pieChartBase64, 'JPEG', 180, 105, 100, 100);
+    
 
   
     const profileImageUrl = imageUrl(usr._id, usr);  
@@ -321,7 +306,7 @@ sortedUsers.sort((a, b) => {
         String.fromCharCode(...new Uint8Array(response.data))
       ); // Conversion en base64 sans Buffer
       console.log("Base  64:",base64)
-      pdf.addImage(`data:image/jpeg;base64,${base64}`, 'JPEG', 220, 10, 50, 50);
+      pdf.addImage(`data:image/jpeg;base64,${base64}`, 'JPEG', 220, 5, 50, 50);
     } catch (error) {
       console.error("Erreur lors du chargement de la photo de profil:", error);
       pdf.text("Aucune image de profil disponible", 180, 10); 
@@ -331,11 +316,8 @@ sortedUsers.sort((a, b) => {
     pdf.setTextColor(255, 0, 0); 
     pdf.text("Ces données sont strictement confidentielles !", 10, 10); 
   
-    const logoWidth = 120;
-    const logoHeight = 120;
-    const logoX = pdf.internal.pageSize.getWidth() - logoWidth - 120; 
-    const logoY = pageHeight - logoHeight - 10; 
-    pdf.addImage(espritLogo, 'PNG', logoX, logoY, logoWidth, logoHeight); 
+    
+    pdf.addImage(espritLogo, 'PNG', 40, 70, 80, 80); 
   
      // Ajouter la date d'aujourd'hui en bas à gauche
   const todayDate = moment().format('DD/MM/YYYY'); 
@@ -350,10 +332,12 @@ sortedUsers.sort((a, b) => {
     const shouldDisplayRank = isDirectorOfStudies || isChefDepartement || isChefUnite;
     const shouldDisplaySearchBar = isDirectorOfStudies || isChefDepartement || isChefUnite; // Condition pour afficher la barre de recherche
     const shouldDisplayCamembert =  isEnseignant || isDirectorOfStudies || isChefDepartement || isChefUnite; //condition pour afficher le camembert
+    const shouldDisplayPagination = isDirectorOfStudies || isChefDepartement || isChefUnite;
 
 
      // Déterminer les indices pour les différentes parties
   const totalUsers = sortedUsers.length;
+  console.log(sortedUsers);
   const totalPages = Math.ceil(totalUsers / itemsPerPage);
   const topQuartileIndex = Math.ceil(totalUsers * 0.25); // 25%
   const middleHalfIndex = Math.ceil(totalUsers * 0.75); // 75%
@@ -373,6 +357,7 @@ const getRowBackgroundColor = (index, userId) => {
 };
 const handlePageChange = (data) => {
   const selectedPage = data.selected;
+
   setCurrentPage(selectedPage);
 };
 
@@ -462,13 +447,15 @@ const downloadExcel = () => {
     <div>
       <h1 className="h2 mb-3 text-center">
         
-        Leaderboard
-        <hr />
-        {!isDirectorOfStudies && ` ( Department: ${departmentName} /Unite : ${uniteName})`} 
+        Leaderboard {isEnseignant && <span>Personnel</span>}
+<br />
+        {!isDirectorOfStudies && <span className='h4'> (Department : {departmentName} /Unite : {uniteName})</span>} 
+        
       </h1>
 
       {shouldDisplaySearchBar && (
-        <div className="row">
+        
+        <div className="row"><hr />
           <div className="col">
             <InputGroup>
               <InputGroup.Text>🔎</InputGroup.Text>
@@ -480,7 +467,10 @@ const downloadExcel = () => {
           </div>
           <div className="col">
           <Button variant="danger" onClick={downloadPDF}> PDF 💾</Button>
-          <Button variant="secondary" onClick={downloadExcel}  style={{ marginLeft: '5px' }}>  Excel 📊</Button>
+          <Button variant="secondary" onClick={downloadExcel} style={{ marginLeft: '5px', backgroundColor: '#39a241' }}>
+  Excel 📊
+</Button>
+
         </div>
         </div>
       )}
@@ -508,14 +498,14 @@ const downloadExcel = () => {
           {usersToDisplay.map((usr, index) => (
             <tr key={usr._id}>
               {shouldDisplayRank && (
-                <td className="text-center" style={{ backgroundColor: getRowBackgroundColor(startIndex + index,usr._id) }}>{startIndex+index + 1}</td> 
+                <td className="text-center h3" style={{ backgroundColor: getRowBackgroundColor(startIndex + index,usr._id) }}>{startIndex+index + 1}</td> 
               )}
 
-              <td className="text-center">
+              <td className="text-center h5">
                 
               {usr._id === user.id ? (
                 <>
-                {usr.name} (❌) 
+                {usr.name} <span className='h6'>(❌)</span> 
 
               <Link to="/profil" title="Voir votre profil">
               <img
@@ -548,16 +538,16 @@ const downloadExcel = () => {
             
           )}
               </td>
-              <td className="text-center">
+              <td className="text-center h5">
                 {usr.role} <br />
                 ({usr.departmentDetails?.[0]?.name || "N/A"} / {usr.uniteDetails?.[0]?.name || "N/A"})
               </td>
-              <td className="text-center">{socialPoints[usr._id] || 0}</td>
-              <td className="text-center">{TaskPoints[usr._id]} (/ {nbrTasksPoints[usr._id]})</td>
-              <td className="text-center">{(socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0)}</td>
-              <td className="text-center">{usr.rating}</td>
-              <td className="text-center">
-                <Button variant="danger" onClick={() => downloadUserPDF(usr)}>Télécharger</Button>
+              <td className="text-center h5">{socialPoints[usr._id] || 0}</td>
+              <td className="text-center h5">{TaskPoints[usr._id]} (/ {nbrTasksPoints[usr._id]})</td>
+              <td className="text-center h4">{(socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0)}</td>
+              <td className="text-center h6">{usr.rating}</td>
+              <td className="text-center ">
+                <Button variant="danger" onClick={() => downloadUserPDF(usr)}> <span className='h5'>PDF 💾</span></Button>
               </td>
             </tr>
           ))}
@@ -565,7 +555,8 @@ const downloadExcel = () => {
       </Table>
       {/* Pagination */}
 {/* Pagination */}
-<div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+
+{shouldDisplayPagination && <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
       <ReactPaginate
         pageCount={totalPages}
         pageRangeDisplayed={5}
@@ -574,7 +565,11 @@ const downloadExcel = () => {
         containerClassName={"pagination"}
         activeClassName={"active"}
       />
-    </div>      
+    </div>  }
+    <hr />
+    {shouldDisplayCamembert &&<div className="d-flex justify-content-center "> {/* Pour centrer le camembert */}
+                        <UserStats />
+                  </div>}    
     </div>
   );
 }

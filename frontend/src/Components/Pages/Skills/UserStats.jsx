@@ -55,7 +55,7 @@ function UserStats() {
 
   return (
     <div style={{ textAlign: "center" }}  >
-      <h3 >
+      <h3 className='h3' >
         Vos statistiques 📊
       </h3>
       

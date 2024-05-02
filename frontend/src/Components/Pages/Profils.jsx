@@ -102,28 +102,6 @@ export default function Profils() {
     }
   };
 
-
-  //TODO remove or update below code
-  /*const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
-  const id = "65df6f7a904814fc0404a57a";
-
-  const handleRemove = async (skillid) => {
-    const resp = await SocialSkillService.unassignSocialSkillFromUser(
-      id,
-      skillid
-    );
-
-    if (resp.status === 200) {
-      alert(" socialSkill deleted successfully");
-      handleClose();
-      user.socialSkills.filter((element) => element._id !== skillid);
-    }
-  };*/
-
   //TODO remove or update above code
 
   useEffect(() => {
@@ -346,23 +324,7 @@ export default function Profils() {
                       <h3> {!!user && <>{user.name}</>}</h3>
                       <div className="star-descp">
                         <span> {!!user && <>{user.role}</>}</span>
-                        <ul>
-                          <li>
-                            <i className="fa fa-star"></i>
-                          </li>
-                          <li>
-                            <i className="fa fa-star"></i>
-                          </li>
-                          <li>
-                            <i className="fa fa-star"></i>
-                          </li>
-                          <li>
-                            <i className="fa fa-star"></i>
-                          </li>
-                          <li>
-                            <i className="fa fa-star-half-o"></i>
-                          </li>
-                        </ul>
+                        
                         <Link to={`/Leaderboard`}>Show the Leaderboard</Link>{/*`/affectSkill/${user?.id}`*/}
                             
                         
@@ -2867,7 +2829,7 @@ export default function Profils() {
                     </div>
 
                     <div className="product-feed-tab current" id="info-dd">
-                      <div className="star-descp">
+                      <div className="star-descp border-radius: 56px">
                       
                         <SocialSkillsUSer/> 
                         {<SocialSkillAffect userId={user._id} />}
@@ -2876,7 +2838,7 @@ export default function Profils() {
 
 
                       <div className="user-profile-ov">
-                        <div>
+                        <div className="border-radius: 56px">
                       {shouldDisplayCamembert &&<div className="d-flex justify-content-center "> {/* Pour centrer le camembert */}
                         <UserStats />
                   </div>}
