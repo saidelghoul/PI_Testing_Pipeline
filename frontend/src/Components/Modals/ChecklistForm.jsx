@@ -93,7 +93,7 @@ const ChecklistForm = ({ refresh, show, handleClose, id_task, users }) => {
       keyboard={false}
       size="lg"
     >
-      <Modal.Header closeButton>
+      <Modal.Header >
         <Row>
           <Modal.Title as={Col}>
             <h1 className=" text-white h3 ">Add checklist</h1>

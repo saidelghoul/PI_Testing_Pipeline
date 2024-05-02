@@ -490,7 +490,7 @@ const downloadExcel = () => {
             <th className="text-center">Points sociaux 🗣️</th>
             <th className="text-center">Score des tâches 📋(/nbr de tâches📚)</th>
             <th className="text-center">Score final 🎯</th>
-            <th className="text-center">Rating⭐</th>
+            {!isEnseignant && <th className="text-center">Rating⭐</th>}
             <th className="text-center">Télécharger 📥</th>
           </tr>
         </thead>
@@ -545,7 +545,7 @@ const downloadExcel = () => {
               <td className="text-center h5">{socialPoints[usr._id] || 0}</td>
               <td className="text-center h5">{TaskPoints[usr._id]} (/ {nbrTasksPoints[usr._id]})</td>
               <td className="text-center h4">{(socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0)}</td>
-              <td className="text-center h6">{usr.rating}</td>
+              {!isEnseignant &&<td className="text-center h6">{usr.rating}</td>}
               <td className="text-center ">
                 <Button variant="danger" onClick={() => downloadUserPDF(usr)}> <span className='h5'>PDF 💾</span></Button>
               </td>

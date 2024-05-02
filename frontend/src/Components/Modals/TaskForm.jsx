@@ -164,7 +164,7 @@ const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
       keyboard={false}
       size="lg"
     >
-      <Modal.Header closeButton>
+      <Modal.Header >
         <Row>
           <Modal.Title as={Col}>
             <h1 className=" text-light h3 ">Add task</h1>
