@@ -2,10 +2,8 @@ const Evenement = require("../model/Evenement");
 const moment = require("moment");
 const User = require("../model/user");
 
-const multer = require("multer");
-
 async function add(req, res) {
-  const eventImage = req.files.image[0];
+  const eventImage = req.files.image ? req.files.image[0] : undefined;
 
   const {
     titre,

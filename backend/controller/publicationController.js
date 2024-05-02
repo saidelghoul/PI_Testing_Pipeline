@@ -2,7 +2,7 @@ const Publication = require("../model/publication");
 const User = require("../model/user");
 
 async function add(req, res) {
-  const eventImage = req.files.image[0];
+  const eventImage = req.files.image ? req.files.image[0] : undefined;
 
   const { sujet, contenu, creator: userId } = req.body;
 

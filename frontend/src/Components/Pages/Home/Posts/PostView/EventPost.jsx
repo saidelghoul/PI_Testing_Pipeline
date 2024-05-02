@@ -4,7 +4,9 @@ import { UserContext } from "../../../../../../context/userContext";
 import axios from "axios";
 import { booked } from "../../utils/const";
 import { Button } from "react-bootstrap";
-
+import Card from "react-bootstrap/Card";
+import ListGroup from "react-bootstrap/ListGroup";
+import { validDate } from "../../utils/utils";
 export default function EventPost({ postContent }) {
   const { user } = useContext(UserContext);
 
@@ -71,70 +73,97 @@ export default function EventPost({ postContent }) {
       alert("Error setting up the request: " + error.message);
     }
   };
-
+  const testDate = validDate(postContent.DateDebut, 4);
   return (
     <>
-      <div className="job_descp">
-        <ul className="job-dt">
-          <li>
-            <a href="#" title="">
-              Capacite: {postContent.Capacite}
-            </a>
-          </li>
-          <li>
-            Price:
-            <span>
-              {postContent.Prix === null
-                ? "Free"
-                : postContent.Prix === 0
-                ? "Free"
-                : postContent.Prix + " dt"}
-            </span>
-          </li>
-        </ul>
-        <span>
-          <h3>
-            <img src="/assets/images/clock.png" alt="" />
-            Start: {moment(postContent.DateDebut).format("lll")}
-          </h3>
-          <h3>
-            <img src="/assets/images/clock.png" alt="" />
-            Finish: {moment(postContent.DateFin).format("lll")}
-          </h3>
-          <h3>
-            {nbPlacesLeft} places left
-            {reservationMade ? (
-              <Button
-                onClick={() => handleReservationClick(postContent._id)}
-                variant={booked.YES}
-              >
-                Book
-              </Button>
-            ) : (
-              <Button
-                onClick={() => handleReservationClick(postContent._id)}
-                variant={booked.NO}
-              >
-                Cancel
-              </Button>
+      {postContent.ImagePath && (
+        <img
+          src={`http://localhost:8000/images/${postContent.ImagePath}`}
+          alt="Event"
+          style={{ width: "500px", height: "250px" }}
+        />
+      )}{" "}
+      <Card.Body>
+        <Card.Title>{postContent.Titre}</Card.Title>
+        <Card.Text>{postContent.Contenu}</Card.Text>
+      </Card.Body>
+      <ListGroup className="list-group-flush">
+        <ListGroup.Item>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div>
+              Price:{" "}
+              <span>
+                {postContent.Prix === null
+                  ? "Free"
+                  : postContent.Prix === 0
+                  ? "Free"
+                  : postContent.Prix + " dt"}
+              </span>
+            </div>
+            <div>
+              <a href="#" title="">
+                Capacite: {postContent.Capacite}
+              </a>
+            </div>
+          </div>
+        </ListGroup.Item>
+        <ListGroup.Item>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            {" "}
+            <div>
+              <h3>
+                <img src="/assets/images/clock.png" alt="" />
+                Start: {moment(postContent.DateDebut).format("lll")}
+              </h3>
+            </div>
+            <div>
+              <h3>
+                <img src="/assets/images/clock.png" alt="" />
+                Finish: {moment(postContent.DateFin).format("lll")}
+              </h3>
+            </div>{" "}
+          </div>
+        </ListGroup.Item>
+      </ListGroup>
+      <Card.Body>
+        {countdown !== "" && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <h3 style={{ marginRight: "20px" }}>{nbPlacesLeft} places left</h3>
+            {testDate && (
+              <>
+                {reservationMade ? (
+                  <Button
+                    onClick={() => handleReservationClick(postContent._id)}
+                    variant={booked.YES}
+                  >
+                    Book
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => handleReservationClick(postContent._id)}
+                    variant={booked.NO}
+                  >
+                    Cancel
+                  </Button>
+                )}
+              </>
             )}
-          </h3>
-          <h3 style={{ color: countdown === "Expired" ? "red" : "inherit" }}>
-            {countdown === "Expired" ? (
-              <span>{countdown}</span>
-            ) : (
-              <span>Countdown: {countdown}</span>
-            )}
-          </h3>
-        </span>
-        {postContent.ImagePath && (
-          <img
-            src={`http://localhost:8000/images/${postContent.ImagePath}`}
-            alt="Event"
-          />
-        )}{" "}
-        <h3>{postContent.Titre}</h3> <p>{postContent.Contenu}</p>
-      </div>
+            <h3 style={{ color: countdown === "Expired" ? "red" : "inherit" }}>
+              {countdown === "Expired" ? (
+                <span>{countdown}</span>
+              ) : (
+                <span>Before: {countdown}</span>
+              )}
+            </h3>
+          </div>
+        )}
+      </Card.Body>
     </>
   );
 }
