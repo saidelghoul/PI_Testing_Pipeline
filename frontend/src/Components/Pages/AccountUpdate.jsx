@@ -528,7 +528,6 @@ export default function AccountUpdate() {
               <tr>
                 <th scope="col">Department name</th>
                 <th scope="col">Description</th>
-                <th scope="col">Number of units</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -537,7 +536,6 @@ export default function AccountUpdate() {
                 <tr key={departement._id}>
                   <td>{departement.name}</td>
                   <td>{departement.description}</td>
-                  <td>{departement.nbrUnite}</td>
                   <td>
                     <i
                       className="fa fa-edit"
@@ -573,7 +571,7 @@ export default function AccountUpdate() {
         </div>
         {/* Formulaire d'ajout/modification de département */}
         <div className="add-billing-method">
-          <h3>{isEditing ? "Update Department" : "Add Department"}</h3>
+          <h3>{isEditing ? "Update Department" : "Add Department 🏢"}</h3>
           <div className="payment_methods">
             <form onSubmit={handleSubmitDep}>
               <div className="row">
@@ -608,18 +606,6 @@ export default function AccountUpdate() {
                   </div>
                 </div>
                 <div className="col-lg-6">
-                  <div className="cc-head">
-                    <h5>Number of units</h5>
-                  </div>
-                  <div className="inpt-field">
-                    <input
-                      type="number"
-                      name="nbrUnite"
-                      placeholder="Number of units"
-                      value={departement.nbrUnite}
-                      onChange={(e) => setDepartement({ ...departement, nbrUnite: parseInt(e.target.value) })}
-                    />
-                  </div>
                 </div>
                 <div className="col-lg-12">
                   <button type="submit">

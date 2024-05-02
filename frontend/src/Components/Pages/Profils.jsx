@@ -2755,7 +2755,8 @@ export default function Profils() {
 
 
                       <div className="user-profile-ov">
-                        <div className="border-radius: 56px">
+                      <div style={{ borderRadius: '56px' }}>
+
                       {shouldDisplayCamembert &&<div className="d-flex justify-content-center "> {/* Pour centrer le camembert */}
                         <UserStats />
                   </div>}
