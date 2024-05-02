@@ -4,21 +4,23 @@ import { UserContext } from "../../../../../../context/userContext";
 import { liked, postTypes, disliked } from "../../utils/const";
 import { getLikePostEndpoint, getDeslikePostEndpoint } from "../../utils/utils";
 import Commentaire from "./Commentaire";
+import { Button, ButtonGroup } from "react-bootstrap";
 
-export default function PostFooter({ postContent }) {
+export default function PostFooter({ postContent, fetchPosts }) {
+  const { user } = useContext(UserContext);
   const likePostEndpoint = getLikePostEndpoint(postContent.postType);
   const deslikePostEndpoint = getDeslikePostEndpoint(postContent.postType);
-
-  const { user } = useContext(UserContext);
-  const [currentPublicationId, setCurrentPublicationId] = useState();
-
+  const [showComment, setShowComment] = useState(false);
+  const likes = postContent.likes?.length || 0;
+  const deslikes = postContent.deslikes?.length || 0;
   const userLikeThisPost = postContent.likes
     ? postContent.likes.indexOf(user?.id)
     : -1;
-
   const userDeslikeThisPost = postContent.deslikes
     ? postContent.deslikes.indexOf(user?.id)
     : -1;
+
+  const [currentPublicationId, setCurrentPublicationId] = useState();
 
   const [commentData, setCommentData] = useState({
     contenu: "",
@@ -37,6 +39,8 @@ export default function PostFooter({ postContent }) {
       // An error occurred while setting up the request
       console.error("Error setting up the request:", error.message);
       alert("Error setting up the request: " + error.message);
+    } finally {
+      fetchPosts();
     }
   };
 
@@ -56,6 +60,8 @@ export default function PostFooter({ postContent }) {
       // An error occurred while setting up the request
       console.error("Error setting up the request:", error.message);
       alert("Error setting up the request: " + error.message);
+    } finally {
+      fetchPosts();
     }
   };
 
@@ -63,7 +69,7 @@ export default function PostFooter({ postContent }) {
     setCommentData({ ...commentData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmitComment = async (e, b, c) => {
+  const handleSubmitComment = async (e) => {
     e.preventDefault();
     if (!currentPublicationId) {
       console.error("ID de la publications non défini.");
@@ -93,6 +99,8 @@ export default function PostFooter({ postContent }) {
       alert("Commentaire ajouté avec succès");
     } catch (error) {
       console.error("Erreur lors de l'ajout du commentaire :", error);
+    } finally {
+      fetchPosts();
     }
   };
 
@@ -103,72 +111,73 @@ export default function PostFooter({ postContent }) {
   return (
     <>
       <div className="job-status-bar">
-        <ul className="like-com">
-          <li>
-            <a onClick={() => handleLikeClick(postContent._id)}>
-              <i className={userLikeThisPost ? liked.YES : liked.NO}></i> Like
-            </a>
-            <img src="/assets/images/liked-img.png" alt="" />
-            <span>{postContent.likes?.length || 0}</span>
-          </li>
-          <li>
-            <a href="#" className="com">
-              <i className="fas fa-comment-alt"></i>{" "}
-              {postContent.comments.length}
-            </a>
-          </li>
-          <li>
-            <img src="" alt="" />
-            <span>{postContent.deslikes?.length || 0}</span>
-            <a onClick={() => handleDeslikeClick(postContent._id)}>
-              <i
-                className={userDeslikeThisPost ? disliked.YES : disliked.NO}
-              ></i>{" "}
-              Like
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      <div className="comment-section">
-        {/* List of comments */}
-        <div className="comment-sec">
-          <ul>
-            {postContent.comments.length > 0 ? (
-              postContent.comments.map((comment) => (
-                <Commentaire key={comment._id} comment={comment} />
-              ))
-            ) : (
-              <li>
-                <p>Be the first one to comment on This post</p>
-              </li>
-            )}
-          </ul>
-        </div>
-
-        {/* Add comment */}
-        <div className="post-comment">
-          <div className="cm_img">
-            <img src="/assets/images/resources/bg-img4.png" alt="" />
-          </div>
-          <div
-            className="comment_box"
-            onClick={() => handleCommentClick(postContent._id)}
+        <ButtonGroup className="like-com">
+          <Button
+            variant="secondary"
+            onClick={() => handleLikeClick(postContent._id)}
           >
-            <form onSubmit={handleSubmitComment}>
-              <input
-                type="text"
-                name="contenu"
-                placeholder="Post a comment"
-                value={commentData.contenu}
-                onChange={handleChangeComent}
-                required
-              />
-              <button type="submit">Post</button>
-            </form>
+            <i className={userLikeThisPost ? liked.YES : liked.NO}></i> {likes}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => handleDeslikeClick(postContent._id)}
+          >
+            <i className={userDeslikeThisPost ? disliked.YES : disliked.NO}>
+              {" "}
+            </i>{" "}
+            {deslikes}
+          </Button>
+          <Button onClick={() => setShowComment(!showComment)}>
+            <i className="fas fa-comment-alt"></i> {postContent.comments.length}
+          </Button>
+        </ButtonGroup>
+        <ul className="like-com"></ul>
+      </div>
+
+      {showComment && (
+        <div className="comment-section">
+          {/* List of comments */}
+          <div className="comment-sec">
+            <ul>
+              {postContent.comments.length > 0 ? (
+                postContent.comments.map((comment) => (
+                  <Commentaire key={comment._id} comment={comment} />
+                ))
+              ) : (
+                <li>
+                  <p>Be the first one to comment on This post</p>
+                </li>
+              )}
+            </ul>
+          </div>
+
+          {/* Add comment */}
+          <div className="post-comment">
+            <div className="cm_img">
+              <img src="/assets/images/resources/bg-img4.png" alt="" />
+            </div>
+            <div
+              className="comment_box"
+              onClick={() => handleCommentClick(postContent._id)}
+            >
+              <form
+                onSubmit={handleSubmitComment}
+                style={{ display: "flex", alignItems: "center" }}
+              >
+                <input
+                  type="text"
+                  name="contenu"
+                  placeholder="Post a comment"
+                  value={commentData.contenu}
+                  onChange={handleChangeComent}
+                  required
+                />
+                <button type="submit">Post</button>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

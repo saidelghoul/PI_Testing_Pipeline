@@ -73,10 +73,7 @@ export default function EventPost({ postContent }) {
   };
 
   return (
-    <div className="job-status-bar">
-      <div className="epi-sec">
-        <ul className="descp"></ul>
-      </div>
+    <>
       <div className="job_descp">
         <ul className="job-dt">
           <li>
@@ -106,18 +103,21 @@ export default function EventPost({ postContent }) {
           </h3>
           <h3>
             {nbPlacesLeft} places left
-            {reservationMade?
-            <Button
-              onClick={() => handleReservationClick(postContent._id)}
-              variant={ booked.YES}
-            >
-              Book
-            </Button>:<Button
-              onClick={() => handleReservationClick(postContent._id)}
-              variant={ booked.NO}
-            >
-              Cancel
-            </Button>}
+            {reservationMade ? (
+              <Button
+                onClick={() => handleReservationClick(postContent._id)}
+                variant={booked.YES}
+              >
+                Book
+              </Button>
+            ) : (
+              <Button
+                onClick={() => handleReservationClick(postContent._id)}
+                variant={booked.NO}
+              >
+                Cancel
+              </Button>
+            )}
           </h3>
           <h3 style={{ color: countdown === "Expired" ? "red" : "inherit" }}>
             {countdown === "Expired" ? (
@@ -135,6 +135,6 @@ export default function EventPost({ postContent }) {
         )}{" "}
         <h3>{postContent.Titre}</h3> <p>{postContent.Contenu}</p>
       </div>
-    </div>
+    </>
   );
 }

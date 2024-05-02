@@ -2,6 +2,7 @@ const Evenement = require("../model/Evenement");
 const Commentaire = require("../model/commentair");
 const Publication = require("../model/publication");
 const User = require("../model/user");
+const { detectBadWords } = require("./badWordsController");
 
 async function getCommentsByEvent(req, res) {
   const eventId = req.params.id;
@@ -34,22 +35,26 @@ async function addToPub(req, res) {
   const publicationId = req.params.id;
 
   try {
-    // Vérifiez si l'utilisateur existe
-
     // Vérifiez si la publication existe
     const publication = await Publication.findById(publicationId);
+
     if (!publication) {
       return res.status(404).json({ error: "Publication not found" });
     }
+
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    // Créez un nouveau commentaire
+
+    // Wait for detecting bad words
+    const censoredContent = await detectBadWords(contenu);
+
+    // Créez un nouveau commentaire après la censure
     const newCommentaire = new Commentaire({
       publicationId,
       creator: userId, // Utilisez l'ID de l'utilisateur connecté en tant que créateur du commentaire
-      contenu,
+      contenu: censoredContent,
     });
 
     // Enregistrez le nouveau commentaire
@@ -76,11 +81,14 @@ async function addToEvent(req, res) {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
+
+    const censoredContent = await detectBadWords(contenu);
+
     // Créez un nouveau commentaire
     const newCommentaire = new Commentaire({
       evenementId,
       creator: userId, // Utilisez l'ID de l'utilisateur connecté en tant que créateur du commentaire
-      contenu,
+      contenu: censoredContent,
     });
 
     // Enregistrez le nouveau commentaire

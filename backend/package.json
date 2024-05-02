@@ -27,7 +27,8 @@
     "nodemon": "^3.0.3",
     "path": "^0.12.7",
     "socket.io": "^4.7.5",
-    "twig": "~0.10.3"
+    "twig": "~0.10.3",
+    "request": "2.88.2"
   },
   "devDependencies": {
     "babel": "^6.23.0",

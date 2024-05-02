@@ -31,6 +31,7 @@ export default function PostsList({ userProfileId }) {
 
   const fetchPosts = async () => {
     try {
+      setIsLoading(true);
       const textPostsRes = await axios.get("/publications/getall");
       const eventPostsRes = await axios.get("/evenemnt/getall");
 
@@ -63,18 +64,14 @@ export default function PostsList({ userProfileId }) {
   }
 
   return (
-    <div className="posts-section">
-      <div className="posty">
-        <div className="post-bar no-margin">
-          {filtredPosts.map((postContent) => (
-            <PostContainer
-              key={postContent._id}
-              postContent={postContent}
-              fetchPosts={fetchPosts} // needed for updating
-            />
-          ))}
-        </div>
-      </div>
-    </div>
+    <>
+      {filtredPosts.map((postContent) => (
+        <PostContainer
+          key={postContent._id}
+          postContent={postContent}
+          fetchPosts={fetchPosts} // needed for updating
+        />
+      ))}
+    </>
   );
 }

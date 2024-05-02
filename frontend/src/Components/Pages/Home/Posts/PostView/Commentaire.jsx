@@ -32,32 +32,32 @@ export default function Commentaire({ comment }) {
 
   return (
     <div className="comment-sec">
-      {isCreator(user.id, comment.creator?._id) && (
-        <CommentDelete comment={comment} />
-      )}
-      <Button
-        onClick={() => handleCommentReportClick(comment._id)}
-        variant={userReportThisPost ? reported.NO : reported.YES}
-      >
-        !
-      </Button>
-      <ul>
-        {
-          <div className="comment-list">
-            <div className="bg-img">
-              <img src="/assets/images/resources/bg-img3.png" alt="" />
-            </div>
-            <div className="comment">
-              <h3>{comment.creator?.name}</h3>
-              <span>
-                <img src="/assets/images/clock.png" alt="" />{" "}
-                {moment(comment.DateCreation).format("lll")}
-              </span>
-              <p>{comment.contenu}</p>
-            </div>
+      {
+        <div className="comment-list">
+          <div className="cm_img">
+            <img src="/assets/images/resources/bg-img4.png" alt="" />
           </div>
-        }
-      </ul>
+          <div className="comment">
+            <h3>{comment.creator?.name}</h3>
+            <span>
+              <img src="/assets/images/clock.png" alt="" />{" "}
+              {moment(comment.DateCreation).format("lll")}
+            </span>
+            <p>{comment.contenu}</p>
+          </div>
+          {isCreator(user.id, comment.creator?._id) && (
+            <CommentDelete comment={comment} />
+          )}
+          {!isCreator(user.id, comment.creator?._id) && (
+            <Button
+              onClick={() => handleCommentReportClick(comment._id)}
+              variant={userReportThisPost ? reported.NO : reported.YES}
+            >
+              Alert
+            </Button>
+          )}
+        </div>
+      }
     </div>
   );
 }

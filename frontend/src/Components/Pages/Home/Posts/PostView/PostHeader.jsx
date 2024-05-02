@@ -44,12 +44,15 @@ export default function PostHeader({ postContent, fetchPosts }) {
           </div>
         </div>
         <div className="ed-opts">
-          <Button
-            onClick={() => handleReportClick(postContent._id)}
-            variant={userReportThisPost ? reported.NO : reported.YES}
-          >
-            !
-          </Button>
+          {!isCreator(user.id, postContent.creator?._id) && (
+            <Button
+              size="sm"
+              onClick={() => handleReportClick(postContent._id)}
+              variant={userReportThisPost ? reported.NO : reported.YES}
+            >
+              Alert
+            </Button>
+          )}
           {isCreator(user.id, postContent.creator?._id) && (
             <PostDelete postContent={postContent} fetchPosts={fetchPosts} />
           )}
