@@ -3,19 +3,19 @@ var Message = require("../model/Chats/message");
 const User = require("../model/user");
 
 async function getAllConversations(req, res) {
-  Conversation.find({})
-  .populate({
-    path: 'messages',
-    select: 'content createdAt' // Sélectionnez les champs à afficher
-  })
-      .exec()
-    .then((conversations) => {
-      res.status(200).json(conversations);
-    })
-    .catch((error) => {
-      res.status(500).json({ error: "Server error: " + error.message });
-    });
+  try {
+    const conversations = await Conversation.find({}).
+    populate({
+      path: 'messages',
+      select: 'createdAt' // Sélectionnez les champs à afficher
+    }) 
+      .exec();
+    res.status(200).json(conversations);
+  } catch (error) {
+    res.status(500).json({ error: "Erreur du serveur : " + error.message });
+  }
 }
+
 
 async function getConversationById(req, res) {
   try {
@@ -181,7 +181,7 @@ async function sendMessage(req, res) {
     const newMessage = new Message({
       content: message,
       sender: userId,
-      conversation: conversationId
+      conversationId: conversationId
     });
 
     // Enregistrez le nouveau message dans la base de données

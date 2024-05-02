@@ -70,6 +70,14 @@ export default function Navbar() {
                 </Link>
               </li>
               <li>
+                <Link to="/myGroups" title="">
+                  <span>
+                    <img src="/assets/images/icon2.png" alt="" />
+                  </span>
+                   My Pages
+                </Link>
+              </li>
+              <li>
                 {user?.role !== "Enseignant" && (
                   <Link to="/activities" title="Manage activities">
                     <span>

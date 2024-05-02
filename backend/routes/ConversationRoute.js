@@ -1,7 +1,6 @@
 var express = require("express");
 var router = express.Router();
 var ConversationController = require("../controller/ConversationController");
-const  authenticateUser  = require('../middleware/requireAuth');
 
 router.get("/getall", ConversationController.getAllConversations);
 
