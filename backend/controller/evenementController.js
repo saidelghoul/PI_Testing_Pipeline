@@ -1,9 +1,12 @@
 const Evenement = require("../model/Evenement");
 const moment = require("moment");
 const User = require("../model/user");
-const Reservation = require("../model/Reservation");
+
+const multer = require("multer");
 
 async function add(req, res) {
+  const eventImage = req.files.image[0];
+
   const {
     titre,
     contenu,
@@ -18,19 +21,19 @@ async function add(req, res) {
     // Vérifier si l'utilisateur existe
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ error: "Utilisateur non trouvé" });
+      return res.status(404).json({ error: "User not found " });
     }
 
     // Vérifier les conditions de date
     if (new Date(datefin) <= new Date(datedeb)) {
-      return res
-        .status(400)
-        .json({ error: "La date de fin doit être après la date de début" });
+      return res.status(400).json({
+        error: "The start Date should be earlier then the finish Date ",
+      });
     }
     if (new Date(datedeb) <= new Date()) {
-      return res
-        .status(400)
-        .json({ error: "La date de début doit être après la date actuelle" });
+      return res.status(400).json({
+        error: "You can't fixe an event Today or in a passed Date ",
+      });
     }
 
     // Créer une nouvelle publication (événement)
@@ -41,6 +44,7 @@ async function add(req, res) {
       DateFin: datefin,
       Capacite: cap,
       Prix: prix,
+      ImagePath: eventImage?.filename,
       creator: userId, // Associer l'ID de l'utilisateur connecté à la publication
     });
 
@@ -56,72 +60,35 @@ async function add(req, res) {
 async function getall(req, res) {
   try {
     const publications = await Evenement.find({})
-    .populate({
-      path: "comments",
-      select: "contenu creator DateCreation",
-      // Sélectionnez les champs de commentaire nécessaires
-      populate: {
-        path: "creator", // Chemin vers le modèle d'utilisateur associé
-        select: "name", // Sélectionnez le champ de nom d'utilisateur
-      },
-    })
-    .exec();
+      .populate({
+        path: "comments",
+        select: "contenu creator DateCreation",
+        // Sélectionnez les champs de commentaire nécessaires
+        populate: {
+          path: "creator", // Chemin vers le modèle d'utilisateur associé
+          select: "name", // Sélectionnez le champ de nom d'utilisateur
+        },
+      })
+      .exec();
 
-    const mappedPublications = await Promise.all(publications.map(async (publication) => {
-      const creatorId = publication.creator;
-      const user = await User.findById(creatorId)
-      const mappedPublication = {
-        ...publication.toObject(),
+    const mappedPublications = await Promise.all(
+      publications.map(async (publication) => {
+        const creatorId = publication.creator;
+        const user = await User.findById(creatorId);
+        const mappedPublication = {
+          ...publication.toObject(),
           creator: {
             _id: user._id,
-            name: user.name
-          }
-      };
-      return mappedPublication;
-    }));
+            name: user.name,
+          },
+        };
+        return mappedPublication;
+      })
+    );
 
-      res.status(200).json(mappedPublications);
-   } catch (error) {
-      res.status(500).json({ error: "Server error: " + error.message });
-    };
-}
-
-async function createReservation(req, res) {
-  try {
-    const { eventId } = req.params;
-    const { creator } = req.body;
-
-    // Récupérer l'événement depuis la base de données
-    const event = await Evenement.findById(eventId);
-
-    // Vérifier si l'événement existe
-    if (!event) {
-      return res.status(404).json({ error: "Événement non trouvé" });
-    }
-
-    // Calculer la nouvelle capacité de l'événement
-    const newCapacity = event.Capacite - 1; // Soustrayez 1 pour chaque nouvelle réservation
-
-    // Mettre à jour la capacité de l'événement dans la base de données
-    await Evenement.findByIdAndUpdate(eventId, { Capacite: newCapacity });
-
-    // Enregistrer la réservation dans la base de données
-    const reservation = new Reservation({
-      event: eventId,
-      creator: creator,
-    });
-    await reservation.save();
-
-    // Répondre avec la réussite de la réservation
-    res.status(201).json({
-      message: "Réservation créée avec succès",
-      reservation: reservation,
-    });
+    res.status(200).json(mappedPublications);
   } catch (error) {
-    console.error("Erreur lors de la création de la réservation:", error);
-    res.status(500).json({
-      error: "Erreur du serveur lors de la création de la réservation.",
-    });
+    res.status(500).json({ error: "Server error: " + error.message });
   }
 }
 
@@ -144,6 +111,8 @@ async function getbyid(req, res) {
 async function update(req, res) {
   const id = req.params.id;
   try {
+    const currentDate = new Date(); // Obtenez la date actuelle
+    req.body.DatePublication = currentDate; // Mettez à jour la DatePublication avec la date actuelle
     const evenement = await Evenement.findByIdAndUpdate(id, req.body, {
       new: true,
     });
@@ -183,11 +152,128 @@ async function remove(req, res) {
   }
 }
 
+async function likePost(req, res) {
+  const id = req.params.id;
+  const userId = req.body.userId;
+
+  try {
+    const evenement = await Evenement.findById(id);
+    if (!evenement) {
+      return res.status(404).json({ error: "Publication not found" });
+    }
+
+    const index = evenement.likes.indexOf(userId);
+    const indexDeslike = evenement.deslikes.indexOf(userId);
+
+    if (index !== -1) {
+      evenement.likes.splice(index, 1);
+    } else {
+      if (indexDeslike !== -1) {
+        evenement.deslikes.splice(index, 1);
+      }
+      evenement.likes.push(userId);
+    }
+
+    const updatedPublication = await evenement.save();
+
+    res.status(200).json(updatedPublication);
+  } catch (error) {
+    res.status(500).json({ error: "Server error: " + error.message });
+  }
+}
+
+async function deslikePost(req, res) {
+  const id = req.params.id;
+  const userId = req.body.userId;
+
+  try {
+    const evenement = await Evenement.findById(id);
+    if (!evenement) {
+      return res.status(404).json({ error: "Publication not found" });
+    }
+
+    const index = evenement.deslikes.indexOf(userId);
+    const indexLike = evenement.likes.indexOf(userId);
+
+    if (index !== -1) {
+      evenement.deslikes.splice(index, 1);
+    } else {
+      if (indexLike !== -1) {
+        evenement.likes.splice(index, 1);
+      }
+      evenement.deslikes.push(userId);
+    }
+
+    const updatedPublication = await evenement.save();
+
+    res.status(200).json(updatedPublication);
+  } catch (error) {
+    res.status(500).json({ error: "Server error: " + error.message });
+  }
+}
+
+async function reportPost(req, res) {
+  const id = req.params.id;
+  const userId = req.body.userId;
+
+  try {
+    const evenement = await Evenement.findById(id);
+    if (!evenement) {
+      return res.status(404).json({ error: "Publication not found" });
+    }
+
+    const index = evenement.reports.indexOf(userId);
+    if (index !== -1) {
+      evenement.reports.splice(index, 1);
+    } else {
+      evenement.reports.push(userId);
+    }
+
+    const updatedPublication = await evenement.save();
+
+    res.status(200).json(updatedPublication);
+  } catch (error) {
+    res.status(500).json({ error: "Server error: " + error.message });
+  }
+}
+
+async function CreateReservation(req, res) {
+  const id = req.params.id;
+  const userId = req.body.userId;
+
+  try {
+    const evenement = await Evenement.findById(id);
+    if (!evenement) {
+      return res.status(404).json({ error: "Publication not found" });
+    }
+
+    const index = evenement.reservations.indexOf(userId);
+    let message;
+
+    if (index !== -1) {
+      evenement.reservations.splice(index, 1);
+      message = "Reservation removed";
+    } else {
+      evenement.reservations.push(userId);
+      message = "Reservation added";
+    }
+
+    const updatedPublication = await evenement.save();
+
+    res.status(200).json(updatedPublication);
+  } catch (error) {
+    res.status(500).json({ error: "Server error: " + error.message });
+  }
+}
+
 module.exports = {
   getall,
-  createReservation,
   getbyid,
   add,
   update,
   remove,
+  likePost,
+  deslikePost,
+  reportPost,
+  CreateReservation,
 };

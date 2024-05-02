@@ -1,8 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import moment from "moment/moment";
+import { UserContext } from "../../../../../../context/userContext";
+import axios from "axios";
+import { booked } from "../../utils/const";
+import { Button } from "react-bootstrap";
 
 export default function EventPost({ postContent }) {
+  const { user } = useContext(UserContext);
+
   const [countdown, setCountdown] = useState("");
+
+  const nbPlacesLeft = postContent.Capacite - postContent.reservations.length;
+
+  const reservationMade = postContent.reservations
+    ? postContent.reservations.indexOf(user?.id)
+    : -1;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -42,6 +54,24 @@ export default function EventPost({ postContent }) {
     return () => clearInterval(interval); // Cleanup on unmount
   }, [postContent.DateDebut]);
 
+  const handleReservationClick = async () => {
+    try {
+      const ReservationData = {
+        userId: user.id,
+      };
+
+      await axios.post(
+        `evenemnt/reservation/${postContent._id}`,
+        ReservationData
+      );
+
+      alert("Reservation created");
+    } catch (error) {
+      console.error("Error setting up the request:", error.message);
+      alert("Error setting up the request: " + error.message);
+    }
+  };
+
   return (
     <div className="job-status-bar">
       <div className="epi-sec">
@@ -74,7 +104,21 @@ export default function EventPost({ postContent }) {
             <img src="/assets/images/clock.png" alt="" />
             Finish: {moment(postContent.DateFin).format("lll")}
           </h3>
-
+          <h3>
+            {nbPlacesLeft} places left
+            {reservationMade?
+            <Button
+              onClick={() => handleReservationClick(postContent._id)}
+              variant={ booked.YES}
+            >
+              Book
+            </Button>:<Button
+              onClick={() => handleReservationClick(postContent._id)}
+              variant={ booked.NO}
+            >
+              Cancel
+            </Button>}
+          </h3>
           <h3 style={{ color: countdown === "Expired" ? "red" : "inherit" }}>
             {countdown === "Expired" ? (
               <span>{countdown}</span>
@@ -83,6 +127,12 @@ export default function EventPost({ postContent }) {
             )}
           </h3>
         </span>
+        {postContent.ImagePath && (
+          <img
+            src={`http://localhost:8000/images/${postContent.ImagePath}`}
+            alt="Event"
+          />
+        )}{" "}
         <h3>{postContent.Titre}</h3> <p>{postContent.Contenu}</p>
       </div>
     </div>

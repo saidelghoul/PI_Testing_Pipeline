@@ -7,6 +7,7 @@ export default function Feed() {
       <div className="main-ws-sec">
         <CreatPost />
         <PostsList />
+        {/* <PostsList userProfileId="66003975d5854d860d08b7b6" /> */}
       </div>
     </div>
   );

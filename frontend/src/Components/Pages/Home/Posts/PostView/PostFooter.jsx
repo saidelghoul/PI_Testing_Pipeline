@@ -1,22 +1,69 @@
 import axios from "axios";
 import { useState, useContext } from "react";
 import { UserContext } from "../../../../../../context/userContext";
-import moment from "moment";
-import { postTypes } from "../../utils/const";
+import { liked, postTypes, disliked } from "../../utils/const";
+import { getLikePostEndpoint, getDeslikePostEndpoint } from "../../utils/utils";
+import Commentaire from "./Commentaire";
 
-export default function PostFooter({ postContent, fetchPosts }) {
+export default function PostFooter({ postContent }) {
+  const likePostEndpoint = getLikePostEndpoint(postContent.postType);
+  const deslikePostEndpoint = getDeslikePostEndpoint(postContent.postType);
+
   const { user } = useContext(UserContext);
-
   const [currentPublicationId, setCurrentPublicationId] = useState();
+
+  const userLikeThisPost = postContent.likes
+    ? postContent.likes.indexOf(user?.id)
+    : -1;
+
+  const userDeslikeThisPost = postContent.deslikes
+    ? postContent.deslikes.indexOf(user?.id)
+    : -1;
 
   const [commentData, setCommentData] = useState({
     contenu: "",
   });
+
+  const handleLikeClick = async () => {
+    try {
+      const LikeData = {
+        userId: user.id,
+      };
+
+      // Send data to the server to add the like to the post
+      await axios.post(`${likePostEndpoint}/${postContent._id}`, LikeData);
+      alert("Like added");
+    } catch (error) {
+      // An error occurred while setting up the request
+      console.error("Error setting up the request:", error.message);
+      alert("Error setting up the request: " + error.message);
+    }
+  };
+
+  const handleDeslikeClick = async () => {
+    try {
+      const DesLikeData = {
+        userId: user.id,
+      };
+
+      // Send data to the server to add the like to the post
+      await axios.post(
+        `${deslikePostEndpoint}/${postContent._id}`,
+        DesLikeData
+      );
+      alert("Like added");
+    } catch (error) {
+      // An error occurred while setting up the request
+      console.error("Error setting up the request:", error.message);
+      alert("Error setting up the request: " + error.message);
+    }
+  };
+
   const handleChangeComent = (e) => {
     setCommentData({ ...commentData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmitComment = async (e) => {
+  const handleSubmitComment = async (e, b, c) => {
     e.preventDefault();
     if (!currentPublicationId) {
       console.error("ID de la publications non défini.");
@@ -58,51 +105,48 @@ export default function PostFooter({ postContent, fetchPosts }) {
       <div className="job-status-bar">
         <ul className="like-com">
           <li>
-            <a href="#">
-              <i className="fas fa-heart"></i> Like
+            <a onClick={() => handleLikeClick(postContent._id)}>
+              <i className={userLikeThisPost ? liked.YES : liked.NO}></i> Like
             </a>
             <img src="/assets/images/liked-img.png" alt="" />
-            <span>25</span>
+            <span>{postContent.likes?.length || 0}</span>
           </li>
           <li>
             <a href="#" className="com">
-              <i className="fas fa-comment-alt"></i> Comment 15
+              <i className="fas fa-comment-alt"></i>{" "}
+              {postContent.comments.length}
+            </a>
+          </li>
+          <li>
+            <img src="" alt="" />
+            <span>{postContent.deslikes?.length || 0}</span>
+            <a onClick={() => handleDeslikeClick(postContent._id)}>
+              <i
+                className={userDeslikeThisPost ? disliked.YES : disliked.NO}
+              ></i>{" "}
+              Like
             </a>
           </li>
         </ul>
       </div>
 
-      {/* ajout d'un commentaire pour postContent  */}
-
       <div className="comment-section">
+        {/* List of comments */}
         <div className="comment-sec">
           <ul>
             {postContent.comments.length > 0 ? (
-              postContent.comments.map((comment, index) => (
-                <li key={index}>
-                  <div className="comment-list">
-                    <div className="bg-img">
-                      <img src="/assets/images/resources/bg-img3.png" alt="" />
-                    </div>
-                    <div className="comment">
-                      <h3>{comment.creator?.name}</h3>
-                      <span>
-                        <img src="/assets/images/clock.png" alt="" />{" "}
-                        {moment(comment.DateCreation).format("lll")}
-                      </span>
-                      <p>{comment.contenu}</p>
-                    </div>
-                  </div>
-                </li>
+              postContent.comments.map((comment) => (
+                <Commentaire key={comment._id} comment={comment} />
               ))
             ) : (
               <li>
-                <p>Aucun commentaire pour cette postContent.</p>
+                <p>Be the first one to comment on This post</p>
               </li>
             )}
           </ul>
         </div>
 
+        {/* Add comment */}
         <div className="post-comment">
           <div className="cm_img">
             <img src="/assets/images/resources/bg-img4.png" alt="" />
@@ -120,7 +164,7 @@ export default function PostFooter({ postContent, fetchPosts }) {
                 onChange={handleChangeComent}
                 required
               />
-              <button type="submit">Send</button>
+              <button type="submit">Post</button>
             </form>
           </div>
         </div>
