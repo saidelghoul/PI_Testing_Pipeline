@@ -38,7 +38,7 @@ export default function Discussions() {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
   const userId = user ? user.id : null;
-  const messagesEndRef = React.useRef(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const imageUrl = userId && user && user.profileImage 
   ? `http://localhost:8000/user/${userId}/profile` 
@@ -57,6 +57,15 @@ export default function Discussions() {
     };
     fetchConversations();
   }, []);
+  const filteredConversations = conversations.filter((conversation) => {
+    const searchLower = searchQuery.toLowerCase();
+    const conversationName = conversation.name?.toLowerCase();
+    
+    return (
+      conversationName.includes(searchLower) ||
+      (conversation.rang && conversation.rang.toString().toLowerCase().includes(searchLower))
+    );
+  });
   
   
   useEffect(() => {
@@ -82,9 +91,7 @@ export default function Discussions() {
     handleConversationClick(id);
     setSelectedConversation(id);
   };
-  React.useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+
   
 
   conversations.sort((a, b) => {
@@ -163,8 +170,8 @@ export default function Discussions() {
               <div className="discussion search">
                 <div className="searchbar">
                   <i className="fa fa-search" aria-hidden="true"></i>
-                  <input type="text" placeholder="Search..." />
-                </div>     <Link to="/addConversation" title="">
+                  <input type="text" placeholder="Search..."   onChange={(e) => setSearchQuery(e.target.value)}/>
+                </div>  <Link to="/addConversation" title="" style={{ marginLeft: '62px' }}>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="16"
@@ -181,7 +188,7 @@ export default function Discussions() {
                         </svg>{" "}
                       </Link>
               </div>
-              {conversations.map((conversation) =>
+              {filteredConversations.map((conversation) =>
   conversation.members.includes(user.id) && (
     <div className="discussion" key={conversation._id} onClick={() => handleClick(conversation._id)}
       style={
@@ -237,7 +244,7 @@ export default function Discussions() {
                     </svg>
                   </Link>
   </div>
-  <div className="messages-chat" style={{ maxHeight: "700px", overflowY: "auto" }}>
+  <div className="messages-chat" >
     {messages.map((message, index) => (
       <div key={index} className={message.sender === user.id ? "message" : message.repondeur === user.id ? "response" : "test"}>
       <div className="photo">
@@ -249,7 +256,6 @@ export default function Discussions() {
         <p className="text">{message.content}</p>
       </div>
     ))}
-    <div ref={messagesEndRef} />
 
   </div>
   <div className="footer-chat">

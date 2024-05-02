@@ -54,7 +54,6 @@ import UpdatePubGroups from "./Components/Pages/groups/UpdatePubGroups";
 import PubGroups from "./Components/Pages/groups/PubGroups";
 import PubActions from "./Components/Pages/groups/PubActions";
 import AddCommentPub from "./Components/Pages/groups/AddCommentPub";
-import ChatBot from "./Components/ChatBot/ChatBot";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -123,17 +122,7 @@ function App() {
             }
 
           />
-          <Route
-            path="/chat"
-            element={
-              <>
-                <Navbar />
-                <ChatBot />
-                <Footer />
-              </>
-            }
-            
-          />
+      
           <Route
             path="/message"
             element={

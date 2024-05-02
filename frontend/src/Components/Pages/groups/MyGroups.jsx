@@ -11,6 +11,7 @@ const [pages, setPages] = useState([]);
 const [currentPage, setCurrentPage] = useState(0);
 const itemsPerPage = 8; // Nombre d'éléments par page
 const [totalPages, setTotalPages] = useState(0);
+const [searchQuery, setSearchQuery] = useState('');
 
 useEffect(() => {
   axios
@@ -30,6 +31,15 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString("fr-FR", options);
 };
 
+const filteredUsers = pages.filter((page) => {
+  const searchLower = searchQuery.toLowerCase();
+  const nomgroups = page.nomgroups?.toLowerCase();
+
+  return (
+    nomgroups.includes(searchLower) ||
+    (page.rang && page.rang.toString().toLowerCase().includes(searchLower))
+  );
+});
 const handleDelete = async (pageId) => {
   try {
     await axios.delete(`/groups/remove/${pageId}`);
@@ -57,6 +67,13 @@ return (
     <div className="container">
       <div className="company-title d-flex justify-content-between align-items-center">
         <h3>My Groups</h3>
+        <div className="col">
+            <div className="col-md-12 d-flex flex-row justifiez-content-end input-group">
+              <span className="input-group-text">
+                🔎</span>
+                <input placeholder="Rechercher Par Nom du groupe" aria-label="Rechercher Par Nom du groupe" className="form-control"  onChange={(e) => setSearchQuery(e.target.value)}/>
+                </div>
+                </div>
         <Link
           to="/addGroup"
           className="btn btn-danger"
@@ -71,8 +88,8 @@ return (
           {loading ? (
             <p>Loading...</p>
           ) : (
-            displayPagesForPage()
-                .filter((page) => page.creator === user.id) // Filtrer les pages pour celles où l'ID du créateur correspond à l'ID de l'utilisateur
+            filteredUsers
+            .filter((page) => page.creator === user.id) // Filtrer les pages pour celles où l'ID du créateur correspond à l'ID de l'utilisateur
                 .map((page) => (
               <div key={page._id} className="col-lg-3 col-md-4 col-sm-6">
                 <div className="company_profile_info">
