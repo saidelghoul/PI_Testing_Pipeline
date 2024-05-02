@@ -19,7 +19,6 @@ import { useState,useContext } from 'react';
 import axios from 'axios';
 import { UserContext } from "../../../context/userContext.jsx";
 
-
 export default function AccountSetting() {
   const { user } = useContext(UserContext);
 
@@ -49,10 +48,11 @@ export default function AccountSetting() {
       if (error.response) {
         setErrorMessage(error.response.data.error);
       } else {
-        setErrorMessage('Une erreur s\'est produite lors de la communication avec le serveur');
+        setErrorMessage('Server error');
       }
     }
   };
+  
   return (
     <>
       <section className="profile-account-setting">
@@ -93,7 +93,7 @@ export default function AccountSetting() {
                       aria-controls="nav-password"
                       aria-selected="false"
                     >
-                      <i className="fa fa-lock"></i>Changer mot de passe
+                      <i className="fa fa-lock"></i>Change password
                     </a>
                     {/* <a
                       className="nav-item nav-link"
@@ -159,17 +159,17 @@ export default function AccountSetting() {
                       aria-controls="nav-deactivate"
                       aria-selected="false"
                     >
-                      <i className="fa fa-random"></i>Désactiver compte
+                      <i className="fa fa-random"></i>Deactivate my account
                     </a>
                   </div>
                 </div>
               </div>
               <div className="col-lg-9">
               <div className="acc-setting">
-                    <h3>Paramètre du compte</h3>
+                    <h3>Account Setting</h3>
                     <form onSubmit={handleSubmit}>
                       <div className="cp-field">
-                        <h5>Ancien mot de passe</h5>
+                        <h5>Old Password</h5>
                         <div className="cpp-fiel">
                           <input
                              type="password"
@@ -183,7 +183,7 @@ export default function AccountSetting() {
                         </div>
                       </div>
                       <div className="cp-field">
-                        <h5>Nouveau mot de passe</h5>
+                        <h5>New Password</h5>
                         <div className="cpp-fiel">
                           <input
                            type="password"
@@ -196,7 +196,7 @@ export default function AccountSetting() {
                         </div>
                       </div>
                       <div className="cp-field">
-                        <h5>Répété le nouveau mot de passe</h5>
+                        <h5>Repeat the new password</h5>
                         <div className="cpp-fiel">
                           <input
                             type="password"
@@ -211,14 +211,14 @@ export default function AccountSetting() {
                       <div className="cp-field">
                         <h5>
                           <a href="#" title="">
-                          Mot de passe oublié?
+                          Forgot your password?
                           </a>
                         </h5>
                       </div>
                       <div className="save-stngs pd2">
                         <ul>
                           <li>
-                            <button type="submit">Enregistrer</button>
+                            <button type="submit">Submit</button>
                           </li>
                           <li>
                           </li>

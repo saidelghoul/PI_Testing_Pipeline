@@ -13,7 +13,7 @@ import "../../../public/assets/lib/slick/slick-theme.css";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../context/userContext";
 import axios from "axios";
-
+import Badges from "./Friends/Badges";
 import SocialSkillService from "../../services/socialSkill-service";
 import { Link } from "react-router-dom";
 import SocialSkillAffect from "./Skills/SocialSkills/SocialSkillAffect";
@@ -152,20 +152,7 @@ export default function Profils() {
 
                         <div className="add-dp" id="OpenImgUpload"></div>
                       </div>
-                      <div className="user_pro_status">
-                  
-                        <ul className="flw-status">
                       
-                          <li>
-                            <span>Following</span>
-                            <b>34</b>
-                          </li>
-                          <li>
-                            <span>Followers</span>
-                            <b>155</b>
-                          </li>
-                        </ul>
-                      </div>
                       <br />
                       <div>
                         <br />
@@ -177,7 +164,7 @@ export default function Profils() {
                               title=""
                               onClick={fetchUserData}
                             >
-                              mettre a jour mon profil
+                           🪪  update my profile 
                             </a>
                           </li>
                         </ul>
@@ -189,22 +176,21 @@ export default function Profils() {
                         {isAdmin && (
                           <div>
                             <a href="/completerProfil" title="">
-                              <i className="la la-user"></i> Mes chefs
-                              département
+                              <i className="la la-user"></i> My chefs department  
                             </a>
                           </div>
                         )}
                         {isChefDep && (
                           <div>
                             <a href="/completerProfil" title="">
-                              <i className="la la-user"></i> Mes chefs unité
+                              <i className="la la-user"></i> My chefs unit 
                             </a>
                           </div>
                         )}
                         {isChefUnite && (
                           <div>
                             <a href="/completerProfil" title="">
-                              <i className="la la-user"></i> Mes enseignants
+                              <i className="la la-user"></i> My teachers
                             </a>
                           </div>
                         )}
@@ -214,19 +200,19 @@ export default function Profils() {
                       <ul className="social_links">
                         {!!user && user.gouvernorat && (
                           <li>
-                            <i className="la la-globe"> Gouvernorat : </i>
+                            🌍<span>Governorate : </span> 
                             <h3>{user.gouvernorat}</h3>
                           </li>
                         )}
                         {!!user && user.addresse && (
                           <li>
-                            <i className="la la-globe"> Ville : </i>
-                            <h3>{user.addresse}</h3>
+                          📌<span> City : </span>
+                               <h3>{user.addresse}</h3>
                           </li>
                         )}
                         {!!user && user.dateNaissance && (
                           <li>
-                            <i className="la la-globe"> Date de naissance : </i>
+                            📆<span>Birth Date :</span>  
                             <h3>
                               {new Date(user.dateNaissance).toLocaleDateString(
                                 "fr-FR"
@@ -236,7 +222,7 @@ export default function Profils() {
                         )}
                         {!!user && user.telephone && (
                           <li>
-                            <i className="la la-globe"> Telephone : </i>
+                            📲 <span>Phone number :</span> 
                             <h3>{user.telephone}</h3>
                           </li>
                         )}
@@ -244,77 +230,8 @@ export default function Profils() {
                       </ul>
                     </div>
                     <div className="suggestions full-width">
-                      <div className="sd-title">
-                        <h3>People Viewed Profile</h3>
-                        <i className="la la-ellipsis-v"></i>
-                      </div>
-                      <div className="suggestions-list">
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s1.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Jessica William</h4>
-                            <span>Graphic Designer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s2.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>John Doe</h4>
-                            <span>PHP Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s3.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Poonam</h4>
-                            <span>Wordpress Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s4.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Bill Gates</h4>
-                            <span>C & C++ Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s5.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Jessica William</h4>
-                            <span>Graphic Designer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s6.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>John Doe</h4>
-                            <span>PHP Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="view-more">
-                          <a href="#" title="">
-                            View More
-                          </a>
-                        </div>
-                      </div>
+                    <div >
+                      <div><Badges/></div></div> 
                     </div>
                   </div>
                 </div>

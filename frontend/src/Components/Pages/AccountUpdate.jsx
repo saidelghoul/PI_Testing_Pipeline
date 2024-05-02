@@ -3,6 +3,7 @@ import { useContext, useState,useEffect } from "react";
 import axios from "axios";
 import { UserContext } from "../../../context/userContext.jsx";
 import ReactPaginate from "react-paginate";
+import Table from 'react-bootstrap/Table';
 
 
 export default function AccountUpdate() {
@@ -134,12 +135,47 @@ export default function AccountUpdate() {
       console.error("Error fetching users:", error);
     }
   };
+
+  const sendSMS = async (to) => {
+    const formattedTo = '+216' + to;
+  
+    try {
+      await axios.post('/send-sms', {
+        to: formattedTo,
+        body: 'Your ESPRIT SOCIAL NETWORK account has been disabled. Please contact your administrator for verification.'
+      });
+      console.log('SMS sent successfully!');
+    } catch (error) {
+      console.error('Error sending SMS:', error);
+    }
+  };
+  
+
   const toggleUserActivation = async (userId, isActive) => {
     try {
       await axios.put(`/user/${isActive ? 'activate' : 'deactivate'}/${userId}`);
-      // Actualiser les données après l'activation ou la désactivation de l'utilisateur
-      fetchChefsDep();
-
+      // fetchChefsDep();
+      if (user) {
+        if (isAdmin) {
+          fetchChefsDep();
+        }
+        if (isChefDep) {
+          fetchChefUnite();
+          fetchDepEns();
+        }
+        if (isChefUnite) {
+          fetchEns();
+        }
+      }
+      if (!isActive) {
+        const response = await axios.get(`/user/getbyid/${userId}`); 
+        const user = response.data; 
+        if (user.telephone) {
+          await sendSMS(user.telephone);
+        } else {
+          console.error('No phone number found for the user.');
+        }
+      }
     } catch (error) {
       console.error("Error toggling user activation:", error);
     }
@@ -273,13 +309,13 @@ export default function AccountUpdate() {
   };
 
   const handleDeleteUnit = async (id) => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer cette unité ?")) {
+    if (window.confirm("Are you sure you want to delete this unit?")) {
       try {
         await axios.delete(`/unite/remove/${id}`);
         fetchUnités();
       } catch (error) {
         console.error(
-          "Erreur lors de la suppression de l'unité:",
+          "Error removing unit:",
           error.message
         );
       }
@@ -287,16 +323,18 @@ export default function AccountUpdate() {
   };
 
   const handleDeleteDep = async (id) => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer ?")) {
+    if (window.confirm("Are you sure you want to delete?")) {
       try {
         await axios.delete(`/unite/removedep/${id}`);
         fetchDepartements();
       } catch (error) {
-        console.error("Erreur lors de la suppression ", error.message);
+        console.error(" Error while deleting", error.message);
       }
     }
   };
  
+
+  
   
   return (
     <>
@@ -317,8 +355,7 @@ export default function AccountUpdate() {
                       role="tab"
                       aria-controls="nav-chef"
                       aria-selected="true"
-                    >
-                      <i className="la la-cogs"></i>Liste des chef département 
+                    >👥List of chef department 
                     </a>
                     <a
                  className="nav-item nav-link"
@@ -329,7 +366,7 @@ export default function AccountUpdate() {
                  aria-controls="nav-dep"
                  aria-selected="false"
                >
-                 <i className="la la-cogs"></i>Liste des departements 
+                 🏢 List of departments
                </a>
                     
                   </div>
@@ -346,7 +383,7 @@ export default function AccountUpdate() {
                  aria-controls="nav-chef"
                  aria-selected="true"
                >
-                 <i className="la la-cogs"></i>Liste des chefs unité 
+                 👥 List of chef unit 
                </a>
            
                <a
@@ -358,7 +395,7 @@ export default function AccountUpdate() {
                  aria-controls="nav-ens"
                  aria-selected="false"
                >
-                 <i className="la la-cogs"></i>Liste des enseignants 
+                 👥 List of teachers
                </a>
 
                <a
@@ -370,7 +407,7 @@ export default function AccountUpdate() {
                  aria-controls="nav-unite"
                  aria-selected="false"
                >
-                 <i className="la la-cogs"></i>Liste des unités 
+                🗂️ Liste of units
                </a>
              </div>
                   
@@ -389,7 +426,7 @@ export default function AccountUpdate() {
                       aria-controls="nav-acc"
                       aria-selected="true"
                     >
-                      <i className="la la-cogs"></i>Liste des enseignants
+                     👥 List of teachers
                     </a>
                     
                   </div>)}
@@ -412,28 +449,30 @@ export default function AccountUpdate() {
     <div className="tab-content">
       {/* Onglet des chefs de département */}
       <div className="tab-pane fade show active" id="nav-chef" role="tabpanel" aria-labelledby="nav-chef-tab">
-        
+    
         <div className="lt-sec">
-          
-          <img src="/assets/images/lt-icon.png" alt="" />
-          <h4>Liste des chefs département</h4>
-          <div className="search-bar">
+          {/* <img src="/assets/images/about.png" alt="" /> */}
+          <h1 className="h3 mb-3 col-md-12 ">List of chef department</h1>
+          <div className="search-bar1">
             <form>
               <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
             onChange={(e) => setSearchTerm(e.target.value)} />
+            
               <button type="submit">
                 <i className="la la-search"></i>
               </button>
-            </form>
+            </form>          
           </div>
-          <br/>
-          <table className="table table-sm">
-            <thead>
+          <div>
+          <div className="space-between"></div>
+          <div className="add-billing-method">
+          <Table striped bordered hover>            
+          <thead>
               <tr>
-                <th scope="col">Nom et Prénom</th>
+                <th scope="col">Name </th>
                 <th scope="col">Email</th>
-                <th scope="col">Nom du département</th>
-                <th scope="col">Activer/Désactiver</th>
+                <th scope="col">Department name</th>
+                <th scope="col">Enable/Disable</th>
               </tr>
             </thead>
             <tbody>
@@ -444,15 +483,19 @@ export default function AccountUpdate() {
                   <td>{user.departement.name}</td> 
                   <td>
                     {user.isActive ? (
-                      <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
+                      <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Disable</button>
                     ) : (
-                      <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
+                      <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Enable</button>
                     )}
                   </td>
               
                 </tr>
                 
-              ))}    <ReactPaginate
+              ))}  
+            </tbody>
+            
+                        </Table>
+                        <ReactPaginate
               pageCount={totalPages}
               pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
               marginPagesDisplayed={2} // Nombre de pages à afficher avant et après les ellipses
@@ -460,17 +503,16 @@ export default function AccountUpdate() {
               containerClassName={"pagination"}
               activeClassName={"active"}
             />
-            </tbody>
-          </table>
+        </div>
         </div>
       </div>
-
+      </div>
       {/* Onglet des départements */}
       <div className="tab-pane fade" id="nav-dep" role="tabpanel" aria-labelledby="nav-dep-tab">
         <div className="lt-sec">
-          <img src="/assets/images/lt-icon.png" alt="" />
-          <h4>Liste des départements</h4>
-          <div className="search-bar">
+          {/* <img src="/assets/images/lt-icon.png" alt="" /> */}
+          <h1 className="h3 mb-3 col-md-12 ">List of departments</h1>
+          <div className="search-bar1">
             <form>
               <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
             onChange={(e) => setSearchTerm(e.target.value)} />
@@ -478,14 +520,15 @@ export default function AccountUpdate() {
                 <i className="la la-search"></i>
               </button>
             </form>
+            <br/>
           </div>
-
-          <table className="table table-sm">
+          <div className="add-billing-method">
+          <Table striped bordered hover>            
             <thead>
               <tr>
-                <th scope="col">Nom du département</th>
+                <th scope="col">Department name</th>
                 <th scope="col">Description</th>
-                <th scope="col">Nombre d'unités</th>
+                <th scope="col">Number of units</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -517,7 +560,7 @@ export default function AccountUpdate() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
           <ReactPaginate
               pageCount={totalPages}
               pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
@@ -526,22 +569,23 @@ export default function AccountUpdate() {
               containerClassName={"pagination"}
               activeClassName={"active"}
             />
+            </div>
         </div>
         {/* Formulaire d'ajout/modification de département */}
         <div className="add-billing-method">
-          <h3>{isEditing ? "Modifier le département" : "Ajouter un département"}</h3>
+          <h3>{isEditing ? "Update Department" : "Add Department"}</h3>
           <div className="payment_methods">
             <form onSubmit={handleSubmitDep}>
               <div className="row">
                 <div className="col-lg-12">
                   <div className="cc-head">
-                    <h5>Nom du département</h5>
+                    <h5>Department name</h5>
                   </div>
                   <div className="inpt-field pd-moree">
                     <input
                       type="text"
                       name="name"
-                      placeholder="Nom du département ..."
+                      placeholder="Department name ..."
                       value={departement.name}
                       onChange={(e) => setDepartement({ ...departement, name: e.target.value })}
                     />
@@ -565,13 +609,13 @@ export default function AccountUpdate() {
                 </div>
                 <div className="col-lg-6">
                   <div className="cc-head">
-                    <h5>Nombre d'unités</h5>
+                    <h5>Number of units</h5>
                   </div>
                   <div className="inpt-field">
                     <input
                       type="number"
                       name="nbrUnite"
-                      placeholder=""
+                      placeholder="Number of units"
                       value={departement.nbrUnite}
                       onChange={(e) => setDepartement({ ...departement, nbrUnite: parseInt(e.target.value) })}
                     />
@@ -579,7 +623,7 @@ export default function AccountUpdate() {
                 </div>
                 <div className="col-lg-12">
                   <button type="submit">
-                    {isEditing ? "Modifier" : "Ajouter"}
+                    {isEditing ? "Submit" : "Add"}
                   </button>
                 </div>
               </div>
@@ -598,9 +642,9 @@ export default function AccountUpdate() {
       {/* Onglet des chefs d'unité */}
       <div className="tab-pane fade show active" id="nav-chef" role="tabpanel" aria-labelledby="nav-chef-tab">
         <div className="lt-sec">
-          <img src="/assets/images/lt-icon.png" alt="" />
-          <h4>Liste des chefs d'unité</h4>
-<div className="search-bar">
+          {/* <img src="/assets/images/lt-icon.png" alt="" /> */}
+          <h1 className="h3 mb-3 col-md-12 ">List of chef unit</h1>
+<div className="search-bar1">
             <form>
               <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
             onChange={(e) => setSearchTerm(e.target.value)} />
@@ -609,13 +653,15 @@ export default function AccountUpdate() {
               </button>
             </form>
           </div>
-          <table className="table table-sm">
+          <div className="add-billing-method">
+
+          <Table striped bordered hover>            
             <thead>
               <tr>
-                <th scope="col">Nom et Prénom</th>
+                <th scope="col">Full Name</th>
                 <th scope="col">Email</th>
-                <th scope="col">Nom de l'unité</th>
-                <th scope="col">Activer/Désactiver</th>
+                <th scope="col">Unit Name</th>
+                <th scope="col">Enable/Disable</th>
               </tr>
             </thead>
             <tbody>
@@ -626,15 +672,15 @@ export default function AccountUpdate() {
                   <td>{user.unite.name}</td>  
                   <td>
                     {user.isActive ? (
-                      <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
+                      <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Disable</button>
                     ) : (
-                      <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
+                      <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Enable</button>
                     )}
                   </td>
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
           <ReactPaginate
               pageCount={totalPages}
               pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
@@ -644,14 +690,15 @@ export default function AccountUpdate() {
               activeClassName={"active"}
             />
         </div>
+        </div>
       </div>
 
       {/* Onglet des enseignants */}
       <div className="tab-pane fade" id="nav-ens" role="tabpanel" aria-labelledby="nav-ens-tab">
         <div className="lt-sec">
-          <img src="/assets/images/lt-icon.png" alt="" />
-          <h4>Liste des enseignants</h4>
-          <div className="search-bar">
+          {/* <img src="/assets/images/lt-icon.png" alt="" /> */}
+          <h1 className="h3 mb-3 col-md-12 ">List of teachers</h1>
+          <div className="search-bar1">
             <form>
               <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
             onChange={(e) => setSearchTerm(e.target.value)} />
@@ -660,12 +707,14 @@ export default function AccountUpdate() {
               </button>
             </form>
           </div>
-          <table className="table table-sm">
+          <div className="add-billing-method">
+
+          <Table striped bordered hover>            
             <thead>
               <tr>
-                <th scope="col">Nom et Prénom</th>
+                <th scope="col">Full Name</th>
                 <th scope="col">Email</th>
-                <th scope="col">Activer/Désactiver</th>
+                <th scope="col">Enable/Disable</th>
               </tr>
             </thead>
             <tbody>
@@ -675,17 +724,16 @@ export default function AccountUpdate() {
                   <td>{user.email}</td> 
                   <td>
                     {user.isActive ? (
-                      <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
+                      <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Disable</button>
                     ) : (
-                      <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
+                      <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Enable</button>
                     )}
                   </td>
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
-        <ReactPaginate
+          </Table>
+          <ReactPaginate
               pageCount={totalPages}
               pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
               marginPagesDisplayed={2} // Nombre de pages à afficher avant et après les ellipses
@@ -693,14 +741,17 @@ export default function AccountUpdate() {
               containerClassName={"pagination"}
               activeClassName={"active"}
             />
+        </div>
+      
+      </div>
       </div>
 
       {/* Onglet des unités */}
       <div className="tab-pane fade" id="nav-unite" role="tabpanel" aria-labelledby="nav-unite-tab">
         <div className="lt-sec">
-          <img src="/assets/images/lt-icon.png" alt="" />
-          <h4>Liste des unités</h4>
-          <div className="search-bar">
+          {/* <img src="/assets/images/lt-icon.png" alt="" /> */}
+          <h1 className="h3 mb-3 col-md-12 ">List of units</h1>
+          <div className="search-bar1">
             <form>
               <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
             onChange={(e) => setSearchTerm(e.target.value)} />
@@ -709,10 +760,12 @@ export default function AccountUpdate() {
               </button>
             </form>
           </div>
-          <table  className="table table-sm">
+          <div className="add-billing-method">
+
+          <Table striped bordered hover>            
             <thead>
               <tr>
-                <th scope="col">Nom de l'unité</th>
+                <th scope="col">Unit Name</th>
                 <th scope="col">Actions</th>
               </tr>
             </thead>
@@ -742,7 +795,7 @@ export default function AccountUpdate() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
           <ReactPaginate
               pageCount={totalPages}
               pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
@@ -751,22 +804,22 @@ export default function AccountUpdate() {
               containerClassName={"pagination"}
               activeClassName={"active"}
             />
-        </div>
+        </div></div>
         {/* Formulaire d'ajout/modification d'unité */}
         <div className="add-billing-method">
-          <h3>{isEditingUnit ? "Modifier l'unité" : "Ajouter une unité"}</h3>
+          <h3>{isEditingUnit ? "Update unit" : "Add unit"}</h3>
           <div className="payment_methods">
             <form onSubmit={handleSubmit2}>
               <div className="row">
                 <div className="col-lg-12">
                   <div className="cc-head">
-                    <h5>Nom de l'unité</h5>
+                    <h5>Unit Name</h5>
                   </div>
                   <div className="inpt-field pd-moree">
                     <input
                       type="text"
                       name="name"
-                      placeholder="Nom de l'unité ..."
+                      placeholder="Unit Name ..."
                       value={unite.name}
                       onChange={handleChange2}
                     />
@@ -775,7 +828,7 @@ export default function AccountUpdate() {
                 </div>
                 <div className="col-lg-12">
                   <button type="submit">
-                    {isEditingUnit ? "Modifier" : "Ajouter"}
+                    {isEditingUnit ? "Update " : "Add"}
                   </button>
                 </div>
               </div>
@@ -788,9 +841,9 @@ export default function AccountUpdate() {
 )}
 
                        {isChefUnite && (  <div className="lt-sec">
-                          <img src="/assets/images/lt-icon.png" alt="" />
-                          <h4>liste des enseignants </h4>
-                          <div className="search-bar">
+                          {/* <img src="/assets/images/lt-icon.png" alt="" /> */}
+                          <h1 className="h3 mb-3 col-md-12 ">list of teachers</h1>
+                          <div className="search-bar1">
             <form>
               <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
             onChange={(e) => setSearchTerm(e.target.value)} />
@@ -799,12 +852,14 @@ export default function AccountUpdate() {
               </button>
             </form>
           </div>
-                          <table className="table table-sm">
+          <div className="add-billing-method">
+
+          <Table striped bordered hover>            
                             <thead>
                               <tr>
-                                <th scope="col">nom et prenom</th>
-                                <th scope="col">email</th>
-                                <th scope="col">activer/désactiver</th>
+                                <th scope="col">Full Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Enable/Disable</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -814,16 +869,16 @@ export default function AccountUpdate() {
                                   <td>{user.email}</td> 
                                   <td>
                                   {user.isActive ? (
-                                  <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Désactiver</button>
+                                  <button onClick={() => toggleUserActivation(user._id, false)} className="btn btn-sm btn-danger">Disable</button>
                                 ) : (
-                                  <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Activer</button>
+                                  <button onClick={() => toggleUserActivation(user._id, true)} className="btn btn-sm btn-success">Enable</button>
                                 )}
 
                                   </td>
                                 </tr>
                               ))}
                             </tbody>
-                          </table>
+                          </Table>
                           <ReactPaginate
               pageCount={totalPages}
               pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
@@ -833,9 +888,9 @@ export default function AccountUpdate() {
               activeClassName={"active"}
             />
                        </div>
-                      
+                       </div>  
+
                       )}
-                       
                   </div>
                 </div>
               </div>

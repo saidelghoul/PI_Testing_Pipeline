@@ -71,7 +71,8 @@ const userSchema = new Schema({
     type: Boolean,
     default: false,
   },
- 
+  badges: [{ type: String }],
+  
 });
 
 const UserModel = mongoose.model("User", userSchema);

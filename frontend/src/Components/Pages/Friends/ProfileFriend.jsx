@@ -24,18 +24,19 @@ const coverImageUrl = user && user.coverImage
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Erreur lors de la récupération de l\'utilisateur:', error);
+        console.error('Error retrieving users : ', error);
       });
   }, [id]);
 
   if (loading) {
     return <div>Chargement...</div>;
   }
+
+  
   return (
     <>
       <section className="cover-sec">
       {/* <img src={coverImageUrl} alt="Cover" width="100%" height="300px" /> */}
-    
     <img src={coverImageUrl} alt="Image de profil" width="100%" height="300px" />
  
         <div className="add-pic-box">
@@ -55,26 +56,42 @@ const coverImageUrl = user && user.coverImage
                       <div className="user-pro-img">
                       {/* <img src={imageUrl} alt="Image de profil" /> */}
                     
-    <img src={imageUrl} alt="Image de profil" />
+                       <img src={imageUrl} alt="Image de profil" />
   
 
                         <div className="add-dp" id="OpenImgUpload"></div>
                       </div>
-                      <div className="user_pro_status">
-                  
-                        <ul className="flw-status">
-                      
+                      <ul className="social_links">
+                        {!!user && user.gouvernorat && (
                           <li>
-                            <span>Following</span>
-                            <b>34</b>
+                            🌍<span>Governorate : </span> 
+                            <h3>{user.gouvernorat}</h3>
                           </li>
+                        )}
+                        {!!user && user.addresse && (
                           <li>
-                            <span>Followers</span>
-                            <b>155</b>
+                          📌<span> City : </span>
+                               <h3>{user.addresse}</h3>
                           </li>
-                        </ul>
-                      </div>
-                      <br />
+                        )}
+                        {!!user && user.dateNaissance && (
+                          <li>
+                            📆<span>Birth Date :</span>  
+                            <h3>
+                              {new Date(user.dateNaissance).toLocaleDateString(
+                                "fr-FR"
+                              )}
+                            </h3>
+                          </li>
+                        )}
+                        {!!user && user.telephone && (
+                          <li>
+                            📲 <span>Phone number :</span> 
+                            <h3>{user.telephone}</h3>
+                          </li>
+                        )}
+                       
+                      </ul>
                      
                       <div>
                         <br></br>
@@ -87,89 +104,17 @@ const coverImageUrl = user && user.coverImage
                      
                     </div>
                     <div className="suggestions full-width">
-                      <div className="sd-title">
-                        <h3>People Viewed Profile</h3>
-                        <i className="la la-ellipsis-v"></i>
-                      </div>
-                      <div className="suggestions-list">
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s1.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Jessica William</h4>
-                            <span>Graphic Designer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s2.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>John Doe</h4>
-                            <span>PHP Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s3.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Poonam</h4>
-                            <span>Wordpress Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s4.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Bill Gates</h4>
-                            <span>C & C++ Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s5.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Jessica William</h4>
-                            <span>Graphic Designer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s6.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>John Doe</h4>
-                            <span>PHP Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="view-more">
-                          <a href="#" title="">
-                            View More
-                          </a>
-                        </div>
-                      </div>
+                    
                     </div>
                   </div>
                 </div>
                 <div className="col-lg-6">
                   <div className="main-ws-sec">
                     <div className="user-tab-sec rewivew">
-                      {/* <h3> {!!user && <>{user.name}</>}</h3> */}
                       <h3>{user.name}</h3>
                       <div className="star-descp">
-                      <span>Rôle: {user.role}</span> {console.log("ici",user)}
+                      <span>Role : {user.role}</span>
 
-                        {/* <span> {!!user && <>{user.role}</>}</span> */}
                         <ul>
                           <li>
                             <i className="fa fa-star"></i>

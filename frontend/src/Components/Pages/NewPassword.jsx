@@ -16,7 +16,6 @@ const NewPassword = () => { // Supprimez { match } de la déstructuration des pr
           token,
           newPassword,
         });
-        
         setMessage(response.data.message);
         setError('');
         navigate('/');
@@ -30,6 +29,7 @@ const NewPassword = () => { // Supprimez { match } de la déstructuration des pr
         setMessage('');
       }
     };
+    
   
     return (
       
@@ -42,8 +42,9 @@ const NewPassword = () => { // Supprimez { match } de la déstructuration des pr
                 <div className="cmp-info">
                   <div className="cm-logo">
                     <img src="/assets/images/esprit.png" alt="" />
-                  </div>
+               
                   <img src="/assets/images/cm-main-img.png" alt="" />
+                </div>
                 </div>
               </div>
               <div className="col-lg-6">
@@ -62,13 +63,13 @@ const NewPassword = () => { // Supprimez { match } de la déstructuration des pr
                   <br/>
                   <br/>
                   <br/>
-        <h2>Entrez votre nouveau mot de passe</h2>
-        
+        <h4>Enter your new password </h4>
+        <br/>
         {message && <p className="success">{message}</p>}
         {error && <p className="error">{error}</p>}
         
         <div className="form-group">
-          <label>Nouveau mot de passe :</label>
+          <label>New Password:</label>
           <input
             type="password"
             value={newPassword}
@@ -77,8 +78,8 @@ const NewPassword = () => { // Supprimez { match } de la déstructuration des pr
           />
         </div>
         
-        <button onClick={handleResetPassword} className="btn btn-primary">
-          Réinitialiser le mot de passe
+        <button onClick={handleResetPassword} className="btn btn-danger">
+        Reset password
         </button>
         </div>
               </div>

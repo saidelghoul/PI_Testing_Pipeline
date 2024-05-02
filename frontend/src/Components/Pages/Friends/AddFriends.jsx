@@ -12,10 +12,10 @@ export default function AddFriends() {
   const itemsPerPage = 8; 
   const [totalPages, setTotalPages] = useState(0);
   const userId = user ? user.id : null;
-  //const imageUrl = userId ? `http://localhost:8000/user/${userId}/profile` : "/assets/images/resources/user-pro-img.png";
-  const imageUrl = userId && user && user.profileImage 
+  const imageUrl = user.profileImage 
   ? `http://localhost:8000/user/${userId}/profile` 
   : "/assets/images/resources/user-pro-img.png";
+  
   
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -28,7 +28,7 @@ export default function AddFriends() {
         setTotalPages(Math.ceil(response.data.length / itemsPerPage));
       })
       .catch((error) => {
-        console.error("Erreur lors de la récupération des users:", error);
+        console.error("Error retrieving users:", error);
       });
   }, []);
  
@@ -48,7 +48,6 @@ export default function AddFriends() {
     );
     //return users.slice(startIndex, endIndex);
     return filteredUsers.slice(startIndex, endIndex);
-
   };
 
   useEffect(() => {
@@ -88,10 +87,10 @@ export default function AddFriends() {
                   <div className="company_profile_info">
                     <div className="company-up-info">
                     {user.profileImage ? (
-    <img src={imageUrl} alt="Image de profil" />
-  ) : (
-    <img src="/assets/images/resources/user-pro-img.png" alt="Image de profil par défaut" />
-  )}
+            <img src={`http://localhost:8000/user/${user._id}/profile`} alt="Image de profil" />
+          ) : (
+            <img src="/assets/images/resources/user-pro-img.png" alt="Image de profil par défaut" />
+          )}
                   <h4>{user.name}</h4>
                       <h5>{user.role}</h5>
                     </div>
