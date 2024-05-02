@@ -65,24 +65,25 @@ const TaskDetails = () => {
     setArchived(archived);
   };
 
+  const fetchTask = async (id) => {
+    const data = await getTasks(id);
+    setTask(data.data.message);
+  };
+
+  const fetchAssignedUsers = async (id) => {
+    const data = await getAssignedUsersForChecklist(id);
+    setUsers(data.data.message);
+    setLoading(false);
+  };
   const refreshTable = async () => {
     setShow(false);
+    fetchTask(id_task);
     fetchChecklist(id_task);
+    fetchAssignedUsers(id_task);
     getProgress(checklists);
   };
 
   useEffect(() => {
-    const fetchTask = async (id) => {
-      const data = await getTasks(id);
-      setTask(data.data.message);
-    };
-
-    const fetchAssignedUsers = async (id) => {
-      const data = await getAssignedUsersForChecklist(id);
-      setUsers(data.data.message);
-      setLoading(false);
-    };
-
     fetchTask(id_task);
     fetchChecklist(id_task);
     fetchAssignedUsers(id_task);
@@ -248,7 +249,8 @@ const TaskDetails = () => {
             {users.map((user, index) => (
               <p className=" text-body-emphasis " key={index}>
                 {" "}
-                {user.name} ( {user.role} )
+                {user.name} ( {user.role} ) [{user.numberOfDoneTasks}/
+                {user.numberOfTasks} tasks done] - Score {user.score}
               </p>
             ))}
           </div>

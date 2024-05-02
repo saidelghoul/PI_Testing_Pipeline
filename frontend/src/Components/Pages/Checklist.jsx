@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, Card, Col, Row } from "react-bootstrap";
 import { updateChecklist } from "../../services/checklist-service";
 import ChecklistDelete from "../Modals/ChecklistDelete";
@@ -7,10 +7,13 @@ import { UserContext } from "../../../context/userContext";
 import toast from "react-hot-toast";
 import ViewFile from "../Modals/ViewFile";
 import DepositFile from "../Modals/DepositFile";
+import { getTasks } from "../../services/task-service";
 
 const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
   const { user } = useContext(UserContext);
   const [toggle, setToggle] = useState(checkList.done);
+
+  const [limitDate, setLimitDate] = useState(null);
 
   const updateDone = async (e) => {
     checkList.done = e.target.checked;
@@ -29,6 +32,15 @@ const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
     }
   };
 
+  const fetchTaskByChecklist = async () => {
+    const data = await getTasks(checkList?.id_task);
+    setLimitDate(data.data.message.dueDate);
+    refresh();
+  };
+
+  useEffect(() => {
+    fetchTaskByChecklist();
+  }, []);
   /* pop up*/
   const [showDelete, setShowDelete] = useState(false);
 
@@ -91,6 +103,7 @@ const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
     //final score to current checklist
     checkList.score = Math.round((doneScore * taskScore * rating) / 10);
     //
+    if (checkList.rating > 4) checkList.feedback = "";
     const response = await updateChecklist(checkList._id, checkList);
     if (response.status === 200) {
       toast.success("Rating assigned successfully");
@@ -100,25 +113,34 @@ const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
   return (
     <>
       <Card
-        bg={checkList.done ? "success" : "secondary"}
+        bg={
+          checkList.feedback !== ""
+            ? "danger"
+            : checkList.done
+            ? "success"
+            : "secondary"
+        }
         style={{ width: "21rem" }}
         className=" shadow shadow-sm m-3 "
       >
         <Card.Header>
           <Row bg={checkList.done ? "success" : "secondary"}>
-            <Col md="8">Todo N°{index} 🏷️</Col>
-            <Col md="2">
+            <Col md="6">Todo N°{index} 🏷️</Col>
+            <Col md="4">
               {checkList?.hasFile && (
-                <label className="custom-control custom-checkbox">
-                  <input
-                    label="Done?"
-                    checked={checkList.done}
-                    type="checkbox"
-                    className="custom-control-input"
-                    onChange={(e) => updateDone(e)}
-                  />
-                  <span className="custom-control-label"></span>
-                </label>
+                <div className=" d-flex flex-row mr-2 ">
+                  <span className="m-2 h6">↪</span>
+                  <label className="custom-control custom-checkbox">
+                    <input
+                      label="Done?"
+                      checked={checkList.done}
+                      type="checkbox"
+                      className="custom-control-input"
+                      onChange={(e) => updateDone(e)}
+                    />
+                    <span className="custom-control-label"></span>
+                  </label>
+                </div>
               )}
             </Col>
             <Col md="2">
@@ -142,15 +164,21 @@ const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
           </Row>
 
           <Row>
-            {checkList?.doneDate != null ? (
-              <p>Turned in ✅</p>
-            ) : (
-              <p>Not turned in 🔴</p>
-            )}
+            <Col md={4}>
+              {checkList?.doneDate != null ? <p>✅</p> : <p>🔴</p>}
+            </Col>
+            <Col md={8}>
+              {user?.id === checkList?.holder?._id && (
+                <p className=" text-danger ">
+                  Due Date: {limitDate?.substr(0, 10)}
+                </p>
+              )}
+            </Col>
           </Row>
         </Card.Header>
         <Card.Body>
           <Card.Title className=" text-white ">{checkList.title}</Card.Title>
+          <hr />
           <Card.Text className=" text-white ">
             -Assigned to:{checkList?.holder?.name} ( {checkList?.holder?.role} )
             {checkList?.description !== "" && (
@@ -162,26 +190,25 @@ const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
             <br />
             -Score :{checkList?.score}
           </Card.Text>
+          <hr />
           <Row>
             <Col md={6}>
-              <Button
-                variant="light"
-                onClick={handleShowDeposit}
-                disabled={user?.id !== checkList?.holder?._id}
-              >
-                Upload{" "}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  className="bi bi-upload"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
-                  <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z" />
-                </svg>
-              </Button>
+              {user?.id === checkList?.holder?._id && (
+                <Button variant="light" onClick={handleShowDeposit}>
+                  Upload{" "}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    className="bi bi-upload"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
+                    <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z" />
+                  </svg>
+                </Button>
+              )}
             </Col>
             <Col md={6}>
               <Button

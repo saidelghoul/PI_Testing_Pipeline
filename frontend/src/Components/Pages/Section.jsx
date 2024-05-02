@@ -35,8 +35,8 @@ const Section = () => {
     } else setProgress(0);
   };
 
-  const fetchChecklistByUser = async (id) => {
-    const data = await getChecklistByHolder(id);
+  const fetchChecklistByUser = async () => {
+    const data = await getChecklistByHolder(id_user);
     setChecklists(data.data.message);
   };
   const fetchScoreByUser = async () => {
@@ -46,13 +46,13 @@ const Section = () => {
   };
 
   useEffect(() => {
-    fetchChecklistByUser(id_user);
+    fetchChecklistByUser();
     fetchScoreByUser();
     getProgress(checklists);
   }, []);
 
   const refreshTable = async () => {
-    fetchChecklistByUser(id_user);
+    fetchChecklistByUser();
 
     getProgress(checklists);
     fetchScoreByUser();

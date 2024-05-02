@@ -70,16 +70,16 @@ export default function Navbar() {
                   Pages
                 </Link>
               </li>
-              <li>
-                {user?.role !== "Enseignant" && (
+              {user?.role !== "Enseignant" && (
+                <li>
                   <Link to="/activities" title="Manage activities">
                     <span>
                       <img src="/assets/images/icon5.png" alt="" />
                     </span>
                     Activites
                   </Link>
-                )}
-              </li>
+                </li>
+              )}
               <li>
                 <Link to={`/${user?.id}/tasks`} title="My tasks">
                   <span>
