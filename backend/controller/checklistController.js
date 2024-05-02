@@ -186,13 +186,27 @@ async function getAssignedUsersForChecklist(req, res) {
       res.status(500).json({ title: "error", message: "no such task" });
     else {
       let users = [];
-      task.collaborators.map((collaborator) =>
+      for (const collaborator of task.collaborators) {
+        let sum = 0;
+        let checklists = await CheckList.find({
+          holder: collaborator._id,
+          id_task: req.params.id_task,
+          archived: false,
+        });
+        let doneTasks = checklists.filter(
+          (checklist) => checklist.done === true
+        );
+        doneTasks.forEach((checklist) => (sum += checklist.score));
         users.push({
           id: collaborator._id,
           name: collaborator.name,
           role: collaborator.role,
-        })
-      );
+          score: sum,
+          numberOfDoneTasks: doneTasks.length,
+          numberOfTasks: checklists.length,
+        });
+      }
+
       res.status(200).json({ title: "success", message: users });
     }
   } catch (err) {
@@ -204,6 +218,7 @@ async function getChecklistScoreForUser(req, res) {
   try {
     const checklists = await CheckList.find({
       holder: req.params.id_user,
+      archived: false,
     });
 
     if (!checklists)

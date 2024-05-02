@@ -105,7 +105,7 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1 className=" text-white ">Add activity</h1>
+            <h1 className=" text-white h3 ">Add activity</h1>
           </Modal.Title>
           <Button
             as={Col}
@@ -136,7 +136,7 @@ const ActivityForm = ({ refresh, show, handleClose }) => {
                 className=" mt-2 "
                 required
                 type="text"
-                placeholder="activity name"
+                placeholder="Activity name"
                 name="name"
                 value={activityItem.name}
                 onChange={onValueChange}

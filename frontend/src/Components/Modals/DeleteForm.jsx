@@ -7,7 +7,7 @@ const DeleteForm = ({ upActivity, show, handleClose, activity, deleting }) => {
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1 className=" text-white ">Delete activity</h1>
+            <h1 className=" text-white h3 ">Delete activity</h1>
           </Modal.Title>
           <Button
             as={Col}

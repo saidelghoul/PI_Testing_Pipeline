@@ -11,7 +11,7 @@ import PropTypes from "prop-types";
 import TaskDelete from "../Modals/TaskDelete";
 import toast from "react-hot-toast";
 
-const Tasks = ({ activity }) => {
+const Tasks = ({ activity, refresh }) => {
   const [tasks, setTasks] = useState([]);
 
   const [archived, setArchived] = useState([]);
@@ -77,6 +77,7 @@ const Tasks = ({ activity }) => {
     setCompleted(current.filter((task) => task.status === "complete"));
 
     setLoading(false);
+    refresh();
   };
 
   // start of options definition by activity category
@@ -455,6 +456,7 @@ const Tasks = ({ activity }) => {
 
 Tasks.propTypes = {
   activity: PropTypes.object,
+  refresh: PropTypes.func,
 };
 
 export default Tasks;

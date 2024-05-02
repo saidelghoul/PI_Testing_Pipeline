@@ -25,7 +25,15 @@ const checkListSchema = new Schema(
       type: Number,
       default: 0,
     },
+    hasFile: {
+      type: Boolean,
+      default: false,
+    },
     description: String,
+    feedback: {
+      type: String,
+      default: "",
+    },
     id_task: {
       type: Schema.Types.ObjectId,
       ref: "Task",

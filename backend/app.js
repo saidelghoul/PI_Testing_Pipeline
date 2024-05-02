@@ -18,6 +18,7 @@ const notificationRoute = require("./routes/NotificationRoute");
 const activitiesRoute = require("./routes/activityRoute");
 const tasksRoute = require("./routes/taskRoute");
 const checklistsRoute = require("./routes/checklistRoute");
+const documentRoute = require("./routes/documentRoute");
 
 const publicationRoute = require("./routes/publicationRoutes");
 const evenementRoutes = require("./routes/EvenementRoutes");
@@ -106,14 +107,17 @@ app.use("/messages", messageRoute);
 app.use("/activities", activitiesRoute);
 app.use("/tasks", tasksRoute);
 app.use("/checklists", checklistsRoute);
+
+app.use("/documents", documentRoute);
 app.use("/socialSkills", socialSkillsRouter);
 app.use("/technicalSkills", technicalSkillsRouter);
 app.use("/user", require("./controller/userController"));
 app.use("/badges",require("./controller/badgesController"));
 
-
-app.use('/imagesUser', express.static(path.join(__dirname, 'public/imagesUser')));
-
+app.use(
+  "/imagesUser",
+  express.static(path.join(__dirname, "public/imagesUser"))
+);
 
 const accountSid = 'AC123f75a58cfaeaad10128a4d8a8ac843';
 const authToken = '58b03b9ac98cffd551468d55cf18da4f';

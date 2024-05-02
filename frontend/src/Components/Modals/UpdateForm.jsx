@@ -100,7 +100,7 @@ const UpdateForm = ({ refresh, show, handleClose, activity }) => {
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1 className=" text-white ">Update activity</h1>
+            <h1 className=" text-white h3 ">Update activity</h1>
           </Modal.Title>
           <Button
             as={Col}

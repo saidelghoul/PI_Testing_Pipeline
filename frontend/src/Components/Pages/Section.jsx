@@ -35,23 +35,24 @@ const Section = () => {
     } else setProgress(0);
   };
 
+  const fetchChecklistByUser = async () => {
+    const data = await getChecklistByHolder(id_user);
+    setChecklists(data.data.message);
+  };
+  const fetchScoreByUser = async () => {
+    const data = await getChecklistScoreForUser(id_user);
+    setScore(data.data.message);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchChecklistByUser = async (id) => {
-      const data = await getChecklistByHolder(id);
-      setChecklists(data.data.message);
-    };
-    const fetchScoreByUser = async () => {
-      const data = await getChecklistScoreForUser(id_user);
-      setScore(data.data.message);
-      setLoading(false);
-    };
-    fetchChecklistByUser(id_user);
+    fetchChecklistByUser();
     fetchScoreByUser();
     getProgress(checklists);
-  }, [checklists]);
+  }, []);
 
   const refreshTable = async () => {
-    fetchChecklistByUser(id_user);
+    fetchChecklistByUser();
 
     getProgress(checklists);
     fetchScoreByUser();

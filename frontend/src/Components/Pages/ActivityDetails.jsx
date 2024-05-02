@@ -24,6 +24,10 @@ const ActivityDetails = () => {
     } else setProgress(0);
   };
 
+  const refresh = async () => {
+    getProgress(activity?.tasks);
+  };
+
   const fetchActivity = async (id) => {
     const data = await getActivities(id);
     setActivity(data.data.message);
@@ -99,7 +103,7 @@ const ActivityDetails = () => {
         />
       </div>
       <hr />
-      <Tasks activity={activity} />
+      <Tasks activity={activity} refresh={refresh} />
     </div>
   );
 };

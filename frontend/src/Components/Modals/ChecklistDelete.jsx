@@ -14,7 +14,7 @@ const ChecklistDelete = ({
       <Modal.Header closeButton>
         <Row>
           <Modal.Title as={Col}>
-            <h1 className=" text-white ">Delete checklist</h1>
+            <h1 className=" text-white h3 ">Delete checklist</h1>
           </Modal.Title>
           <Button
             as={Col}
