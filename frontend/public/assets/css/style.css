@@ -390,6 +390,25 @@ header {
 	font-weight: bold;
 }
 
+.badges-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.badge-item {
+    margin-right: 30px; /* Espacement entre les badges */
+}
+
+.badge-item img {
+    width: 70px; /* Taille des badges */
+    height: 70px; /* Taille des badges */
+    border-radius: 70%; /* Afficher les badges comme des cercles */
+}
+
+
 .search-bar1.st2 {
 	float: right;
 }
