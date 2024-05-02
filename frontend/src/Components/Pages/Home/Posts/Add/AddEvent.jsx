@@ -14,24 +14,39 @@ export default function AddEvent() {
     datefin: "",
     cap: "",
     prix: "",
+    image: null,
   });
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    if (e.target.type === "file") {
+      // For file input, update the state with the selected file
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.files[0], // Get the first file if multiple files are selected
+      });
+    } else {
+      // For other inputs, update the state with the input value
+      setFormData({
+        ...formData,
+        [e.target.name]: e.target.value,
+      });
+    }
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const publicationData = {
-        ...formData,
-        creator: user.id, // Utilisez l'ID de l'utilisateur connecté
-      };
+      const formDataWithUser = new FormData(); // Create a FormData object to send form data including files
+      for (const key in formData) {
+        formDataWithUser.append(key, formData[key]);
+      }
+      formDataWithUser.append("creator", user.id); // Append user ID to form data
 
-      // Envoyez les données au serveur pour ajouter la publication
-      await axios.post("/evenemnt/add", publicationData);
+      // Send form data with image file to server for adding the event
+      await axios.post("/evenemnt/add", formDataWithUser, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Set content type as multipart/form-data for file upload
+        },
+      });
 
       setFormData({
         titre: "",
@@ -40,8 +55,9 @@ export default function AddEvent() {
         datefin: "",
         cap: "",
         prix: "",
+        image: null,
       });
-      alert("Evenement ajoutée avec succès");
+      alert("Event creatad succefuly");
       navigate("/home");
     } catch (error) {
       console.error(
@@ -61,10 +77,10 @@ export default function AddEvent() {
     <>
       <div className="col-12" style={{ alignContent: "center" }}>
         <div className="acc-setting">
-          <h3>Création un Evenement</h3>
+          <h3>Create your event</h3>
           <form onSubmit={handleSubmit}>
             <div className="cp-field">
-              <h5>Titre</h5>
+              <h5>Title</h5>
               <div className="cpp-fiel">
                 <input
                   type="text"
@@ -78,7 +94,7 @@ export default function AddEvent() {
             </div>
 
             <div className="cp-field">
-              <h5>Contenu</h5>
+              <h5>Content</h5>
               <textarea
                 id="description"
                 name="contenu"
@@ -87,7 +103,7 @@ export default function AddEvent() {
               />
             </div>
             <div className="cp-field">
-              <h5>Date Début </h5>
+              <h5>Start Date </h5>
               <input
                 type="datetime-local"
                 name="datedeb"
@@ -98,7 +114,7 @@ export default function AddEvent() {
               />
             </div>
             <div className="cp-field">
-              <h5>Date Fin</h5>
+              <h5>Finish Date</h5>
               <input
                 type="datetime-local"
                 name="datefin"
@@ -109,7 +125,7 @@ export default function AddEvent() {
               />
             </div>
             <div className="cp-field">
-              <h5>Capacité</h5>
+              <h5>Places Available</h5>
               <input
                 type="number"
                 name="cap"
@@ -120,7 +136,7 @@ export default function AddEvent() {
               />
             </div>
             <div className="cp-field">
-              <h5>Prix</h5>
+              <h5>Price</h5>
               <input
                 type="number"
                 name="prix"
@@ -129,11 +145,20 @@ export default function AddEvent() {
                 onChange={handleChange}
               />
             </div>
+            <div className="cp-field">
+              <h5>Image</h5>
+              <input
+                type="file"
+                name="image"
+                onChange={handleChange}
+                accept="image/*" // Accept only image files
+              />
+            </div>
 
             <div className="save-stngs pd3">
               <ul>
                 <li>
-                  <button type="submit">Ajouter</button>
+                  <button type="submit">Create</button>
                 </li>
               </ul>
             </div>

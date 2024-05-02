@@ -1,16 +1,70 @@
 import axios from "axios";
 import { useState, useContext } from "react";
 import { UserContext } from "../../../../../../context/userContext";
-import moment from "moment";
+import { liked, postTypes, disliked } from "../../utils/const";
+import { getLikePostEndpoint, getDeslikePostEndpoint } from "../../utils/utils";
+import Commentaire from "./Commentaire";
+import { Button, ButtonGroup } from "react-bootstrap";
 
 export default function PostFooter({ postContent, fetchPosts }) {
   const { user } = useContext(UserContext);
+  const likePostEndpoint = getLikePostEndpoint(postContent.postType);
+  const deslikePostEndpoint = getDeslikePostEndpoint(postContent.postType);
+  const [showComment, setShowComment] = useState(false);
+  const likes = postContent.likes?.length || 0;
+  const deslikes = postContent.deslikes?.length || 0;
+  const userLikeThisPost = postContent.likes
+    ? postContent.likes.indexOf(user?.id)
+    : -1;
+  const userDeslikeThisPost = postContent.deslikes
+    ? postContent.deslikes.indexOf(user?.id)
+    : -1;
 
   const [currentPublicationId, setCurrentPublicationId] = useState();
 
   const [commentData, setCommentData] = useState({
     contenu: "",
   });
+
+  const handleLikeClick = async () => {
+    try {
+      const LikeData = {
+        userId: user.id,
+      };
+
+      // Send data to the server to add the like to the post
+      await axios.post(`${likePostEndpoint}/${postContent._id}`, LikeData);
+      alert("Like added");
+    } catch (error) {
+      // An error occurred while setting up the request
+      console.error("Error setting up the request:", error.message);
+      alert("Error setting up the request: " + error.message);
+    } finally {
+      fetchPosts();
+    }
+  };
+
+  const handleDeslikeClick = async () => {
+    try {
+      const DesLikeData = {
+        userId: user.id,
+      };
+
+      // Send data to the server to add the like to the post
+      await axios.post(
+        `${deslikePostEndpoint}/${postContent._id}`,
+        DesLikeData
+      );
+      alert("Like added");
+    } catch (error) {
+      // An error occurred while setting up the request
+      console.error("Error setting up the request:", error.message);
+      alert("Error setting up the request: " + error.message);
+    } finally {
+      fetchPosts();
+    }
+  };
+
   const handleChangeComent = (e) => {
     setCommentData({ ...commentData, [e.target.name]: e.target.value });
   };
@@ -22,19 +76,31 @@ export default function PostFooter({ postContent, fetchPosts }) {
       return;
     }
     try {
-      const response = await axios.post(
-        `/commentaire/addToPub/${currentPublicationId}`,
-        {
-          ...commentData,
-          creator: user.id, // Utilisez l'ID de l'utilisateur connecté
-        }
-      );
+      if (postContent?.postType === postTypes.TEXT) {
+        const response = await axios.post(
+          `/commentaire/addToPub/${currentPublicationId}`,
+          {
+            ...commentData,
+            creator: user.id,
+          }
+        );
+      } else if (postContent?.postType === postTypes.EVENT) {
+        const response = await axios.post(
+          `/commentaire/addToEvent/${currentPublicationId}`,
+          {
+            ...commentData,
+            creator: user.id,
+          }
+        );
+      }
       setCommentData({
         contenu: "",
       });
       alert("Commentaire ajouté avec succès");
     } catch (error) {
       console.error("Erreur lors de l'ajout du commentaire :", error);
+    } finally {
+      fetchPosts();
     }
   };
 
@@ -45,75 +111,73 @@ export default function PostFooter({ postContent, fetchPosts }) {
   return (
     <>
       <div className="job-status-bar">
-        <ul className="like-com">
-          <li>
-            <a href="#">
-              <i className="fas fa-heart"></i> Like
-            </a>
-            <img src="/assets/images/liked-img.png" alt="" />
-            <span>25</span>
-          </li>
-          <li>
-            <a href="#" className="com">
-              <i className="fas fa-comment-alt"></i> Comment 15
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      {/* ajout d'un commentaire pour postContent  */}
-
-      <div className="comment-section">
-        <div className="comment-sec">
-          <ul>
-            {postContent.comments.length > 0 ? (
-              postContent.comments.map((comment, index) => (
-                <li key={index}>
-                  <div className="comment-list">
-                    <div className="bg-img">
-                      <img src="/assets/images/resources/bg-img3.png" alt="" />
-                    </div>
-                    <div className="comment">
-                      <h3>{comment.creator?.name}</h3>
-                      <span>
-                        <img src="/assets/images/clock.png" alt="" />{" "}
-                        {moment(comment.DateCreation).format("lll")}
-                      </span>
-                      <p>{comment.contenu}</p>
-                    </div>
-                  </div>
-                </li>
-              ))
-            ) : (
-              <li>
-                <p>Aucun commentaire pour cette postContent.</p>
-              </li>
-            )}
-          </ul>
-        </div>
-
-        <div className="post-comment">
-          <div className="cm_img">
-            <img src="/assets/images/resources/bg-img4.png" alt="" />
-          </div>
-          <div
-            className="comment_box"
-            onClick={() => handleCommentClick(postContent._id)}
+        <ButtonGroup className="like-com">
+          <Button
+            variant="secondary"
+            onClick={() => handleLikeClick(postContent._id)}
           >
-            <form onSubmit={handleSubmitComment}>
-              <input
-                type="text"
-                name="contenu"
-                placeholder="Post a comment"
-                value={commentData.contenu}
-                onChange={handleChangeComent}
-                required
-              />
-              <button type="submit">Send</button>
-            </form>
+            <i className={userLikeThisPost ? liked.YES : liked.NO}></i> {likes}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => handleDeslikeClick(postContent._id)}
+          >
+            <i className={userDeslikeThisPost ? disliked.YES : disliked.NO}>
+              {" "}
+            </i>{" "}
+            {deslikes}
+          </Button>
+          <Button onClick={() => setShowComment(!showComment)}>
+            <i className="fas fa-comment-alt"></i> {postContent.comments.length}
+          </Button>
+        </ButtonGroup>
+        <ul className="like-com"></ul>
+      </div>
+
+      {showComment && (
+        <div className="comment-section">
+          {/* List of comments */}
+          <div className="comment-sec">
+            <ul>
+              {postContent.comments.length > 0 ? (
+                postContent.comments.map((comment) => (
+                  <Commentaire key={comment._id} comment={comment} />
+                ))
+              ) : (
+                <li>
+                  <p>Be the first one to comment on This post</p>
+                </li>
+              )}
+            </ul>
+          </div>
+
+          {/* Add comment */}
+          <div className="post-comment">
+            <div className="cm_img">
+              <img src="/assets/images/resources/bg-img4.png" alt="" />
+            </div>
+            <div
+              className="comment_box"
+              onClick={() => handleCommentClick(postContent._id)}
+            >
+              <form
+                onSubmit={handleSubmitComment}
+                style={{ display: "flex", alignItems: "center" }}
+              >
+                <input
+                  type="text"
+                  name="contenu"
+                  placeholder="Post a comment"
+                  value={commentData.contenu}
+                  onChange={handleChangeComent}
+                  required
+                />
+                <button type="submit">Post</button>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

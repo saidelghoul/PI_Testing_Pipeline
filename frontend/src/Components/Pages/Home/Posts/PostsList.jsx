@@ -13,9 +13,17 @@ function BasicExample() {
   );
 }
 
-export default function PostsList() {
+export default function PostsList({ userProfileId }) {
   const [allPosts, setAllPosts] = useState([]);
+  const [filtredPosts, setFiltredPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    if (userProfileId)
+      setFiltredPosts(
+        allPosts.filter((post) => post.creator?._id === userProfileId)
+      );
+    else setFiltredPosts(allPosts);
+  }, [allPosts]);
 
   useEffect(() => {
     fetchPosts();
@@ -23,9 +31,9 @@ export default function PostsList() {
 
   const fetchPosts = async () => {
     try {
+      setIsLoading(true);
       const textPostsRes = await axios.get("/publications/getall");
       const eventPostsRes = await axios.get("/evenemnt/getall");
-
 
       const textPosts = textPostsRes.data.map((post) => ({
         ...post, // copying all the proerties from the object
@@ -56,18 +64,14 @@ export default function PostsList() {
   }
 
   return (
-    <div className="posts-section">
-      <div className="posty">
-        <div className="post-bar no-margin">
-          {allPosts.map((postContent) => (
-            <PostContainer
-              key={postContent._id}
-              postContent={postContent}
-              fetchPosts={fetchPosts} // needed for updating
-            />
-          ))}
-        </div>
-      </div>
-    </div>
+    <>
+      {filtredPosts.map((postContent) => (
+        <PostContainer
+          key={postContent._id}
+          postContent={postContent}
+          fetchPosts={fetchPosts} // needed for updating
+        />
+      ))}
+    </>
   );
 }

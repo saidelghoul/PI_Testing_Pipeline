@@ -1,31 +1,34 @@
 import { postTypes } from "./const";
+import moment from "moment/moment";
 
-export const isCreator = (userId, creatorId) => userId === creatorId;
+export const isCreator = (userId, creatorId) => userId === creatorId; //true
+
+export const validDate = (testDate, diffrnce) => {
+  const currentDate = moment();
+  return Math.abs(currentDate.diff(testDate, "days")) > diffrnce;
+};
 
 export const getDeleteEndpoint = (eventType) => {
-  console.log(" >> ", eventType);
-  if (eventType === postTypes.TEXT) return "publications/delete"; 
-  if (eventType === postTypes.EVENT) return "evenemnt/remove";
+  if (eventType === postTypes.TEXT) return "/publications/delete";
+  if (eventType === postTypes.EVENT) return "/evenemnt/remove";
 };
 
-export const getUpdateEndpoint = (eventType) => {
-  switch (eventType) {
-    case postTypes.TEXT:
-      return "/evenemnt/update";
-    case postTypes.POST:
-      return "/publications/update";
-    default:
-      console.log(`Sorry, we are out of ${eventType}.`);
-  }
+export const getUpdateLink = (eventType) => {
+  if (eventType === postTypes.TEXT) return "/update";
+  if (eventType === postTypes.EVENT) return "/updateEvent";
 };
 
-export const getAllDataEndpoint = (eventType) => {
-  switch (eventType) {
-    case postTypes.TEXT:
-      return "evenemnt";
-    case postTypes.POST:
-      return "";
-    default:
-      console.log(`Sorry, we are out of ${eventType}.`);
-  }
+export const getLikePostEndpoint = (eventType) => {
+  if (eventType === postTypes.TEXT) return "/publications/like";
+  if (eventType === postTypes.EVENT) return "/evenemnt/like";
+};
+
+export const getDeslikePostEndpoint = (eventType) => {
+  if (eventType === postTypes.TEXT) return "/publications/deslike";
+  if (eventType === postTypes.EVENT) return "/evenemnt/deslike";
+};
+
+export const getReportPostEndpoint = (eventType) => {
+  if (eventType === postTypes.TEXT) return "/publications/report";
+  if (eventType === postTypes.EVENT) return "/evenemnt/report";
 };

@@ -16,4 +16,7 @@ router.post("/addToEvent/:id", commentaireController.addToEvent);
 router.get("/commentPub/:id", commentaireController.getCommentByPub);
 router.get("/commentEvent/:id", commentaireController.getCommentsByEvent);
 
+router.post("/report/:id", commentaireController.reportComment);
+
+
 module.exports = router;
