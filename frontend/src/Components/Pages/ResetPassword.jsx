@@ -12,7 +12,6 @@ import "../../../public/assets/lib/slick/slick-theme.css";
 import { useState } from "react";
 import axios from "axios";
 
-
 export default function ResetPassword() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');

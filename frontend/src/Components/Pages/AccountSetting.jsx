@@ -19,7 +19,6 @@ import { useState,useContext } from 'react';
 import axios from 'axios';
 import { UserContext } from "../../../context/userContext.jsx";
 
-
 export default function AccountSetting() {
   const { user } = useContext(UserContext);
 

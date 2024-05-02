@@ -16,7 +16,6 @@ const NewPassword = () => { // Supprimez { match } de la déstructuration des pr
           token,
           newPassword,
         });
-        
         setMessage(response.data.message);
         setError('');
         navigate('/');

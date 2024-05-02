@@ -449,7 +449,7 @@ export default function AccountUpdate() {
     <div className="tab-content">
       {/* Onglet des chefs de département */}
       <div className="tab-pane fade show active" id="nav-chef" role="tabpanel" aria-labelledby="nav-chef-tab">
-        
+    
         <div className="lt-sec">
           {/* <img src="/assets/images/about.png" alt="" /> */}
           <h1 className="h3 mb-3 col-md-12 ">List of chef department</h1>

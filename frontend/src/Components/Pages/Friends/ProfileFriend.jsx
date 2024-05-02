@@ -34,7 +34,6 @@ const coverImageUrl = user && user.coverImage
     <>
       <section className="cover-sec">
       {/* <img src={coverImageUrl} alt="Cover" width="100%" height="300px" /> */}
-    
     <img src={coverImageUrl} alt="Image de profil" width="100%" height="300px" />
  
         <div className="add-pic-box">

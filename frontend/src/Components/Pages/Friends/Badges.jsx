@@ -41,7 +41,6 @@ export default function Badges() {
            <span style={{ display: 'flex', justifyContent: 'center' }}>My Badges</span>
             <br/>
             <ul style={{ marginLeft: '2.4%'}} >
-
                 {badges.map((badge, index) => (
                     <li key={index} className="badge-item">
                         <img src={getBadgeImage(badge)} alt={badge} />

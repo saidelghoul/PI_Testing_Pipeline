@@ -22,7 +22,6 @@ import { UserContext } from "../../../context/userContext.jsx";
 export default function UpdateProfil() {
     const { user } = useContext(UserContext);
 
-    
   useEffect(() => {
     if (user) {
       fetchUserData();

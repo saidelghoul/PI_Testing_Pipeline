@@ -14,7 +14,6 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams,Link } from 'react-router-dom';
 
-
 const ConfirmEmail = () => {
   const { token } = useParams();
   const [message, setMessage] = useState('');

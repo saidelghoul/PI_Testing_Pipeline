@@ -256,7 +256,6 @@ export default function Profils() {
                     <div className="suggestions full-width">
                     <div >
                       <div><Badges/></div>  </div> 
-                    
                     </div>
                   </div>
                 </div>

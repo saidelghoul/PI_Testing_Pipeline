@@ -47,7 +47,6 @@ export default function AddFriends() {
     );
     //return users.slice(startIndex, endIndex);
     return filteredUsers.slice(startIndex, endIndex);
-
   };
 
   useEffect(() => {

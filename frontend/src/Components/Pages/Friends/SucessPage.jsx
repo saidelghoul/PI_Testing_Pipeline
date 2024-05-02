@@ -41,9 +41,6 @@ export default function SucessPage() {
       Back To Sign In
         </button>
 </div>
-
-  
-   
            </div>
            </div>
          </div>
