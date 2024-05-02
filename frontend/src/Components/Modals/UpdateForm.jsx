@@ -97,7 +97,7 @@ const UpdateForm = ({ refresh, show, handleClose, activity }) => {
       keyboard={false}
       size="lg"
     >
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Row>
           <Modal.Title as={Col}>
             <h1 className=" text-white h3 ">Update activity</h1>

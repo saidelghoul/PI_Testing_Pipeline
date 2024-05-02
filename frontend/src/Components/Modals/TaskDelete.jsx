@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 const TaskDelete = ({ upTask, refresh, show, handleClose, task, deleting }) => {
   return (
     <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Row>
           <Modal.Title as={Col}>
             <h1 className=" text-white h3 ">Delete task</h1>
@@ -26,10 +26,10 @@ const TaskDelete = ({ upTask, refresh, show, handleClose, task, deleting }) => {
       </Modal.Header>
 
       <Modal.Body>
-        <div className=" text-danger text-center ">
+        <div className=" text-danger text-center h5 ">
           Are you sure you want to delete/archive this task
         </div>
-        <div className=" text-danger text-center ">({task.title})</div>
+        <div className=" text-danger text-center h5 ">({task.title})</div>
       </Modal.Body>
       <Modal.Footer>
         {deleting === true ? (
