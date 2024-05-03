@@ -69,7 +69,7 @@ export default function Navbar() {
           <div className="logo">
             <ODDSocialSkillPopup></ODDSocialSkillPopup>
           </div>
-          <div className="search-bar col-2">
+          <div className="search-bar col-1">
             <form>
               <input type="text" name="search" placeholder="Search..." />
               <button type="submit">
