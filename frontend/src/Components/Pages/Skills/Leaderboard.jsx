@@ -1,5 +1,5 @@
 import { useEffect, useState,  useContext } from 'react';
-import { Table, Button, Form, InputGroup } from 'react-bootstrap';
+import { Table, Button, Form, InputGroup, Spinner } from 'react-bootstrap';
 import { getUsersForTask } from '../../../services/task-service';
 import socialSkillService from '../../../services/socialSkill-service';
 import { getChecklistScoreForUser } from '../../../services/checklist-service';
@@ -31,6 +31,7 @@ function Leaderboard() {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageScores, setPageScores] = useState({}); // Pour les scores des pages
   const [publicationScores, setPublicationScores] = useState({}); 
+  const [isLoading, setIsLoading] = useState(true);
   
   const itemsPerPage = 10; // Nombre d'éléments par page (ajustez si nécessaire)
   //console.log("user Actu",user);
@@ -48,6 +49,7 @@ function Leaderboard() {
 
   useEffect(() => {
     const fetchUsers = async () => {
+      setIsLoading(true);
       const listUsers = await getUsersForTask();
       let filteredUsers = listUsers.data.message;
       console.log("Filtre",filteredUsers);
@@ -104,7 +106,7 @@ function Leaderboard() {
             (sum, skill) => sum + (skill.pointSocial || 0),
             0
           );
-          socialScores[usr._id] = socialScore * 10;
+          socialScores[usr._id] = socialScore ;
 
           // Récupérer les scores des tâches
   
@@ -146,7 +148,26 @@ function Leaderboard() {
   
       // Calcul du score final pour chaque utilisateur
       const finalUsers = filteredUsers.map((usr) => {
-        const finalScore = (socialScores[usr._id] || 0) + (TaskPoints[usr._id] || 0)+ (publicationScores[usr._id] || 0)+(pageScores[usr._id] || 0);
+
+
+
+        let finalScore = (socialScores[usr._id] || 0)*0.1 + (TaskPoints[usr._id] || 0)*0.3+ (publicationScores[usr._id] || 0)*0.3+(pageScores[usr._id] || 0)*0.3;
+        console.log("le score finale du user est : ",finalScore)
+        
+        // Déterminer le nombre de sous-scores égaux à 0
+        const zeroCount = [socialScores[usr._id], TaskPoints[usr._id], publicationScores[usr._id], pageScores[usr._id]].filter((score) => score === 0).length;
+
+
+        // Appliquer la réduction en fonction du nombre de zéros
+        if (zeroCount === 1) {
+          finalScore *= 0.8;
+        } else if (zeroCount === 2) {
+          finalScore *= 0.5;
+        } else if (zeroCount === 3) {
+          finalScore *= 0.3;
+        } else if (zeroCount === 4) {
+          finalScore = 0; // Si tous les sous-scores sont 0, le score final est 0
+        }
         return {
           ...usr,
           finalScore,
@@ -200,6 +221,7 @@ function Leaderboard() {
       setNbrTasksPoints(nbrTasksScores);
       setPublicationScores(publicationScores);
       setPageScores(pageScores);
+      setIsLoading(false); // Indiquer que le chargement est terminé
       
     };
   
@@ -240,8 +262,26 @@ const calculatePostScore = (nbrLikes, nbrDislikes, nbrReports) => {
 
 // Trier les utilisateurs selon le score final décroissant
 const sortedUsers = filteredUsers.map((usr) => {
-  const finalScore = (socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0) + (publicationScores[usr._id]||0) + (pageScores[usr._id]||0);
+  let finalScore = (socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0) + (publicationScores[usr._id]||0) + (pageScores[usr._id]||0);
   //console.log("Score final de l'utilisateur:", usr.name, finalScore); // Afficher le score final pour chaque utilisateur
+  // Déterminer le nombre de sous-scores égaux à 0
+  const zeroCount = [socialPoints[usr._id], TaskPoints[usr._id], publicationScores[usr._id], pageScores[usr._id]].filter((score) => score === 0).length;
+
+  console.log("nbr de 0 est : ",zeroCount);
+
+
+  // Appliquer la réduction en fonction du nombre de zéros
+  if (zeroCount === 1) {
+    finalScore *= 0.8;
+  } else if (zeroCount === 2) {
+    finalScore *= 0.5;
+  } else if (zeroCount === 3) {
+    finalScore *= 0.3;
+  } else if (zeroCount === 4) {
+    finalScore = 0; // Si tous les sous-scores sont 0, le score final est 0
+  }
+  //console.log("Final Score du user "+usr.name+"est :", finalScore)
+
   return {
     ...usr,
     socialScore: socialPoints[usr._id] || 0,
@@ -249,6 +289,7 @@ const sortedUsers = filteredUsers.map((usr) => {
     publicationScore: publicationScores[usr._id]||0,
     pageScore: pageScores[usr._id]||0, // Inclure le score de page
     finalScore,
+    
     isCurrentUser: usr._id === user.id, // Pour identifier l'utilisateur actuel
   };
 });
@@ -261,6 +302,8 @@ sortedUsers.sort((a, b) => {
   }
   return b.finalScore - a.finalScore;
 });
+
+console.log("Users triés",sortedUsers);
 
  // Tri décroissant
 
@@ -312,7 +355,7 @@ const downloadPDF = () => {
     body: sortedUsers.map((usr, index) => [
       {
         content: index + 1,
-        styles: { fontStyle: 'bold' },
+        styles: { fontStyle: 'bold', fillColor: getRowBackgroundColor(index) },
       },
       usr.name,
       `${usr.role} (${usr.departmentDetails?.[0]?.name || 'N/A'} / ${usr.uniteDetails?.[0]?.name || 'N/A'})`,
@@ -320,7 +363,7 @@ const downloadPDF = () => {
       `${TaskPoints[usr._id]} (/ ${nbrTasksPoints[usr._id]})`,
       publicationScores[usr._id]|| 0,
       pageScores[usr._id] || 0,
-      usr.finalScore || 0,
+      Math.round(usr.finalScore) || 0,
       {
         content : usr.rating.length,
         styles: { fontStyle: 'bold' }
@@ -367,11 +410,16 @@ const downloadPDF = () => {
     pdf.setFont("Helvetica", "bold");
     pdf.text(`Score final = Points sociaux + Score des tâches + Score des publications + Score de page= ${(socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0) + (publicationScores[usr._id] || 0) + (pageScores[usr._id] || 0)}`, 10, 80);
 
-    
-      const pieChartBase64 = await generatePieChartBase64(socialPoints[usr._id], TaskPoints[usr._id]);
-      console.log("PIE",pieChartBase64);
 
-      pdf.addImage(pieChartBase64, 'JPEG', 180, 105, 100, 100);
+    
+      if(user.id === usr._id){
+        const pieChartBase64 = await generatePieChartBase64(socialPoints[usr._id], TaskPoints[usr._id]);
+        console.log("PIE",pieChartBase64);
+  
+        pdf.addImage(pieChartBase64, 'JPEG', 180, 105, 100, 100);
+
+      }
+
     
 
   
@@ -429,9 +477,7 @@ const getRowBackgroundColor = (index, userId) => {
     return 'lightgreen'; // 25% supérieur
   } else if (index >= middleHalfIndex) {
     return 'lightcoral'; // 25% inférieur
-  } else {
-    return 'transparent'; // 50% du milieu
-  }
+  } 
 };
 const handlePageChange = (data) => {
   const selectedPage = data.selected;
@@ -526,6 +572,17 @@ const totalPageScores = data.reduce((total, item) => total + (item["Score de pag
 
   XLSX.writeFile(workbook, fileName); // Exporter le fichier Excel avec le nom contenant la date
 };
+
+if (isLoading) {
+  return (
+    <div style={{ textAlign: 'center', padding: '50px' }} className='Container'>
+      <h3 className='h4'> ⌛Chargement des données du tableau ⏳ veuillez patienter quelques secondes ...</h3>
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Chargement...</span>
+      </Spinner>
+    </div>
+  );
+}
 
   return (
     <div>
@@ -632,7 +689,7 @@ const totalPageScores = data.reduce((total, item) => total + (item["Score de pag
               <td className="text-center h5">{TaskPoints[usr._id]} (/ {nbrTasksPoints[usr._id]})</td>
               <td className="text-center h5">{usr.publicationScore  || 0}</td>
               <td className='text-center h5'>{usr.pageScore || 0}</td> 
-              <td className="text-center h4">{(socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0)+(usr.publicationScore  || 0) + (usr.pageScore || 0)}</td>
+              <td className="text-center h4">{Math.round(usr.finalScore)}</td>
               {!isEnseignant &&<td className="text-center h6">{usr.rating}</td>}
               <td className="text-center ">
                 <Button variant="danger" onClick={() => downloadUserPDF(usr)}> <span className='h5'>PDF 💾</span></Button>
