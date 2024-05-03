@@ -2,20 +2,21 @@ import {  useEffect, useState } from 'react';
 import SocialSkillService from "../../../../services/socialSkill-service";
 import { Modal, Button, Badge, OverlayTrigger, Tooltip, DropdownButton , Dropdown } from 'react-bootstrap';
 import {  FaStar, FaHeart,  FaInfoCircle } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
-function SocialSkillsUSer(user) {
-    console.log("userId",user.userId);
+function SocialSkillsUSer({ user }) {
+    console.log("userId",user._id);
   const [isLoading, setIsLoading] = useState(true);
   const [assigned, setAssigned] = useState([]);
   const [showSkillModal, setShowSkillModal] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [displayCount, setDisplayCount] = useState(4); // Initialisez avec 4 compétences à afficher
-  const [filterLevel, setFilterLevel] = useState("⭐⭐⭐");
+  const [filterLevel, setFilterLevel] = useState("Tous");
   const [filteredSkills, setFilteredSkills] = useState([]);
 
   const getAssigned = async () => {
     try {
-      const skillsData = await SocialSkillService.getSocialSkillsByUser(user.userId);
+      const skillsData = await SocialSkillService.getSocialSkillsByUser(user._id);
       setAssigned(skillsData.socialSkills);
       setFilteredSkills(skillsData.socialSkills); // Initialiser avec toutes les compétences
       console.log("skills du user "+user+" sont:",skillsData);
@@ -67,7 +68,7 @@ function SocialSkillsUSer(user) {
 
   const handleRemove = async (skillId) => {
     try {
-      await SocialSkillService.unassignSocialSkillFromUser(skillId, user.id);
+      await SocialSkillService.unassignSocialSkillFromUser(skillId, user._id);
       setAssigned(assigned.filter((skill) => skill._id !== skillId));
       setFilteredSkills(filteredSkills.filter(skill => skill._id !== skillId)); // Mettre à jour la liste filtrée
     } catch (error) {
@@ -126,7 +127,10 @@ function SocialSkillsUSer(user) {
     <div>
       <div className="user-profile-ov">
         <h3 style={{textAlign: 'center'}}>
-          Compétences Sociales 🧠
+          Compétences Sociales 🧠 de {user.name} 
+          <Link to={`/affectSkillOtherUser/${user._id}`}>
+            <i className="fa fa-plus-square"></i>
+          </Link>
         </h3>
 
         {/* Dropdown pour le filtrage */}
@@ -187,9 +191,9 @@ function SocialSkillsUSer(user) {
         ) : (
             <div style={{textAlign: 'center'}}>
                 <hr />
-                <h1>Aucune compétence sociale n'est disponible pour le moment (*) </h1>
+                <h1>Aucune compétence sociale de ce Type n'est disponible pour le moment (*) </h1>
                 <hr />
-                <p> (*) : il est possible que l'utilisateur n'ait pas encore ajouter des socials Skills.</p>
+                <p> (*) : il est possible que l'utilisateur n'ait pas encore ajouter des socials Skills de ce Type.</p>
             </div>
           
         )}
