@@ -1036,7 +1036,7 @@ main {
 
 .post-topbar {
 	float: left;
-	width: 100%;
+	width: 106%;
 	padding: 23px 20px;
 	background-color: #fff;
 	border-top: 4px solid #e44d3a;
@@ -1049,6 +1049,7 @@ main {
 	-o-box-shadow: 0 0 1px rgba(0,0,0,0.24);
 	box-shadow: 0 0 1px rgba(0,0,0,0.24);
 	margin-bottom: 20px;
+	height: 126px;
 }
 .user-picy {
 	float: left;
@@ -1057,6 +1058,7 @@ main {
 .user-picy img {
 	width: 100%;
 	object-fit: cover;
+	margin-bottom:10px
 }
 .post-st {
 	float: right;
@@ -1090,7 +1092,7 @@ main {
 
 .posts-section {
 	float: left;
-	width: 100%;
+	width: 106%;
 }
 .reviewtext{
 	margin: 0 -20px;
@@ -1264,7 +1266,7 @@ main {
 	width: 33px;
 	height: 30px;
 	padding-left: 0px;
-	background-color: #53d690;
+	background-color: #3ca728bf;
 	text-align: center;
 	line-height: 30px;
 }
@@ -1392,6 +1394,7 @@ main {
 }
 .like-com li a.active {
 	color: #e44d3a;
+	margin-bottom:10px
 }
 .like-com li a i {
 	margin-right: 2px;
@@ -1640,8 +1643,9 @@ main {
 	float: left;
 	width: 100%;
 	background-color: #fff;
-	padding: 20px;
+	padding: 16px;
 	box-shadow: 0px 3px #e4e4e4;
+	margin-top: 20px;
 }
 .plus-ic {
 	float: left;
@@ -1716,7 +1720,9 @@ main {
 	color: #b2b2b2;
 	font-size: 14px;
 	display: block;
-	margin-bottom: 14px;
+	margin-bottom: 15px;
+	margin-top:24px ;
+	margin-left: 48px;
 }
 .comment p {
 	color: #686868;
@@ -1796,7 +1802,9 @@ main {
 
 .right-sidebar {
 	float: left;
-	width: 100%;
+	width: 107%;
+	margin-top: 190px;
+	margin-left: -839px
 }
 .widget {
 	float: left;
@@ -2575,7 +2583,8 @@ select {
 .footy-sec {
 	float: left;
 	width: 100%;
-	margin-top: 70px;
+	margin-top: 368px;
+	position: sticky;
 }
 .footy-sec ul {
 	float: left;
@@ -2962,7 +2971,7 @@ footer {
 .wd-heady {
 	float: left;
 	width: 100%;
-	padding: 20px 20px;
+	padding: 36px 8px;
 	border-bottom: 1px solid #e5e5e5;
 }
 .wd-heady h3 {
@@ -4824,7 +4833,7 @@ a:hover {
 /* ============== messages-page ============== */
 
 .messages-page {
-	padding: 60px 0;
+	padding: 19px 0;
 }
 .messages-sec {
 	float: left;

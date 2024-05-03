@@ -47,6 +47,13 @@ import ConfirmEmail from "./Components/Pages/ConfirmEmail";
 import AddFriends from "./Components/Pages/Friends/AddFriends";
 import ProfileFriend from "./Components/Pages/Friends/ProfileFriend";
 import SuccessPage from './Components/Pages/Friends/SucessPage';
+import Disscussions from "./Components/Pages/chats/Disscussions";
+import MyGroups from "./Components/Pages/groups/MyGroups";
+import AddPubGroups from "./Components/Pages/groups/AddPubGroups";
+import UpdatePubGroups from "./Components/Pages/groups/UpdatePubGroups";
+import PubGroups from "./Components/Pages/groups/PubGroups";
+import PubActions from "./Components/Pages/groups/PubActions";
+import AddCommentPub from "./Components/Pages/groups/AddCommentPub";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -75,11 +82,81 @@ function App() {
             }
           />
           <Route
+            path="/modifier/:postId"
+            element={
+              <>
+                <Navbar />
+                <UpdatePubGroups />
+                <Footer />
+              </>
+            }
+          />
+            <Route
+            path="/afficherPub/:groupId"
+            element={
+              <>
+                <Navbar />
+                <PubGroups />
+                <Footer />
+              </>
+            }
+          />
+           <Route
+            path="/actions/:postId"
+            element={
+              <>
+                <Navbar />
+                <PubActions />
+                <Footer />
+              </>
+            }
+          />
+           <Route
+            path="/addcomments/:postId"
+            element={
+              <>
+                <Navbar />
+                <AddCommentPub />
+                <Footer />
+              </>
+            }
+
+          />
+      
+          <Route
+            path="/message"
+            element={
+              <>
+                <Navbar />
+                <Disscussions />
+              </>
+            }
+          />
+          <Route
+            path="/addPub/:groupId"
+            element={
+              <>
+                <Navbar />
+                <AddPubGroups />
+              </>
+            }
+          />
+          <Route
             path="/groupes"
             element={
               <>
                 <Navbar />
                 <AllGroups />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/myGroups"
+            element={
+              <>
+                <Navbar />
+                <MyGroups />
                 <Footer />
               </>
             }
@@ -153,16 +230,7 @@ function App() {
               </>
             }
           />
-          <Route
-            path="/message"
-            element={
-              <>
-                <Navbar />
-                <Messages />
-                <Footer />
-              </>
-            }
-          />
+       
           <Route
             path="/getUsers/:conversationId"
             element={
@@ -425,6 +493,7 @@ function App() {
               </>
             }
           />
+         
 
           <Route
             path="/socialSkills/edit/:id"
