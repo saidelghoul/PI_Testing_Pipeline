@@ -7,6 +7,8 @@ export default function SucessPage() {
   const handleBackToHome = () => {
     navigate('/');
   };
+
+  
   return (
     <>
     <div className="sign-in-page " style={{ backgroundColor: "#dc3545" }}>
@@ -17,39 +19,30 @@ export default function SucessPage() {
              <div className="cmp-info">
                <div className="cm-logo">
                  <img src="/assets/images/esprit.png" alt="" />
-               </div>
                <img src="/assets/images/cm-main-img.png" alt="" />
              </div>
+             </div>
+
            </div>
            <div className="col-lg-6">
            <div className="login-sec">
                <br/>
-               <br/>
-               <br/>
-               <br/>
-               <br/>
-               <br/>
-               <br/>
-               <br/>
-               <br/>
-               <br/>
-               <br/>
-               <br/>
-               <br/>
-               <br/>
+             <br/>
              
-   <br/>
+   <br/><img src="/assets/images/mail.png" alt="" />
   
-   <div className="form-group">
-     <label>Merci pour votre inscription  </label>
-     <br/>   un mail de confirmation a été envoyé ! <br/>
-  
-     veuillez consulter votre mail pour confirmer votre inscription
-   </div>
-   <button onClick={handleBackToHome} className="btn btn-primary">
-          Retour à l'accueil
+   <div className="form-group" style={{textAlign: 'center' }}>
+  <span>Thank you for your registration</span>
+  <br />
+  A confirmation email has been sent!
+  <br />
+  Please check your email to confirm your registration.
+<br/>
+<br/>
+  <button onClick={handleBackToHome} className="btn btn-primary">
+      Back To Sign In
         </button>
-   
+</div>
            </div>
            </div>
          </div>

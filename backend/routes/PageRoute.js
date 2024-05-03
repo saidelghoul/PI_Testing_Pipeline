@@ -1,6 +1,8 @@
 var express = require("express");
 var router = express.Router();
 var pageController = require("../controller/PageController");
+var PubpageController = require("../controller/Groups/PubGroupsController");
+
 const upload =require("../middleware/upload");
 const path = require('path');
 

@@ -11,6 +11,7 @@ export default function AllGroups() {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 8; // Nombre d'éléments par page
   const [totalPages, setTotalPages] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     axios
@@ -25,6 +26,18 @@ export default function AllGroups() {
       });
   }, []);
 
+
+  const filteredUsers = pages.filter((page) => {
+    const searchLower = searchQuery.toLowerCase();
+    const nomgroups = page.nomgroups?.toLowerCase();
+  
+    return (
+      nomgroups.includes(searchLower) ||
+      (page.rang && page.rang.toString().toLowerCase().includes(searchLower))
+    );
+  });
+  
+  
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString("fr-FR", options);
@@ -56,14 +69,21 @@ export default function AllGroups() {
     <section className="companies-info">
       <div className="container">
         <div className="company-title d-flex justify-content-between align-items-center">
-          <h3>All Groups</h3>
-          <Link
+          <h3>Others Groups</h3>
+          <div className="col">
+            <div className="col-md-12 d-flex flex-row justifiez-content-end input-group">
+              <span className="input-group-text">
+                🔎</span>
+                <input placeholder="Rechercher Par Nom du groupe" aria-label="Rechercher Par Nom du groupe" className="form-control"  onChange={(e) => setSearchQuery(e.target.value)}/>
+                </div>
+                </div>
+          {/* <Link
             to="/addGroup"
             className="btn btn-danger"
             style={{ backgroundColor: "#dc3545" }}
           >
-            Ajouter une autre page
-          </Link>
+            Add Page
+          </Link> */}
         </div>
         <br></br>
         <div className="companies-list">
@@ -71,7 +91,9 @@ export default function AllGroups() {
             {loading ? (
               <p>Loading...</p>
             ) : (
-              displayPagesForPage().map((page) => (
+              filteredUsers
+              .filter((page) => page.creator !== user.id)
+              .map((page) => (
                 <div key={page._id} className="col-lg-3 col-md-4 col-sm-6">
                   <div className="company_profile_info">
                     <div className="company-up-info">
@@ -80,6 +102,7 @@ export default function AllGroups() {
                         alt="Profile"
                       />
                       <h3>{page.nomgroups}</h3>
+
                       <h4>{formatDate(page.date)}</h4>
                       <ul>
                         {user.id === page.creator && (
@@ -123,13 +146,7 @@ export default function AllGroups() {
                           </li>
                         )}
 
-                        {user.id !== page.creator && (
-                          <li>
-                            <a href="/message" title="" className="follow">
-                              <i className="fa fa-envelope"></i>
-                            </a>
-                          </li>
-                        )}
+                      
                         {user.id === page.creator && (
                           <button
                             onClick={() => handleDelete(page._id)}
@@ -145,7 +162,7 @@ export default function AllGroups() {
                       title=""
                       className="view-more-pro"
                     >
-                      View Profile
+                      View Page
                     </Link>
                   </div>
                 </div>

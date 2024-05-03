@@ -1,9 +1,38 @@
-import { useContext } from "react";
-import { UserContext } from "../../../../context/userContext";
+import { useContext, useEffect, useState } from "react";
+import axios from "axios";
+
+import { UserContext } from "../../../../context/userContext.jsx";
 import Feed from "./Feed/Feed.jsx";
 
 export default function Home() {
   const { user } = useContext(UserContext);
+  const userId = user ? user.id : null;
+  const imageUrl = user && user.profileImage 
+  ? `http://localhost:8000/user/${userId}/profile` 
+  : "/assets/images/resources/user-pro-img.png";
+  
+  const [totalReports, setTotalReports] = useState(0);
+  console.log("totalReports : ", totalReports);
+
+  // use this block of code where you want to get user score
+  useEffect(() => {
+    console.log("user", user);
+    if (user?.id !== null && user?.id !== undefined) fetchPosts();
+  }, [user]);
+
+  const fetchPosts = async () => {
+    // initialiser user par l'id de user que je vais voir son score
+    try {
+      const totalReportsRes = await axios.get(
+        `/userScore/publicationsCountByUserId/${user?.id}`
+      );
+      console.log("totalReportsRes", totalReportsRes);
+
+      setTotalReports(totalReportsRes.data);
+    } catch (error) {
+      console.error("Error fetching posts", error);
+    }
+  };
 
   return (
     <main>
@@ -17,24 +46,23 @@ export default function Home() {
                     <div className="user-profile">
                       <div className="username-dt">
                         <div className="usr-pic">
-                        {/* <img src={imageUrl} alt="Image de profil" /> */}
+                        <img src={imageUrl} alt="Image de profil" />
 
+                          {/* <img src={imageUrl} alt="Image de profil" /> */}
                         </div>
                       </div>
                       <div className="user-specs">
                         <> {!!user && <h1>{user.name}</h1>}</>
                         <span> {!!user && <h2>{user.role}</h2>}</span>
                         <span>
-                          Département {!!user && <h2>{user.departement}</h2>}
+                        Department  {!!user && <h2>{user.departement}</h2>}
                         </span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              {/* Feed */}
               <Feed />
-              
             </div>
           </div>
         </div>

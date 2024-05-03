@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import SocialSkillsOnlyReading from '../Skills/SocialSkills/SocialSkillsOtherUser';
 
 export default function Profils() {
 const { id } = useParams();
@@ -23,18 +24,19 @@ const coverImageUrl = user && user.coverImage
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Erreur lors de la récupération de l\'utilisateur:', error);
+        console.error('Error retrieving users : ', error);
       });
   }, [id]);
 
   if (loading) {
     return <div>Chargement...</div>;
   }
+
+  
   return (
     <>
       <section className="cover-sec">
       {/* <img src={coverImageUrl} alt="Cover" width="100%" height="300px" /> */}
-    
     <img src={coverImageUrl} alt="Image de profil" width="100%" height="300px" />
  
         <div className="add-pic-box">
@@ -54,26 +56,42 @@ const coverImageUrl = user && user.coverImage
                       <div className="user-pro-img">
                       {/* <img src={imageUrl} alt="Image de profil" /> */}
                     
-    <img src={imageUrl} alt="Image de profil" />
+                       <img src={imageUrl} alt="Image de profil" />
   
 
                         <div className="add-dp" id="OpenImgUpload"></div>
                       </div>
-                      <div className="user_pro_status">
-                  
-                        <ul className="flw-status">
-                      
+                      <ul className="social_links">
+                        {!!user && user.gouvernorat && (
                           <li>
-                            <span>Following</span>
-                            <b>34</b>
+                            🌍<span>Governorate : </span> 
+                            <h3>{user.gouvernorat}</h3>
                           </li>
+                        )}
+                        {!!user && user.addresse && (
                           <li>
-                            <span>Followers</span>
-                            <b>155</b>
+                          📌<span> City : </span>
+                               <h3>{user.addresse}</h3>
                           </li>
-                        </ul>
-                      </div>
-                      <br />
+                        )}
+                        {!!user && user.dateNaissance && (
+                          <li>
+                            📆<span>Birth Date :</span>  
+                            <h3>
+                              {new Date(user.dateNaissance).toLocaleDateString(
+                                "fr-FR"
+                              )}
+                            </h3>
+                          </li>
+                        )}
+                        {!!user && user.telephone && (
+                          <li>
+                            📲 <span>Phone number :</span> 
+                            <h3>{user.telephone}</h3>
+                          </li>
+                        )}
+                       
+                      </ul>
                      
                       <div>
                         <br></br>
@@ -86,89 +104,17 @@ const coverImageUrl = user && user.coverImage
                      
                     </div>
                     <div className="suggestions full-width">
-                      <div className="sd-title">
-                        <h3>People Viewed Profile</h3>
-                        <i className="la la-ellipsis-v"></i>
-                      </div>
-                      <div className="suggestions-list">
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s1.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Jessica William</h4>
-                            <span>Graphic Designer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s2.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>John Doe</h4>
-                            <span>PHP Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s3.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Poonam</h4>
-                            <span>Wordpress Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s4.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Bill Gates</h4>
-                            <span>C & C++ Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s5.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>Jessica William</h4>
-                            <span>Graphic Designer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="suggestion-usd">
-                          <img src="/assets/images/resources/s6.png" alt="" />
-                          <div className="sgt-text">
-                            <h4>John Doe</h4>
-                            <span>PHP Developer</span>
-                          </div>
-                          <span>
-                            <i className="la la-plus"></i>
-                          </span>
-                        </div>
-                        <div className="view-more">
-                          <a href="#" title="">
-                            View More
-                          </a>
-                        </div>
-                      </div>
+                    
                     </div>
                   </div>
                 </div>
                 <div className="col-lg-6">
                   <div className="main-ws-sec">
                     <div className="user-tab-sec rewivew">
-                      {/* <h3> {!!user && <>{user.name}</>}</h3> */}
                       <h3>{user.name}</h3>
                       <div className="star-descp">
-                      <span>Rôle: {user.role}</span>
+                      <span>Role : {user.role}</span>
 
-                        {/* <span> {!!user && <>{user.role}</>}</span> */}
                         <ul>
                           <li>
                             <i className="fa fa-star"></i>
@@ -186,9 +132,7 @@ const coverImageUrl = user && user.coverImage
                             <i className="fa fa-star-half-o"></i>
                           </li>
                         </ul>
-                        <a href="#" title="">
-                          Status
-                        </a>
+
 
                     
                       </div>
@@ -2691,29 +2635,9 @@ const coverImageUrl = user && user.coverImage
                     </div>
 
                     <div className="product-feed-tab current" id="info-dd">
-                      <div className="user-profile-ov">
-                        <h3>
-                          <a href="#" title="" className="overview-open">
-                            Overview
-                          </a>{" "}
-                          <a href="#" title="" className="overview-open">
-                            <i className="fa fa-pencil"></i>
-                          </a>
-                        </h3>
-                        <p>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit. Quisque tempor aliquam felis, nec condimentum
-                          ipsum commodo id. Vivamus sit amet augue nec urna
-                          efficitur tincidunt. Vivamus consectetur aliquam
-                          lectus commodo viverra. Nunc eu augue nec arcu
-                          efficitur faucibus. Aliquam accumsan ac magna
-                          convallis bibendum. Quisque laoreet augue eget augue
-                          fermentum scelerisque. Vivamus dignissim mollis est
-                          dictum blandit. Nam porta auctor neque sed congue.
-                          Nullam rutrum eget ex at maximus. Lorem ipsum dolor
-                          sit amet, consectetur adipiscing elit. Donec eget
-                          vestibulum lorem.
-                        </p>
+                      <div className="star-descp border-radius: 56px">
+                      <SocialSkillsOnlyReading userId={id}/>
+                       
                       </div>
                       {/*<div className="user-profile-ov st2">
 											<h3><a href="#" title="" className="exp-bx-open">Experience </a><a href="#" title="" className="exp-bx-open"><i className="fa fa-pencil"></i></a> <a href="#" title="" className="exp-bx-open"><i className="fa fa-plus-square"></i></a></h3>
@@ -2725,7 +2649,7 @@ const coverImageUrl = user && user.coverImage
 											<p className="no-margin">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque tempor aliquam felis, nec condimentum ipsum commodo id. Vivamus sit amet augue nec urna efficitur tincidunt. Vivamus consectetur aliquam lectus commodo viverra. </p>
 										</div>*/}
 
-                      <div className="user-profile-ov">
+                      <div className="user-profile-ov ">
                         <h3>
                           <a href="#" title="" className="ed-box-open">
                             Education/Technical Skills
@@ -2748,20 +2672,7 @@ const coverImageUrl = user && user.coverImage
                         </p>
                       </div>
 
-                      <div className="user-profile-ov">
-                        <h3>
-                          <a href="#" title="" className="skills-open">
-                            Skills
-                          </a>{" "}
-                          <a href="#" title="" className="skills-open">
-                            <i className="fa fa-pencil"></i>
-                          </a>{" "}
-                        
-                        </h3>
 
-                        {/* */}
-
-                      </div>
 
                      
                     </div>

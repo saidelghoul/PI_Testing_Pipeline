@@ -33,5 +33,4 @@ router.post("/forgotPassword",forgotPassword);
 router.post("/resetPassword",resetPassword);
 router.get('/confirm/:token', confirmEmail);
 
-
 module.exports = router;

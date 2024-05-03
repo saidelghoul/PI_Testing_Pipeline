@@ -5,15 +5,20 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
-const http = require("http"); // Importez le module http de Node.js
-const { mongoose } = require("mongoose");
+const http = require("http");
+const mongoose = require("mongoose");
 const socketIo = require("socket.io");
 const multer = require("multer");
+const twilio = require('twilio');
+const Message = require("./model/Chats/message");
+const Conversation = require("./model/Chats/conversation");
+const router = express.Router();
 
 const messageRoute = require("./routes/ConversationRoute");
+const messageRouter = require("./routes/messageRouter");
 const notificationRoute = require("./routes/NotificationRoute");
+const PubPageRoute = require("./routes/PubGrpusRoute");
 
-//activities management routes
 const activitiesRoute = require("./routes/activityRoute");
 const tasksRoute = require("./routes/taskRoute");
 const checklistsRoute = require("./routes/checklistRoute");
@@ -25,67 +30,64 @@ const commentaireRoutes = require("./routes/ComentaireRoute");
 const PageRoute = require("./routes/PageRoute");
 const socialSkillsRouter = require("./routes/socialSkillsRoute");
 const technicalSkillsRouter = require("./routes/technicalSkillsRoute");
+const UserScoreRoutes = require("./routes/UserScoreRoutes");
+const CommentPageRoute = require("./routes/commentairePubRoute");
+
 
 const app = express();
+const server = http.createServer(app);
 
-const server = http.createServer(app); // Créez un serveur HTTP en utilisant Express
-
-const isAuthenticated = (req, res, next) => {
-  if (req.user) {
-    // L'utilisateur est authentifié, continuez vers la route suivante
-    next();
-  } else {
-    // L'utilisateur n'est pas authentifié, renvoyez une erreur 401 (non autorisé)
-    res.status(401).json({ message: "Non autorisé" });
-  }
-};
-
-// Connectez Socket.IO au serveur HTTP
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:5173", // Spécifiez l'URL d'origine autorisée
-    methods: ["GET", "POST"], // Spécifiez les méthodes autorisées
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
   },
 });
-app.io = io;
-// Définir une liste pour stocker les identifiants des utilisateurs connectés
-let connectedUsers = [];
 
-io.on("connection", (socket) => {
-  console.log("Nouveau client connecté");
 
-  // Ajouter l'utilisateur à la liste des utilisateurs connectés
-  socket.on("userConnected", (userId) => {
-    connectedUsers.push(userId);
-    // Diffuser la liste des utilisateurs connectés à tous les clients
-    io.emit("userListUpdate", connectedUsers);
-  });
 
-  // Gérer la déconnexion de l'utilisateur
-  socket.on("disconnect", () => {
-    console.log("Client déconnecté");
-    // Supprimer l'utilisateur de la liste des utilisateurs connectés
-    connectedUsers = connectedUsers.filter((user) => user !== socket.userId);
-    // Diffuser la liste mise à jour des utilisateurs connectés à tous les clients
-    io.emit("userListUpdate", connectedUsers);
-  });
-
-  // Gérer l'envoi de messages
-  socket.on("sendMessage", (message) => {
-    console.log("Nouveau message :", message);
-    io.emit("message", message); // Diffuser le message à tous les clients connectés
-  });
-});
-
-//database connection
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("Database connected"))
   .catch((err) => console.log("Database not connected", err));
 
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "twig");
+  app.set("views", path.join(__dirname, "views"));
+  app.set("view engine", "twig");
+
+  
+io.on("connection", (socket) => {
+  console.log("Client connected");
+
+  socket.on("message", async (data) => {
+    try {
+      const { content, sender, repondeur, conversationId } = data;
+      console.log("Message content:", content);
+      console.log("Message sender:", sender);
+      console.log("Message repondeur:", repondeur);
+      console.log("Message conversationId:", conversationId);
+
+      const newMessage = new Message({
+        content,
+        sender,
+        repondeur,
+        conversation: conversationId,
+      });
+      await newMessage.save();
+
+      await Conversation.findByIdAndUpdate(conversationId, {
+        $push: { messages: newMessage._id },
+      });
+
+      io.emit("message", newMessage);
+    } catch (error) {
+      console.error("Error in sending message:", error.message);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -102,7 +104,11 @@ app.use("/commentaire", commentaireRoutes);
 app.use("/groups", PageRoute);
 app.use("/images", express.static(path.join(__dirname, "uploads")));
 app.use("/notifications", notificationRoute);
+app.use("/pubGroupe", PubPageRoute);
+app.use("/commentGroupe", CommentPageRoute);
+
 app.use("/messages", messageRoute);
+app.use("/test", messageRouter);
 app.use("/activities", activitiesRoute);
 app.use("/tasks", tasksRoute);
 app.use("/checklists", checklistsRoute);
@@ -111,31 +117,54 @@ app.use("/documents", documentRoute);
 app.use("/socialSkills", socialSkillsRouter);
 app.use("/technicalSkills", technicalSkillsRouter);
 app.use("/user", require("./controller/userController"));
+app.use("/badges",require("./controller/badgesController"));
+app.use("/userScore", UserScoreRoutes);
 
 app.use(
   "/imagesUser",
   express.static(path.join(__dirname, "public/imagesUser"))
 );
 
-const port = 8000;
+const accountSid = 'AC123f75a58cfaeaad10128a4d8a8ac843';
+const authToken = '58b03b9ac98cffd551468d55cf18da4f';
 
-// Remplacez app.listen par server.listen pour utiliser le serveur HTTP créé
-server.listen(port, () => console.log(`server is running on ${port}`));
+const client = twilio(accountSid, authToken);
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.post('/send-sms', (req, res) => {
+  const { to, body } = req.body;
+
+  client.messages
+    .create({
+      body: body,
+      from: '+13343397288',
+      to: to
+    })
+    .then(message => {
+      console.log('SMS sent:', message.sid);
+      res.send('SMS sent successfully!');
+    })
+    .catch(err => {
+      console.error('Error sending SMS:', err);
+      res.status(500).send('Failed to send SMS');
+    });
+});
+
+app.use('/imagesUser', express.static(path.join(__dirname, 'public/imagesUser')));
+
+
+const port = process.env.PORT || 8000;
+server.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
+app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
   res.render("error");
 });
 
-module.exports = app;
+module.exports = { app, io };

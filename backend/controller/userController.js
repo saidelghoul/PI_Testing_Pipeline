@@ -29,7 +29,7 @@ router.put('/:userId/profileimage', upload.fields([{ name: 'profileImage', maxCo
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+      return res.status(404).json({ message: 'User not found' });
     }
 
     // Vérifier et mettre à jour l'image de profil
@@ -40,6 +40,10 @@ router.put('/:userId/profileimage', upload.fields([{ name: 'profileImage', maxCo
     // Vérifier et mettre à jour l'image de couverture
     if (req.files['coverImage'] && req.files['coverImage'][0]) {
       user.coverImage = req.files['coverImage'][0].path;
+    }
+
+    if (!user.badges.includes("advanced")) {
+      user.badges.push("advanced");
     }
 
     await user.save();
@@ -65,13 +69,13 @@ router.put('/:userId/profileimage', upload.fields([{ name: 'profileImage', maxCo
       // Mettre à jour le cookie du token avec le nouveau token
       res.cookie('token', token, { httpOnly: true, secure: true });
       // Renvoyer la réponse avec un message de succès
-      res.status(200).json({ message: 'Images de profil et de couverture mises à jour avec succès' });
+      res.status(200).json({ message: 'Profile and cover images updated successfully' });
     });
 
-    res.status(200).json({ message: 'Images de profil et de couverture mises à jour avec succès' });
+    res.status(200).json({ message: 'Profile and cover images updated successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Erreur interne du serveur' });
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
@@ -82,7 +86,7 @@ router.get('/:userId/profile', async (req, res) => {
     const user = await User.findById(userId);
 
     if (!user || !user.profileImage ) {
-      return res.status(404).json({ message: 'Image de profil non trouvée' });
+      return res.status(404).json({ message: 'Profile picture not found' });
     }
 
     // Construire le chemin absolu du fichier
@@ -90,14 +94,14 @@ router.get('/:userId/profile', async (req, res) => {
 
     // Vérifier si le fichier existe
     if (!fs.existsSync(imagePath)) {
-      return res.status(404).json({ message: 'Image de profil non trouvée' });
+      return res.status(404).json({ message: 'Profile picture not found' });
     }
 
     // Envoyer l'image en tant que fichier
     res.sendFile(imagePath);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Erreur interne du serveur' });
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -109,7 +113,7 @@ router.get('/:userId/cover', async (req, res) => {
     const user = await User.findById(userId);
 
     if (!user || !user.coverImage ) {
-      return res.status(404).json({ message: 'Image de coverture non trouvée' });
+      return res.status(404).json({ message: 'Cover image not found' });
     }
 
     // Construire le chemin absolu du fichier
@@ -117,14 +121,14 @@ router.get('/:userId/cover', async (req, res) => {
 
     // Vérifier si le fichier existe
     if (!fs.existsSync(imagecoverPath)) {
-      return res.status(404).json({ message: 'Image de couverture non trouvée' });
+      return res.status(404).json({ message: 'Cover image not found' });
     }
 
     // Envoyer l'image en tant que fichier
     res.sendFile(imagecoverPath);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Erreur interne du serveur' });
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -134,19 +138,21 @@ router.put('/:userId', async (req, res) => {
   const updates = req.body;
 
   try {
-      // Recherchez l'utilisateur par son ID et mettez à jour ses informations
       const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
 
       if (!updatedUser) {
-          return res.status(404).json({ error: 'Utilisateur non trouvé' });
+          return res.status(404).json({ error: 'User not found' });
+      }
+         // Vérifier si le badge "Profil Completed" n'a pas déjà été ajouté à l'utilisateur
+         if (!updatedUser.badges.includes("Profil Completed")) {
+          // Ajouter le badge "Profil Completed" à l'utilisateur
+          updatedUser.badges.push("Profil Completed");
+          await updatedUser.save();
       }
 
-      // Récupérer les détails du département associé à l'utilisateur
       const departement = await Departement.findById(updatedUser.departement);
-      // Récupérer les détails de l'unité associée à l'utilisateur
       const unite = await Unite.findById(updatedUser.unite);
 
-      // Créer le nouveau payload du token avec les informations mises à jour
       const tokenPayload = {
           id: updatedUser._id,
           name: updatedUser.name,
@@ -174,8 +180,8 @@ router.put('/:userId', async (req, res) => {
       });
 
   } catch (error) {
-      console.error('Erreur lors de la mise à jour de l\'utilisateur :', error);
-      res.status(500).json({ error: 'Erreur lors de la mise à jour de l\'utilisateur' });
+      console.error('Error updating user:', error);
+      res.status(500).json({ error: 'Error updating user' });
   }
 });
 
@@ -219,8 +225,8 @@ router.get('/enseignant/test', async (req, res) => {
     const Users = await User.find({ role: "Enseignant" });
     res.json(Users);
   } catch (error) {
-    console.error('Erreur lors de la récupération des utilisateurs :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
+    console.error('Error recovering users:', error);
+    res.status(500).json({ error: 'Error recovering users' });
   }
 });
 router.get('/enseignant', async (req, res) => {
@@ -230,7 +236,7 @@ router.get('/enseignant', async (req, res) => {
 
     // Vérifier si l'utilisateur connecté a un département et une unité
     if (!currentUser.department || !currentUser.unit) {
-      return res.status(400).json({ error: "L'utilisateur connecté n'a pas de département ou d'unité." });
+      return res.status(400).json({ error: "The logged in user does not have a department or unit." });
     }
 
     // Trouver les utilisateurs qui sont enseignants et ont le même département et unité que l'utilisateur connecté
@@ -242,11 +248,10 @@ router.get('/enseignant', async (req, res) => {
 
     res.json(users);
   } catch (error) {
-    console.error('Erreur lors de la récupération des utilisateurs :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
+    console.error('Error retrieving users:', error);
+    res.status(500).json({ error: 'Error recovering users' });
   }
 });
-
 
 //lister tous les Chef unité pour le chef departement connecté
 router.get('/chef', async (req, res) => {
@@ -254,8 +259,8 @@ router.get('/chef', async (req, res) => {
     const chefUsers = await User.find({ role: "Chef département" }).populate('departement','name');
     res.json(chefUsers);
   } catch (error) {
-    console.error('Erreur lors de la récupération des utilisateurs :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
+    console.error(' Error recovering users:', error);
+    res.status(500).json({ error: 'Error recovering users' });
   }
 });
 
@@ -267,7 +272,7 @@ router.get('/chefunite', async (req, res) => {
     // Recherche du département par nom
     const departement = await Departement.findOne({ name: departementName });
     if (!departement) {
-      return res.status(404).json({ error: 'Département non trouvé' });
+      return res.status(404).json({ error: 'Department not found' });
     }
 
     // Recherche des utilisateurs avec le rôle "Chef unité" et le département trouvé
@@ -275,8 +280,8 @@ router.get('/chefunite', async (req, res) => {
                                     .populate('unite', 'name');
     res.json(chefUnitUsers);
   } catch (error) {
-    console.error('Erreur lors de la récupération des utilisateurs :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
+    console.error('Error recovering users:', error);
+    res.status(500).json({ error: 'Error recovering users' });
   }
 });
 
@@ -287,7 +292,7 @@ router.get('/enseignants', async (req, res) => {
     // Recherche du unite par nom
     const unite = await Unite.findOne({ name: uniteName });
     if (!unite) {
-      return res.status(404).json({ error: 'Unité non trouvé' });
+      return res.status(404).json({ error: 'Unit not found' });
     }
 
     // Recherche des utilisateurs avec le rôle "Enseignant" et le département trouvé
@@ -295,8 +300,8 @@ router.get('/enseignants', async (req, res) => {
                                     .populate('unite', 'name');
     res.json(ensUsers);
   } catch (error) {
-    console.error('Erreur lors de la récupération des utilisateurs :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
+    console.error('Error recovering users:', error);
+    res.status(500).json({ error: 'Error recovering users' });
   }
 });
 
@@ -307,7 +312,7 @@ router.get('/enseignantsbydep', async (req, res) => {
     // Recherche du departement par nom
     const departement = await Departement.findOne({ name: departementName });
     if (!departement) {
-      return res.status(404).json({ error: 'Departement non trouvé' });
+      return res.status(404).json({ error: 'Department not found' });
     }
 
     // Recherche des utilisateurs avec le rôle "Enseignant" et le département trouvé
@@ -315,8 +320,8 @@ router.get('/enseignantsbydep', async (req, res) => {
                                     .populate('departement', 'name');
     res.json(ensUsers);
   } catch (error) {
-    console.error('Erreur lors de la récupération des utilisateurs :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
+    console.error('Error retrieving users:', error);
+    res.status(500).json({ error: 'Error retrieving users' });
   }
 });
 
@@ -328,27 +333,27 @@ router.put("/changePassword/:userId", async (req, res) => {
     // Trouver l'utilisateur par son ID
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ error: "Aucun utilisateur trouvé" });
+      return res.status(404).json({ error: "No users found" });
     }
 
     // Vérifier si l'ancien mot de passe correspond
     const isPasswordValid = await comparePassword(oldPassword, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ error: "Ancien mot de passe incorrect" });
+      return res.status(400).json({ error: "Old incorrect password" });
     }
 
     // Vérifier si le nouveau mot de passe et la confirmation correspondent
     if (newPassword !== confirmedNewPassword) {
-      return res.status(400).json({ error: "Les nouveaux mots de passe ne correspondent pas" });
+      return res.status(400).json({ error: "New passwords do not match" });
     }
 
     // Mettre à jour le mot de passe dans la base de données
     user.password = await hashPassword(newPassword);
     await user.save();
 
-    res.status(200).json({ message: "Mot de passe mis à jour avec succès" });
+    res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
-    console.error("Erreur lors de la modification du mot de passe:", error);
+    console.error("Error changing password:", error);
     res.status(500).json({ error: "Server error: " + error.message });
   }
 });
@@ -371,7 +376,7 @@ router.get('/usersget', async (req, res) => {
       try {
         const users = await User.find({});
         if (!users || !users.profileImage ) {
-          return res.status(404).json({ message: 'Image de profil non trouvée' });
+          return res.status(404).json({ message: 'Profile picture not found' });
         }
     
         // Construire le chemin absolu du fichier
@@ -379,7 +384,7 @@ router.get('/usersget', async (req, res) => {
     
         // Vérifier si le fichier existe
         if (!fs.existsSync(imagePath)) {
-          return res.status(404).json({ message: 'Image de profil non trouvée' });
+          return res.status(404).json({ message: 'Profile picture not found' });
         }
     
         // Envoyer l'image en tant que fichier
@@ -393,7 +398,7 @@ router.get('/usersget', async (req, res) => {
  
     res.json(users);
   } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs', error });
+    res.status(500).json({ message: 'Error recovering users', error });
   }
 });
 
@@ -418,7 +423,7 @@ router.get('/profile-image/:userId', async (req, res) => {
     res.sendFile(imagePath);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Erreur interne du serveur' });
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -428,7 +433,7 @@ router.get('/users', async (req, res) => {
     const users = await User.find({});
     res.json(users);
   } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la récupération des utilisateurs', error });
+    res.status(500).json({ message: 'Error recovering users', error });
   }
 });
 router.get('/userbyid/:id', async (req, res) => {
@@ -436,12 +441,12 @@ router.get('/userbyid/:id', async (req, res) => {
     const user = await User.findById(req.params.id);
     
     if (!user) {
-      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+      return res.status(404).json({ message: 'User not found' });
     }
 
     res.json(user);
   } catch (error) {
-    res.status(500).json({ message: 'Erreur lors de la récupération de l\'utilisateur', error });
+    res.status(500).json({ message: 'Error recovering user', error });
   }
 });
 

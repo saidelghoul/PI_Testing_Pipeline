@@ -22,7 +22,6 @@ import { UserContext } from "../../../context/userContext.jsx";
 export default function UpdateProfil() {
     const { user } = useContext(UserContext);
 
-    
   useEffect(() => {
     if (user) {
       fetchUserData();
@@ -67,24 +66,24 @@ export default function UpdateProfil() {
         // Check if the date of birth is provided
         if (!updatedUser.dateNaissance) {
           validationErrors.dateNaissance =
-            "Veuillez fournir votre date de naissance.";
+            "Please provide your date of birth.";
         } else {
           // Check if the entered date is valid
           const userDateOfBirth = new Date(updatedUser.dateNaissance);
           if (isNaN(userDateOfBirth.getTime())) {
             validationErrors.dateNaissance =
-              "Veuillez entrer une date de naissance valide.";
+              "Please enter a valid date of birth.";
           } else {
             // Check if the user is at least 25 years old
             if (userDateOfBirth > minDate) {
-              validationErrors.dateNaissance = "Vous devez avoir au moins 25 ans.";
+              validationErrors.dateNaissance = "You must be at least 25 years old.";
             }
           }
         }
         // Vérifiez si le numéro de téléphone est numérique
         if (isNaN(updatedUser.telephone)) {
           validationErrors.telephone =
-            "Le numéro de téléphone doit être numérique.";
+            "The phone number must be numeric.";
         }
     
         // Update state with errors, if any
@@ -97,7 +96,7 @@ export default function UpdateProfil() {
         try {
           const response = await axios.put(`/user/${user.id}`, updatedUser);
     
-          console.log("Profil utilisateur mis à jour avec succès:", response.data);
+          console.log("User profile updated successfully:", response.data);
           setUpdatedUser({
             addresse: "",
             gouvernorat: "",
@@ -107,7 +106,7 @@ export default function UpdateProfil() {
           });
           window.location.href = "/profil";
         } catch (error) {
-          console.error("Erreur lors de la mise à jour du profil:", error.message);
+          console.error("Error updating profile:", error.message);
         }
       };
     
@@ -132,7 +131,7 @@ export default function UpdateProfil() {
   const handleUpload = async () => {
     try {
       if (!selectedFile|| !selectedCoverFile) {
-        alert('Veuillez sélectionner à la fois une image de profil et une image de couverture.');
+        alert('Please select both a profile image and a cover image.');
         return;
       }
       
@@ -146,8 +145,8 @@ export default function UpdateProfil() {
         }
       });
 
-      console.log('Images téléchargée avec succès:', response.data);
-      alert('Images téléchargée avec succès');
+      console.log('Images uploaded successfully:', response.data);
+      alert('Images uploaded successfully');
 
       // Réinitialisez l'état du fichier sélectionné
       setSelectedFile(null);
@@ -155,11 +154,12 @@ export default function UpdateProfil() {
       window.location.href = "/profil";
 
     } catch (error) {
-      console.error('Erreur lors du téléchargement de l\'image:', error.response ? error.response.data : error.message);
-      alert(error.response ? error.response.data.message : 'Erreur lors du téléchargement de l\'image');
+      console.error('Error uploading image:', error.response ? error.response.data : error.message);
+      alert(error.response ? error.response.data.message : 'Error downloading image');
     }
   };
      
+
 
   return (
     <>
@@ -179,7 +179,7 @@ export default function UpdateProfil() {
                       aria-controls="nav-acc"
                       aria-selected="true"
                     >
-                      <i className="la la-cogs"></i>Mettre a jour mon profil 
+                      🪪 Update my profile
                     </a>
                     <a
                  className="nav-item nav-link"
@@ -190,7 +190,7 @@ export default function UpdateProfil() {
                  aria-controls="nav-dep"
                  aria-selected="false"
                >
-                 <i className="la la-cogs"></i>Ajouter photos
+                 ⚙️ Add photos
                </a>
                     </div>
                     
@@ -208,12 +208,12 @@ export default function UpdateProfil() {
                             <form onSubmit={handleSubmit1}>
                               <div className="row">
                                 <div className="col-lg-12">
-                                  <label htmlFor="addresse">Ville :</label>
+                                  <label htmlFor="addresse"> City :</label>
                                   <input
                                     type="text"
                                     id="addresse"
                                     name="addresse"
-                                    placeholder="ville"
+                                    placeholder="City"
                                     value={updatedUser.addresse}
                                     onChange={handleChange}
                                   />
@@ -230,7 +230,7 @@ export default function UpdateProfil() {
                                       onChange={handleChange}
                                     >
                                       <option>
-                                        Sélectionnez un gouvernorat
+                                      Select a governorate
                                       </option>
                                       <option value="Ariana">Ariana</option>
                                       <option value="Béja">Béja</option>
@@ -269,12 +269,12 @@ export default function UpdateProfil() {
                                 </div>
 
                                 <div className="col-lg-12">
-                                  <label htmlFor="telephone">Téléphone :</label>
+                                  <label htmlFor="telephone">Phone number :</label>
                                   <input
                                     type="text"
                                     id="telephone"
                                     name="telephone"
-                                    placeholder="telephone"
+                                    placeholder="phone number"
                                     value={updatedUser.telephone}
                                     onChange={handleChange}
                                   />
@@ -287,14 +287,14 @@ export default function UpdateProfil() {
                                 <div className="col-lg-12">
                                   <div className="price-sec">
                                     <label htmlFor="dateNaissance">
-                                      Date de Naissance :
+                                      Birtth Date :
                                     </label>
 
                                     <input
                                       type="date"
                                       id="dateNaissance"
                                       name="dateNaissance"
-                                      placeholder="Price"
+                                      placeholder="Birth Date"
                                       value={updatedUser.dateNaissance}
                                       onChange={handleChange}
                                     />
@@ -306,15 +306,15 @@ export default function UpdateProfil() {
                                   </div>
                                 </div>
                                 <div className="col-lg-12">
-                                  <label htmlFor="gender">Genre :</label>
+                                  <label htmlFor="gender">Gender :</label>
                                   <select
                                     id="gender"
                                     name="gender"
                                     value={updatedUser.gender}
                                     onChange={handleChange}
                                   >
-                                    <option value="homme">Homme</option>
-                                    <option value="femme">Femme</option>
+                                    <option value="homme">Man</option>
+                                    <option value="femme">Women</option>
                                   </select>
                                 </div>
                                 <div className="col-lg-12">
@@ -341,16 +341,16 @@ export default function UpdateProfil() {
          <div className="tab-pane fade" id="nav-dep" role="tabpanel" aria-labelledby="nav-dep-tab">
          <div className="post-project-fields">
         <div className="lt-sec">
-        <div>
+        <div className="col-lg-12">
           
-      <label htmlFor="profileImage">Image de profil :</label>
+      <label>Profile picture:</label>
       <input type="file" id="profileImage" onChange={handleFileChange} />
     </div>
     <div>
-      <label htmlFor="coverImage">Image de couverture :</label>
+      <label>Cover image:</label>
       <input type="file" id="coverImage" onChange={handleCoverFileChange} />
     </div>
-    <button onClick={handleUpload}>Télécharger</button>
+    <button className="active" type="submit" value="post" onClick={handleUpload}>Submit</button>
   
         </div>
        </div>

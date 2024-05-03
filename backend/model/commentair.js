@@ -10,6 +10,13 @@ const Commentaire = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+
+  reports: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
 module.exports = mongoose.model("commentaire", Commentaire);

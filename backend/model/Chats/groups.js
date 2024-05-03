@@ -24,7 +24,13 @@ const GroupsSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Notification' 
 
-       }]
+       }],
+       publications:[
+        {
+          type: mongoose.Schema.Types.ObjectId,
+            ref:"PubGroups"
+        }
+       ]
   });
 
   const Groups = mongoose.model('groups', GroupsSchema);

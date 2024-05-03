@@ -12,7 +12,6 @@ import "../../../public/assets/lib/slick/slick-theme.css";
 import { useState } from "react";
 import axios from "axios";
 
-
 export default function ResetPassword() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -33,6 +32,7 @@ export default function ResetPassword() {
     }
   };
 
+  
   return (
     <>
        <div className="sign-in-page " style={{ backgroundColor: "#dc3545" }}>
@@ -43,8 +43,8 @@ export default function ResetPassword() {
                 <div className="cmp-info">
                   <div className="cm-logo">
                     <img src="/assets/images/esprit.png" alt="" />
-                  </div>
                   <img src="/assets/images/cm-main-img.png" alt="" />
+                </div>
                 </div>
               </div>
               <div className="col-lg-6">
@@ -63,14 +63,14 @@ export default function ResetPassword() {
                   <br/>
                   <br/>
                   <br/>
-                
-              <h2>Mot de passe oublié ?</h2>
+                  <span style={{ fontWeight: 'bold', textAlign: 'center' }}>  Forgot your password ?</span>
+              <h2 style={{ color: 'red' }}><br/>Enter your email bellow to receive a password reset link</h2>
       <br/>
       {message && <p className="success">{message}</p>}
       {error && <p className="error">{error}</p>}
       
       <div className="form-group">
-        <label>Veuillez ecriver votre Email :  </label>
+        <label> Your Email: </label>
         <br/>   <br/>
      
         <input
@@ -81,8 +81,8 @@ export default function ResetPassword() {
         />
       </div>
       
-      <button onClick={handleForgotPassword} className="btn btn-primary">
-        Envoyer le lien de réinitialisation
+      <button onClick={handleForgotPassword} className="btn btn-danger">
+      Reset password
       </button>
               </div>
               </div>

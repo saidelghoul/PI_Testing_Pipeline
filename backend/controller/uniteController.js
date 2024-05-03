@@ -13,7 +13,7 @@ router.get("/getAll", async (req, res) => {
     const { departementName } = req.query;
     const departement = await Departement.findOne({ name: departementName });
     if (!departement) {
-      return res.status(404).json({ error: 'Unité non trouvé' });
+      return res.status(404).json({ error: 'Unit not found' });
     }
     const allUnits = await Unite.find({departement: departement._id}).populate('departement', 'name');
     res.status(200).json(allUnits);
@@ -22,6 +22,7 @@ router.get("/getAll", async (req, res) => {
   }
 });
 
+
 router.get('/getunitebydep', async (req, res) => {
   try {
     const { departementName } = req.query;
@@ -29,7 +30,7 @@ router.get('/getunitebydep', async (req, res) => {
     // Recherche du departement par nom
     const departement = await Departement.findOne({ name: departementName });
     if (!departement) {
-      return res.status(404).json({ error: 'Unité non trouvé' });
+      return res.status(404).json({ error: 'Unit not found' });
     }
 
     // Recherche des utilisateurs avec le rôle "Enseignant" et le département trouvé
@@ -37,8 +38,8 @@ router.get('/getunitebydep', async (req, res) => {
                                     .populate('departement', 'name');
     res.json(unite);
   } catch (error) {
-    console.error('Erreur lors de la récupération des utilisateurs :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
+    console.error(' Error recovering users:', error);
+    res.status(500).json({ error: 'Error recovering users' });
   }
 });
 
@@ -50,7 +51,7 @@ router.post("/adding", async (req, res) => {
     // Recherchez le département par nom
     const departement = await Departement.findOne({ name: departementName });
     if (!departement) {
-      return res.status(404).json({ error: 'Département non trouvé' });
+      return res.status(404).json({ error: 'Department not found' });
     }
 
     // Créez une nouvelle unité avec les données fournies
@@ -58,8 +59,8 @@ router.post("/adding", async (req, res) => {
 
     res.status(201).json(newUnite);
   } catch (err) {
-    console.error('Erreur lors de l\'ajout de l\'unité :', err.message);
-    res.status(500).json({ error: "Erreur lors de l'ajout de l'unité" });
+    console.error('Error adding unit :', err.message);
+    res.status(500).json({ error: "Error adding unit" });
   }
 });
 
@@ -147,12 +148,12 @@ router.get("/:id/departement", async (req, res) => {
     // Trouver le département par son ID et peupler les unités associées
     const unite = await Unite.findById(uniteId).populate('departement');
     if (!unite) {
-      res.status(404).json({ error: "Unité non trouvé" });
+      res.status(404).json({ error: "Unit not found" });
     } else {
       res.status(200).json(unite.departement);
     }
   } catch (error) {
-    res.status(500).json({ error: "Erreur serveur: " + error.message });
+    res.status(500).json({ error: "Server Error: " + error.message });
   }
 });
 

@@ -14,7 +14,6 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams,Link } from 'react-router-dom';
 
-
 const ConfirmEmail = () => {
   const { token } = useParams();
   const [message, setMessage] = useState('');
@@ -27,12 +26,14 @@ const ConfirmEmail = () => {
 
       } catch (error) {
         console.error(error.response.data);
-        setMessage('Erreur lors de la confirmation de l\'e-mail');
+        setMessage('Error confirming email');
       }
     };
 
     confirmEmail();
   }, [token]);
+
+  
 
   return (
     <>
@@ -67,7 +68,7 @@ const ConfirmEmail = () => {
      <div>
       <p>{message}</p>
       <Link to="/">
-        <button  className="btn btn-primary">Confirmer mon inscription</button>
+        <button  className="btn btn-danger">Confirm my registration</button>
       </Link>
     </div>
     </div>

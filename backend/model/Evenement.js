@@ -9,6 +9,8 @@ const Evenement = new Schema({
   DateFin: { type: Date, required: true },
   Capacite: { type: Number, required: true },
   Prix: Number,
+  ImagePath: String,
+
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -17,6 +19,30 @@ const Evenement = new Schema({
     {
       type: Schema.Types.ObjectId,
       ref: "commentaire", // Référence à un modèle de commentaire
+    },
+  ],
+  likes: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  deslikes: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  reports: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  reservations: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
   ],
 });

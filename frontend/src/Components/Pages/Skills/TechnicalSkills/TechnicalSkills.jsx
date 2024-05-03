@@ -2,7 +2,12 @@ import React from 'react'
 
 function TechnicalSkills() {
   return (
-    <div>TechnicalSkills</div>
+   
+      <section className="companies-info">
+           <div className='container h4 text-center'>Coming Soon !!😎</div>
+      </section>
+      
+      
   )
 }
 

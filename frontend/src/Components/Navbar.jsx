@@ -17,6 +17,7 @@ import {
   getChecklistByHolder,
   getChecklistScoreForUser,
 } from "../services/checklist-service";
+import ODDSocialSkillPopup from "./Pages/Skills/utils/ODDSocialSkillPopup";
 
 export default function Navbar() {
   const { user } = useContext(UserContext);
@@ -60,12 +61,15 @@ export default function Navbar() {
 
   return (
     <header>
-      <div className="container">
+      <div style={{ marginTop: "25px" }} className="container">
         <div className="header-data">
           <div className="logo">
             <img src="/assets/images/esprit.png" alt="" width="100em" />
           </div>
-          <div className="search-bar">
+          <div className="logo">
+            <ODDSocialSkillPopup></ODDSocialSkillPopup>
+          </div>
+          <div className="search-bar col-2">
             <form>
               <input type="text" name="search" placeholder="Search..." />
               <button type="submit">
@@ -73,7 +77,7 @@ export default function Navbar() {
               </button>
             </form>
           </div>
-          <nav>
+          <nav style={{ paddingRight: "60px" }}>
             <ul>
               <li>
                 <a href="/home" title="">
@@ -99,16 +103,25 @@ export default function Navbar() {
                   Pages
                 </Link>
               </li>
-              {user?.role !== "Enseignant" && (
-                <li>
+              <li>
+                <Link to="/myGroups" title="">
+                  <span>
+                    <img src="/assets/images/icon2.png" alt="" />
+                  </span>
+                  My Pages
+                </Link>
+              </li>
+              <li>
+                {user?.role !== "Enseignant" && (
                   <Link to="/activities" title="Manage activities">
                     <span>
                       <img src="/assets/images/icon5.png" alt="" />
                     </span>
                     Activites
                   </Link>
-                </li>
-              )}
+                )}
+              </li>
+
               <li>
                 <Link to={`/${user?.id}/tasks`} title="My tasks">
                   <span>
@@ -146,7 +159,7 @@ export default function Navbar() {
                   Messages
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to={`/Historiques/${user?.id}`}
                   title=""
@@ -157,7 +170,7 @@ export default function Navbar() {
                   </span>
                   Historiques
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </nav>
           <div className="menu-btn">
@@ -165,7 +178,7 @@ export default function Navbar() {
               <i className="fa fa-bars"></i>
             </a>
           </div>
-          <div className="user-account">
+          <div className="user-account" style={{ marginLeft: "10px" }}>
             <div className="user-info">
               <img
                 src={imageUrl}
@@ -181,62 +194,50 @@ export default function Navbar() {
             <div className="user-account-settingss" id="users">
               <h3 className="tc">
                 <Link to="/profil" title="">
-                  Profil
+                  Profil 🧑
                 </Link>
               </h3>
-
-              <h3>Online Status</h3>
-              <ul className="on-off-status">
-                <li>
-                  <div className="fgt-sec">
-                    <input type="radio" name="cc" id="c5" />
-                    <label htmlFor="c5">
-                      <span></span>
-                    </label>
-                    <small>Online</small>
-                  </div>
-                </li>
-                <li>
-                  <div className="fgt-sec">
-                    <input type="radio" name="cc" id="c6" />
-                    <label htmlFor="c6">
-                      <span></span>
-                    </label>
-                    <small>Offline</small>
-                  </div>
-                </li>
-              </ul>
-              <h3>Custom Status</h3>
-              <div className="search_form">
-                <form>
-                  <input type="text" name="search" />
-                  <button type="submit">Ok</button>
-                </form>
-              </div>
 
               <div className="user-account-settingss" id="users">
                 {user?.role === "Directeur d'étude" && ( // Afficher les liens uniquement pour le Directeur d'étude
                   <>
-                    <h3>Skills</h3>
+                    <h3 className="text-center">Skills 🏆</h3>
                     <ul className="us-links">
                       <li>
-                        <div className="fgt-sec">
+                        <div className="text-center">
                           <Link to={`/socialSkills/`}>
-                            <p>Social Skills</p>
+                            <h4 span className="h6">
+                              ➡ Social Skills 🗣️
+                            </h4>
                           </Link>
                         </div>
                       </li>
                       <li>
-                        <div className="fgt-sec">
+                        {" "}
+                        <br />
+                        <div className="text-center">
                           <Link to={`/technicalSkills/`}>
-                            <p>Technical Skills</p>
+                            <h4>
+                              {" "}
+                              ➡Technical Skills
+                              <>
+                                <br /> (COMING SOON )
+                              </>
+                            </h4>
                           </Link>
                         </div>
                       </li>
                     </ul>
                   </>
                 )}
-                <h3>Setting</h3>
+                <div className="text-center">
+                  <Link to={`/Historiques/${user?.id}`}>
+                    <h3 className="h5">📒 Historique 📒</h3>
+                  </Link>
+                  <hr />
+                </div>
+
+                <h3 className="text-center">Setting ⚙️</h3>
                 <ul className="us-links">
                   <li>
                     <Link to="/settings" title="">
@@ -261,7 +262,7 @@ export default function Navbar() {
                 </ul>
                 <h3 className="tc">
                   <Link to="/" title="" onClick={handleLogout}>
-                    Logout
+                    Logout 🚪 🏃
                   </Link>
                 </h3>
               </div>

@@ -89,7 +89,7 @@ const registerUser = async (req, res) => {
       unite,
       emailToken,
     });
-
+    
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -101,17 +101,230 @@ const registerUser = async (req, res) => {
     const mailOptions = {
       from: 'marwakb4@gmail.com',
       to: email,
-      subject: 'Confirmation de votre inscription',
-      text: `Cliquez sur ce lien pour confirmer votre inscription : ${process.env.CLIENT_URL}/confirm/${emailToken} ou bien cliquer sur  ${process.env.CLIENT_URL1}/confirm/${emailToken}`,
+      subject: 'Confirmation of your registration',
+      html: `<!DOCTYPE html>
+      <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
+      
+      <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch><o:AllowPNG/></o:OfficeDocumentSettings></xml><![endif]--><!--[if !mso]><!--><!--<![endif]-->
+        <style>
+          * {
+            box-sizing: border-box;
+          }
+      
+          body {
+            margin: 0;
+            padding: 0;
+          }
+      
+          a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: inherit !important;
+          }
+      
+          #MessageViewBody a {
+            color: inherit;
+            text-decoration: none;
+          }
+      
+          p {
+            line-height: inherit
+          }
+      
+          .desktop_hide,
+          .desktop_hide table {
+            mso-hide: all;
+            display: none;
+            max-height: 0px;
+            overflow: hidden;
+          }
+      
+          .image_block img+div {
+            display: none;
+          }
+      
+          @media (max-width:700px) {
+            .desktop_hide table.icons-inner {
+              display: inline-block !important;
+            }
+      
+            .icons-inner {
+              text-align: center;
+            }
+      
+            .icons-inner td {
+              margin: 0 auto;
+            }
+      
+            .mobile_hide {
+              display: none;
+            }
+      
+            .row-content {
+              width: 100% !important;
+            }
+      
+            .stack .column {
+              width: 100%;
+              display: block;
+            }
+      
+            .mobile_hide {
+              min-height: 0;
+              max-height: 0;
+              max-width: 0;
+              overflow: hidden;
+              font-size: 0px;
+            }
+      
+            .desktop_hide,
+            .desktop_hide table {
+              display: table !important;
+              max-height: none !important;
+            }
+          }
+        </style>
+      </head>
+      
+      <body style="background-color: #fff0e3; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+        <table class="nl-container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff0e3;">
+          <tbody>
+            <tr>
+              <td>
+                <table class="row row-1" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 680px; margin: 0 auto;" width="680">
+                          <tbody>
+                            <tr>
+                              <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+                                <table class="empty_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                  <tr>
+                                    <td class="pad">
+                                      <div></div>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; color: #000000; width: 680px; margin: 0 auto;" width="680">
+                          <tbody>
+                            <tr>
+                              <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+                                <div class="spacer_block block-1" style="height:35px;line-height:35px;font-size:1px;">&#8202;</div>
+                                <table class="heading_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                  <tr>
+                                    <td class="pad" style="text-align:center;width:100%;">
+                                      <h1 style="margin: 0; color: #101010; direction: ltr; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; font-size: 27px; font-weight: normal; letter-spacing: normal; line-height: 120%; text-align: center; margin-top: 0; margin-bottom: 0; mso-line-height-alt: 32.4px;"><strong>Would you like <br>to confirm your registration?</strong></h1>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table class="row row-3" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; color: #000000; width: 680px; margin: 0 auto;" width="680">
+                          <tbody>
+                            <tr>
+                              <td class="column column-1" width="16.666666666666668%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+                                <div class="spacer_block block-1" style="height:0px;line-height:0px;font-size:1px;">&#8202;</div>
+                              </td>
+                              <td class="column column-2" width="66.66666666666667%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+                                <table class="paragraph_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                  <tr>
+                                    <td class="pad" style="padding-bottom:10px;padding-left:20px;padding-right:10px;padding-top:10px;">
+                                      <div style="color:#848484;font-family:Arial, Helvetica Neue, Helvetica, sans-serif;font-size:14px;line-height:180%;text-align:center;mso-line-height-alt:25.2px;">
+                                        <p style="margin: 0;">&nbsp;</p>
+                                        <p style="margin: 0;">Please confirm your registration by clicking on the provided button</p>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </table>
+                                <div class="spacer_block block-2" style="height:10px;line-height:10px;font-size:1px;">&#8202;</div>
+                                <table class="button_block block-3" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                  <tr>
+                                    <td class="pad">
+                                      <div class="alignment" align="center"><!--[if mso]>
+      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${process.env.CLIENT_URL1}/confirm/${emailToken}" style="height:47px;width:185px;v-text-anchor:middle;" arcsize="10%" strokeweight="0.75pt" strokecolor="#101" fillcolor="#101">
+      <w:anchorlock/>
+      <v:textbox inset="0px,0px,0px,0px">
+      <center style="color:#ffffff; font-family:Arial, sans-serif; font-size:16px">
+      <![endif]--><a href="${process.env.CLIENT_URL1}/confirm/${emailToken}" target="_blank" style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#101;border-radius:4px;width:auto;border-top:1px solid #101;font-weight:400;border-right:1px solid #101;border-bottom:1px solid #101;border-left:1px solid #101;padding-top:5px;padding-bottom:5px;font-family:Arial, Helvetica Neue, Helvetica, sans-serif;font-size:16px;text-align:center;mso-border-alt:none;word-break:keep-all;"><span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;letter-spacing:normal;"><span style="word-break: break-word; line-height: 32px;">Confirm registration</span></span></a><!--[if mso]></center></v:textbox></v:roundrect><![endif]--></div>
+                                    </td>
+                                  </tr>
+                                </table>
+                                <table class="paragraph_block block-4" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                  <tr>
+                                    <td class="pad">
+                                      <div style="color:#101112;direction:ltr;font-family:Arial, Helvetica Neue, Helvetica, sans-serif;font-size:15px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:18px;">
+                                        <p style="margin: 0;">Alternatively, you can click the following button&nbsp;</p>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </table>
+                                <table class="button_block block-5" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                  <tr>
+                                    <td class="pad">
+                                      <div class="alignment" align="center"><!--[if mso]>
+      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${process.env.CLIENT_URL}/confirm/${emailToken}" style="height:42px;width:124px;v-text-anchor:middle;" arcsize="10%" stroke="false" fillcolor="#7747FF">
+      <w:anchorlock/>
+      <v:textbox inset="0px,0px,0px,0px">
+      <center style="color:#ffffff; font-family:Arial, sans-serif; font-size:16px">
+      <![endif]--><a href="${process.env.CLIENT_URL}/confirm/${emailToken}" target="_blank" style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#7747FF;border-radius:4px;width:auto;border-top:0px solid transparent;font-weight:400;border-right:0px solid transparent;border-bottom:0px solid transparent;border-left:0px solid transparent;padding-top:5px;padding-bottom:5px;font-family:Arial, Helvetica Neue, Helvetica, sans-serif;font-size:16px;text-align:center;mso-border-alt:none;word-break:keep-all;"><span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;letter-spacing:normal;"><span style="word-break: break-word; line-height: 32px;">click on me&nbsp;</span></span></a><!--[if mso]></center></v:textbox></v:roundrect><![endif]--></div>
+                                    </td>
+                                  </tr>
+                                </table>
+                                <div class="spacer_block block-6" style="height:20px;line-height:20px;font-size:1px;">&#8202;</div>
+                              </td>
+                              <td class="column column-3" width="16.666666666666668%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+                                <div class="spacer_block block-1" style="height:0px;line-height:0px;font-size:1px;">&#8202;</div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                
+                
+              </td>
+            </tr>
+          </tbody>
+        </table><!-- End -->
+      </body>
+      
+      </html>`,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log(error);
-        return res.json({ error: 'Échec d envoi de l\'e-mail de confirmation' });
+        return res.json({ error: 'Failed to send confirmation email!' });
       }
-      console.log('Email envoyé: ' + info.response);
-      res.json({ message: 'Un e-mail de confirmation a été envoyé' });
+      console.log('Email sent: ' + info.response);
+      res.json({ message: 'A confirmation email has been sent' });
     });
 
 
@@ -128,18 +341,20 @@ const confirmEmail = async (req, res) => {
     const user = await User.findOne({ emailToken: token });
 
     if (!user) {
-      return res.json({ error: 'Token invalide ou expiré' });
+      return res.json({ error: 'Invalid or expired token' });
     }
 
     user.isEmailVerified = true;
     user.emailToken = ''; 
+    user.badges.push("New Member");
+
     await user.save();
 
-    res.json({ message: 'Votre compte a été activé avec succès' });
+    res.json({ message: 'Your account has been successfully activated' });
 
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: 'Erreur serveur' });
+    res.status(500).json({ error: 'Server Error' });
   }
 };
 
@@ -151,15 +366,15 @@ const loginUser = async (req, res) => {
     // Vérifier si l'utilisateur existe
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({ error: "Aucun utilisateur trouvé" });
+      return res.json({ error: "No users found" });
     }
     // Vérifier si le compte de l'utilisateur est actif
     if (!user.isActive) {
-      return res.json({ error: "compte désactivé" });
+      return res.json({ error: "Account Disabled" });
     }
 
     if (!user.emailToken && !user.isEmailVerified ) {
-      return res.json({ error: "Veuillez vérifier votre adresse e-mail pour activer votre compte" });
+      return res.json({ error: "Please verify your email address to activate your account!" });
     }
   
     // Vérifier si les mots de passe correspondent
@@ -206,10 +421,10 @@ const getProfile = async (req, res) => {
   if (token) {
     jwt.verify(token, process.env.JWT_SECRET, {}, async (err, decodedToken) => {
       if (err) {
-        console.error("Erreur lors du décodage du token :", err);
+        console.error("Error while decoding the token:", err);
         return res
           .status(500)
-          .json({ error: "Erreur lors du décodage du token" });
+          .json({ error: "Error while decoding the token" });
       }
       const {
         id,
@@ -232,7 +447,7 @@ const getProfile = async (req, res) => {
       if (!id) {
         return res
           .status(400)
-          .json({ error: "ID d'utilisateur non trouvé dans le token" });
+          .json({ error: "User ID not found in token" });
       }
       // L'ID de l'utilisateur est disponible ici
       res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // désactive la mise en cache
@@ -280,7 +495,7 @@ const getProfile = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  res.clearCookie('token').json({ message: 'Déconnexion réussie' });
+  res.clearCookie('token').json({ message: 'Logout successful' });
 };
 
 const forgotPassword = async (req, res) => {
@@ -289,7 +504,7 @@ const forgotPassword = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({ error: 'Aucun utilisateur trouvé avec cet e-mail' });
+      return res.json({ error: 'No users found with this email' });
     }
 
     // Generate reset token
@@ -309,20 +524,270 @@ const forgotPassword = async (req, res) => {
       },
     });
 
+    // const mailOptions = {
+    //   from: 'marwakb4@gmail.com',
+    //   to: email,
+    //   subject: 'Password reset request',
+    //   text: ` Click this link to reset your password: ${process.env.CLIENT_URL}/reset/${resetToken} or click this link  ${process.env.CLIENT_URL1}/reset/${resetToken}`,
+    // };
     const mailOptions = {
       from: 'marwakb4@gmail.com',
       to: email,
-      subject: 'Demande de réinitialisation du mot de passe',
-      text: `Cliquez sur ce lien pour réinitialiser votre mot de passe : ${process.env.CLIENT_URL}/reset/${resetToken}  ou bien cliquer ce lien ${process.env.CLIENT_URL1}/reset/${resetToken}`,
-    };
+      subject: 'Password Reset Request',
+      html: `
+      <!DOCTYPE html>
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
+
+<head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"><!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch><o:AllowPNG/></o:OfficeDocumentSettings></xml><![endif]--><!--[if !mso]><!--><!--<![endif]-->
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			padding: 0;
+		}
+
+		a[x-apple-data-detectors] {
+			color: inherit !important;
+			text-decoration: inherit !important;
+		}
+
+		#MessageViewBody a {
+			color: inherit;
+			text-decoration: none;
+		}
+
+		p {
+			line-height: inherit
+		}
+
+		.desktop_hide,
+		.desktop_hide table {
+			mso-hide: all;
+			display: none;
+			max-height: 0px;
+			overflow: hidden;
+		}
+
+		.image_block img+div {
+			display: none;
+		}
+
+		@media (max-width:700px) {
+			.desktop_hide table.icons-inner {
+				display: inline-block !important;
+			}
+
+			.icons-inner {
+				text-align: center;
+			}
+
+			.icons-inner td {
+				margin: 0 auto;
+			}
+
+			.mobile_hide {
+				display: none;
+			}
+
+			.row-content {
+				width: 100% !important;
+			}
+
+			.stack .column {
+				width: 100%;
+				display: block;
+			}
+
+			.mobile_hide {
+				min-height: 0;
+				max-height: 0;
+				max-width: 0;
+				overflow: hidden;
+				font-size: 0px;
+			}
+
+			.desktop_hide,
+			.desktop_hide table {
+				display: table !important;
+				max-height: none !important;
+			}
+		}
+	</style>
+</head>
+
+<body style="background-color: #fff0e3; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+	<table class="nl-container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff0e3;">
+		<tbody>
+			<tr>
+				<td>
+					<table class="row row-1" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+						<tbody>
+							<tr>
+								<td>
+									<table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 680px; margin: 0 auto;" width="680">
+										<tbody>
+											<tr>
+												<td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+													<table class="empty_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+														<tr>
+															<td class="pad">
+																<div></div>
+															</td>
+														</tr>
+													</table>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+						<tbody>
+							<tr>
+								<td>
+									<table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; color: #000000; width: 680px; margin: 0 auto;" width="680">
+										<tbody>
+											<tr>
+												<td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+													<div class="spacer_block block-1" style="height:35px;line-height:35px;font-size:1px;">&#8202;</div>
+													<table class="heading_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+														<tr>
+															<td class="pad" style="text-align:center;width:100%;">
+																<h1 style="margin: 0; color: #101010; direction: ltr; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; font-size: 27px; font-weight: normal; letter-spacing: normal; line-height: 120%; text-align: center; margin-top: 0; margin-bottom: 0; mso-line-height-alt: 32.4px;"><strong>Forgot Your Password?</strong></h1>
+															</td>
+														</tr>
+													</table>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="row row-3" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+						<tbody>
+							<tr>
+								<td>
+									<table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; color: #000000; width: 680px; margin: 0 auto;" width="680">
+										<tbody>
+											<tr>
+												<td class="column column-1" width="16.666666666666668%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+													<div class="spacer_block block-1" style="height:0px;line-height:0px;font-size:1px;">&#8202;</div>
+												</td>
+												<td class="column column-2" width="66.66666666666667%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+													<table class="paragraph_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+														<tr>
+															<td class="pad" style="padding-bottom:10px;padding-left:20px;padding-right:10px;padding-top:10px;">
+																<div style="color:#848484;font-family:Arial, Helvetica Neue, Helvetica, sans-serif;font-size:14px;line-height:180%;text-align:center;mso-line-height-alt:25.2px;">
+																	<p style="margin: 0;">You have requested a password reset.<br>Please click the button below to reset your password</p>
+																</div>
+															</td>
+														</tr>
+													</table>
+													<div class="spacer_block block-2" style="height:10px;line-height:10px;font-size:1px;">&#8202;</div>
+													<table class="button_block block-3" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+														<tr>
+															<td class="pad">
+																<div class="alignment" align="center"><!--[if mso]>
+<v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${process.env.CLIENT_URL1}/reset/${resetToken}" style="height:47px;width:162px;v-text-anchor:middle;" arcsize="10%" strokeweight="0.75pt" strokecolor="#101" fillcolor="#101">
+<w:anchorlock/>
+<v:textbox inset="0px,0px,0px,0px">
+<center style="color:#ffffff; font-family:Arial, sans-serif; font-size:16px">
+<![endif]--><a href="${process.env.CLIENT_URL1}/reset/${resetToken}" target="_blank" style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#101;border-radius:4px;width:auto;border-top:1px solid #101;font-weight:400;border-right:1px solid #101;border-bottom:1px solid #101;border-left:1px solid #101;padding-top:5px;padding-bottom:5px;font-family:Arial, Helvetica Neue, Helvetica, sans-serif;font-size:16px;text-align:center;mso-border-alt:none;word-break:keep-all;"><span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;letter-spacing:normal;"><span style="word-break: break-word; line-height: 32px;">Reset Password</span></span></a><!--[if mso]></center></v:textbox></v:roundrect><![endif]--></div>
+															</td>
+														</tr>
+													</table>
+													<table class="paragraph_block block-4" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+														<tr>
+															<td class="pad">
+																<div style="color:#101112;direction:ltr;font-family:Arial, Helvetica Neue, Helvetica, sans-serif;font-size:15px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:18px;">
+																	<p style="margin: 0;">Alternatively, you can click the following button&nbsp;</p>
+																</div>
+															</td>
+														</tr>
+													</table>
+													<table class="button_block block-5" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+														<tr>
+															<td class="pad">
+																<div class="alignment" align="center"><!--[if mso]>
+<v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${process.env.CLIENT_URL}/reset/${resetToken}" style="height:42px;width:120px;v-text-anchor:middle;" arcsize="10%" stroke="false" fillcolor="#7747FF">
+<w:anchorlock/>
+<v:textbox inset="0px,0px,0px,0px">
+<center style="color:#ffffff; font-family:Arial, sans-serif; font-size:16px">
+<![endif]--><a href="${process.env.CLIENT_URL}/reset/${resetToken}" target="_blank" style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#7747FF;border-radius:4px;width:auto;border-top:0px solid transparent;font-weight:400;border-right:0px solid transparent;border-bottom:0px solid transparent;border-left:0px solid transparent;padding-top:5px;padding-bottom:5px;font-family:Arial, Helvetica Neue, Helvetica, sans-serif;font-size:16px;text-align:center;mso-border-alt:none;word-break:keep-all;"><span style="padding-left:20px;padding-right:20px;font-size:16px;display:inline-block;letter-spacing:normal;"><span style="word-break: break-word; line-height: 32px;">click on me&nbsp;</span></span></a><!--[if mso]></center></v:textbox></v:roundrect><![endif]--></div>
+															</td>
+														</tr>
+													</table>
+													<div class="spacer_block block-6" style="height:20px;line-height:20px;font-size:1px;">&#8202;</div>
+												</td>
+												<td class="column column-3" width="16.666666666666668%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+													<div class="spacer_block block-1" style="height:0px;line-height:0px;font-size:1px;">&#8202;</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="row row-4" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+						<tbody>
+							<tr>
+								<td>
+									
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="row row-5" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+						<tbody>
+							<tr>
+								<td>
+									<table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 680px; margin: 0 auto;" width="680">
+										<tbody>
+											<tr>
+												<td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+													<div class="spacer_block block-1" style="height:20px;line-height:20px;font-size:1px;">&#8202;</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+			
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		</tbody>
+	</table><!-- End -->
+</body>
+
+</html>
+      `
+  };
+  
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log(error);
-        return res.json({ error: 'Échec d envoi de e-mail' });
+        return res.json({ error: 'Failed to send email' });
       }
-      console.log('Email envoyé: ' + info.response);
-      res.json({ message: 'E-mail envoyé avec les instructions de réinitialisation du mot de passe' });
+      console.log('Email sent: ' + info.response);
+      res.json({ message: 'Email sent with password reset instructions' });
     });
   } catch (error) {
     console.log(error);
