@@ -631,7 +631,7 @@ const totalPageScores = data.reduce((total, item) => total + (item["Score de pag
               <td className="text-center h5">{socialPoints[usr._id] || 0}</td>
               <td className="text-center h5">{TaskPoints[usr._id]} (/ {nbrTasksPoints[usr._id]})</td>
               <td className="text-center h5">{usr.publicationScore  || 0}</td>
-              <td className='text-center'>{usr.pageScore || 0}</td> 
+              <td className='text-center h5'>{usr.pageScore || 0}</td> 
               <td className="text-center h4">{(socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0)+(usr.publicationScore  || 0) + (usr.pageScore || 0)}</td>
               {!isEnseignant &&<td className="text-center h6">{usr.rating}</td>}
               <td className="text-center ">
