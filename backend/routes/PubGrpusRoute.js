@@ -13,6 +13,8 @@ router.put('/update/:postId', PubpageController.updatePublication);
 router.post('/publications/:postId/:userId', PubpageController.reactToPublication);
 router.post('/publications/:postId/:userId/dislike', PubpageController.dislikeToPublication);
 router.get('/publications/:postId/reactions', PubpageController.getLikesAndDislikesForPublication);
+router.get("/publications/user/:userId", PubpageController.getPublicationsByGroupAndUser);
+
 
 
 

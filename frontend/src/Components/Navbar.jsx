@@ -40,7 +40,7 @@ export default function Navbar() {
           <div className="logo">
             <ODDSocialSkillPopup></ODDSocialSkillPopup>
           </div>
-          <div className="search-bar col-2">
+          <div className="search-bar col-2" >
             <form>
               <input type="text" name="search" placeholder="Search..." />
               <button type="submit">
@@ -48,7 +48,7 @@ export default function Navbar() {
               </button>
             </form>
           </div>
-          <nav>
+          <nav style={{paddingRight:'60px'}}>
             <ul>
               <li>
                 <a href="/home" title="">
@@ -126,7 +126,7 @@ export default function Navbar() {
                   Messages
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to={`/Historiques/${user?.id}`}
                   title=""
@@ -137,7 +137,7 @@ export default function Navbar() {
                   </span>
                   Historiques
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </nav>
           <div className="menu-btn">
@@ -145,7 +145,7 @@ export default function Navbar() {
               <i className="fa fa-bars"></i>
             </a>
           </div>
-          <div className="user-account">
+          <div className="user-account" style={{marginLeft:'10px'}}>
             <div className="user-info">
               <img
                 src={imageUrl}
@@ -190,6 +190,14 @@ export default function Navbar() {
                     </ul>
                   </>
                 )}
+                <div className="text-center">
+                <Link to={`/Historiques/${user?.id}`}>
+                            <h3 className="h5">📒 Historique 📒</h3>
+                          </Link>
+                          <hr />
+
+                </div>
+                
                 <h3 className="text-center">Setting ⚙️</h3>
                 <ul className="us-links">
                   <li>

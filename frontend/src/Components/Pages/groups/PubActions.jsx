@@ -64,12 +64,12 @@ export default function PubActions({ postId, updateCounts,groupId }) {
     <div className="job-status-bar">
       <ul className="like-com">
         <li>
-          <a href="#" className={isLiked ? 'active' : ''} onClick={handleLike}>
+          <a href="#" className={isLiked ? 'active ' : ''} onClick={handleLike}>
             ❤️ Like {likesCount} 
           </a>
         </li>
         <li>
-          <a href="#" className={isDisliked ? 'active' : ''} onClick={handleDislike}>
+          <a className={isDisliked ? 'active ' : ''} onClick={handleDislike}>
             💔 Dislike {dislikesCount}
           </a>
         </li>
@@ -77,10 +77,6 @@ export default function PubActions({ postId, updateCounts,groupId }) {
           <a href="#">
             {comments.length} 🗨 Comments
           </a>
-        </li>
-        <li>
-          <a href="#">
-share           </a>
         </li>
       </ul>
     </div>

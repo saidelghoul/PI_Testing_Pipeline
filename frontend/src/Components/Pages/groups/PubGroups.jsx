@@ -9,6 +9,14 @@ export default function PubGroups({ groupId }) {
     const [publications, setPublications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useContext(UserContext);
+  const userId = user ? user.id : null;
+
+  //const imageUrl = userId ? `http://localhost:8000/user/${userId}/profile` : "/assets/images/resources/user-pro-img.png";
+  const imageUrl = userId && user && user.profileImage 
+  ? `http://localhost:8000/user/${userId}/profile` 
+  : "/assets/images/resources/user-pro-img.png";
+  console.log(imageUrl);
+  
 
   useEffect(() => {
     axios
@@ -52,7 +60,7 @@ export default function PubGroups({ groupId }) {
             <div className="post_topbar">
               <div className="usy-dt">
                 <img
-                  src={post.creator.profileImage ? `http://localhost:8000/user/${post.creator._id}/profile` : "/assets/images/resources/user-pro-img.png"}
+                  src={imageUrl }
                   alt={post.creator.name}
                   width={70}
                   style={{ borderRadius: '50%' }}

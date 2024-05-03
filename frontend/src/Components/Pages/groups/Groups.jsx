@@ -14,9 +14,11 @@ import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import { UserContext } from "../../../../context/userContext";
 import PubGroups from "./PubGroups";
+import { Spinner } from "react-bootstrap";
 
 export default function Groups() {
   const [page, setPage] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams(); // Récupérer l'ID depuis l'URL
   const { user } = useContext(UserContext);
   const [isParticipating, setIsParticipating] = useState(true);
@@ -29,6 +31,13 @@ export default function Groups() {
   const [likesCount, setLikesCount] = useState(0);
   const [dislikesCount, setDislikesCount] = useState(0);
   const [comments, setComments] = useState([]);
+  const userId = user ? user.id : null;
+ 
+
+    //const imageUrl = userId ? `http://localhost:8000/user/${userId}/profile` : "/assets/images/resources/user-pro-img.png";
+    const imageUrl = userId && user && user.profileImage 
+    ? `http://localhost:8000/user/${userId}/profile` 
+    : "/assets/images/resources/user-pro-img.png";
 
 
 
@@ -47,10 +56,12 @@ export default function Groups() {
         setUserIsCreator(response.data.creator === user.id);
 
         const { totalPublications, groupScore, totalLikes, totalDislikes } = calculateScore(response.data);
+        
         setPageScore(groupScore);
         setPublicationsCount(totalPublications);
         setTotalLikes(totalLikes);
         setTotalDislikes(totalDislikes);
+        setIsLoading(false);
       
       })
       .catch((error) => {
@@ -58,29 +69,11 @@ export default function Groups() {
           "Erreur lors de la récupération des données de la page:",
           error
         );
+        setIsLoading(false);
       });
   }, [id]);
   
-  const fetchComments = async () => {
-    try {
-        const response = await axios.get(`/commentGroupe/comments/${postId}`);
-        setComments(response.data);
-    } catch (error) {
-        console.error("Erreur lors de la récupération des commentaires :", error.message);
-    }
-};
-
-const fetchLikesAndDislikesCount = async () => {
-  try {
-    const response = await axios.get(`/pubGroupe/publications/${postId}/reactions`);
-    setLikesCount(response.data.likes);
-    setDislikesCount(response.data.dislikes);
-  } catch (error) {
-    console.error('Erreur lors de la récupération du nombre de likes et de dislikes :', error);
-  }
-};
-
-const calculateScore = (page) => {
+ const calculateScore = (page) => {
   let groupScore = 0;
   let totalPublications = 0;
   let totalLikes = 0;
@@ -98,6 +91,7 @@ const calculateScore = (page) => {
     });
 
     groupScore = totalLikes - totalDislikes;
+    console.log("laaa",groupScore);
   }
 
   return { totalPublications, groupScore, totalLikes, totalDislikes };
@@ -142,9 +136,18 @@ const calculateScore = (page) => {
   };
 
   // Exécuter cet effet chaque fois que l'ID change
+  if (isLoading) { // Afficher un spinner pendant le chargement
+    return (
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Chargement...</span>
+        </Spinner>
+      </div>
+    );
+  }
+
   return (
     <>
-  
       <section className="cover-sec">
         <img
           src={`http://localhost:8000/images/${page.coverImage}`}
@@ -168,33 +171,24 @@ const calculateScore = (page) => {
                         />
                       </div>
                       <div className="user_pro_status">
-                      {user && page && user.id !== page.creator && !isParticipating && (
-        <div>
-          {user.id !== page.creator && page.notifications && page.notifications.isAccept === false && (
-            <div className="alert alert-danger" role="alert">
-              Le créateur a refusé la notification.
-            </div>
-          )}
-          <ul className="flw-hr">
-            <li>
-              <a href="#" onClick={participerPage} title="" className="flww">
-                <i className="la la-plus"></i> Regoindre
-              </a>
-            </li>
-          </ul>
-        </div>
-      )}
+                        {user && page && user.id !== page.creator && !isParticipating && (
+                          <ul className="flw-hr">
+                            <li>
+                              <a href="#" onClick={participerPage} title="" className="flww">
+                                <i className="la la-plus"></i> Rejoindre
+                              </a>
+                            </li>
+                          </ul>
+                        )}
                         <ul className="flw-status">
+                          <li className="text-center" style={{ paddingLeft: '50px' }}>
+                            <span className="text-center">👫 Membres 👫</span>
+                            <b>{page.participants ? page.participants.length : 0}</b>
+                          </li>
+                          <hr />
                           <li>
-                            <span> 👫Members 👫</span>
-                            <b>
-                              {" "}
-                              {page.participants ? page.participants.length : 0}
-<br></br>
-                           <span> 🥇Score du Page🥇 </span>
- <b>{publicationsCount * (page.participants ? page.participants.length : 0)}</b>
-   
-                            </b>
+                            <span>🥇 Score du Groupe</span>
+                            <b>{publicationsCount +(page.participants ? page.participants.length : 0)}</b>
                           </li>
                         </ul>
                       </div>
@@ -224,21 +218,15 @@ const calculateScore = (page) => {
                           </li>
                         </ul>
                       </div>
-
                       <div className="post-topbar">
                         <div className="user-picy">
-                          <img
-                            src="/assets/images/resources/user-pic.png"
-                            alt=""
-                          /> 
+                          <img src={imageUrl} alt="" /> 
                         </div>
-                        <br></br>
-                       
                         <div className="post-st">
                           <ul>
                             <li>
                               <Link className="post-jb active" to={`/addPub/${page._id}`} title="">
-                                Add Publication
+                                Ajouter une Publication
                               </Link>
                             </li>
                           </ul>
@@ -246,25 +234,18 @@ const calculateScore = (page) => {
                       </div>
                     </div>
                     <PubGroups groupId={id} />
-
-                 
                   </div>
                 </div>
                 <div className="col-lg-3">
                   <div className="right-sidebar">
-                   
                     <div className="widget widget-portfolio">
                       <div className="wd-heady">
-                        <h3> 🗓️ Date création {" "}</h3>{""}
+                        <h3>🗓️ Date de Création</h3>
                         <span>{formatDate(page.date)}</span>
-
-
                       </div>
                       <div className="wd-heady">
-                        <h3> 📝 Description {" "}</h3>{""}
+                        <h3>📝 Description</h3>
                         <span>{page.description}</span>
-
-
                       </div>
                     </div>
                   </div>
@@ -274,9 +255,6 @@ const calculateScore = (page) => {
           </div>
         </div>
       </main>
-      
-
-     
     </>
   );
 }

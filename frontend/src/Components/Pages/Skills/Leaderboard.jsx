@@ -14,12 +14,14 @@ import ReactPaginate from 'react-paginate';
 import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx'; // Importez SheetJS
 import userScoreServicePost from '../../../services/userScoreServicePost';
+import publicationService from '../../../services/page-service';
 
 
 
 
 function Leaderboard() {
   const { user } = useContext(UserContext);
+  console.log('user:', user);
   const [users, setUsers] = useState([]);
   const [socialPoints, setSocialPoints] = useState({});
   const [TaskPoints, setTaskPoints] = useState({});
@@ -27,6 +29,8 @@ function Leaderboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [, setCurrentUserRating] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
+  const [pageScores, setPageScores] = useState({}); // Pour les scores des pages
+  const [publicationScores, setPublicationScores] = useState({}); 
   
   const itemsPerPage = 10; // Nombre d'éléments par page (ajustez si nécessaire)
   //console.log("user Actu",user);
@@ -87,6 +91,9 @@ function Leaderboard() {
     //score des posts
     const publicationScores = {};
   
+    const pageScores = {}; // Pour stocker les scores des pages
+
+
       await Promise.all(
         filteredUsers.map(async (usr) => {
           //console.log("ONESTLA",usr)
@@ -97,7 +104,7 @@ function Leaderboard() {
             (sum, skill) => sum + (skill.pointSocial || 0),
             0
           );
-          socialScores[usr._id] = socialScore * 100;
+          socialScores[usr._id] = socialScore * 10;
 
           // Récupérer les scores des tâches
   
@@ -118,9 +125,8 @@ function Leaderboard() {
 
         ]);
 
-        console.log("likes",likes),
-        console.log("dislikes",dislikes),
-        console.log("reports",reports)
+        // ppu
+        const pagePublications = await publicationService.getPublicationsByGroupAndUser( usr._id);
 
             // Calculer le score des publications
             const postScore = calculatePostScore(
@@ -131,16 +137,20 @@ function Leaderboard() {
 
           publicationScores[usr._id] = postScore; // Stocker le score de publication
           //console.log("Ceci est le score de la publication du user"+usr._id+":",postScore);
+          const pageScore = pagePublications.length ||0;
+          //console.log("ija",pageScore);
+          pageScores[usr._id] = pageScore;
+
         })
       );
   
       // Calcul du score final pour chaque utilisateur
       const finalUsers = filteredUsers.map((usr) => {
-        const finalScore = (socialScores[usr._id] || 0) + (TaskPoints[usr._id] || 0)+ (publicationScores[usr._id] || 0);
+        const finalScore = (socialScores[usr._id] || 0) + (TaskPoints[usr._id] || 0)+ (publicationScores[usr._id] || 0)+(pageScores[usr._id] || 0);
         return {
           ...usr,
           finalScore,
-          publicationScore: publicationScores[usr._id],
+
 
         };
       });
@@ -154,9 +164,9 @@ function Leaderboard() {
   
       // Trouver Xmax et Xmin
       const Xmax = Math.max(...finalUsers.map((usr) => usr.finalScore));
-      console.log("xmax", Xmax);
+      //console.log("xmax", Xmax);
       const Xmin = Math.min(...finalUsers.map((usr) => usr.finalScore));
-      console.log("xmin", Xmin);
+      //console.log("xmin", Xmin);
       // Déterminer le rating pour chaque utilisateur
       const ratedUsers = finalUsers.map((usr) => {
         const Fi = (Xmax - usr.finalScore) / (Xmax - Xmin);
@@ -183,10 +193,14 @@ function Leaderboard() {
        // Obtenir le rating de l'utilisateur actuel
        const currentUser = ratedUsers.find((usr) => usr._id === user._id);
        setCurrentUserRating(currentUser ? currentUser.rating : '');
+
       setUsers(ratedUsers);
       setSocialPoints(socialScores);
       setTaskPoints(taskScores);
       setNbrTasksPoints(nbrTasksScores);
+      setPublicationScores(publicationScores);
+      setPageScores(pageScores);
+      
     };
   
     fetchUsers(); // Appeler la fonction de récupération des utilisateurs
@@ -226,12 +240,14 @@ const calculatePostScore = (nbrLikes, nbrDislikes, nbrReports) => {
 
 // Trier les utilisateurs selon le score final décroissant
 const sortedUsers = filteredUsers.map((usr) => {
-  const finalScore = (socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0);
-  console.log("Score final de l'utilisateur:", usr.name, finalScore); // Afficher le score final pour chaque utilisateur
+  const finalScore = (socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0) + (publicationScores[usr._id]||0) + (pageScores[usr._id]||0);
+  //console.log("Score final de l'utilisateur:", usr.name, finalScore); // Afficher le score final pour chaque utilisateur
   return {
     ...usr,
     socialScore: socialPoints[usr._id] || 0,
     taskScore: TaskPoints[usr._id] || 0,
+    publicationScore: publicationScores[usr._id]||0,
+    pageScore: pageScores[usr._id]||0, // Inclure le score de page
     finalScore,
     isCurrentUser: usr._id === user.id, // Pour identifier l'utilisateur actuel
   };
@@ -261,65 +277,65 @@ sortedUsers.sort((a, b) => {
 
 
 
-  const downloadPDF = () => {
-    const pdf = new jsPDF('p', 'mm', 'a4'); 
-    pdf.text("Leaderboard des professeurs", 10, 20);
-    pdf.text(`Date du jour: ${moment().format('DD/MM/YYYY')}`, 10, 30); 
-    
-    pdf.setFont("Helvetica", "bold");
-    pdf.text("Formule pour le Score des tâches:", 10, 40);
-    pdf.setFont("Helvetica", "normal");
-    pdf.text("Score des tâches = somme des points obtenus", 10, 45);
-    
-    const getRowBackgroundColor = (index) => {
-      if (index < topQuartileIndex) {
-        return "lightgreen"; // Top 25%
-      } else if (index >= middleHalfIndex) {
-        return "lightcoral"; // Derniers 25%
-      } else {
-        return "white"; // 50% du milieu
-      }
-    };
-    const logoWidth = 50;
-    const logoHeight = 50;
-    pdf.addImage(espritLogo, 'PNG', 150, 10, logoWidth, logoHeight); 
+const downloadPDF = () => {
+  const pdf = new jsPDF('p', 'mm', 'a4');
 
-    pdf.autoTable({
-      startY: 70,
-      head: [['Rang', 'Nom', 'Rôle', 'Points sociaux', 'Score des tâches','Score final','Rating']],
-      body: sortedUsers.map((usr, index) => [
-        {
-          content: index + 1,
-          styles: { fillColor: getRowBackgroundColor(index) }, // Appliquer la couleur
-        },
-        usr.name,
-        {
-          content: `${usr.role} (${usr.departmentDetails?.[0]?.name || "N/A"} / ${usr.uniteDetails?.[0]?.name || "N/A"})`,
-          styles: { fontStyle: 'bold' }, // Rendre le texte en gras
-        },
-        socialPoints[usr._id] || 0,
-        `${TaskPoints[usr._id] || 0} (/ ${nbrTasksPoints[usr._id]})`, 
-        (socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0),
-        {
-          content : usr.rating.length,
-          styles: { fontStyle: 'bold' }
-        },
-      ]),
-    });
+  // Titre du document
+  pdf.text("Leaderboard des professeurs", 10, 20);
+  pdf.text(`Date du jour: ${moment().format('DD/MM/YYYY')}`, 10, 30);
 
-    const pageHeight = pdf.internal.pageSize.getHeight();
+  // Ajouter le logo
+  const logoWidth = 50;
+  const logoHeight = 50;
+  pdf.addImage(espritLogo, 'PNG', 150, 10, logoWidth, logoHeight);
 
-        pdf.setTextColor(255, 0, 0); 
-    pdf.text("Ces données sont strictement confidentielles !", 10, pageHeight - 10); 
-    
-   
+  // Ajouter les formules des scores
+  pdf.setFont("Helvetica", "bold");
+  pdf.text("Formules pour le calcul des scores :", 10, 40);
+  
+  pdf.setFont("Helvetica", "normal");
+  pdf.text("Score des tâches = Somme des points obtenus", 10, 45);
 
-    
-    
-    
-    const pdfFileName = `Leaderboard_${moment().format('DD-MM-YYYY')}.pdf`; 
-    pdf.save(pdfFileName); 
-  };
+  // Formule des publications (posts)
+  pdf.text("Score des publications dépend du nbr de LIkes, Dislikes et Report", 10, 50); // Exemple de formule
+  pdf.text("Score des publications inclut les rapports (si applicables)", 10, 55);
+
+  // Formule du score de page
+  pdf.text("Score de Page = Nombre de publications dans toutes les pages du site", 10, 60);
+
+  // Ajouter le tableau des scores
+  pdf.autoTable({
+    startY: 70,
+    head: [
+      ['Rang', 'Nom', 'Rôle', 'Points sociaux', 'Score des tâches', 'Score des publications', 'Score de Page', 'Score final', 'Rating'],
+    ],
+    body: sortedUsers.map((usr, index) => [
+      {
+        content: index + 1,
+        styles: { fontStyle: 'bold' },
+      },
+      usr.name,
+      `${usr.role} (${usr.departmentDetails?.[0]?.name || 'N/A'} / ${usr.uniteDetails?.[0]?.name || 'N/A'})`,
+      socialPoints[usr._id] || 0,
+      `${TaskPoints[usr._id]} (/ ${nbrTasksPoints[usr._id]})`,
+      publicationScores[usr._id]|| 0,
+      pageScores[usr._id] || 0,
+      usr.finalScore || 0,
+      {
+        content : usr.rating.length,
+        styles: { fontStyle: 'bold' }
+      },
+    ]),
+  });
+
+  // Ajouter une note de confidentialité
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  pdf.setTextColor(255, 0, 0);
+  pdf.text("Ces données sont strictement confidentielles !", 10, pageHeight - 10);
+
+  const pdfFileName = `Leaderboard_${moment().format('DD-MM-YYYY')}.pdf`;
+  pdf.save(pdfFileName); // Télécharger le fichier PDF
+};
   
 
 
@@ -345,9 +361,11 @@ sortedUsers.sort((a, b) => {
     pdf.text(`Rôle: ${usr.role} (${usr.departmentDetails?.[0]?.name || "N/A"} / ${usr.uniteDetails?.[0]?.name || "N/A"})`, 10, 30);
     pdf.text(`Points sociaux: ${socialPoints[usr._id] || 0}`, 10, 40);
     pdf.text(`Score des tâches: ${TaskPoints[usr._id] || 0}`, 10, 50);
+    pdf.text(`Score des publications: ${publicationScores[usr._id] || 0}`, 10, 60);
+    pdf.text(`Score de page: ${pageScores[usr._id] || 0}`, 10, 70);
   
     pdf.setFont("Helvetica", "bold");
-    pdf.text(`Score final = Points sociaux + Score des tâches = ${(socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0)}`, 10, 60);
+    pdf.text(`Score final = Points sociaux + Score des tâches + Score des publications + Score de page= ${(socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0) + (publicationScores[usr._id] || 0) + (pageScores[usr._id] || 0)}`, 10, 80);
 
     
       const pieChartBase64 = await generatePieChartBase64(socialPoints[usr._id], TaskPoints[usr._id]);
@@ -377,7 +395,7 @@ sortedUsers.sort((a, b) => {
     pdf.text("Ces données sont strictement confidentielles !", 10, 10); 
   
     
-    pdf.addImage(espritLogo, 'PNG', 40, 70, 80, 80); 
+    pdf.addImage(espritLogo, 'PNG', 40, 100, 80, 80); 
   
      // Ajouter la date d'aujourd'hui en bas à gauche
   const todayDate = moment().format('DD/MM/YYYY'); 
@@ -444,7 +462,7 @@ const applyBordersAndCenter = (worksheet) => {
   }
 
   // Mettre en gras les titres des colonnes (première ligne)
-  const headers = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1'];
+  const headers = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1','H1','I1'];
   headers.forEach((header) => {
     if (worksheet[header]) {
       worksheet[header].s = worksheet[header].s || {}; // S'assurer que le style existe
@@ -460,7 +478,9 @@ const downloadExcel = () => {
     Rôle: `${usr.role} (${usr.departmentDetails?.[0]?.name || "N/A"} / ${usr.uniteDetails?.[0]?.name || "N/A"})`,
     "Points sociaux": socialPoints[usr._id] || 0,
     "Score des tâches": `${TaskPoints[usr._id]} (/ ${nbrTasksPoints[usr._id]})`,
-    "Score final": (socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0),
+    "Score des publications": publicationScores[usr._id] || 0, // Ajout du score des publications
+    "Score de page": pageScores[usr._id] || 0, // Ajout du score de page
+    "Score final": (socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0)  + (publicationScores[usr._id] || 0) + (pageScores[usr._id] || 0),
     Rating: usr.rating,
   }));
 
@@ -469,6 +489,8 @@ const downloadExcel = () => {
   // Calculer la somme des points sociaux, des scores des tâches, et des scores finaux
   const totalSocialPoints = data.reduce((total, item) => total + item["Points sociaux"], 0);
   const totalTaskScores = data.reduce((total, item) => total + parseInt(item["Score des tâches"].split(" ")[0]), 0); // Extraire le score numérique
+  const totalPublicationScores = data.reduce((total, item) => total + (item["Score des publications"] || 0), 0); // Calculer la somme des scores des publications
+const totalPageScores = data.reduce((total, item) => total + (item["Score de page"] || 0), 0); // Calculer la somme des scores de page
   const totalFinalScores = data.reduce((total, item) => total + item["Score final"], 0);
 
   // Ajouter des lignes pour les sommes
@@ -476,9 +498,11 @@ const downloadExcel = () => {
     ["", "", "", "", "", "","" ],
     ["", "", "", "", "", "","" ],
     ["", "", "", "", "", "","" ],
-    [ "Total des Points sociaux:", totalSocialPoints], 
-    [ "Total des Scores des tâches:", totalTaskScores], 
-    [ "Total des Scores finaux:", totalFinalScores]
+    [ "", "","Total des Points sociaux:", totalSocialPoints], 
+    [ "", "","Total des Scores des tâches:", totalTaskScores], 
+    [ "", "","Total des Scores des publications générales:", totalPublicationScores], 
+    [ "", "","Total des Scores des publications des pages:", totalPageScores], 
+    [ "", "","Total des Scores finaux:", totalFinalScores]
   ], {
     origin: -1, // Ajouter à la fin de la feuille
   });
@@ -489,7 +513,7 @@ const downloadExcel = () => {
   applyBordersAndCenter(worksheet);
 
   // Ajustement de la largeur des colonnes
-  worksheet["!cols"] = [{ wch: 25 }, { wch: 25 }, { wch: 40 }, { wch: 20 }, { wch: 20 }, { wch: 10 }, { wch: 15 }]; 
+  worksheet["!cols"] = [{ wch: 10 }, { wch: 25 }, { wch: 40 }, { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 15 }, { wch: 10 }, { wch: 15 }]; 
 
   const workbook = XLSX.utils.book_new(); // Nouveau classeur
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Leaderboard'); // Ajouter la feuille
@@ -548,8 +572,9 @@ const downloadExcel = () => {
             <th className="text-center">Nom 🙎‍♂️(❌ : vous)</th>
             <th className="text-center">Rôle 💼(Département/Unité)</th>
             <th className="text-center">Points sociaux 🗣️</th>
-            <th className="text-center">Score des tâches 📋(/nbr de tâches📚)</th>
+            <th className="text-center">Score des tâches 📋<br />(/nbr de tâches📚)</th>
             <th className="text-center">Score des publications ✍️</th>
+            <th className='text-center'>Score de Page 📄</th> 
             <th className="text-center">Score final 🎯</th>
             {!isEnseignant && <th className="text-center">Rating⭐</th>}
             <th className="text-center">Télécharger 📥</th>
@@ -606,7 +631,8 @@ const downloadExcel = () => {
               <td className="text-center h5">{socialPoints[usr._id] || 0}</td>
               <td className="text-center h5">{TaskPoints[usr._id]} (/ {nbrTasksPoints[usr._id]})</td>
               <td className="text-center h5">{usr.publicationScore  || 0}</td>
-              <td className="text-center h4">{(socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0)+(usr.publicationScore  || 0)}</td>
+              <td className='text-center'>{usr.pageScore || 0}</td> 
+              <td className="text-center h4">{(socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0)+(usr.publicationScore  || 0) + (usr.pageScore || 0)}</td>
               {!isEnseignant &&<td className="text-center h6">{usr.rating}</td>}
               <td className="text-center ">
                 <Button variant="danger" onClick={() => downloadUserPDF(usr)}> <span className='h5'>PDF 💾</span></Button>

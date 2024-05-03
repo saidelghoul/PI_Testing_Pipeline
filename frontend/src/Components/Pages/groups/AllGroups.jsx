@@ -77,13 +77,13 @@ export default function AllGroups() {
                 <input placeholder="Rechercher Par Nom du groupe" aria-label="Rechercher Par Nom du groupe" className="form-control"  onChange={(e) => setSearchQuery(e.target.value)}/>
                 </div>
                 </div>
-          <Link
+          {/* <Link
             to="/addGroup"
             className="btn btn-danger"
             style={{ backgroundColor: "#dc3545" }}
           >
             Add Page
-          </Link>
+          </Link> */}
         </div>
         <br></br>
         <div className="companies-list">
@@ -146,13 +146,7 @@ export default function AllGroups() {
                           </li>
                         )}
 
-                        {user.id !== page.creator && (
-                          <li>
-                            <a href="/message" title="" className="follow">
-                              <i className="fa fa-envelope"></i>
-                            </a>
-                          </li>
-                        )}
+                      
                         {user.id === page.creator && (
                           <button
                             onClick={() => handleDelete(page._id)}
@@ -168,7 +162,7 @@ export default function AllGroups() {
                       title=""
                       className="view-more-pro"
                     >
-                      View Profile
+                      View Page
                     </Link>
                   </div>
                 </div>

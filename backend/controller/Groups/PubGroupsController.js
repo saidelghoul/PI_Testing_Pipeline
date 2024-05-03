@@ -203,4 +203,25 @@ async function getLikesAndDislikesForPublication(req, res) {
   }
   }
 
-  module.exports = {  add ,getAlls,reactToPublication,getLikesAndDislikesForPublication,dislikeToPublication ,updatePublication,getPublicationsByGroupId,remove, getbyid};
+  async function getPublicationsByGroupAndUser(req, res) {
+    const userId = req.params.userId;
+  
+    try {
+      // Rechercher les publications créées par un utilisateur spécifique dans un groupe donné
+      const publications = await pubGroups.find({ creator: userId }).populate({
+        path: "creator",
+        select: "name profileImage", // Sélectionnez les propriétés que vous voulez afficher du créateur
+      });
+  
+      if (publications.length === 0) {
+        return res.status(200).json({ publications});
+      }
+  
+      res.status(200).json(publications);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des publications :", error);
+      res.status(500).json({ message: "Erreur serveur." });
+    }
+  }
+
+  module.exports = {  add ,getAlls,reactToPublication,getLikesAndDislikesForPublication,dislikeToPublication ,updatePublication,getPublicationsByGroupId,remove, getbyid,getPublicationsByGroupAndUser};

@@ -80,8 +80,8 @@ export default function AddCommentPub({ postId }) {
                                     <h3>{comment.creator.name}</h3>
                                     <span>🕒 {formatDate(comment.createdAt)}</span>
                                     <p>{comment.contenue} {"  "}
-
-                                        <a href="#" onClick={() => handleDelete(comment._id)}>❌</a>{" "}
+                                    
+                                    {user.id === comment.creator._id && (<a href="#" onClick={() => handleDelete(comment._id)}>❌</a>)}{" "}
 
                                     </p>
                                 </div>
