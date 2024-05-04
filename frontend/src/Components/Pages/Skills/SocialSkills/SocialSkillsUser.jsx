@@ -22,22 +22,27 @@ function SocialSkillsUSer() {
       setAssigned(skillsData.socialSkills);
       setFilteredSkills(skillsData.socialSkills); // Initialiser avec toutes les compétences
 
-      
+      console.log("Compétences récupérées pour l'utilisateur :", skillsData.socialSkills);
     } catch (error) {
       console.error("Erreur lors de la récupération des compétences assignées:", error);
     }
   };
 
+  console.log("User actuel :", user);
   // Calcul du score total selon la nouvelle formule
   const autoAssignedScore = assigned
-    .filter(skill => skill.assignedBy === user._id)
+    .filter(skill => skill.assignedBy === user.id)
     .reduce((total, skill) => total + (skill.pointSocial || 0), 0);
+
+    console.log("Auto :",assigned.filter(skill => skill.assignedBy === user.id));
 
   const nonAutoAssignedScore = assigned
-    .filter(skill => skill.assignedBy !== user._id)
+    .filter(skill => skill.assignedBy !== user.id)
     .reduce((total, skill) => total + (skill.pointSocial || 0), 0);
 
-    const totalSocialPoints = Math.round(0.2 * autoAssignedScore + 0.8 * nonAutoAssignedScore);
+    console.log("No Auto :",assigned.filter(skill => skill.assignedBy !== user.id));
+
+    const totalSocialPoints = Math.round((autoAssignedScore + 2 * nonAutoAssignedScore)/2);
 
 
       // Compter le nombre de compétences auto-affectées et non-auto-affectées
@@ -184,7 +189,7 @@ function SocialSkillsUSer() {
                 overlay={
                   <Tooltip id={`tooltip-${skill._id}`}>
                     {/* Points sociaux: {skill.pointSocial} <br /> */}
-                    Type: {skill.assignedBy === user._id ? " (Myself 😎)" : " (Shared 💝)"} {/* Condition pour indiquer le type d'affectation */} <br/>
+                    Type: {skill.assignedBy === user.id ? " (Myself 😎)" : " (Shared 💝)"} {/* Condition pour indiquer le type d'affectation */} <br/>
                     Priorité: {skill.niveau} <br></br>
                     
                   </Tooltip>
@@ -192,7 +197,7 @@ function SocialSkillsUSer() {
               >
                 <li 
                   style={{ 
-                    backgroundColor: skill.assignedBy === user.id ? "#c3e6cb" : "#f5c6cb", // Couleur pour différencier auto-affecté et attribué par d'autres
+                    backgroundColor: skill.assignedBy === user.id ? "#c3e6cb" : " #f5c6cb ", // Couleur pour différencier auto-affecté et attribué par d'autres
                     border: '2px solid #ddd', 
                     padding: '10px', 
                     marginBottom: '10px', 
@@ -217,7 +222,7 @@ function SocialSkillsUSer() {
             ))}
           </ul>
         ) : (
-          <div>Vous n'avez pas encore de compétences sociales.</div>
+          <div>Vous n'avez pas encore ajouté de compétences sociales 😎</div>
         )}
 
         {assigned.length > displayCount && (

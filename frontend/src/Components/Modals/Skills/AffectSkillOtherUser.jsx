@@ -17,6 +17,7 @@ function AffectSkillOtherUser( targetUserId ) {
     const [skills, setSkills] = useState([]);
     const [error, setError] = useState(null); // Utilisez un état pour les erreurs
     const navigate = useNavigate(); // Utilisation de useNavigate pour rediriger
+    const [sharedSkillsCount, setSharedSkillsCount] = useState(0); // Compter les compétences auto-affectées
     targetUserId = id ;
     console.log("HEEEEEEYYYY",targetUserId);
     //console.log("userrrrrrr: ",user);
@@ -26,6 +27,10 @@ function AffectSkillOtherUser( targetUserId ) {
         try {
           const response = await SocialSkillService.getAvailableSocialSkills(id); // Obtenir les compétences disponibles
           setSkills(response); // Mettre à jour l'état avec les compétences
+        // Obtenir le nombre de compétences auto-affectées
+        const sharedSkillsResponse = await SocialSkillService.getSocialSkillsByUser(id);
+        const sharedSkills = sharedSkillsResponse.socialSkills.filter(skill => skill.assignedBy === id);
+        setSharedSkillsCount(sharedSkills.length); // Mettre à jour le nombre de compétences non auto-affectées 💝
         } catch (error) {
           console.error("Erreur lors de la récupération des compétences:", error.message);
           setError("Erreur lors de la récupération des compétences");
@@ -64,13 +69,16 @@ function AffectSkillOtherUser( targetUserId ) {
         }
       };
 
+          // Désactiver le bouton si la limite est atteinte
+    const isAddButtonDisabled = sharedSkillsCount >= 15;
+
   return (
      <div className="container">
       {error && <Alert variant="danger">{error}</Alert>} {/* Afficher les erreurs */}
       <Card className="my-4 p-4">
         <Row className="mb-3">
           <Col>
-            <h2 className="text-center h4" >Ajouter une compétence sociale 💝 <br /><span className="h6">( Le nombre de "⭐" équivaut à la demande de cette compétence dans le marché)</span></h2>
+            <h2 className="text-center h4" >Offrez une compétence sociale 💝 <br /><span className="h6">( Le nombre de "⭐" équivaut à la demande de cette compétence dans le marché)</span></h2>
             <p className="text-center"></p>
           </Col>
           
@@ -105,6 +113,7 @@ function AffectSkillOtherUser( targetUserId ) {
               <Button
                 variant="success"
                 onClick={handleAddSocialSkill}
+                disabled={isAddButtonDisabled} // Désactiver si limite atteinte
               >
                 <FaPlusCircle /> Add
               </Button>
