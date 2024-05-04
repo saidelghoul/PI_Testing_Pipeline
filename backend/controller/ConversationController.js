@@ -57,45 +57,44 @@ async function getUsers(req, res) {
   }
 }
 async function addConversation(req, res) {
-  const { members, creator: connectedUserId } = req.body;
+  const { members, creator: connectedUserId, name } = req.body;
 
-  if (!members || members.length !== 2) {
-    return res.status(400).json({ error: "Veuillez fournir deux membres pour créer une conversation" });
+  // Vérifier si au moins un membre est fourni
+  if (!members || members.length < 1) {
+    return res.status(400).json({ error: "Veuillez fournir au moins un membre pour créer une conversation" });
   }
-
-  const clickedUserId = members.find(memberId => memberId !== connectedUserId); // Trouver l'ID de l'autre membre
 
   try {
-    // Vérifier s'il existe déjà une conversation entre les deux utilisateurs
+    // Vérifier s'il existe déjà une conversation entre ces membres
     const existingConversation = await Conversation.findOne({
-      members: { $all: [connectedUserId, clickedUserId] }
+      members: { $all: [connectedUserId, ...members] }
     });
 
+    // Si une conversation existe déjà, renvoyer une erreur
     if (existingConversation) {
-      return res.status(400).json({ error: "Une conversation entre ces utilisateurs existe déjà" });
+      return res.status(400).json({ error: "Une conversation avec ces membres existe déjà" });
     }
 
-    const connectedUser = await User.findById(connectedUserId);
-    const clickedUser = await User.findById(clickedUserId);
-
-    if (!connectedUser || !clickedUser) {
-      return res.status(404).json({ error: "Un ou les deux utilisateurs non trouvés" });
-    }
-
+    // Créer une nouvelle conversation avec le nom spécifié
     const conversation = {
-      name: clickedUser.name,
-      members: [connectedUserId, clickedUserId],
+      name: name, // Utiliser le nom spécifié dans la requête
+      members: [connectedUserId, ...members],
       creator: connectedUserId // Définir le créateur de la conversation comme l'utilisateur connecté
     };
-
     const newConversation = new Conversation(conversation);
     const saved = await newConversation.save();
-    res.status(201).json(saved);
+    return res.status(201).json(saved);
   } catch (err) {
     console.error("Erreur:", err);
-    res.status(500).json({ error: "Erreur du serveur " + err.message });
+    return res.status(500).json({ error: "Erreur du serveur " + err.message });
   }
 }
+
+
+
+
+
+
 
 async function removeConversation(req, res) {
   const id = req.params.id;

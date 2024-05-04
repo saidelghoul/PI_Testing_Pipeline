@@ -40,7 +40,7 @@ export default function UpdateConversation() {
     try {
       await axios.put(`/messages/update/${id}`, formData);
       alert("La conversation a été mise à jour avec succès");
-      navigate("/message");
+      navigate("/teste");
     } catch (error) {
       console.error(
         "Erreur lors de la modification de la conversation :",

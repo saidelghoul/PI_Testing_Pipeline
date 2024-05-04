@@ -31,7 +31,7 @@ export default function AddUsers() {
         newMemberId: userId,
       });
       // Rediriger vers la page de modification de la conversation
-      navigate(`/message`);
+      navigate(`/teste`);
     } catch (error) {
       console.error(
         "Erreur lors de la mise à jour de la conversation : ",

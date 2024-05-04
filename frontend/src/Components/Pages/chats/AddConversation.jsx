@@ -5,7 +5,7 @@ import { UserContext } from "../../../../context/userContext";
 
 export default function AddConversation() {
   const [users, setUsers] = useState([]);
-  const [clickedUserId, setClickedUserId] = useState(null); // Ajout de l'état pour clickedUserId
+  const [clickedUserId, setClickedUserId] = useState(null);
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
 
@@ -26,16 +26,15 @@ export default function AddConversation() {
   }, []);
 
   const handleUserClick = async (id, name) => {
-    setClickedUserId(id); // Mise à jour de l'état clickedUserId
     try {
       const response = await axios.post("/messages/add", {
         members: [user.id, id],
-        name: name, // Utilisateur connecté et utilisateur cliqué
-        creator: user.id, // Utilisateur connecté comme créateur de la conversation
+        name: `${user.name} & ${name}`, // Concaténer les noms des deux utilisateurs
+        creator: user.id,
       });
 
       console.log("Conversation créée avec succès : ", response.data);
-      navigate("/message");
+      navigate("/teste");
     } catch (error) {
       console.error("Erreur lors de la création de la conversation : ", error);
       if (

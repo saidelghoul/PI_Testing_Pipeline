@@ -152,7 +152,7 @@ export default function Navbar() {
               </li>
 
               <li>
-                <Link to="/message" title="" className="not-box-openm">
+                <Link to="/teste" title="" className="not-box-openm">
                   <span>
                     <img src="/assets/images/icon6.png" alt="" />
                   </span>

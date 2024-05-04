@@ -54,6 +54,7 @@ import UpdatePubGroups from "./Components/Pages/groups/UpdatePubGroups";
 import PubGroups from "./Components/Pages/groups/PubGroups";
 import PubActions from "./Components/Pages/groups/PubActions";
 import AddCommentPub from "./Components/Pages/groups/AddCommentPub";
+import Teste from "./Components/Pages/chats/Teste";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -87,6 +88,16 @@ function App() {
               <>
                 <Navbar />
                 <UpdatePubGroups />
+                <Footer />
+              </>
+            }
+          />
+                    <Route
+            path="/teste"
+            element={
+              <>
+                <Navbar />
+                <Teste />
                 <Footer />
               </>
             }
