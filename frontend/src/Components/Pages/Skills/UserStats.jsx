@@ -16,6 +16,9 @@ function UserStats() {
   const [taskScore, setTaskScore] = useState(0);
   const [publicationScore, setPublicationScore] = useState(0);
   const [pageScore, setPageScore] = useState(0);
+
+  const [autoSkillsCount, setAutoSkillsCount] = useState(0); // Nombre de compétences auto-affectées
+  const [sharedSkillsCount, setSharedSkillsCount] = useState(0); // Nombre de compétences non auto-affectées
   const chartRef = useRef(null); // Référence pour le camembert
 
   useEffect(() => {
@@ -23,12 +26,35 @@ function UserStats() {
       try {
         //score Social
         const socialResult = await socialSkillService.getSocialSkillsByUser(user.id);
-        let socialSum = 0;
-        const socialSkills = Array.isArray(socialResult.socialSkills) ? socialResult.socialSkills : [];
-        socialSkills.forEach((skill) => {
-          socialSum += skill.pointSocial || 1;
-        });
-        setSocialScore(socialSum);
+
+         // Calcul du score social
+         const autoAssignedScore = socialResult.socialSkills
+         .filter(skill => skill.assignedBy === user.id)
+         .reduce((total, skill) => total + (skill.pointSocial || 0), 0);
+         
+
+       const nonAutoAssignedScore = socialResult.socialSkills
+         .filter(skill => skill.assignedBy !== user.id)
+         .reduce((total, skill) => total + (skill.pointSocial || 0), 0);
+
+
+
+         const totalSocialScore = Math.round(0.2 * autoAssignedScore + 0.8 * nonAutoAssignedScore);
+        setSocialScore(totalSocialScore);
+
+        // Compter le nombre de compétences auto-affectées et non auto-affectées
+        const autoCount = socialResult.socialSkills.filter(skill => skill.assignedBy === user.id).length;
+        const sharedCount = socialResult.socialSkills.filter(skill => skill.assignedBy !== user.id).length;
+
+        setAutoSkillsCount(autoCount);
+        setSharedSkillsCount(sharedCount);
+
+        // let socialSum = 0;
+        // const socialSkills = Array.isArray(socialResult.socialSkills) ? socialResult.socialSkills : [];
+        // socialSkills.forEach((skill) => {
+        //   socialSum += skill.pointSocial || 1;
+        // });
+        // setSocialScore(socialSum);
 
         //score tache
 
