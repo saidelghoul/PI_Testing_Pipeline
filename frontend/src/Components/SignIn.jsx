@@ -200,6 +200,8 @@ export default function SignIn() {
                     <form onSubmit={loginUser}>
                       <div className="row">
                         <div className="col-lg-12 no-pdd">
+                          <br/><br/><br/>
+
                           <div className="sn-field">
                             <input
                               type="text"
@@ -248,7 +250,7 @@ export default function SignIn() {
                         </div>
                       </div>
                     </form>
-                    <div className="login-resources">
+                    {/* <div className="login-resources">
                       <h4>Login Via Social Account</h4>
                       <ul>
                         <li>
@@ -257,7 +259,7 @@ export default function SignIn() {
                           </a>
                         </li>
                       </ul>
-                    </div>
+                    </div> */}
                   </div>
                   <div
               className={`sign_in_sec ${activeTab === "tab-2" ? "current" : ""}`}

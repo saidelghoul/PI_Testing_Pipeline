@@ -150,17 +150,7 @@ export default function AccountSetting() {
                     >
                       <i className="fa fa-cc-diners-club"></i>Blocking
                     </a> */}
-                    <a
-                      className="nav-item nav-link"
-                      id="nav-deactivate-tab"
-                      data-toggle="tab"
-                      href="#nav-deactivate"
-                      role="tab"
-                      aria-controls="nav-deactivate"
-                      aria-selected="false"
-                    >
-                      <i className="fa fa-random"></i>Deactivate my account
-                    </a>
+                    
                   </div>
                 </div>
               </div>

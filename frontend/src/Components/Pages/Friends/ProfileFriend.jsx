@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import SocialSkillsOnlyReading from '../Skills/SocialSkills/SocialSkillsOtherUser';
+import UsersBadges from "./UsersBadges";
 
 export default function Profils() {
 const { id } = useParams();
@@ -104,7 +105,7 @@ const coverImageUrl = user && user.coverImage
                      
                     </div>
                     <div className="suggestions full-width">
-                    
+                    <UsersBadges/>
                     </div>
                   </div>
                 </div>
@@ -3636,13 +3637,13 @@ const coverImageUrl = user && user.coverImage
                   </div>
                 </div>
                 <div className="col-lg-3">
-                  <div className="right-sidebar">
+                  <div className="right1-sidebar">
                     <div className="message-btn">
                       {/* <Link to="/settings" title="">
                         <i className="fas fa-cog"></i> Setting
                       </Link> */}
                     </div>
-                    <div className="widget widget-portfolio">
+                    {/* <div className="widget widget-portfolio">
                       <div className="wd-heady">
                         <h3>Portfolio</h3>
                         <img src="/assets/images/photo-icon.png" alt="" />
@@ -3723,7 +3724,7 @@ const coverImageUrl = user && user.coverImage
                           </li>
                         </ul>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
