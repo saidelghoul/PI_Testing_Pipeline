@@ -80,6 +80,8 @@ async function removeDocument(req, res) {
       checkList.score = 0;
       checkList.rating = 0;
 
+      checkList.feedback = "";
+
       await CheckList.findByIdAndUpdate(document.id_checklist, checkList, {
         next: true,
       });

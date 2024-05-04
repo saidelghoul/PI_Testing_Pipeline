@@ -9,10 +9,14 @@ import "../../public/assets/css/responsive.css";
 import "../../public/assets/lib/slick/slick.css";
 import "../../public/assets/lib/slick/slick-theme.css";
 
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/userContext";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import {
+  getChecklistByHolder,
+  getChecklistScoreForUser,
+} from "../services/checklist-service";
 import ODDSocialSkillPopup from "./Pages/Skills/utils/ODDSocialSkillPopup";
 
 export default function Navbar() {
@@ -30,9 +34,34 @@ export default function Navbar() {
       console.error("Erreur lors de la déconnexion :", error);
     }
   };
+
+  //remaining tasks
+  const [loading, setLoading] = useState(true);
+
+  const [checklists, setChecklists] = useState([]);
+  const [score, setScore] = useState({});
+
+  useEffect(() => {
+    const fetchChecklistByUser = async () => {
+      const data = await getChecklistByHolder(userId);
+      setChecklists(data.data.message);
+    };
+
+    const fetchScoreByUser = async () => {
+      const data = await getChecklistScoreForUser(userId);
+      setScore(data.data.message);
+    };
+
+    if (userId) {
+      fetchChecklistByUser();
+      fetchScoreByUser();
+      setLoading(false);
+    }
+  }, [userId]);
+
   return (
     <header>
-      <div style={{marginTop : '25px' }} className="container">
+      <div style={{ marginTop: "25px" }} className="container">
         <div className="header-data">
           <div className="logo">
             <img src="/assets/images/esprit.png" alt="" width="100em" />
@@ -40,7 +69,7 @@ export default function Navbar() {
           <div className="logo">
             <ODDSocialSkillPopup></ODDSocialSkillPopup>
           </div>
-          <div className="search-bar col-2" >
+          <div className="search-bar col-1">
             <form>
               <input type="text" name="search" placeholder="Search..." />
               <button type="submit">
@@ -48,7 +77,7 @@ export default function Navbar() {
               </button>
             </form>
           </div>
-          <nav style={{paddingRight:'60px'}}>
+          <nav style={{ paddingRight: "60px" }}>
             <ul>
               <li>
                 <a href="/home" title="">
@@ -79,7 +108,7 @@ export default function Navbar() {
                   <span>
                     <img src="/assets/images/icon2.png" alt="" />
                   </span>
-                   My Pages
+                  My Pages
                 </Link>
               </li>
               <li>
@@ -89,15 +118,19 @@ export default function Navbar() {
                       <img src="/assets/images/icon5.png" alt="" />
                     </span>
                     Activites
-                  </Link>)}
-                </li>
-              
+                  </Link>
+                )}
+              </li>
+
               <li>
                 <Link to={`/${user?.id}/tasks`} title="My tasks">
                   <span>
                     <img src="/assets/images/icon3.png" alt="" />
                   </span>
-                  My Tasks
+                  My Tasks{" "}
+                  {loading || (
+                    <>( {checklists.length - score.numberOfTasks} )</>
+                  )}
                 </Link>
               </li>
               <li>
@@ -145,7 +178,7 @@ export default function Navbar() {
               <i className="fa fa-bars"></i>
             </a>
           </div>
-          <div className="user-account" style={{marginLeft:'10px'}}>
+          <div className="user-account" style={{ marginLeft: "10px" }}>
             <div className="user-info">
               <img
                 src={imageUrl}
@@ -164,9 +197,6 @@ export default function Navbar() {
                   Profil 🧑
                 </Link>
               </h3>
-              
-
-
 
               <div className="user-account-settingss" id="users">
                 {user?.role === "Directeur d'étude" && ( // Afficher les liens uniquement pour le Directeur d'étude
@@ -176,14 +206,24 @@ export default function Navbar() {
                       <li>
                         <div className="text-center">
                           <Link to={`/socialSkills/`}>
-                            <h4 span className="h6">➡ Social Skills 🗣️</h4>
+                            <h4 span className="h6">
+                              ➡ Social Skills 🗣️
+                            </h4>
                           </Link>
                         </div>
                       </li>
-                      <li> <br />
+                      <li>
+                        {" "}
+                        <br />
                         <div className="text-center">
                           <Link to={`/technicalSkills/`}>
-                            <h4> ➡Technical Skills<><br /> (COMING SOON )</></h4>
+                            <h4>
+                              {" "}
+                              ➡Technical Skills
+                              <>
+                                <br /> (COMING SOON )
+                              </>
+                            </h4>
                           </Link>
                         </div>
                       </li>
@@ -191,13 +231,12 @@ export default function Navbar() {
                   </>
                 )}
                 <div className="text-center">
-                <Link to={`/Historiques/${user?.id}`}>
-                            <h3 className="h5">📒 Historique 📒</h3>
-                          </Link>
-                          <hr />
-
+                  <Link to={`/Historiques/${user?.id}`}>
+                    <h3 className="h5">📒 Historique 📒</h3>
+                  </Link>
+                  <hr />
                 </div>
-                
+
                 <h3 className="text-center">Setting ⚙️</h3>
                 <ul className="us-links">
                   <li>
@@ -226,15 +265,10 @@ export default function Navbar() {
                     Logout 🚪 🏃
                   </Link>
                 </h3>
-                
               </div>
             </div>
-            
           </div>
-          
-
         </div>
-        
       </div>
     </header>
   );

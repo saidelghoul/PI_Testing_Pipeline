@@ -82,7 +82,7 @@ const DepositFile = ({ show, handleClose, checkList, refresh }) => {
       backdrop="static"
       keyboard={false}
     >
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Row>
           <Modal.Title as={Col}>
             <h1 className=" text-white h3 ">Attach new work</h1>

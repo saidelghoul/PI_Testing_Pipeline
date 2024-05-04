@@ -48,7 +48,7 @@ const ViewFile = ({ show, handleClose, checkList }) => {
       backdrop="static"
       keyboard={false}
     >
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Row>
           <Modal.Title as={Col}>
             <h1 className=" text-white h3 ">View attached work</h1>

@@ -78,7 +78,7 @@ const Feedback = ({ handleClose, checkList }) => {
               <Form.Label>Feedback to {checkList?.holder?.name}</Form.Label>
               <Form.Control
                 className=" mt-2 "
-                placeholder="Write a brief feedback on this work..."
+                placeholder="Write a brief feedback on this work to justify your rating..."
                 as="textarea"
                 rows={3}
                 name="feedback"
