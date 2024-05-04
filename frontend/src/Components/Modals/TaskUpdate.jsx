@@ -219,10 +219,12 @@ const TaskUpdate = ({
       keyboard={false}
       size="lg"
     >
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Row>
           <Modal.Title as={Col}>
-            <h1 className=" text-white h3 ">Update task</h1>
+            <h1 className=" text-white h3 ">
+              Update task for {activity?.name}
+            </h1>
           </Modal.Title>
           <Button
             as={Col}

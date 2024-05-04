@@ -4,7 +4,7 @@ import { Button, Modal, Row, Col } from "react-bootstrap";
 const DeleteForm = ({ upActivity, show, handleClose, activity, deleting }) => {
   return (
     <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Row>
           <Modal.Title as={Col}>
             <h1 className=" text-white h3 ">Delete activity</h1>
@@ -26,10 +26,10 @@ const DeleteForm = ({ upActivity, show, handleClose, activity, deleting }) => {
       </Modal.Header>
 
       <Modal.Body>
-        <div className=" text-danger text-center ">
+        <div className=" text-danger text-center h5 ">
           Are you sure you want to delete/archive this activity
         </div>
-        <div className=" text-danger text-center ">( {activity?.name} )</div>
+        <div className=" text-danger text-center h5 ">( {activity?.name} )</div>
       </Modal.Body>
       <Modal.Footer>
         {deleting === true ? (

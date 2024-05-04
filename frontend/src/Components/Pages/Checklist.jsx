@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Button, Card, Col, Row } from "react-bootstrap";
+import { Button, Card, Col, Row, Spinner } from "react-bootstrap";
 import { updateChecklist } from "../../services/checklist-service";
 import ChecklistDelete from "../Modals/ChecklistDelete";
 import PropTypes from "prop-types";
@@ -13,9 +13,12 @@ const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
   const { user } = useContext(UserContext);
   const [toggle, setToggle] = useState(checkList.done);
 
+  const [loading, setLoading] = useState(false);
+
   const [limitDate, setLimitDate] = useState(null);
 
   const updateDone = async (e) => {
+    setLoading(true);
     checkList.done = e.target.checked;
     if (checkList?.done) checkList.doneDate = new Date();
     else {
@@ -29,16 +32,17 @@ const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
     if (response.status === 200) {
       setToggle(!toggle);
       refresh();
+
+      setLoading(false);
     }
   };
 
-  const fetchTaskByChecklist = async () => {
-    const data = await getTasks(checkList?.id_task);
-    setLimitDate(data.data.message.dueDate);
-    refresh();
-  };
-
   useEffect(() => {
+    const fetchTaskByChecklist = async () => {
+      const data = await getTasks(checkList?.id_task);
+      setLimitDate(data.data.message.dueDate);
+      refresh();
+    };
     fetchTaskByChecklist();
   }, []);
   /* pop up*/
@@ -140,6 +144,13 @@ const Checklist = ({ refresh, checkList, task, index, upChecklist }) => {
                     />
                     <span className="custom-control-label"></span>
                   </label>
+                  {loading && (
+                    <Spinner
+                      animation="border"
+                      role="output"
+                      variant="danger"
+                    ></Spinner>
+                  )}
                 </div>
               )}
             </Col>

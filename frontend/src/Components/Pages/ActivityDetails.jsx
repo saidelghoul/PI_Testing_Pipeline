@@ -25,17 +25,17 @@ const ActivityDetails = () => {
   };
 
   const refresh = async () => {
-    getProgress(activity?.tasks);
+    fetchActivity(id_activity);
   };
 
   const fetchActivity = async (id) => {
     const data = await getActivities(id);
     setActivity(data.data.message);
+    getProgress(data.data.message?.tasks);
     setLoading(false);
   };
   useEffect(() => {
     fetchActivity(id_activity);
-    getProgress(activity?.tasks);
   }, []);
 
   if (loading) {

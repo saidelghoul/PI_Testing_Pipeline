@@ -11,7 +11,7 @@ const ChecklistDelete = ({
 }) => {
   return (
     <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Row>
           <Modal.Title as={Col}>
             <h1 className=" text-white h3 ">Delete checklist</h1>
@@ -33,10 +33,10 @@ const ChecklistDelete = ({
       </Modal.Header>
 
       <Modal.Body>
-        <div className=" text-danger text-center  ">
+        <div className=" text-danger text-center h5">
           Are you sure you want to delete/archive this checklist
         </div>
-        <div className=" text-danger text-center  ">({checklist.title})</div>
+        <div className=" text-danger text-center h5">({checklist.title})</div>
       </Modal.Body>
       <Modal.Footer>
         {deleting === true ? (
