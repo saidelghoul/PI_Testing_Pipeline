@@ -14,6 +14,9 @@ function SocialSkillsUSer({ user }) {
   const [filterLevel, setFilterLevel] = useState("Tous");
   const [filteredSkills, setFilteredSkills] = useState([]);
 
+
+  
+
   const getAssigned = async () => {
     try {
       const skillsData = await SocialSkillService.getSocialSkillsByUser(user._id);
@@ -160,13 +163,14 @@ function SocialSkillsUSer({ user }) {
                 placement="top"
                 overlay={
                   <Tooltip id={`tooltip-${skill._id}`}>
-                    Points sociaux: {skill.pointSocial} <br />
+                   Type: {skill.assignedBy === user._id ? " (Myself 😎)" : " (Shared 💝)"} {/* Condition pour indiquer le type d'affectation */} <br/>
                     Priorité: {skill.niveau} {/* Vous pouvez également afficher la priorité */}
                   </Tooltip>
                 }
               >
                 <li 
                   style={{ 
+                    backgroundColor: skill.assignedBy === user._id ? "#c3e6cb" : "#f5c6cb",
                     border: '2px solid #ddd', 
                     padding: '10px', 
                     marginBottom: '10px', 

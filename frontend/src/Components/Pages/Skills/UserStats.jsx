@@ -28,7 +28,7 @@ function UserStats() {
         socialSkills.forEach((skill) => {
           socialSum += skill.pointSocial || 1;
         });
-        setSocialScore(socialSum*100);
+        setSocialScore(socialSum);
 
         //score tache
 

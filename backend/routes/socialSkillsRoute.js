@@ -12,7 +12,7 @@ router.delete("/remove/:id", socialSkillController.removeSocialSkill);
 
 router.put("/update/:id", socialSkillController.updateSocialSkill);
 
-router.put('/assign/:socialSkillId/:userId', socialSkillController.assignSocialSkillToUser);
+router.post('/assign/:socialSkillId/:userId', socialSkillController.assignSocialSkillToUser); // Utilisez POST pour envoyer des données dans le corps de la requête
 
 router.put('/unassign/:socialSkillId/:userId', socialSkillController.unassignSocialSkillFromUser);
 

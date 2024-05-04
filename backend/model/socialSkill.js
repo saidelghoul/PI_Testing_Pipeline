@@ -15,7 +15,12 @@ var SocialSkill = new Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-  ]
+  ],
+  assignedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User", // Référence à l'utilisateur qui a attribué
+    required: false,
+  },
     
 });
 

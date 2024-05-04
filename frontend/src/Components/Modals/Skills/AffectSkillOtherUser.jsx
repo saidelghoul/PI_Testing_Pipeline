@@ -1,14 +1,17 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Button, Col, Row, Form, Card, Dropdown, Alert } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import SocialSkillService from "../../../services/socialSkill-service";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaPlusCircle, FaTimesCircle } from "react-icons/fa";
+import { UserContext } from '../../../../context/userContext';
+
 
 function AffectSkillOtherUser( targetUserId ) {
 
     const { id } = useParams();
+    const { user} = useContext(UserContext);
     const [validated, setValidated] = useState(false);
     const [socialSkillItem, setSocialSkillItem] = useState(null); // Utilisez null comme valeur par défaut
     const [skills, setSkills] = useState([]);
@@ -16,6 +19,7 @@ function AffectSkillOtherUser( targetUserId ) {
     const navigate = useNavigate(); // Utilisation de useNavigate pour rediriger
     targetUserId = id ;
     console.log("HEEEEEEYYYY",targetUserId);
+    //console.log("userrrrrrr: ",user);
   
     useEffect(() => {
       const fetchSkills = async () => {
@@ -42,7 +46,7 @@ function AffectSkillOtherUser( targetUserId ) {
         }
     
         try {
-          await SocialSkillService.assignSocialSkillToUser(socialSkillItem, id);
+          await SocialSkillService.assignSocialSkillToUser(socialSkillItem, id, user.id);
           alert("Compétence sociale ajoutée avec succès");
           navigate(`/profileuser/${targetUserId}`); // Redirection vers le profil du user auquel nous avons ajouté
         } catch (error) {
@@ -66,7 +70,7 @@ function AffectSkillOtherUser( targetUserId ) {
       <Card className="my-4 p-4">
         <Row className="mb-3">
           <Col>
-            <h2 className="text-center h4" >Ajouter une compétence sociale <br /><span className="h6">( Le nombre de "⭐" équivaut à la demande de cette compétence dans le marché)</span></h2>
+            <h2 className="text-center h4" >Ajouter une compétence sociale 💝 <br /><span className="h6">( Le nombre de "⭐" équivaut à la demande de cette compétence dans le marché)</span></h2>
             <p className="text-center"></p>
           </Col>
           

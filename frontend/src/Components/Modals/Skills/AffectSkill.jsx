@@ -1,23 +1,33 @@
 import { Button, Col, Row, Form, Card, Dropdown, Alert } from "react-bootstrap";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import SocialSkillService from "../../../services/socialSkill-service";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaPlusCircle, FaTimesCircle,   FaCheck } from "react-icons/fa";
+import { UserContext } from "../../../../context/userContext";
+
+
 
 const AffectSkill = () => {
+  const { user } = useContext(UserContext); // Pour obtenir les détails de l'utilisateur
   const { id } = useParams();
   const [validated, setValidated] = useState(false);
   const [socialSkillItem, setSocialSkillItem] = useState(null); // Utilisez null comme valeur par défaut
   const [skills, setSkills] = useState([]);
   const [error, setError] = useState(null); // Utilisez un état pour les erreurs
   const navigate = useNavigate(); // Utilisation de useNavigate pour rediriger
+  const [autoSkillsCount, setAutoSkillsCount] = useState(0); // Compter les compétences auto-affectées
 
   useEffect(() => {
     const fetchSkills = async () => {
       try {
         const response = await SocialSkillService.getAvailableSocialSkills(id); // Obtenir les compétences disponibles
         setSkills(response); // Mettre à jour l'état avec les compétences
+
+        // Obtenir le nombre de compétences auto-affectées
+        const autoSkillsResponse = await SocialSkillService.getSocialSkillsByUser(id);
+        const autoSkills = autoSkillsResponse.socialSkills.filter(skill => skill.assignedBy === id);
+        setAutoSkillsCount(autoSkills.length); // Mettre à jour le nombre de compétences auto-affectées 😎
       } catch (error) {
         console.error("Erreur lors de la récupération des compétences:", error.message);
         setError("Erreur lors de la récupération des compétences");
@@ -38,7 +48,7 @@ const AffectSkill = () => {
     }
 
     try {
-      await SocialSkillService.assignSocialSkillToUser(socialSkillItem, id);
+      await SocialSkillService.assignSocialSkillToUser(socialSkillItem, id , id);
       alert("Compétence sociale ajoutée avec succès");
       navigate("/profil"); // Rediriger vers le profil après le succès
     } catch (error) {
@@ -57,6 +67,9 @@ const AffectSkill = () => {
     }
   };
 
+    // Désactiver le bouton si la limite est atteinte
+    const isAddButtonDisabled = autoSkillsCount >= 10;
+
 
   
 
@@ -66,7 +79,7 @@ const AffectSkill = () => {
       <Card className="my-4 p-4">
         <Row className="mb-3">
           <Col>
-            <h2 className="text-center h4" >Ajouter une compétence sociale <br /><span className="h6">( Le nombre de "⭐" équivaut à la demande de cette compétence dans le marché)</span></h2>
+            <h2 className="text-center h4" >Ajouter une compétence sociale 😎<br /><span className="h6">( Le nombre de "⭐" équivaut à la demande de cette compétence dans le marché)</span></h2>
             <p className="text-center"></p>
           </Col>
           
@@ -101,6 +114,7 @@ const AffectSkill = () => {
               <Button
                 variant="success"
                 onClick={handleAddSocialSkill}
+                disabled={isAddButtonDisabled} // Désactiver si limite atteinte
               >
                 <FaPlusCircle /> Add
               </Button>
