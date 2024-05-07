@@ -171,11 +171,11 @@ export default function Groups() {
                         />
                       </div>
                       <div className="user_pro_status">
-                        {user && page && user.id !== page.creator && !isParticipating && (
+                        {user && page && user.id !== page.creator && !isParticipating && !page.visibilite && (
                           <ul className="flw-hr">
                             <li>
                               <a href="#" onClick={participerPage} title="" className="flww">
-                                <i className="la la-plus"></i> Rejoindre
+                                <i className="la la-plus"></i> Follow
                               </a>
                             </li>
                           </ul>
@@ -222,18 +222,31 @@ export default function Groups() {
                         <div className="user-picy">
                           <img src={imageUrl} alt="" /> 
                         </div>
-                        <div className="post-st">
-                          <ul>
-                            <li>
-                              <Link className="post-jb active" to={`/addPub/${page._id}`} title="">
-                                Ajouter une Publication
-                              </Link>
-                            </li>
-                          </ul>
-                        </div>
+                        {user.id ===page.creator &&  ( 
+  <div className="post-st">
+    <ul>
+      <li>
+        <Link className="post-jb active" to={`/addPub/${page._id}`} title="">
+          Ajouter une Publication
+        </Link>
+      </li>
+    </ul>
+  </div>
+)}
                       </div>
                     </div>
-                    <PubGroups groupId={id} />
+                    {(user.id === page.creator || isParticipating || page.visibilite || page.notifications.isAccept) && page.notifications.isAccept ? (
+  <PubGroups groupId={id} />
+) : (
+  (!page.visibilite && !page.notifications.isAccept && (
+    <div>
+      <p>You are not authorized to see the publications of this page because it is currently invisible.
+        Or your notifications are denied
+      </p>
+    </div>
+  ))
+)}
+
                   </div>
                 </div>
                 <div className="col-lg-3">

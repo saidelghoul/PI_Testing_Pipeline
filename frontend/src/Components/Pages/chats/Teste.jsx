@@ -11,6 +11,9 @@ const socket = io("http://localhost:8000");
 
 export  default function Teste(){
     const [conversations, setConversations] = useState([]);
+    const [membres, setMembres] = useState([]);
+    const [isTyping, setIsTyping] = useState(false); // Nouvel état pour le typing
+    const imageName = conversations.image && conversations.image.split('/').pop()
     const [showMore, setShowMore] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const {user}=useContext(UserContext);
@@ -21,15 +24,21 @@ export  default function Teste(){
     const [messageInput, setMessageInput] = useState("");
     const [searchQuerys, setSearchQuerys] = useState('');
 
-    const imageUrl = conversations && conversations.profileImage 
-    ? `http://localhost:8000/user/profile` 
-    : "/assets/images/resources/user-pro-img.png";
+    const imageUrls = conversations && conversations.image 
+    ? `http://localhost:8000/${conversations.image}` 
+    : "/assets/images/resources/cover-img.jpg";
+ 
+
 
     useEffect(() => {
         const fetchConversations = async () => {
           try {
             const response = await axios.get("/messages/getall");
-            setConversations(response.data);
+            const sortedConversations = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            // Inverser l'ordre des conversations
+            const reversedConversations = sortedConversations.reverse();
+            setConversations(reversedConversations);
           } catch (error) {
             console.error(
               "Erreur lors de la récupération des conversations : ",
@@ -39,6 +48,24 @@ export  default function Teste(){
         };
         fetchConversations();
       }, []);
+
+      useEffect(() => {
+        const fetchMembres= async () => {
+          try {
+            if (selectedConversationId) { // Vérifiez si selectedConversationId est défini
+
+            const response = await axios.get(`/messages/getMembres/${selectedConversationId}`);
+            setMembres(response.data);
+            }
+          } catch (error) {
+            console.error(
+              "Erreur lors de la récupération des conversations : ",
+              error
+            );
+          }
+        };
+        fetchMembres();
+      }, [selectedConversationId]);
       const formatDate = (dateString) => {
         const options = { year: "numeric", month: "long", day: "numeric" };
         return new Date(dateString).toLocaleDateString("fr-FR", options);
@@ -72,6 +99,8 @@ export  default function Teste(){
     
         fetchMessages();
       }, [selectedConversationId]);
+
+     
       const handleConversationClick = async (conversationId) => {
         setSelectedConversationId(conversationId);
         try {
@@ -148,6 +177,24 @@ export  default function Teste(){
           );
         }
       };
+      const handleTyping = () => {
+        // Envoyer un message de typing lorsque l'utilisateur commence à taper
+        socket.emit("typing", { conversationId: selectedConversationId });
+        // Définir un délai après lequel le typing sera désactivé
+        setTimeout(() => {
+          setIsTyping(false);
+        }, 2000); // Mettez la durée souhaitée en millisecondes
+      };
+
+      useEffect(() => {
+        // Écouter l'événement "typing" du serveur
+        socket.on("typing", (data) => {
+          // Vérifier si le message de typing est pour la conversation actuellement sélectionnée
+          if (data.conversationId === selectedConversationId) {
+            setIsTyping(true); // Activer le typing
+          }
+        });
+      }, [selectedConversationId]);
     return (
     <>
         <section className="messages-page">
@@ -164,7 +211,7 @@ export  default function Teste(){
                 <div className="card1 m-0">
 
                     <div className="row no-gutters">
-                        <div className="col-xl-4 col-lg-4 col-md-4 col-sm-3 col-3">
+                        <div className="col-xl-4 col-lg-4 col-md-4 col-sm-3 col-3" style={{ overflowY: "scroll", maxHeight: "800px"}}>
                             <div className="users-container1">
 
                                 <div className="chat-search-box">
@@ -180,89 +227,85 @@ export  default function Teste(){
                                     
                                 </div>
                                 <ul className="users">
-                                {visibleConversations.map(conversation => (
+  {visibleConversations.map(conversation => (
     conversation.members && conversation.members.includes(user.id) && (
+      <li key={conversation._id} className="person" data-chat={`person${conversation._id}`} onClick={() => handleClick(conversation._id)}>
+        <div className="user">
+          {conversation.messages.length > 0 && conversation.messages[0].repondeur.profileImage ? (
+            <img src={`http://localhost:8000/user/${conversation.messages[0]._id}/profile`} alt={conversation.messages[0].repondeur.name} />
+          ) : (
+            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Default" />
+          )}
+        </div>
+        <p className="name-time">
+          <span className="name" style={{marginLeft: "10px", marginRight: "40px"}}>{conversation.name}</span>
+          <span className="right" style={{paddingLeft: "155px"}}>{formatDate(conversation.createdAt)}</span>{" "}
+          <a onClick={() => handleDeleteConversation(conversation._id)}>(❌)</a>
+        </p>
+      </li>
+    )
+  ))}
+</ul>
 
-                                    <li key={conversation._id} className="person" data-chat={`person${conversation._id}`} onClick={() => handleClick(conversation._id)}>
-                                            <div className="user">
-                                            <img src={imageUrl} alt="Retail Admin"/>
-                                            <span className="status busy"></span>
-                                        </div>
-                                        <p className="name-time">
-                                            <span className="name" style={{marginLeft: "10px",marginRight: "40px"}}>{conversation.name}</span>
-                                            <span className="right" style={{paddingLeft:"155px"}}>{formatDate(conversation.createdAt)}</span>{""} {" "}
-                                           <a onClick={() => handleDeleteConversation(conversation._id)}>(❌)</a>
-
-                                        </p>
-                                    </li>
-                               ) ))}
-
-                                </ul>
                                 {conversations.length > 5 && !showMore && (
                                                     <button className="btn btn-primary" onClick={() => setShowMore(true)}>Voir plus</button>
                                                 )}
                             </div>
                         </div>
                         <div className="col-xl-8 col-lg-8 col-md-8 col-sm-9 col-9">
-                            <div className="selected-user">
-                                <span>To: <span className="name">{selectedConversationDetails?.name}</span>
-                                <Link
-                    to={`/getUsers/${selectedConversationDetails?._id}`}
-                    title=""
-                  >➕</Link>
-                                <Link
-                    to={`/modifierConversation/${selectedConversationDetails?._id}`}
-                    title=""
-                  >✍</Link>
+  {selectedConversationDetails ? (
+    <>
+      <div className="selected-user">
+        <span>
+          To: <span className="name">{selectedConversationDetails?.name}</span>
+          <Link to={`/getUsers/${selectedConversationDetails?._id}`} title="">➕</Link>
+          <Link to={`/modifierConversation/${selectedConversationDetails?._id}`} title="">✍</Link>
+          Les membres du discussions:
+          <div style={{ display: "flex", flexWrap: "wrap" }}>
+            {selectedConversationDetails.members.map((membre, index) => (
+              <span key={index} style={{ margin: "0 10px" }}>{membre.name}</span>
+            ))}
+          </div>
+          <span className="input-group-text" style={{ marginRight: "-11px", marginTop: "-57px", marginLeft: "646px" }}>
+            🔎<input placeholder="Rechercher Par Nom du groupe" aria-label="Rechercher Par Nom " className="form-control" onChange={(e) => setSearchQuerys(e.target.value)} />
+          </span>
+        </span>
+      </div>
 
-                                    <span className="input-group-text" style={{ marginRight: "-11px",
-    marginTop: "-57px",
-    marginLeft: "646px"}}
-   
->
-                🔎<input placeholder="Rechercher Par Nom du groupe" aria-label="Rechercher Par Nom " className="form-control" onChange={(e) => setSearchQuerys(e.target.value)} />
-</span>
+      <div className="chat-container1">
+        <ul className="chat-box chatContainerScroll" style={{ overflowY: "scroll", maxHeight: "500px" }}>
+          {filteredMessages.map((message, index) => (
+            <li className={message.sender._id === user.id ? "chat-right" : "chat-left"} key={index}>
+              <div className="chat-avatar">
+              <img src={message.sender.profileImage ? `http://localhost:8000/user/${message.sender._id}/profile` : 'https://www.bootdey.com/img/Content/avatar/avatar3.png'} alt={message.sender.name} />                <div className="chat-name">{message.sender.name}</div>
+              </div>
+              <div className="chat-text">{message.content}</div>
+              <div className="chat-hour">{moment(message.createdAt).fromNow()}<span className="fa fa-check-circle"></span></div>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-                                        
-                             
-                                </span>
-                               
-          
-                         </div>
-                            <div className="chat-container1">
-                                
-                                <ul className="chat-box chatContainerScroll" style={{ overflowY: "scroll", maxHeight: "500px"}}
-   >
-                                {filteredMessages.map((message, index) => (
-                                                <li className={message.sender._id === user.id ? "chat-right" : "chat-left"} key={index}>
+      <form className="form-group mt-3 mb-0" onSubmit={handleMessageSend}>
+        <div className="input-group">
+        <textarea className="form-control" placeholder="Input Your Message" type="text" name="message" value={messageInput} onChange={(e) => { setMessageInput(e.target.value); handleTyping(); }}></textarea>
+          {isTyping && <div>Typing...</div>} {/* Affichage du typing */}
 
-                                        <div className="chat-avatar">
-                                            <img src="https://www.bootdey.com/img/Content/avatar/avatar3.png" alt="Retail Admin"/>
-                                            <div className="chat-name">{message.sender.name}</div>
-                                        </div>
-                                        <div className="chat-text">{message.content}</div>
-                                        <div className="chat-hour">{moment(message.createdAt).fromNow() }<span className="fa fa-check-circle"></span></div>
-                                    </li>
-                                            ))}
-
-                                </ul>
-                                <form className="form-group mt-3 mb-0" onSubmit={handleMessageSend}>
-                                <div className="input-group">
-    <textarea className="form-control" placeholder="Input Your Message" type="text"  name="message" value={messageInput} onChange={(e) => setMessageInput(e.target.value)}></textarea>
-    <div className="input-group-btn">
-        <button type="submit" className="btn btn-info" style={{
-            marginTop: '7px',
-            width: '65px',
-            height: '47px'
-        }}>
-            ➤
-        </button>
+          <div className="input-group-btn">
+            <button type="submit" className="btn btn-info" style={{ marginTop: '7px', width: '65px', height: '47px' }}>
+              ➤
+            </button>
+          </div>
+        </div>
+      </form>
+    </>
+  ) : (
+    <div className="no-conversation-selected-message">
+      Veuillez sélectionner une conversation pour afficher le chat.
     </div>
+  )}
 </div>
 
-                                </form>
-                            </div>
-                        </div>
                     </div>
                 </div>
 

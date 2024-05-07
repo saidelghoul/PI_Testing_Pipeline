@@ -1,14 +1,18 @@
 var Conversation = require("../model/Chats/conversation");
 var Message = require("../model/Chats/message");
 const User = require("../model/user");
+const path = require('path'); // Importez le module path pour manipuler les chemins de fichier
 
 async function getAllConversations(req, res) {
   try {
-    const conversations = await Conversation.find({}).
-    populate({
-      path: 'messages',
-      select: 'createdAt' // Sélectionnez les champs à afficher
-    }) 
+    const conversations = await  Conversation.find({}).populate({path: "messages",
+    select: "repondeur",
+    populate: {
+      path: "repondeur",
+      select: "profileImage"
+    }})
+  
+
       .exec();
     res.status(200).json(conversations);
   } catch (error) {
@@ -40,7 +44,7 @@ async function getMessage(req, res) {
   try {
     const messages = await Message.find({ conversation: conversationId })// Utilisez { createdAt: -1 } pour trier par ordre décroissant
                                   .populate({path:'sender',
-                                            select:'name'});
+                                            select:'name profileImage'});
     res.status(200).json(messages);
   } catch (error) {
     res.status(500).json({ error: "Erreur du serveur : " + error.message });
@@ -75,11 +79,20 @@ async function addConversation(req, res) {
       return res.status(400).json({ error: "Une conversation avec ces membres existe déjà" });
     }
 
-    // Créer une nouvelle conversation avec le nom spécifié
+    // Récupérer les informations de chaque membre, y compris leurs images de profil
+    const membersInfo = await User.find({ _id: { $in: [connectedUserId, ...members] } });
+
+    // Générer l'image de la conversation en combinant les images de profil de chaque membre
+    const conversationImage = membersInfo.map(member => member.profileImage).join('');
+
+    // Définir le chemin d'enregistrement de l'image dans le répertoire "public"
+    const imagePath = `${conversationImage}`;
+    // Créer une nouvelle conversation avec le nom spécifié et l'image combinée
     const conversation = {
-      name: name, // Utiliser le nom spécifié dans la requête
+      name: name,
       members: [connectedUserId, ...members],
-      creator: connectedUserId // Définir le créateur de la conversation comme l'utilisateur connecté
+      creator: connectedUserId,
+      image: imagePath // Utiliser le chemin de l'image combinée pour la conversation
     };
     const newConversation = new Conversation(conversation);
     const saved = await newConversation.save();
@@ -89,6 +102,7 @@ async function addConversation(req, res) {
     return res.status(500).json({ error: "Erreur du serveur " + err.message });
   }
 }
+
 
 
 
@@ -233,7 +247,23 @@ async function getAllMessagesByContent(req, res) {
   } catch (err) {
     res.status(500).json({ error: "Server error" + err.message });
   }
+};
+
+async function getMembersByConversation(req, res) {
+
+  try {
+    const conversation = await Conversation.findById(req.params.id).populate({
+      path: "members",
+      select: "name"
+    });
+
+    if (!conversation) {
+      return res.status(404).json({ error: "Conversation not found" });
+    }
+
+    res.status(200).json(conversation);
+  } catch (error) {
+    res.status(500).json({ error: "Server error" + error.message });
+  }
 }
-
-
-module.exports = { getAllConversations,removeMessage,getMessagesByConversationId,getMessage,sendMessage,updateConversationMembres, getUsers,getConversationById, addConversation, removeConversation, updateConversation ,getAllMessagesByContent };
+module.exports = { getAllConversations,getMembersByConversation,removeMessage,getMessagesByConversationId,getMessage,sendMessage,updateConversationMembres, getUsers,getConversationById, addConversation, removeConversation, updateConversation ,getAllMessagesByContent };

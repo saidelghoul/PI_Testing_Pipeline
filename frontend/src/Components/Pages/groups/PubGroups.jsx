@@ -22,6 +22,7 @@ export default function PubGroups({ groupId }) {
     axios
       .get(`/pubGroupe/getPubId/${groupId}`)
       .then((response) => {
+        
         setPublications(response.data);
         setIsLoading(false);
 

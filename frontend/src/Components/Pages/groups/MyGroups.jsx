@@ -100,6 +100,10 @@ return (
                     />
                     <h3>{page.nomgroups}</h3>
                     <h4>{formatDate(page.date)}</h4>
+                    {page.visibilite ? <b> 🔓 Public page 🔓</b> : <b> 🔒 Private Page 🔒</b>}
+                    <br></br>                    <br></br>
+
+
                     <ul>
                       {user.id === page.creator && (
                         <li>
@@ -164,7 +168,7 @@ return (
                     title=""
                     className="view-more-pro"
                   >
-                    View Profile
+                    View Page
                   </Link>
                 </div>
               </div>

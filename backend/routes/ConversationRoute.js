@@ -1,8 +1,10 @@
 var express = require("express");
 var router = express.Router();
 var ConversationController = require("../controller/ConversationController");
+const upload =require("../middleware/upload");
 
 router.get("/getall", ConversationController.getAllConversations);
+router.get("/getMembres/:id", ConversationController.getMembersByConversation);
 
 router.get("/getbyid/:id", ConversationController.getConversationById);
 

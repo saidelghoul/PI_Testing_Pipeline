@@ -102,7 +102,7 @@ async function getall(req, res) {
 async function getbyid(req, res) {
   try {
     const groupId = req.params.id;
-    const group = await Page.findById(groupId);
+    const group = await Page.findById(groupId).populate({path:"notifications",select:"isAccept"});
     if (!group) {
         return res.status(404).json({ message: 'Le groupe n\'existe pas' });
     }
