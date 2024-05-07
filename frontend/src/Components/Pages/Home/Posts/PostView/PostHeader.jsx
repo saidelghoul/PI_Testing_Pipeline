@@ -16,14 +16,6 @@ export default function PostHeader({ postContent, fetchPosts }) {
     ? postContent.reports.includes(user?.id)
     : false;
 
-  const imageUrl = (usrId, usr) => {
-    if (usrId && usr?.profileImage) {
-      return `${process.env.REACT_APP_BACKEND_URL}/user/${usrId}/profile`;
-    } else {
-      return "/assets/images/resources/user-pro-img.png";
-    }
-  };
-
   const handleReportClick = async () => {
     try {
       const ReportData = {
