@@ -32,18 +32,12 @@ export default function Groups() {
   const [dislikesCount, setDislikesCount] = useState(0);
   const [comments, setComments] = useState([]);
   const userId = user ? user.id : null;
- 
 
-    //const imageUrl = userId ? `http://localhost:8000/user/${userId}/profile` : "/assets/images/resources/user-pro-img.png";
-    const imageUrl = userId && user && user.profileImage 
-    ? `http://localhost:8000/user/${userId}/profile` 
-    : "/assets/images/resources/user-pro-img.png";
-
-
-
-
-
-
+  //const imageUrl = userId ? `http://localhost:8000/user/${userId}/profile` : "/assets/images/resources/user-pro-img.png";
+  const imageUrl =
+    userId && user && user.profileImage
+      ? `${process.env.REACT_APP_BACKEND_URL}/user/${userId}/profile`
+      : "/assets/images/resources/user-pro-img.png";
 
   useEffect(() => {
     // Effectuer une requête GET pour récupérer les données de la page selon l'ID depuis le backend
@@ -55,14 +49,14 @@ export default function Groups() {
         setIsParticipating(response.data.participants.includes(user.id));
         setUserIsCreator(response.data.creator === user.id);
 
-        const { totalPublications, groupScore, totalLikes, totalDislikes } = calculateScore(response.data);
-        
+        const { totalPublications, groupScore, totalLikes, totalDislikes } =
+          calculateScore(response.data);
+
         setPageScore(groupScore);
         setPublicationsCount(totalPublications);
         setTotalLikes(totalLikes);
         setTotalDislikes(totalDislikes);
         setIsLoading(false);
-      
       })
       .catch((error) => {
         console.error(
@@ -72,37 +66,31 @@ export default function Groups() {
         setIsLoading(false);
       });
   }, [id]);
-  
- const calculateScore = (page) => {
-  let groupScore = 0;
-  let totalPublications = 0;
-  let totalLikes = 0;
-  let totalDislikes = 0;
 
-  if (page.publications && page.publications.length > 0) {
-    totalPublications = page.publications.length;
-    page.publications.forEach((publication) => {
-      if (publication.Like) {
-        totalLikes += publication.Like;
-      }
-      if (publication.dislike) {
-        totalDislikes += publication.dislike;
-      }
-    });
+  const calculateScore = (page) => {
+    let groupScore = 0;
+    let totalPublications = 0;
+    let totalLikes = 0;
+    let totalDislikes = 0;
 
-    groupScore = totalLikes - totalDislikes;
-    console.log("laaa",groupScore);
-  }
+    if (page.publications && page.publications.length > 0) {
+      totalPublications = page.publications.length;
+      page.publications.forEach((publication) => {
+        if (publication.Like) {
+          totalLikes += publication.Like;
+        }
+        if (publication.dislike) {
+          totalDislikes += publication.dislike;
+        }
+      });
 
-  return { totalPublications, groupScore, totalLikes, totalDislikes };
-};
+      groupScore = totalLikes - totalDislikes;
+      console.log("laaa", groupScore);
+    }
 
+    return { totalPublications, groupScore, totalLikes, totalDislikes };
+  };
 
-    
-
-  
-  
-  
   const participerPage = async () => {
     try {
       const response = await axios.post(`/groups/${id}/participer`, {
@@ -136,9 +124,10 @@ export default function Groups() {
   };
 
   // Exécuter cet effet chaque fois que l'ID change
-  if (isLoading) { // Afficher un spinner pendant le chargement
+  if (isLoading) {
+    // Afficher un spinner pendant le chargement
     return (
-      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
         <Spinner animation="border" role="status">
           <span className="visually-hidden">Chargement...</span>
         </Spinner>
@@ -150,7 +139,7 @@ export default function Groups() {
     <>
       <section className="cover-sec">
         <img
-          src={`http://localhost:8000/images/${page.coverImage}`}
+          src={`${process.env.REACT_APP_BACKEND_URL}/images/${page.coverImage}`}
           alt="cover"
           style={{ height: "362px" }}
         />
@@ -166,29 +155,47 @@ export default function Groups() {
                     <div className="user_profile">
                       <div className="user-pro-img">
                         <img
-                          src={`http://localhost:8000/images/${page.profileImage}`}
+                          src={`${process.env.REACT_APP_BACKEND_URL}/images/${page.profileImage}`}
                           alt="Profile"
                         />
                       </div>
                       <div className="user_pro_status">
-                        {user && page && user.id !== page.creator && !isParticipating && (
-                          <ul className="flw-hr">
-                            <li>
-                              <a href="#" onClick={participerPage} title="" className="flww">
-                                <i className="la la-plus"></i> Rejoindre
-                              </a>
-                            </li>
-                          </ul>
-                        )}
+                        {user &&
+                          page &&
+                          user.id !== page.creator &&
+                          !isParticipating && (
+                            <ul className="flw-hr">
+                              <li>
+                                <a
+                                  href="#"
+                                  onClick={participerPage}
+                                  title=""
+                                  className="flww"
+                                >
+                                  <i className="la la-plus"></i> Rejoindre
+                                </a>
+                              </li>
+                            </ul>
+                          )}
                         <ul className="flw-status">
-                          <li className="text-center" style={{ paddingLeft: '50px' }}>
+                          <li
+                            className="text-center"
+                            style={{ paddingLeft: "50px" }}
+                          >
                             <span className="text-center">👫 Membres 👫</span>
-                            <b>{page.participants ? page.participants.length : 0}</b>
+                            <b>
+                              {page.participants ? page.participants.length : 0}
+                            </b>
                           </li>
                           <hr />
                           <li>
                             <span>🥇 Score du Groupe</span>
-                            <b>{publicationsCount +(page.participants ? page.participants.length : 0)}</b>
+                            <b>
+                              {publicationsCount +
+                                (page.participants
+                                  ? page.participants.length
+                                  : 0)}
+                            </b>
                           </li>
                         </ul>
                       </div>
@@ -220,12 +227,16 @@ export default function Groups() {
                       </div>
                       <div className="post-topbar">
                         <div className="user-picy">
-                          <img src={imageUrl} alt="" /> 
+                          <img src={imageUrl} alt="" />
                         </div>
                         <div className="post-st">
                           <ul>
                             <li>
-                              <Link className="post-jb active" to={`/addPub/${page._id}`} title="">
+                              <Link
+                                className="post-jb active"
+                                to={`/addPub/${page._id}`}
+                                title=""
+                              >
                                 Ajouter une Publication
                               </Link>
                             </li>

@@ -1,5 +1,5 @@
 import axios from "axios";
-const url = "http://localhost:8000/activities";
+const url = process.env.REACT_APP_BACKEND_URL + "/activities";
 
 export const getActivities = async (id) => {
   id = id || "";

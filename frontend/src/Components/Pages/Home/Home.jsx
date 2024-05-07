@@ -7,10 +7,11 @@ import Feed from "./Feed/Feed.jsx";
 export default function Home() {
   const { user } = useContext(UserContext);
   const userId = user ? user.id : null;
-  const imageUrl = user && user.profileImage 
-  ? `http://localhost:8000/user/${userId}/profile` 
-  : "/assets/images/resources/user-pro-img.png";
-  
+  const imageUrl =
+    user && user.profileImage
+      ? `${process.env.REACT_APP_BACKEND_URL}/user/${userId}/profile`
+      : "/assets/images/resources/user-pro-img.png";
+
   const [totalReports, setTotalReports] = useState(0);
   console.log("totalReports : ", totalReports);
 
@@ -46,7 +47,7 @@ export default function Home() {
                     <div className="user-profile">
                       <div className="username-dt">
                         <div className="usr-pic">
-                        <img src={imageUrl} alt="Image de profil" />
+                          <img src={imageUrl} alt="Image de profil" />
 
                           {/* <img src={imageUrl} alt="Image de profil" /> */}
                         </div>
@@ -55,7 +56,7 @@ export default function Home() {
                         <> {!!user && <h1>{user.name}</h1>}</>
                         <span> {!!user && <h2>{user.role}</h2>}</span>
                         <span>
-                        Department  {!!user && <h2>{user.departement}</h2>}
+                          Department {!!user && <h2>{user.departement}</h2>}
                         </span>
                       </div>
                     </div>

@@ -1,22 +1,22 @@
-import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
 import { UserContext } from "../../../../context/userContext";
 import { Link } from "react-router-dom";
-import PubActions from './PubActions';
-import AddCommentPub from './AddCommentPub';
+import PubActions from "./PubActions";
+import AddCommentPub from "./AddCommentPub";
 
 export default function PubGroups({ groupId }) {
-    const [publications, setPublications] = useState([]);
+  const [publications, setPublications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useContext(UserContext);
   const userId = user ? user.id : null;
 
   //const imageUrl = userId ? `http://localhost:8000/user/${userId}/profile` : "/assets/images/resources/user-pro-img.png";
-  const imageUrl = userId && user && user.profileImage 
-  ? `http://localhost:8000/user/${userId}/profile` 
-  : "/assets/images/resources/user-pro-img.png";
+  const imageUrl =
+    userId && user && user.profileImage
+      ? `${process.env.REACT_APP_BACKEND_URL}/user/${userId}/profile`
+      : "/assets/images/resources/user-pro-img.png";
   console.log(imageUrl);
-  
 
   useEffect(() => {
     axios
@@ -24,10 +24,12 @@ export default function PubGroups({ groupId }) {
       .then((response) => {
         setPublications(response.data);
         setIsLoading(false);
-
       })
       .catch((error) => {
-        console.error("Erreur lors de la récupération des publications:", error);
+        console.error(
+          "Erreur lors de la récupération des publications:",
+          error
+        );
       });
   }, [groupId]);
 
@@ -60,10 +62,10 @@ export default function PubGroups({ groupId }) {
             <div className="post_topbar">
               <div className="usy-dt">
                 <img
-                  src={imageUrl }
+                  src={imageUrl}
                   alt={post.creator.name}
                   width={70}
-                  style={{ borderRadius: '50%' }}
+                  style={{ borderRadius: "50%" }}
                 />
                 <div className="usy-name">
                   <h3>{post.creator.name}</h3>
@@ -75,7 +77,11 @@ export default function PubGroups({ groupId }) {
               <ul className="bk-links">
                 {user.id === post.creator._id && (
                   <li>
-                    <Link to={`/modifier/${post._id}`} title="" className="follow">
+                    <Link
+                      to={`/modifier/${post._id}`}
+                      title=""
+                      className="follow"
+                    >
                       <i className="la ">✏️</i>
                     </Link>
                   </li>
@@ -83,7 +89,12 @@ export default function PubGroups({ groupId }) {
                 {user.id === post.creator._id && (
                   <li>
                     <a href="#" title="">
-                      <i className="la la" onClick={() => handleDelete(post._id)}>❌</i>
+                      <i
+                        className="la la"
+                        onClick={() => handleDelete(post._id)}
+                      >
+                        ❌
+                      </i>
                     </a>
                   </li>
                 )}
@@ -93,8 +104,8 @@ export default function PubGroups({ groupId }) {
             <div className="job_descp">
               <p>{post.Contenue}</p>
             </div>
-            <PubActions postId={post._id} groupId={groupId}/>
-            <AddCommentPub postId={post._id}/>
+            <PubActions postId={post._id} groupId={groupId} />
+            <AddCommentPub postId={post._id} />
           </div>
         ))}
       </div>

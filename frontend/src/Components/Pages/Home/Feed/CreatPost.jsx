@@ -18,7 +18,7 @@ export default function CreatPost() {
 
   const imageUrl = (usrId, usr) => {
     if (usrId && usr?.profileImage) {
-      return `http://localhost:8000/user/${usrId}/profile`;
+      return `${process.env.REACT_APP_BACKEND_URL}/user/${usrId}/profile`;
     } else {
       return "/assets/images/resources/user-pro-img.png";
     }
@@ -31,11 +31,11 @@ export default function CreatPost() {
 
   return (
     <div className="post-topbar d-flex flex-row">
-      <div className="user-picy col-6" >
+      <div className="user-picy col-6">
         <img
           src={imageUrl(user.id, user)}
           alt={user.name}
-          style={{ width: '55px', height: '55px', borderRadius: '50%' }}
+          style={{ width: "55px", height: "55px", borderRadius: "50%" }}
         />
         <span className="h4">{user.name}</span>
       </div>

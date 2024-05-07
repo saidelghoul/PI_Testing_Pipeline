@@ -24,7 +24,7 @@ export default function Navbar() {
   const userId = user ? user.id : null;
   const imageUrl =
     userId && user && user.profileImage
-      ? `http://localhost:8000/user/${userId}/profile`
+      ? `${process.env.REACT_APP_BACKEND_URL}/user/${userId}/profile`
       : "/assets/images/resources/user-pro-img.png";
   const handleLogout = async () => {
     try {

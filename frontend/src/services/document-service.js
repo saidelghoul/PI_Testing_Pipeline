@@ -1,5 +1,5 @@
 import axios from "axios";
-const url = "http://localhost:8000/documents";
+const url = process.env.REACT_APP_BACKEND_URL + "/documents";
 
 export const getDocuments = async (id) => {
   id = id || "";

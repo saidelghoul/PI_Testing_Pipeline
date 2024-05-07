@@ -4,7 +4,7 @@ export default function TextPost({ postContent }) {
       <h3>{postContent.Sujet}</h3> <p>{postContent.Contenue}</p>
       {postContent.ImagePath && (
         <img
-          src={`http://localhost:8000/images/${postContent.ImagePath}`}
+          src={`${process.env.REACT_APP_BACKEND_URL}/images/${postContent.ImagePath}`}
           alt="Event"
         />
       )}{" "}

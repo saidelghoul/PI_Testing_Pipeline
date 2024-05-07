@@ -1,20 +1,22 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import SocialSkillsOnlyReading from '../Skills/SocialSkills/SocialSkillsOtherUser';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import SocialSkillsOnlyReading from "../Skills/SocialSkills/SocialSkillsOtherUser";
 
 export default function Profils() {
-const { id } = useParams();
+  const { id } = useParams();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   //const userId = user ? user.id : null;
-  const imageUrl = user && user.profileImage 
-  ? `http://localhost:8000/user/${id}/profile` 
-  : "/assets/images/resources/user-pro-img.png";
+  const imageUrl =
+    user && user.profileImage
+      ? `${process.env.REACT_APP_BACKEND_URL}/user/${id}/profile`
+      : "/assets/images/resources/user-pro-img.png";
 
-const coverImageUrl = user && user.coverImage 
-  ? `http://localhost:8000/user/${id}/cover` 
-  : "/assets/images/resources/cover-img.jpg";
+  const coverImageUrl =
+    user && user.coverImage
+      ? `${process.env.REACT_APP_BACKEND_URL}/user/${id}/cover`
+      : "/assets/images/resources/cover-img.jpg";
 
   useEffect(() => {
     axios
@@ -24,7 +26,7 @@ const coverImageUrl = user && user.coverImage
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Error retrieving users : ', error);
+        console.error("Error retrieving users : ", error);
       });
   }, [id]);
 
@@ -32,13 +34,17 @@ const coverImageUrl = user && user.coverImage
     return <div>Chargement...</div>;
   }
 
-  
   return (
     <>
       <section className="cover-sec">
-      {/* <img src={coverImageUrl} alt="Cover" width="100%" height="300px" /> */}
-    <img src={coverImageUrl} alt="Image de profil" width="100%" height="300px" />
- 
+        {/* <img src={coverImageUrl} alt="Cover" width="100%" height="300px" /> */}
+        <img
+          src={coverImageUrl}
+          alt="Image de profil"
+          width="100%"
+          height="300px"
+        />
+
         <div className="add-pic-box">
           <div className="container">
             <div className="row no-gutters"></div>
@@ -54,29 +60,28 @@ const coverImageUrl = user && user.coverImage
                   <div className="main-left-sidebar">
                     <div className="user_profile">
                       <div className="user-pro-img">
-                      {/* <img src={imageUrl} alt="Image de profil" /> */}
-                    
-                       <img src={imageUrl} alt="Image de profil" />
-  
+                        {/* <img src={imageUrl} alt="Image de profil" /> */}
+
+                        <img src={imageUrl} alt="Image de profil" />
 
                         <div className="add-dp" id="OpenImgUpload"></div>
                       </div>
                       <ul className="social_links">
                         {!!user && user.gouvernorat && (
                           <li>
-                            🌍<span>Governorate : </span> 
+                            🌍<span>Governorate : </span>
                             <h3>{user.gouvernorat}</h3>
                           </li>
                         )}
                         {!!user && user.addresse && (
                           <li>
-                          📌<span> City : </span>
-                               <h3>{user.addresse}</h3>
+                            📌<span> City : </span>
+                            <h3>{user.addresse}</h3>
                           </li>
                         )}
                         {!!user && user.dateNaissance && (
                           <li>
-                            📆<span>Birth Date :</span>  
+                            📆<span>Birth Date :</span>
                             <h3>
                               {new Date(user.dateNaissance).toLocaleDateString(
                                 "fr-FR"
@@ -86,26 +91,20 @@ const coverImageUrl = user && user.coverImage
                         )}
                         {!!user && user.telephone && (
                           <li>
-                            📲 <span>Phone number :</span> 
+                            📲 <span>Phone number :</span>
                             <h3>{user.telephone}</h3>
                           </li>
                         )}
-                       
                       </ul>
-                     
+
                       <div>
                         <br></br>
                       </div>
-                      
+
                       <br />
-                      <div className="post-popup pst-pj">
-                       
-                      </div>
-                     
+                      <div className="post-popup pst-pj"></div>
                     </div>
-                    <div className="suggestions full-width">
-                    
-                    </div>
+                    <div className="suggestions full-width"></div>
                   </div>
                 </div>
                 <div className="col-lg-6">
@@ -113,7 +112,7 @@ const coverImageUrl = user && user.coverImage
                     <div className="user-tab-sec rewivew">
                       <h3>{user.name}</h3>
                       <div className="star-descp">
-                      <span>Role : {user.role}</span>
+                        <span>Role : {user.role}</span>
 
                         <ul>
                           <li>
@@ -132,9 +131,6 @@ const coverImageUrl = user && user.coverImage
                             <i className="fa fa-star-half-o"></i>
                           </li>
                         </ul>
-
-
-                    
                       </div>
                       <div className="tab-feed st2 settingjb">
                         <ul>
@@ -2636,8 +2632,7 @@ const coverImageUrl = user && user.coverImage
 
                     <div className="product-feed-tab current" id="info-dd">
                       <div className="star-descp border-radius: 56px">
-                      <SocialSkillsOnlyReading userId={id}/>
-                       
+                        <SocialSkillsOnlyReading userId={id} />
                       </div>
                       {/*<div className="user-profile-ov st2">
 											<h3><a href="#" title="" className="exp-bx-open">Experience </a><a href="#" title="" className="exp-bx-open"><i className="fa fa-pencil"></i></a> <a href="#" title="" className="exp-bx-open"><i className="fa fa-plus-square"></i></a></h3>
@@ -2671,10 +2666,6 @@ const coverImageUrl = user && user.coverImage
                           lectus commodo viverra.{" "}
                         </p>
                       </div>
-
-
-
-                     
                     </div>
                     <div className="product-feed-tab" id="rewivewdata">
                       <section></section>
@@ -3632,7 +3623,6 @@ const coverImageUrl = user && user.coverImage
                         </div>
                       </div>
                     </div>
-                  
                   </div>
                 </div>
                 <div className="col-lg-3">

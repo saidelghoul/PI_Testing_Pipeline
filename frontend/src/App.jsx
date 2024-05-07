@@ -42,11 +42,11 @@ import Leaderboard from "./Components/Pages/Skills/Leaderboard";
 import Historiques from "./Components/Historiques";
 import UpdateProfil from "./Components/Pages/UpdateProfil";
 import ResetPassword from "./Components/Pages/ResetPassword";
-import NewPassword from './Components/Pages/NewPassword';
+import NewPassword from "./Components/Pages/NewPassword";
 import ConfirmEmail from "./Components/Pages/ConfirmEmail";
 import AddFriends from "./Components/Pages/Friends/AddFriends";
 import ProfileFriend from "./Components/Pages/Friends/ProfileFriend";
-import SuccessPage from './Components/Pages/Friends/SucessPage';
+import SuccessPage from "./Components/Pages/Friends/SucessPage";
 import Disscussions from "./Components/Pages/chats/Disscussions";
 import MyGroups from "./Components/Pages/groups/MyGroups";
 import AddPubGroups from "./Components/Pages/groups/AddPubGroups";
@@ -55,7 +55,7 @@ import PubGroups from "./Components/Pages/groups/PubGroups";
 import PubActions from "./Components/Pages/groups/PubActions";
 import AddCommentPub from "./Components/Pages/groups/AddCommentPub";
 
-axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL;
 axios.defaults.withCredentials = true;
 
 function App() {
@@ -91,7 +91,7 @@ function App() {
               </>
             }
           />
-            <Route
+          <Route
             path="/afficherPub/:groupId"
             element={
               <>
@@ -101,7 +101,7 @@ function App() {
               </>
             }
           />
-           <Route
+          <Route
             path="/actions/:postId"
             element={
               <>
@@ -111,7 +111,7 @@ function App() {
               </>
             }
           />
-           <Route
+          <Route
             path="/addcomments/:postId"
             element={
               <>
@@ -120,9 +120,8 @@ function App() {
                 <Footer />
               </>
             }
-
           />
-      
+
           <Route
             path="/message"
             element={
@@ -211,7 +210,7 @@ function App() {
               </>
             }
           />
-           <Route
+          <Route
             path="/Historiques/:id"
             element={
               <>
@@ -230,7 +229,7 @@ function App() {
               </>
             }
           />
-       
+
           <Route
             path="/getUsers/:conversationId"
             element={
@@ -395,7 +394,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/friends"
             element={
               <>
@@ -405,14 +404,16 @@ function App() {
               </>
             }
           />
-              <Route path="/success" element={
-                <>
+          <Route
+            path="/success"
+            element={
+              <>
                 <SuccessPage />
-                </>
-              } />
+              </>
+            }
+          />
 
-
-<Route
+          <Route
             path="/profileuser/:id"
             element={
               <>
@@ -422,7 +423,7 @@ function App() {
               </>
             }
           />
-<Route
+          <Route
             path="/updateProfil"
             element={
               <>
@@ -442,14 +443,8 @@ function App() {
             }
           />
 
-<Route 
-  path="/reset/:token" 
-  element={<NewPasswordWrapper />} 
-/>
-<Route path="/confirm/:token" element={<Confirmation/>} />
-
-
-
+          <Route path="/reset/:token" element={<NewPasswordWrapper />} />
+          <Route path="/confirm/:token" element={<Confirmation />} />
 
           <Route
             path="/affectSkill/:id"
@@ -466,8 +461,8 @@ function App() {
             element={
               <>
                 <Navbar />
-                {/*<AffectSkill />*/ }
-                <Leaderboard/>
+                {/*<AffectSkill />*/}
+                <Leaderboard />
                 <Footer />
               </>
             }
@@ -493,7 +488,6 @@ function App() {
               </>
             }
           />
-         
 
           <Route
             path="/socialSkills/edit/:id"

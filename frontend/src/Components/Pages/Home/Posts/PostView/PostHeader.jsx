@@ -16,13 +16,13 @@ export default function PostHeader({ postContent, fetchPosts }) {
     ? postContent.reports.includes(user?.id)
     : false;
 
-    const imageUrl = (usrId, usr) => {
-      if (usrId && usr?.profileImage) {
-        return `http://localhost:8000/user/${usrId}/profile`;
-      } else {
-        return "/assets/images/resources/user-pro-img.png";
-      }
-    };
+  const imageUrl = (usrId, usr) => {
+    if (usrId && usr?.profileImage) {
+      return `${process.env.REACT_APP_BACKEND_URL}/user/${usrId}/profile`;
+    } else {
+      return "/assets/images/resources/user-pro-img.png";
+    }
+  };
 
   const handleReportClick = async () => {
     try {
@@ -39,12 +39,11 @@ export default function PostHeader({ postContent, fetchPosts }) {
     }
   };
 
-
   return (
     <>
       <div className="post_topbar">
         <div className="usy-dt">
-        {/* <img
+          {/* <img
           src={imageUrl(user.id, user)}
           alt={user.name}
           style={{ width: '55px', height: '55px', borderRadius: '50%' }}

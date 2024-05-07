@@ -1,5 +1,5 @@
 import axios from "axios";
-const url = "http://localhost:8000/checklists";
+const url = process.env.REACT_APP_BACKEND_URL + "/checklists";
 
 export const getChecklists = async (id) => {
   id = id || "";

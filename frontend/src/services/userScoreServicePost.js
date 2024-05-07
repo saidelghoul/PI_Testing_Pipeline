@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
 
 // Base URL pour les requêtes
-const apiUrl = "http://localhost:8000/userScore"; // Ajustez selon votre configuration
+const apiUrl = process.env.REACT_APP_BACKEND_URL + "/userScore"; // Ajustez selon votre configuration
 
 const userScoreServicePost = {
   // Récupérer le nombre de rapports pour un utilisateur par son ID
@@ -11,7 +11,10 @@ const userScoreServicePost = {
       //console.log("PubReports",response);
       return response.data;
     } catch (error) {
-      console.error("Erreur lors de la récupération des rapports:", error.message);
+      console.error(
+        "Erreur lors de la récupération des rapports:",
+        error.message
+      );
       throw error;
     }
   },
@@ -31,11 +34,16 @@ const userScoreServicePost = {
   // Récupérer le nombre de dislikes pour un utilisateur par son ID
   getPubDislikesById: async (userId) => {
     try {
-      const response = await axios.get(`${apiUrl}/getPubtDesliketbyid/${userId}`);
+      const response = await axios.get(
+        `${apiUrl}/getPubtDesliketbyid/${userId}`
+      );
       //console.log("PubDislikes",response);
       return response.data;
     } catch (error) {
-      console.error("Erreur lors de la récupération des dislikes:", error.message);
+      console.error(
+        "Erreur lors de la récupération des dislikes:",
+        error.message
+      );
       throw error;
     }
   },
@@ -43,11 +51,16 @@ const userScoreServicePost = {
   // Récupérer le nombre de rapports pour les événements
   getEventReportsById: async (userId) => {
     try {
-      const response = await axios.get(`${apiUrl}/getEventReportbyid/${userId}`);
+      const response = await axios.get(
+        `${apiUrl}/getEventReportbyid/${userId}`
+      );
       //console.log("EventReports",response);
       return response.data;
     } catch (error) {
-      console.error("Erreur lors de la récupération des rapports d'événements:", error.message);
+      console.error(
+        "Erreur lors de la récupération des rapports d'événements:",
+        error.message
+      );
       throw error;
     }
   },
@@ -59,7 +72,10 @@ const userScoreServicePost = {
       //console.log("EventLikes",response);
       return response.data;
     } catch (error) {
-      console.error("Erreur lors de la récupération des likes d'événements:", error.message);
+      console.error(
+        "Erreur lors de la récupération des likes d'événements:",
+        error.message
+      );
       throw error;
     }
   },
@@ -67,11 +83,16 @@ const userScoreServicePost = {
   // Récupérer le nombre de dislikes pour les événements
   getEventDislikesById: async (userId) => {
     try {
-      const response = await axios.get(`${apiUrl}/getEventDesliketbyid/${userId}`);
+      const response = await axios.get(
+        `${apiUrl}/getEventDesliketbyid/${userId}`
+      );
       //console.log("EventsDislikes",response);
       return response.data;
     } catch (error) {
-      console.error("Erreur lors de la récupération des dislikes d'événements:", error.message);
+      console.error(
+        "Erreur lors de la récupération des dislikes d'événements:",
+        error.message
+      );
       throw error;
     }
   },

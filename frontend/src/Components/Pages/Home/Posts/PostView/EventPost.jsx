@@ -78,7 +78,7 @@ export default function EventPost({ postContent }) {
     <>
       {postContent.ImagePath && (
         <img
-          src={`http://localhost:8000/images/${postContent.ImagePath}`}
+          src={`${process.env.REACT_APP_BACKEND_URL}/images/${postContent.ImagePath}`}
           alt="Event"
           style={{ width: "500px", height: "250px" }}
         />

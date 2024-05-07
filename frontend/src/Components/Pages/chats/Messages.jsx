@@ -22,7 +22,7 @@ import { Link } from "react-router-dom";
 import io from "socket.io-client"; // Importer socket.io-client
 import { UserContext } from "../../../../context/userContext.jsx";
 
-const socket = io("http://localhost:8000");
+const socket = io(`${process.env.REACT_APP_BACKEND_URL}`);
 
 export default function Messages() {
   const [conversations, setConversations] = useState([]);
@@ -47,7 +47,7 @@ export default function Messages() {
         );
       }
     };
-  
+
     // Écoutez les nouveaux messages émis par le serveur
     socket.on("message", (newMessage) => {
       setConversations((prevConversations) => {
@@ -55,7 +55,7 @@ export default function Messages() {
         const conversationIndex = prevConversations.findIndex(
           (conversation) => conversation._id === newMessage.conversation
         );
-  
+
         if (conversationIndex !== -1) {
           // Ajoutez le nouveau message à la conversation correspondante
           const updatedConversations = [...prevConversations];
@@ -63,19 +63,21 @@ export default function Messages() {
           return updatedConversations;
         } else {
           // Si la conversation n'existe pas encore, ajoutez-la
-          return [...prevConversations, { _id: newMessage.conversation, messages: [newMessage] }];
+          return [
+            ...prevConversations,
+            { _id: newMessage.conversation, messages: [newMessage] },
+          ];
         }
       });
     });
-  
+
     fetchConversations();
-  
+
     // Nettoyez l'écouteur d'événements lorsque le composant est démonté
     return () => {
       socket.off("message");
     };
   }, []);
-  
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -127,7 +129,9 @@ export default function Messages() {
       socket.emit("message", {
         content: messageInput,
         sender: user.id,
-        repondeur: selectedConversationDetails?.members.find(member => member !== user.id),
+        repondeur: selectedConversationDetails?.members.find(
+          (member) => member !== user.id
+        ),
         conversationId: selectedConversationId,
       });
       setMessageInput("");
@@ -148,7 +152,6 @@ export default function Messages() {
       );
     }
   };
-
 
   conversations.sort((a, b) => {
     const lastMessageA = a.messages[a.messages.length - 1];
@@ -353,53 +356,63 @@ export default function Messages() {
                     </svg>{" "}
                   </a>
                 </div>
-                <div className="messages-line" style={{ maxHeight: "600px", overflowY: "auto" }}>
-  {messages.map((message, index) => (
-    <div
-      key={index}
-      className={`main-message-box ${message.sender === user.id ? "ta-right" : "ta-left"}`}
-      style={message.sender === user.id ? { textAlign: "right" } : { textAlign: "left" }}
-    >
-      <div className="message-dt st3">
-        {message.repondeur !== user.id && (
-          <div className="message-inner-dt">
-            <a onClick={() => handleDelete(message._id)}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                className="bi bi-x-octagon-fill"
-                viewBox="0 0 16 16"
-              >
-                <path d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353zm-6.106 4.5L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708" />
-              </svg>
-            </a>
-          </div>
-        )}
+                <div
+                  className="messages-line"
+                  style={{ maxHeight: "600px", overflowY: "auto" }}
+                >
+                  {messages.map((message, index) => (
+                    <div
+                      key={index}
+                      className={`main-message-box ${
+                        message.sender === user.id ? "ta-right" : "ta-left"
+                      }`}
+                      style={
+                        message.sender === user.id
+                          ? { textAlign: "right" }
+                          : { textAlign: "left" }
+                      }
+                    >
+                      <div className="message-dt st3">
+                        {message.repondeur !== user.id && (
+                          <div className="message-inner-dt">
+                            <a onClick={() => handleDelete(message._id)}>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                fill="currentColor"
+                                className="bi bi-x-octagon-fill"
+                                viewBox="0 0 16 16"
+                              >
+                                <path d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353zm-6.106 4.5L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708" />
+                              </svg>
+                            </a>
+                          </div>
+                        )}
 
-        <div className="message-inner-dt img-bx" style={message.sender !== user.id ? { color: "red" } : {}}>
-          <b>
-            {message.sender !== user.id ? "De : "  : "Vous :"} {message.content}
-          </b>
-        </div>
+                        <div
+                          className="message-inner-dt img-bx"
+                          style={
+                            message.sender !== user.id ? { color: "red" } : {}
+                          }
+                        >
+                          <b>
+                            {message.sender !== user.id ? "De : " : "Vous :"}{" "}
+                            {message.content}
+                          </b>
+                        </div>
 
-        <span>{moment(message.createdAt).format("lll")}</span>
-      </div>
-      <div className="messg-usr-img">
-        <img
-          src={
-               "/assets/images/resources/m-img1.png"
-          }
-          alt=""
-        />
-      </div>
-    </div>
-  ))}
-</div>
-
-
-
+                        <span>{moment(message.createdAt).format("lll")}</span>
+                      </div>
+                      <div className="messg-usr-img">
+                        <img
+                          src={"/assets/images/resources/m-img1.png"}
+                          alt=""
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
                 <div className="message-send-area">
                   <form onSubmit={handleMessageSend}>

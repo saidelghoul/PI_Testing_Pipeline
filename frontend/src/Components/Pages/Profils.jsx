@@ -18,38 +18,36 @@ import SocialSkillService from "../../services/socialSkill-service";
 import { Link } from "react-router-dom";
 import SocialSkillAffect from "./Skills/SocialSkills/SocialSkillAffect";
 import SocialSkillsUSer from "./Skills/SocialSkills/SocialSkillsUser";
-import UserStats, { generatePieChartBase64 } from '../Pages/Skills/UserStats';
+import UserStats, { generatePieChartBase64 } from "../Pages/Skills/UserStats";
 import PostsList from "./Home/Posts/PostsList";
-
 
 export default function Profils() {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useContext(UserContext);
-  
+
   const userId = user ? user.id : null;
   //const imageUrl = userId ? `http://localhost:8000/user/${userId}/profile` : "/assets/images/resources/user-pro-img.png";
-  const imageUrl = userId && user && user.profileImage 
-  ? `http://localhost:8000/user/${userId}/profile` 
-  : "/assets/images/resources/user-pro-img.png";
+  const imageUrl =
+    userId && user && user.profileImage
+      ? `${process.env.REACT_APP_BACKEND_URL}/user/${userId}/profile`
+      : "/assets/images/resources/user-pro-img.png";
 
   // const coverImageUrl = userId ? `http://localhost:8000/user/${userId}/cover` : "/assets/images/resources/cover-img.jpg";
 
-  const coverImageUrl = userId && user && user.coverImage 
-  ? `http://localhost:8000/user/${userId}/cover` 
-  : "/assets/images/resources/cover-img.jpg";
+  const coverImageUrl =
+    userId && user && user.coverImage
+      ? `${process.env.REACT_APP_BACKEND_URL}/user/${userId}/cover`
+      : "/assets/images/resources/cover-img.jpg";
 
   const isAdmin = user && user.role === "Directeur d'étude";
   const isChefDep = user && user.role === "Chef département";
   const isChefUnite = user && user.role === "Chef unité";
   const isEnseignant = user?.role === "Enseignant";
-  const shouldDisplayCamembert =  isEnseignant || isAdmin || isChefDep || isChefUnite; //condition pour afficher le camembert
-
-
- 
+  const shouldDisplayCamembert =
+    isEnseignant || isAdmin || isChefDep || isChefUnite; //condition pour afficher le camembert
 
   useEffect(() => {
     if (user) {
-     
       fetchUserData();
 
       fetchSkills();
@@ -63,19 +61,19 @@ export default function Profils() {
   const fetchSkills = async () => {
     try {
       const result = await SocialSkillService.getAvailableSocialSkills(user.id);
-  
+
       if (Array.isArray(result)) {
         setSkills([...result, user.id]); // Maintenant, vous êtes sûr que 'result' est un tableau
       } else {
         console.error("Les données reçues ne sont pas un tableau"); // Gestion d'erreur
       }
     } catch (error) {
-      console.error("Erreur lors de la récupération des compétences disponibles:", error); // Gestion des exceptions
+      console.error(
+        "Erreur lors de la récupération des compétences disponibles:",
+        error
+      ); // Gestion des exceptions
     }
   };
-  
-
-
 
   const [assigned, setAssigned] = useState([]);
 
@@ -132,7 +130,7 @@ export default function Profils() {
   return (
     <>
       <section className="cover-sec">
-      <img src={coverImageUrl} alt="Cover" width="100%" height="300px" />
+        <img src={coverImageUrl} alt="Cover" width="100%" height="300px" />
         <div className="add-pic-box">
           <div className="container">
             <div className="row no-gutters"></div>
@@ -148,24 +146,23 @@ export default function Profils() {
                   <div className="main-left-sidebar">
                     <div className="user_profile">
                       <div className="user-pro-img">
-                      <img src={imageUrl} alt="Image de profil" />
-
+                        <img src={imageUrl} alt="Image de profil" />
 
                         <div className="add-dp" id="OpenImgUpload"></div>
                       </div>
-                      
+
                       <br />
                       <div>
                         <br />
                         <ul>
                           <li>
-                          <a
+                            <a
                               className="post_project"
                               href="/updateProfil"
                               title=""
                               onClick={fetchUserData}
                             >
-                           🪪  update my profile 
+                              🪪 update my profile
                             </a>
                           </li>
                         </ul>
@@ -177,14 +174,14 @@ export default function Profils() {
                         {isAdmin && (
                           <div>
                             <a href="/completerProfil" title="">
-                              <i className="la la-user"></i> My chefs department  
+                              <i className="la la-user"></i> My chefs department
                             </a>
                           </div>
                         )}
                         {isChefDep && (
                           <div>
                             <a href="/completerProfil" title="">
-                              <i className="la la-user"></i> My chefs unit 
+                              <i className="la la-user"></i> My chefs unit
                             </a>
                           </div>
                         )}
@@ -197,23 +194,23 @@ export default function Profils() {
                         )}
                       </div>
                       <br />
-                      
+
                       <ul className="social_links">
                         {!!user && user.gouvernorat && (
                           <li>
-                            🌍<span>Governorate : </span> 
+                            🌍<span>Governorate : </span>
                             <h3>{user.gouvernorat}</h3>
                           </li>
                         )}
                         {!!user && user.addresse && (
                           <li>
-                          📌<span> City : </span>
-                               <h3>{user.addresse}</h3>
+                            📌<span> City : </span>
+                            <h3>{user.addresse}</h3>
                           </li>
                         )}
                         {!!user && user.dateNaissance && (
                           <li>
-                            📆<span>Birth Date :</span>  
+                            📆<span>Birth Date :</span>
                             <h3>
                               {new Date(user.dateNaissance).toLocaleDateString(
                                 "fr-FR"
@@ -223,16 +220,18 @@ export default function Profils() {
                         )}
                         {!!user && user.telephone && (
                           <li>
-                            📲 <span>Phone number :</span> 
+                            📲 <span>Phone number :</span>
                             <h3>{user.telephone}</h3>
                           </li>
                         )}
-                       
                       </ul>
                     </div>
                     <div className="suggestions full-width">
-                    <div >
-                      <div><Badges/></div></div> 
+                      <div>
+                        <div>
+                          <Badges />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -242,11 +241,9 @@ export default function Profils() {
                       <h3> {!!user && <>{user.name}</>}</h3>
                       <div className="star-descp">
                         <span> {!!user && <>{user.role}</>}</span>
-                        
-                        <Link to={`/Leaderboard`}>Show the Leaderboard</Link>{/*`/affectSkill/${user?.id}`*/}
-                            
-                        
-                        
+
+                        <Link to={`/Leaderboard`}>Show the Leaderboard</Link>
+                        {/*`/affectSkill/${user?.id}`*/}
                       </div>
                       <div className="tab-feed st2 settingjb">
                         <ul>
@@ -2748,31 +2745,15 @@ export default function Profils() {
 
                     <div className="product-feed-tab current" id="info-dd">
                       <div className="star-descp border-radius: 56px">
-                      
-                        <SocialSkillsUSer/> 
+                        <SocialSkillsUSer />
                         {<SocialSkillAffect userId={user._id} />}
                       </div>
-                                          
 
-
-                      
-<div style={{ borderRadius: '56px' }}>
-
-
-
-<div>
-<PostsList userProfileId={user.id} />
-
-  </div>
-  
-</div>
-
-
-
-                      
-
-                      
-                      
+                      <div style={{ borderRadius: "56px" }}>
+                        <div>
+                          <PostsList userProfileId={user.id} />
+                        </div>
+                      </div>
                     </div>
                     <div className="product-feed-tab" id="rewivewdata">
                       <section></section>
@@ -3730,7 +3711,6 @@ export default function Profils() {
                         </div>
                       </div>
                     </div>
-                  
                   </div>
                 </div>
                 <div className="col-lg-3">
@@ -3741,18 +3721,19 @@ export default function Profils() {
                       </Link>
                     </div>
                     <div className="widget widget-portfolio">
-                    <div className="user-profile-ov">
-                      <div >
-                    {shouldDisplayCamembert && (
-                    <div className="d-flex justify-content-center"> {/* Pour centrer le camembert */}
-                      <UserStats />
-                    </div>
-                       )}
-                    </div>
+                      <div className="user-profile-ov">
+                        <div>
+                          {shouldDisplayCamembert && (
+                            <div className="d-flex justify-content-center">
+                              {" "}
+                              {/* Pour centrer le camembert */}
+                              <UserStats />
+                            </div>
+                          )}
+                        </div>
 
-  {/* Nouvelle balise div ajoutée après le code précédent */}
-  
-</div>
+                        {/* Nouvelle balise div ajoutée après le code précédent */}
+                      </div>
                     </div>
                   </div>
                 </div>

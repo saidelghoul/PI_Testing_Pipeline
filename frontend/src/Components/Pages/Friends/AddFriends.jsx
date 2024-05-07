@@ -9,14 +9,13 @@ export default function AddFriends() {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 8; 
+  const itemsPerPage = 8;
   const [totalPages, setTotalPages] = useState(0);
   const userId = user ? user.id : null;
-  const imageUrl = user.profileImage 
-  ? `http://localhost:8000/user/${userId}/profile` 
-  : "/assets/images/resources/user-pro-img.png";
-  
-  
+  const imageUrl = user.profileImage
+    ? `${process.env.REACT_APP_BACKEND_URL}/user/${userId}/profile`
+    : "/assets/images/resources/user-pro-img.png";
+
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -31,7 +30,6 @@ export default function AddFriends() {
         console.error("Error retrieving users:", error);
       });
   }, []);
- 
 
   const handlePageChange = ({ selected }) => {
     setCurrentPage(selected);
@@ -41,34 +39,40 @@ export default function AddFriends() {
   const displayUsersForPage = () => {
     const startIndex = currentPage * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const filteredUsers = users.filter(user => 
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchTerm.toLowerCase()),
-      
+    const filteredUsers = users.filter(
+      (user) =>
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.role.toLowerCase().includes(searchTerm.toLowerCase())
     );
     //return users.slice(startIndex, endIndex);
     return filteredUsers.slice(startIndex, endIndex);
   };
 
   useEffect(() => {
-    const filteredUsers = users.filter(user => 
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredUsers = users.filter(
+      (user) =>
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.role.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     setTotalPages(Math.ceil(filteredUsers.length / itemsPerPage));
   }, [searchTerm, users]);
-  
+
   return (
     <section className="companies-info">
       <div className="container">
         <div className="company-title d-flex justify-content-between align-items-center">
           <h3>All Users</h3>
-          
-           <div className="search-bar">
+
+          <div className="search-bar">
             <form>
-              <input type="text" name="search" placeholder="Search..."  value={searchTerm} 
-            onChange={(e) => setSearchTerm(e.target.value)} />
+              <input
+                type="text"
+                name="search"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
               <button type="submit">
                 <i className="la la-search"></i>
               </button>
@@ -82,16 +86,21 @@ export default function AddFriends() {
               <p>Loading...</p>
             ) : (
               displayUsersForPage().map((user) => (
-                
                 <div key={user._id} className="col-lg-3 col-md-4 col-sm-6">
                   <div className="company_profile_info">
                     <div className="company-up-info">
-                    {user.profileImage ? (
-            <img src={`http://localhost:8000/user/${user._id}/profile`} alt="Image de profil" />
-          ) : (
-            <img src="/assets/images/resources/user-pro-img.png" alt="Image de profil par défaut" />
-          )}
-                  <h4>{user.name}</h4>
+                      {user.profileImage ? (
+                        <img
+                          src={`${process.env.REACT_APP_BACKEND_URL}/user/${user._id}/profile`}
+                          alt="Image de profil"
+                        />
+                      ) : (
+                        <img
+                          src="/assets/images/resources/user-pro-img.png"
+                          alt="Image de profil par défaut"
+                        />
+                      )}
+                      <h4>{user.name}</h4>
                       <h5>{user.role}</h5>
                     </div>
                     <Link
@@ -107,7 +116,13 @@ export default function AddFriends() {
             )}
           </div>
           {/* Afficher le composant de pagination */}
-          <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "20px",
+            }}
+          >
             <ReactPaginate
               pageCount={totalPages}
               pageRangeDisplayed={5} // Nombre de pages à afficher dans la pagination
