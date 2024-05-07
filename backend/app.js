@@ -9,7 +9,7 @@ const http = require("http");
 const mongoose = require("mongoose");
 const socketIo = require("socket.io");
 const multer = require("multer");
-const twilio = require('twilio');
+const twilio = require("twilio");
 const Message = require("./model/Chats/message");
 const Conversation = require("./model/Chats/conversation");
 const router = express.Router();
@@ -33,28 +33,24 @@ const technicalSkillsRouter = require("./routes/technicalSkillsRoute");
 const UserScoreRoutes = require("./routes/UserScoreRoutes");
 const CommentPageRoute = require("./routes/commentairePubRoute");
 
-
 const app = express();
 const server = http.createServer(app);
 
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
-
-
 
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("Database connected"))
   .catch((err) => console.log("Database not connected", err));
 
-  app.set("views", path.join(__dirname, "views"));
-  app.set("view engine", "twig");
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "twig");
 
-  
 io.on("connection", (socket) => {
   console.log("Client connected");
 
@@ -117,7 +113,7 @@ app.use("/documents", documentRoute);
 app.use("/socialSkills", socialSkillsRouter);
 app.use("/technicalSkills", technicalSkillsRouter);
 app.use("/user", require("./controller/userController"));
-app.use("/badges",require("./controller/badgesController"));
+app.use("/badges", require("./controller/badgesController"));
 app.use("/userScore", UserScoreRoutes);
 
 app.use(
@@ -125,42 +121,44 @@ app.use(
   express.static(path.join(__dirname, "public/imagesUser"))
 );
 
-const accountSid = 'AC123f75a58cfaeaad10128a4d8a8ac843';
-const authToken = '58b03b9ac98cffd551468d55cf18da4f';
+const accountSid = "AC123f75a58cfaeaad10128a4d8a8ac843";
+const authToken = "58b03b9ac98cffd551468d55cf18da4f";
 
 const client = twilio(accountSid, authToken);
 
-app.post('/send-sms', (req, res) => {
+app.post("/send-sms", (req, res) => {
   const { to, body } = req.body;
 
   client.messages
     .create({
       body: body,
-      from: '+13343397288',
-      to: to
+      from: "+13343397288",
+      to: to,
     })
-    .then(message => {
-      console.log('SMS sent:', message.sid);
-      res.send('SMS sent successfully!');
+    .then((message) => {
+      console.log("SMS sent:", message.sid);
+      res.send("SMS sent successfully!");
     })
-    .catch(err => {
-      console.error('Error sending SMS:', err);
-      res.status(500).send('Failed to send SMS');
+    .catch((err) => {
+      console.error("Error sending SMS:", err);
+      res.status(500).send("Failed to send SMS");
     });
 });
 
-app.use('/imagesUser', express.static(path.join(__dirname, 'public/imagesUser')));
-
+app.use(
+  "/imagesUser",
+  express.static(path.join(__dirname, "public/imagesUser"))
+);
 
 const port = process.env.PORT || 8000;
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
   res.status(err.status || 500);
