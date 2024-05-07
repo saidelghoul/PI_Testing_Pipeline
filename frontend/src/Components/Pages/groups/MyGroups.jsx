@@ -108,7 +108,7 @@ return (
                       {user.id === page.creator && (
                         <li>
                           <Link
-                            to={`/modifier/${page._id}`}
+                            to={`/modifierPage/${page._id}`}
                             title=""
                             className="follow"
                           >

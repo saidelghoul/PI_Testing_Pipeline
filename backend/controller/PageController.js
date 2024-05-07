@@ -132,6 +132,7 @@ async function update(req, res) {
   const id = req.params.id;
   const profileImage = req.files.profileImage ? req.files.profileImage[0].filename : undefined;
   const coverImage = req.files.coverImage ? req.files.coverImage[0].filename : undefined;
+  const { nomgroups, description, visibilite } = req.body;
 
   try {
     let group = await Page.findById(id);
@@ -146,6 +147,15 @@ async function update(req, res) {
     }
     if (coverImage) {
       group.coverImage = coverImage;
+    }
+    if (nomgroups) {
+      group.nomgroups = nomgroups;
+    }
+    if (description) {
+      group.description = description;
+    }
+    if (visibilite) {
+      group.visibilite = visibilite;
     }
 
     // Enregistrer les modifications

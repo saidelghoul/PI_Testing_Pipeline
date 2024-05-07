@@ -222,7 +222,7 @@ export default function Groups() {
                         <div className="user-picy">
                           <img src={imageUrl} alt="" /> 
                         </div>
-                        {user.id ===page.creator &&  ( 
+                        {(user.id === page.creator) || (isParticipating || page.notifications.isAccept && page.visibilite)  ? (
   <div className="post-st">
     <ul>
       <li>
@@ -232,20 +232,25 @@ export default function Groups() {
       </li>
     </ul>
   </div>
-)}
+) : <span>👋😊</span>}
+
                       </div>
                     </div>
-                    {(user.id === page.creator || isParticipating || page.visibilite || page.notifications.isAccept) && page.notifications.isAccept ? (
+                    {((user.id === page.creator)|| (isParticipating || page.notifications.isAccept) || page.visibilite) ? (
   <PubGroups groupId={id} />
 ) : (
-  (!page.visibilite && !page.notifications.isAccept && (
+  (!isParticipating && !page.notifications.isAccept) ? (
     <div>
-      <p>You are not authorized to see the publications of this page because it is currently invisible.
-        Or your notifications are denied
-      </p>
+      <p>Vous n'êtes pas autorisé à voir les publications de cette page car vos notifications sont désactivées.</p>
+    </div>
+  ) : (
+    <div>
+      <p>Vous n'êtes pas autorisé à voir les publications de cette page car vous n'êtes pas le créateur.</p>
     </div>
   ))
-)}
+}
+
+
 
                   </div>
                 </div>

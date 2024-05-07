@@ -69,14 +69,7 @@ export default function Navbar() {
           <div className="logo">
             <ODDSocialSkillPopup></ODDSocialSkillPopup>
           </div>
-          <div className="search-bar col-1">
-            <form>
-              <input type="text" name="search" placeholder="Search..." />
-              <button type="submit">
-                <i className="la la-search"></i>
-              </button>
-            </form>
-          </div>
+         
           <nav style={{ paddingRight: "60px" }}>
             <ul>
               <li>

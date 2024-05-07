@@ -193,7 +193,7 @@ function App() {
             }
           />
           <Route
-            path="/modifier/:id"
+            path="/modifierPage/:id"
             element={
               <>
                 <Navbar />
