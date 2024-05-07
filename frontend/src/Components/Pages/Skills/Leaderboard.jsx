@@ -30,7 +30,7 @@ function Leaderboard() {
   const [TaskPoints, setTaskPoints] = useState({});
   const [nbrTasksPoints, setNbrTasksPoints] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
-  const [, setCurrentUserRating] = useState('');
+  const [currentUserRating, setCurrentUserRating] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
   const [pageScores, setPageScores] = useState({}); // Pour les scores des pages
   const [publicationScores, setPublicationScores] = useState({}); 
@@ -50,6 +50,7 @@ function Leaderboard() {
   const isChefUnite = user?.role === "Chef unité";
   const isEnseignant = user?.role === "Enseignant"
 
+  
   useEffect(() => {
     const fetchUsers = async () => {
       setIsLoading(true);
@@ -140,14 +141,18 @@ function Leaderboard() {
           // Récupérer les scores des tâches
   
           const checklistResult = await getChecklistScoreForUser(usr._id);
-          const taskScore = checklistResult.data.message.somme || 1;
-          const nbrTasks = checklistResult.data.message.numberOfTasks || 0;
-  
-          taskScores[usr._id] = taskScore;
-          nbrTasksScores[usr._id] = nbrTasks;
 
-          if(nbrTasks !==0){
-            taskScores[usr._id] = Math.round(taskScore/nbrTasks);
+          console.log("le usr ")
+          const taskScore = checklistResult.data.message.somme
+          // console.log("maybeeee"+usr.name,checklistResult.data);
+          const nbrTasks = checklistResult.data.message.numberOfTasks
+  
+          taskScores[usr._id] = checklistResult.data.message.somme || 1;
+          nbrTasksScores[usr._id] = checklistResult.data.message.numberOfTasks || 0;
+
+          if(checklistResult.data.message.numberOfTasks !==0){
+            taskScores[usr._id] = Math.round((checklistResult.data.message.somme)/(checklistResult.data.message.numberOfTasks));
+            
 
           }else  taskScores[usr._id] = 0;
           
@@ -180,17 +185,24 @@ function Leaderboard() {
 
         })
       );
-  
+
+
       // Calcul du score final pour chaque utilisateur
-      const finalUsers = filteredUsers.map((usr) => {
+      const finalUsers = await filteredUsers.map((usr) => {
 
-
-
-        let finalScore = (socialScores[usr._id] || 0)*0.1 + (TaskPoints[usr._id] || 0)*0.3+ (publicationScores[usr._id] || 0)*0.3+(pageScores[usr._id] || 0)*0.3;
-        console.log("le score finale du user est : ",finalScore)
         
+
+        let finalScore = (socialScores[usr._id] || 0) + (taskScores[usr._id] || 0)+ (publicationScores[usr._id] || 0)+(pageScores[usr._id] || 0);
+
+        console.log("filterUsers Social",socialScores[usr._id]);
+        console.log("filtered Users Task (le prblm est dans le tasks points)",TaskPoints[usr._id]);
+        console.log("filtered Users Page",pageScores[usr._id]);
+        console.log("filtered Users publication",publicationScores[usr._id]);
+        // let finalScore1 = finalScore;
+        console.log("le score finale du user "+usr.name+" est : ",finalScore)
+       
         // Déterminer le nombre de sous-scores égaux à 0
-        const zeroCount = [socialScores[usr._id], TaskPoints[usr._id], publicationScores[usr._id], pageScores[usr._id]].filter((score) => score === 0).length;
+        const zeroCount = [socialScores[usr._id], taskScores[usr._id], publicationScores[usr._id], pageScores[usr._id]].filter((score) => score === 0).length;
 
 
         // Appliquer la réduction en fonction du nombre de zéros
@@ -206,6 +218,7 @@ function Leaderboard() {
         return {
           ...usr,
           finalScore,
+          // finalScore1
 
 
         };
@@ -216,27 +229,41 @@ function Leaderboard() {
 
 
 
-
+      
   
       // Trouver Xmax et Xmin
       const Xmax = Math.max(...finalUsers.map((usr) => usr.finalScore));
-      //console.log("xmax", Xmax);
-      const Xmin = Math.min(...finalUsers.map((usr) => usr.finalScore));
-      //console.log("xmin", Xmin);
+      console.log("liste pr trouver le max",finalUsers.map((usr) => usr.finalScore));
+      console.log("xmax du user", Xmax);
+      console.log("liste Users pr trouver le max",finalUsers.map((usr) => usr));
+      const Xmin = Math.min(...finalUsers.map(
+        (usr) => usr.finalScore));
+      console.log("xmin", Xmin);
+      
       // Déterminer le rating pour chaque utilisateur
       const ratedUsers = finalUsers.map((usr) => {
-        const Fi = (Xmax - usr.finalScore) / (Xmax - Xmin);
+        let finalScore = (socialScores[usr._id] || 0) + (taskScores[usr._id] || 0)+ (publicationScores[usr._id] || 0)+(pageScores[usr._id] || 0);
+        console.log("formule final scorre akram  ",usr.name,finalScore)
+        const Fi = (Xmax - finalScore) / (Xmax - Xmin);
+        console.log("FiMax",Xmax);
+        console.log("FiMin",Xmin);
+        console.log("user haha,le problème ESST LAAAAAAAAAA"+usr.name,usr.finalScore);
         let rating;
         if (Fi >= 0.8) {
           rating = '⭐'; // 5 étoiles
+          console.log("1 étoile pour le user"+usr.name,usr.finalScore1);
         } else if (Fi >= 0.6) {
           rating = '⭐⭐'; // 4 étoiles
+          console.log("2 étoile pour le user"+usr.name,usr.finalScore1);
         } else if (Fi >= 0.4) {
           rating = '⭐⭐⭐'; // 3 étoiles
+          console.log("3 étoile pour le user"+usr.name,usr.finalScore1);
         } else if (Fi >= 0.2) {
           rating = '⭐⭐⭐⭐'; // 2 étoiles
+          console.log("4 étoile pour le user"+usr.name,usr.finalScore1);
         } else {
           rating = '⭐⭐⭐⭐⭐'; // 1 étoile
+          console.log("5 étoile pour le user"+usr.name,usr.finalScore1);
         }
   
         return {
@@ -246,10 +273,14 @@ function Leaderboard() {
 
         };
       });
-       // Obtenir le rating de l'utilisateur actuel
-       const currentUser = ratedUsers.find((usr) => usr._id === user._id);
-       setCurrentUserRating(currentUser ? currentUser.rating : '');
 
+      console.log("USers Rated",ratedUsers);
+       // Obtenir le rating de l'utilisateur actuel
+       const currentUser = ratedUsers.find((usr) => usr._id === user.id);
+
+       console.log("Current"+user.name,currentUser.rating);
+       
+      setCurrentUserRating(currentUser ? currentUser.rating : '');
       setUsers(ratedUsers);
       setSocialPoints(socialScores);
       setSkillsAssignedAuto(SkillsAuto);
@@ -300,6 +331,12 @@ const calculatePostScore = (nbrLikes, nbrDislikes, nbrReports) => {
 // Trier les utilisateurs selon le score final décroissant
 const sortedUsers = filteredUsers.map((usr) => {
   let finalScore = (socialPoints[usr._id] || 0) + (TaskPoints[usr._id] || 0) + (publicationScores[usr._id]||0) + (pageScores[usr._id]||0);
+  console.log("le user "+ usr.name+" a comme score social ", socialPoints[usr._id]);
+  console.log("le user "+ usr.name+" a comme score task ",TaskPoints[usr._id]);
+  console.log("le user "+ usr.name+" a comme score publication ", publicationScores[usr._id]);
+  console.log("le user "+ usr.name+" a comme score pageScores ", (pageScores[usr._id]));
+  
+
   //console.log("Score final de l'utilisateur:", usr.name, finalScore); // Afficher le score final pour chaque utilisateur
   // Déterminer le nombre de sous-scores égaux à 0
   const zeroCount = [socialPoints[usr._id], TaskPoints[usr._id], publicationScores[usr._id], pageScores[usr._id]].filter((score) => score === 0).length;
@@ -318,6 +355,7 @@ const sortedUsers = filteredUsers.map((usr) => {
     finalScore = 0; // Si tous les sous-scores sont 0, le score final est 0
   }
   //console.log("Final Score du user "+usr.name+"est :", finalScore)
+  console.log("le user "+ usr.name+ " aura donc comme score final ",finalScore)
 
   return {
     ...usr,
@@ -328,6 +366,7 @@ const sortedUsers = filteredUsers.map((usr) => {
     finalScore,
     
     isCurrentUser: usr._id === user.id, // Pour identifier l'utilisateur actuel
+    
   };
 });
 
@@ -546,6 +585,7 @@ const handlePageChange = (data) => {
 const startIndex = currentPage * itemsPerPage;
 const endIndex = startIndex + itemsPerPage;
 const usersToDisplay = sortedUsers.slice(startIndex, endIndex);
+console.log("JE SUIS JUSTE LAA",usersToDisplay)
 
 const applyBordersAndCenter = (worksheet) => {
   const range = XLSX.utils.decode_range(worksheet['!ref']); // Obtenir la plage des cellules
