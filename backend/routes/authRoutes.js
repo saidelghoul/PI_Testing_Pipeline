@@ -9,7 +9,7 @@ const {
   logout,
   forgotPassword,
   resetPassword,
-  confirmEmail
+  confirmEmail,
 } = require("../controller/authController");
 
 //middleware
@@ -20,6 +20,7 @@ router.use(
       "http://localhost:5173",
       "http://localhost:3000",
       "http://172.19.136.127:3000",
+      "https://piweb-codemasters.onrender.com",
     ],
   })
 );
@@ -28,9 +29,9 @@ router.get("/", test);
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/profile", getProfile);
-router.get('/logout',logout);
-router.post("/forgotPassword",forgotPassword);
-router.post("/resetPassword",resetPassword);
-router.get('/confirm/:token', confirmEmail);
+router.get("/logout", logout);
+router.post("/forgotPassword", forgotPassword);
+router.post("/resetPassword", resetPassword);
+router.get("/confirm/:token", confirmEmail);
 
 module.exports = router;
