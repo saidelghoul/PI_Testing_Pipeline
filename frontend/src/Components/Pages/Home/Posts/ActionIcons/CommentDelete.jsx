@@ -1,13 +1,11 @@
 import React from "react";
 import axios from "axios";
-export default function CommentDelete({comment}) {
+export default function CommentDelete({ comment }) {
   const handleDeleteComment = async (id) => {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer ?")) {
       try {
         await axios.delete(`commentaire/remove/${id}`);
       } catch (error) {
-        console.error("Erreur lors de la suppression ", error.message);
-
         alert(
           "Erreur lors de la configuration de la requête : " + error.message
         );

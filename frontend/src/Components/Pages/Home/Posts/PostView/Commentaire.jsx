@@ -1,15 +1,11 @@
 import moment from "moment";
 import { reported } from "../../utils/const";
-import { useContext } from "react";
-import { UserContext } from "../../../../../../context/userContext";
 import axios from "axios";
 import CommentDelete from "../ActionIcons/CommentDelete";
 import { isCreator } from "../../utils/utils";
 import { Button } from "react-bootstrap";
 
-export default function Commentaire({ comment }) {
-  const { user } = useContext(UserContext);
-
+export default function Commentaire({ comment, user }) {
   const userReportThisPost = comment.reports
     ? comment.reports.includes(user?.id)
     : false;
@@ -50,7 +46,7 @@ export default function Commentaire({ comment }) {
           )}
           {!isCreator(user.id, comment.creator?._id) && (
             <Button
-              onClick={() => handleCommentReportClick(comment._id)}
+              onClick={handleCommentReportClick}
               variant={userReportThisPost ? reported.NO : reported.YES}
             >
               Alert

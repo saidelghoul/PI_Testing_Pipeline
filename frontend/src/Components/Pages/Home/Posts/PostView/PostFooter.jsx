@@ -1,13 +1,11 @@
 import axios from "axios";
-import { useState, useContext } from "react";
-import { UserContext } from "../../../../../../context/userContext";
+import { useState } from "react";
 import { liked, postTypes, disliked } from "../../utils/const";
 import { getLikePostEndpoint, getDeslikePostEndpoint } from "../../utils/utils";
 import Commentaire from "./Commentaire";
 import { Button, ButtonGroup } from "react-bootstrap";
 
-export default function PostFooter({ postContent, fetchPosts }) {
-  const { user } = useContext(UserContext);
+export default function PostFooter({ postContent, fetchPosts, user }) {
   const likePostEndpoint = getLikePostEndpoint(postContent.postType);
   const deslikePostEndpoint = getDeslikePostEndpoint(postContent.postType);
   const [showComment, setShowComment] = useState(false);
@@ -55,7 +53,7 @@ export default function PostFooter({ postContent, fetchPosts }) {
         `${deslikePostEndpoint}/${postContent._id}`,
         DesLikeData
       );
-      alert("Like added");
+      alert("Dislike added");
     } catch (error) {
       // An error occurred while setting up the request
       console.error("Error setting up the request:", error.message);
@@ -141,7 +139,11 @@ export default function PostFooter({ postContent, fetchPosts }) {
             <ul>
               {postContent.comments.length > 0 ? (
                 postContent.comments.map((comment) => (
-                  <Commentaire key={comment._id} comment={comment} />
+                  <Commentaire
+                    key={comment._id}
+                    comment={comment}
+                    user={user}
+                  />
                 ))
               ) : (
                 <li>

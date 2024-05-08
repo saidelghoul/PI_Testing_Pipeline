@@ -1,11 +1,7 @@
 import { Link } from "react-router-dom";
-import { UserContext } from "../../../../../context/userContext";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function CreatPost() {
-  const { user } = useContext(UserContext);
-  console.log(user);
-
+export default function CreatPost({ user }) {
   // Ajoutez un état pour indiquer si les données sont chargées
   const [isLoading, setIsLoading] = useState(true);
 

@@ -61,54 +61,52 @@ export default function AddPub() {
   };
 
   return (
-    <>
-      <div className="col-12" style={{ alignContent: "center" }}>
-        <div className="acc-setting">
-          <h3>Create a new Post</h3>
-          <form onSubmit={handleSubmit}>
-            <div className="cp-field">
-              <h5>Subject</h5>
-              <div className="cpp-fiel">
-                <input
-                  type="text"
-                  id="Sujet"
-                  placeholder="Sujet"
-                  name="sujet"
-                  value={formData.sujet}
-                  onChange={handleChange}
-                  required
-                />{" "}
-              </div>
-            </div>
-            <div className="cp-field">
-              <h5>Content</h5>
-              <textarea
-                id="Contenue"
-                name="contenu"
-                value={formData.contenu}
+    <div className="col-12" style={{ alignContent: "center" }}>
+      <div className="acc-setting">
+        <h3>Create a new Post</h3>
+        <form onSubmit={handleSubmit}>
+          <div className="cp-field">
+            <h5>Subject</h5>
+            <div className="cpp-fiel">
+              <input
+                type="text"
+                id="Sujet"
+                placeholder="Sujet"
+                name="sujet"
+                value={formData.sujet}
                 onChange={handleChange}
                 required
-              />
+              />{" "}
             </div>
-            <div className="cp-field">
-              <h5>Image</h5>
-              <input
-                type="file"
-                name="image"
-                onChange={handleChange}
-                accept="image/*" // Accept only image files
-              />
-            </div>
-            <div className="save-stngs pd3">
-              <ul>
-                <li>
-                  <button type="submit">Create</button>
-                </li>
-              </ul>
-            </div>
-          </form>
-        </div>
+          </div>
+          <div className="cp-field">
+            <h5>Content</h5>
+            <textarea
+              id="Contenue"
+              name="contenu"
+              value={formData.contenu}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="cp-field">
+            <h5>Image</h5>
+            <input
+              type="file"
+              name="image"
+              onChange={handleChange}
+              accept="image/*" // Accept only image files
+            />
+          </div>
+          <div className="save-stngs pd3">
+            <ul>
+              <li>
+                <button type="submit">Create</button>
+              </li>
+            </ul>
+          </div>
+        </form>
       </div>
-    </>
+    </div>
   );
 }

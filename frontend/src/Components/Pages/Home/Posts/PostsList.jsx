@@ -8,12 +8,12 @@ import { postTypes } from "../utils/const";
 function BasicExample() {
   return (
     <Spinner animation="border" role="status">
-      <span className="visually-hidden">Loading...</span>
+      <span className="visually-hidden"></span>
     </Spinner>
   );
 }
 
-export default function PostsList({ userProfileId }) {
+export default function PostsList({ userProfileId, user }) {
   const [allPosts, setAllPosts] = useState([]);
   const [filtredPosts, setFiltredPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -70,6 +70,7 @@ export default function PostsList({ userProfileId }) {
           key={postContent._id}
           postContent={postContent}
           fetchPosts={fetchPosts} // needed for updating
+          user={user}
         />
       ))}
     </>

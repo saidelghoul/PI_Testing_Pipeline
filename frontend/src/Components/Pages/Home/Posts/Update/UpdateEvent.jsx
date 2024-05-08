@@ -73,89 +73,87 @@ export default function UpdateEvent() {
   };
 
   return (
-    <>
-      <div className="col-12" style={{ alignContent: "center" }}>
-        <div className="acc-setting">
-          <h3>Update your Event</h3>
-          <form onSubmit={handleSubmit}>
-            <div className="cp-field">
-              <h5>Title</h5>
-              <div className="cpp-fiel">
-                <input
-                  type="text"
-                  id="nomgroups"
-                  placeholder="Titre"
-                  name="Titre"
-                  value={formData.Titre}
-                  onChange={handleChange}
-                />
-              </div>
+    <div className="col-12" style={{ alignContent: "center" }}>
+      <div className="acc-setting">
+        <h3>Update your Event</h3>
+        <form onSubmit={handleSubmit}>
+          <div className="cp-field">
+            <h5>Title</h5>
+            <div className="cpp-fiel">
+              <input
+                type="text"
+                id="nomgroups"
+                placeholder="Titre"
+                name="Titre"
+                value={formData.Titre}
+                onChange={handleChange}
+              />
             </div>
+          </div>
 
-            <div className="cp-field">
-              <h5>Content</h5>
-              <textarea
-                id="description"
-                name="Contenu"
-                value={formData.Contenu}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="cp-field">
-              <h5>Start Date </h5>
-              <input
-                type="datetime-local"
-                name="DateDebut"
-                placeholder="Date de début"
-                value={formData.DateDebut}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="cp-field">
-              <h5> Finish Date </h5>
-              <input
-                type="datetime-local"
-                name="DateFin"
-                placeholder="Date de fin"
-                value={formData.DateFin}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="cp-field">
-              <h5>Capacite</h5>
-              <input
-                type="number"
-                name="Capacite"
-                placeholder="Capacité"
-                value={formData.Capacite}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="cp-field">
-              <h5>Price</h5>
-              <input
-                type="number"
-                name="Prix"
-                placeholder="Prix"
-                value={formData.Prix}
-                onChange={handleChange}
-                required
-              />
-            </div>
+          <div className="cp-field">
+            <h5>Content</h5>
+            <textarea
+              id="description"
+              name="Contenu"
+              value={formData.Contenu}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="cp-field">
+            <h5>Start Date </h5>
+            <input
+              type="datetime-local"
+              name="DateDebut"
+              placeholder="Date de début"
+              value={formData.DateDebut}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="cp-field">
+            <h5> Finish Date </h5>
+            <input
+              type="datetime-local"
+              name="DateFin"
+              placeholder="Date de fin"
+              value={formData.DateFin}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="cp-field">
+            <h5>Capacite</h5>
+            <input
+              type="number"
+              name="Capacite"
+              placeholder="Capacité"
+              value={formData.Capacite}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="cp-field">
+            <h5>Price</h5>
+            <input
+              type="number"
+              name="Prix"
+              placeholder="Prix"
+              value={formData.Prix}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-            <div className="save-stngs pd3">
-              <ul>
-                <li>
-                  <button type="submit">Update</button>
-                </li>
-              </ul>
-            </div>
-          </form>
-        </div>
+          <div className="save-stngs pd3">
+            <ul>
+              <li>
+                <button type="submit">Update</button>
+              </li>
+            </ul>
+          </div>
+        </form>
       </div>
-    </>
+    </div>
   );
 }

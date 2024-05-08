@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import axios from "axios";
+import { useContext } from "react";
 
 import { UserContext } from "../../../../context/userContext.jsx";
 import Feed from "./Feed/Feed.jsx";
@@ -7,33 +6,9 @@ import Feed from "./Feed/Feed.jsx";
 export default function Home() {
   const { user } = useContext(UserContext);
   const userId = user ? user.id : null;
-  const imageUrl =
-    user && user.profileImage
-      ? `${process.env.REACT_APP_BACKEND_URL}/user/${userId}/profile`
-      : "/assets/images/resources/user-pro-img.png";
-
-  const [totalReports, setTotalReports] = useState(0);
-  console.log("totalReports : ", totalReports);
-
-  // use this block of code where you want to get user score
-  useEffect(() => {
-    console.log("user", user);
-    if (user?.id !== null && user?.id !== undefined) fetchPosts();
-  }, [user]);
-
-  const fetchPosts = async () => {
-    // initialiser user par l'id de user que je vais voir son score
-    try {
-      const totalReportsRes = await axios.get(
-        `/userScore/publicationsCountByUserId/${user?.id}`
-      );
-      console.log("totalReportsRes", totalReportsRes);
-
-      setTotalReports(totalReportsRes.data);
-    } catch (error) {
-      console.error("Error fetching posts", error);
-    }
-  };
+  const imageUrl = user?.profileImage
+    ? `${process.env.REACT_APP_BACKEND_URL}/user/${userId}/profile`
+    : "/assets/images/resources/user-pro-img.png";
 
   return (
     <main>
@@ -63,7 +38,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <Feed />
+              <Feed user={user} />
             </div>
           </div>
         </div>

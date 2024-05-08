@@ -1,15 +1,12 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import moment from "moment/moment";
-import { UserContext } from "../../../../../../context/userContext";
 import axios from "axios";
 import { booked } from "../../utils/const";
 import { Button } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import { validDate } from "../../utils/utils";
-export default function EventPost({ postContent }) {
-  const { user } = useContext(UserContext);
-
+export default function EventPost({ postContent, user }) {
   const [countdown, setCountdown] = useState("");
 
   const nbPlacesLeft = postContent.Capacite - postContent.reservations.length;
@@ -138,17 +135,11 @@ export default function EventPost({ postContent }) {
             {testDate && (
               <>
                 {reservationMade ? (
-                  <Button
-                    onClick={() => handleReservationClick(postContent._id)}
-                    variant={booked.YES}
-                  >
+                  <Button onClick={handleReservationClick} variant={booked.YES}>
                     Book
                   </Button>
                 ) : (
-                  <Button
-                    onClick={() => handleReservationClick(postContent._id)}
-                    variant={booked.NO}
-                  >
+                  <Button onClick={handleReservationClick} variant={booked.NO}>
                     Cancel
                   </Button>
                 )}

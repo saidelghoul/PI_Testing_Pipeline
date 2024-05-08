@@ -57,14 +57,10 @@ export default function AddEvent() {
         prix: "",
         image: null,
       });
-      alert("Event creatad succefuly");
+      alert("Event created succefully");
       navigate("/home");
     } catch (error) {
-      console.error(
-        "Erreur lors de la configuration de la requête :",
-        error.message
-      );
-      if (error.response && error.response.data && error.response.data.error) {
+      if (error?.response?.data.error) {
         alert("Warning : " + error.response.data.error);
       } else {
         alert(
@@ -74,97 +70,95 @@ export default function AddEvent() {
     }
   };
   return (
-    <>
-      <div className="col-12" style={{ alignContent: "center" }}>
-        <div className="acc-setting">
-          <h3>Create your event</h3>
-          <form onSubmit={handleSubmit}>
-            <div className="cp-field">
-              <h5>Title</h5>
-              <div className="cpp-fiel">
-                <input
-                  type="text"
-                  id="nomgroups"
-                  placeholder="Titre"
-                  name="titre"
-                  value={formData.titre}
-                  onChange={handleChange}
-                />
-              </div>
+    <div className="col-12" style={{ alignContent: "center" }}>
+      <div className="acc-setting">
+        <h3>Create your event</h3>
+        <form onSubmit={handleSubmit}>
+          <div className="cp-field">
+            <h5>Title</h5>
+            <div className="cpp-fiel">
+              <input
+                type="text"
+                id="nomgroups"
+                placeholder="Titre"
+                name="titre"
+                value={formData.titre}
+                onChange={handleChange}
+              />
             </div>
+          </div>
 
-            <div className="cp-field">
-              <h5>Content</h5>
-              <textarea
-                id="description"
-                name="contenu"
-                value={formData.contenu}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="cp-field">
-              <h5>Start Date </h5>
-              <input
-                type="datetime-local"
-                name="datedeb"
-                placeholder="Date de début"
-                value={formData.DateDebut}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="cp-field">
-              <h5>Finish Date</h5>
-              <input
-                type="datetime-local"
-                name="datefin"
-                placeholder="Date de début"
-                value={formData.DateDebut}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="cp-field">
-              <h5>Places Available</h5>
-              <input
-                type="number"
-                name="cap"
-                placeholder="Capacité"
-                value={formData.cap}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="cp-field">
-              <h5>Price</h5>
-              <input
-                type="number"
-                name="prix"
-                placeholder="Prix"
-                value={formData.prix}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="cp-field">
-              <h5>Image</h5>
-              <input
-                type="file"
-                name="image"
-                onChange={handleChange}
-                accept="image/*" // Accept only image files
-              />
-            </div>
+          <div className="cp-field">
+            <h5>Content</h5>
+            <textarea
+              id="description"
+              name="contenu"
+              value={formData.contenu}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="cp-field">
+            <h5>Start Date </h5>
+            <input
+              type="datetime-local"
+              name="datedeb"
+              placeholder="Date de début"
+              value={formData.DateDebut}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="cp-field">
+            <h5>Finish Date</h5>
+            <input
+              type="datetime-local"
+              name="datefin"
+              placeholder="Date de début"
+              value={formData.DateDebut}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="cp-field">
+            <h5>Places Available</h5>
+            <input
+              type="number"
+              name="cap"
+              placeholder="Capacité"
+              value={formData.cap}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="cp-field">
+            <h5>Price</h5>
+            <input
+              type="number"
+              name="prix"
+              placeholder="Prix"
+              value={formData.prix}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="cp-field">
+            <h5>Image</h5>
+            <input
+              type="file"
+              name="image"
+              onChange={handleChange}
+              accept="image/*" // Accept only image files
+            />
+          </div>
 
-            <div className="save-stngs pd3">
-              <ul>
-                <li>
-                  <button type="submit">Create</button>
-                </li>
-              </ul>
-            </div>
-          </form>
-        </div>
+          <div className="save-stngs pd3">
+            <ul>
+              <li>
+                <button type="submit">Create</button>
+              </li>
+            </ul>
+          </div>
+        </form>
       </div>
-    </>
+    </div>
   );
 }

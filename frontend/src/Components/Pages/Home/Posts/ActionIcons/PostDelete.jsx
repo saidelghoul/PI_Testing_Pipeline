@@ -10,12 +10,7 @@ export default function PostDelete({ postContent, fetchPosts }) {
         await axios.delete(`${endpoint}/${id}`);
         fetchPosts();
       } catch (error) {
-        console.error("Erreur lors de la suppression ", error.message);
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.error
-        ) {
+        if (error?.response?.data?.error) {
           alert("Warning : " + error.response.data.error);
         } else {
           alert(

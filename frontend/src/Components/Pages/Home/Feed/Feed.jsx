@@ -1,13 +1,12 @@
 import CreatPost from "./CreatPost.jsx";
 import PostsList from "../Posts/PostsList.jsx";
 
-export default function Feed() {
+export default function Feed({ user }) {
   return (
     <div className="col-lg-6 col-md-8 no-pd">
       <div className="main-ws-sec">
-        <CreatPost />
-        { <PostsList /> }
-        {/* { <PostsList userProfileId="66003975d5854d860d08b7b6" /> } */}
+        <CreatPost user={user} />
+        {<PostsList user={user} />}
       </div>
     </div>
   );

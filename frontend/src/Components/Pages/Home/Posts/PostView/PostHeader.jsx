@@ -1,5 +1,3 @@
-import { useContext } from "react";
-import { UserContext } from "../../../../../../context/userContext";
 import { isCreator, getReportPostEndpoint, validDate } from "../../utils/utils";
 import PostDelete from "../ActionIcons/PostDelete";
 import PostUpdate from "../ActionIcons/PostUpdate";
@@ -8,21 +6,22 @@ import { postTypes, reported } from "../../utils/const";
 import axios from "axios";
 import { Button } from "react-bootstrap";
 
-export default function PostHeader({ postContent, fetchPosts }) {
-  const { user } = useContext(UserContext);
-  const reportPostEndpoint = getReportPostEndpoint(postContent.postType);
+export default function PostHeader({ postContent, fetchPosts, user }) {
+  const reportPostEndpoint = getReportPostEndpoint(postContent?.postType);
 
-  const userReportThisPost = postContent.reports
-    ? postContent.reports.includes(user?.id)
+  const userId = user ? user.id : null;
+
+  const userReportThisPost = postContent?.reports
+    ? postContent?.reports?.includes(user?.id)
     : false;
 
   const handleReportClick = async () => {
     try {
       const ReportData = {
-        userId: user.id,
+        userId: userId,
       };
 
-      await axios.post(`${reportPostEndpoint}/${postContent._id}`, ReportData);
+      await axios.post(`${reportPostEndpoint}/${postContent?._id}`, ReportData);
       alert("report added");
     } catch (error) {
       // An error occurred while setting up the request
@@ -35,35 +34,30 @@ export default function PostHeader({ postContent, fetchPosts }) {
     <>
       <div className="post_topbar">
         <div className="usy-dt">
-          {/* <img
-          src={imageUrl(user.id, user)}
-          alt={user.name}
-          style={{ width: '55px', height: '55px', borderRadius: '50%' }}
-        /> */}
           <div className="usy-name">
-            <h3>{postContent.creator?.name}</h3>
+            <h3>{postContent?.creator?.name}</h3>
             <span>
               <img src="/assets/images/clock.png" alt="" />
-              Published in: {moment(postContent.DatePublication).format("lll")}
+              Published in: {moment(postContent?.DatePublication).format("lll")}
             </span>
           </div>
         </div>
         <div className="ed-opts">
-          {!isCreator(user.id, postContent.creator?._id) && (
+          {!isCreator(userId, postContent?.creator?._id) && (
             <Button
               size="sm"
-              onClick={() => handleReportClick(postContent._id)}
+              onClick={() => handleReportClick(postContent?._id)}
               variant={userReportThisPost ? reported.NO : reported.YES}
             >
               Alert
             </Button>
           )}
-          {isCreator(user.id, postContent.creator?._id) && (
+          {isCreator(userId, postContent?.creator?._id) && (
             <PostDelete postContent={postContent} fetchPosts={fetchPosts} />
           )}
-          {isCreator(user.id, postContent.creator?._id) &&
+          {isCreator(userId, postContent?.creator?._id) &&
             (postContent?.postType === postTypes.TEXT ||
-              validDate(postContent.DateDebut, 4)) && (
+              validDate(postContent?.DateDebut, 4)) && (
               <PostUpdate postContent={postContent} />
             )}
         </div>
