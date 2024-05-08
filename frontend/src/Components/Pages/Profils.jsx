@@ -26,13 +26,10 @@ export default function Profils() {
   const { user } = useContext(UserContext);
 
   const userId = user ? user.id : null;
-  //const imageUrl = userId ? `http://localhost:8000/user/${userId}/profile` : "/assets/images/resources/user-pro-img.png";
   const imageUrl =
     userId && user && user.profileImage
       ? `${process.env.REACT_APP_BACKEND_URL}/user/${userId}/profile`
       : "/assets/images/resources/user-pro-img.png";
-
-  // const coverImageUrl = userId ? `http://localhost:8000/user/${userId}/cover` : "/assets/images/resources/cover-img.jpg";
 
   const coverImageUrl =
     userId && user && user.coverImage
@@ -3609,112 +3606,10 @@ export default function Profils() {
                         </div>
                       </div>
                     </div>
-                    <div className="product-feed-tab" id="portfolio-dd">
-                      <div className="portfolio-gallery-sec">
-                        <h3>Portfolio</h3>
-                        <div className="portfolio-btn">
-                          <i className="fas fa-plus-square"></i> Add Portfolio
-                        </div>
-                        <div className="gallery_pf">
-                          <div className="row">
-                            <div className="col-lg-4 col-md-4 col-sm-6 col-6">
-                              <div className="gallery_pt">
-                                <img
-                                  src="/assets/images/resources/pf-img1.jpg"
-                                  alt=""
-                                />
-                                <img src="/assets/images/all-out.png" alt="" />
-                              </div>
-                            </div>
-                            <div className="col-lg-4 col-md-4 col-sm-6 col-6">
-                              <div className="gallery_pt">
-                                <img
-                                  src="/assets/images/resources/pf-img2.jpg"
-                                  alt=""
-                                />
-                                <img src="/assets/images/all-out.png" alt="" />
-                              </div>
-                            </div>
-                            <div className="col-lg-4 col-md-4 col-sm-6 col-6">
-                              <div className="gallery_pt">
-                                <img
-                                  src="/assets/images/resources/pf-img3.jpg"
-                                  alt=""
-                                />
-                                <img src="/assets/images/all-out.png" alt="" />
-                              </div>
-                            </div>
-                            <div className="col-lg-4 col-md-4 col-sm-6 col-6">
-                              <div className="gallery_pt">
-                                <img
-                                  src="/assets/images/resources/pf-img4.jpg"
-                                  alt=""
-                                />
-                                <img src="/assets/images/all-out.png" alt="" />
-                              </div>
-                            </div>
-                            <div className="col-lg-4 col-md-4 col-sm-6 col-6">
-                              <div className="gallery_pt">
-                                <img
-                                  src="/assets/images/resources/pf-img5.jpg"
-                                  alt=""
-                                />
-                                <img src="/assets/images/all-out.png" alt="" />
-                              </div>
-                            </div>
-                            <div className="col-lg-4 col-md-4 col-sm-6 col-6">
-                              <div className="gallery_pt">
-                                <img
-                                  src="/assets/images/resources/pf-img6.jpg"
-                                  alt=""
-                                />
-                                <img src="/assets/images/all-out.png" alt="" />
-                              </div>
-                            </div>
-                            <div className="col-lg-4 col-md-4 col-sm-6 col-6">
-                              <div className="gallery_pt">
-                                <img
-                                  src="/assets/images/resources/pf-img7.jpg"
-                                  alt=""
-                                />
-                                <img src="/assets/images/all-out.png" alt="" />
-                              </div>
-                            </div>
-                            <div className="col-lg-4 col-md-4 col-sm-6 col-6">
-                              <div className="gallery_pt">
-                                <img
-                                  src="/assets/images/resources/pf-img8.jpg"
-                                  alt=""
-                                />
-                                <img src="/assets/images/all-out.png" alt="" />
-                              </div>
-                            </div>
-                            <div className="col-lg-4 col-md-4 col-sm-6 col-6">
-                              <div className="gallery_pt">
-                                <img
-                                  src="/assets/images/resources/pf-img9.jpg"
-                                  alt=""
-                                />
-                                <img src="/assets/images/all-out.png" alt="" />
-                              </div>
-                            </div>
-                            <div className="col-lg-4 col-md-4 col-sm-6 col-6">
-                              <div className="gallery_pt">
-                                <img
-                                  src="/assets/images/resources/pf-img10.jpg"
-                                  alt=""
-                                />
-                                <img src="/assets/images/all-out.png" alt="" />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
                 <div className="col-lg-3">
-                  <div className="right-sidebar">
+                  <div className="right1-sidebar">
                     <div className="message-btn">
                       <Link to="/settings" title="">
                         <i className="fas fa-cog"></i> Setting

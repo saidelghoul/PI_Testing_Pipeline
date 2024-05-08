@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import SocialSkillsOnlyReading from "../Skills/SocialSkills/SocialSkillsOtherUser";
+import UsersBadges from "./UsersBadges";
 
 export default function Profils() {
   const { id } = useParams();
@@ -23,7 +24,6 @@ export default function Profils() {
       .get(`/user/userbyid/${id}`)
       .then((response) => {
         setUser(response.data);
-        console.log("Oklm", response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -108,6 +108,9 @@ export default function Profils() {
 
                       <br />
                       <div className="post-popup pst-pj"></div>
+                    </div>
+                    <div className="suggestions full-width">
+                      <UsersBadges />
                     </div>
                     <div className="suggestions full-width"></div>
                   </div>
@@ -3622,94 +3625,8 @@ export default function Profils() {
                   </div>
                 </div>
                 <div className="col-lg-3">
-                  <div className="right-sidebar">
-                    <div className="message-btn">
-                      {/* <Link to="/settings" title="">
-                        <i className="fas fa-cog"></i> Setting
-                      </Link> */}
-                    </div>
-                    <div className="widget widget-portfolio">
-                      <div className="wd-heady">
-                        <h3>Portfolio</h3>
-                        <img src="/assets/images/photo-icon.png" alt="" />
-                      </div>
-                      <div className="pf-gallery">
-                        <ul>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery1.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery2.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery3.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery4.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery5.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery6.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery7.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery8.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery9.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery10.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery11.png"
-                              alt=""
-                            />
-                          </li>
-                          <li>
-                            <img
-                              src="/assets/images/resources/pf-gallery12.png"
-                              alt=""
-                            />
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
+                  <div className="right1-sidebar">
+                    <div className="message-btn"></div>
                   </div>
                 </div>
               </div>
