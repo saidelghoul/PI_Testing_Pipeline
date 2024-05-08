@@ -88,11 +88,15 @@ const SocialSkillService = {
     }
   },*/
 
-  assignSocialSkillToUser: async (socialSkillId, userId) => {
+  assignSocialSkillToUser: async (socialSkillId, userId, assignedByUserId) => {
     try {
-      const response = await axios.put(
-        `${apiUrl}/assign/${socialSkillId}/${userId}`
+      const response = await axios.post(
+        `${apiUrl}/assign/${socialSkillId}/${userId}`,
+        {
+          assignedBy: assignedByUserId, // Envoyer l'ID de l'utilisateur qui fait l'affectation
+        }
       );
+      console.log("JE suis LA AAAAAAAAAA", response.data.socialSkill);
       return response.data.socialSkill;
     } catch (error) {
       console.error(

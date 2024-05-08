@@ -22,16 +22,32 @@ function SocialSkillsUSer() {
       setAssigned(skillsData.socialSkills);
       setFilteredSkills(skillsData.socialSkills); // Initialiser avec toutes les compétences
 
-      
+      console.log("Compétences récupérées pour l'utilisateur :", skillsData.socialSkills);
     } catch (error) {
       console.error("Erreur lors de la récupération des compétences assignées:", error);
     }
   };
 
-  const totalSocialPoints = assigned.reduce(
-    (total, skill) => total + (skill.pointSocial || 0),
-    0
-  );
+  console.log("User actuel :", user);
+  // Calcul du score total selon la nouvelle formule
+  const autoAssignedScore = assigned
+    .filter(skill => skill.assignedBy === user.id)
+    .reduce((total, skill) => total + (skill.pointSocial || 0), 0);
+
+    console.log("Auto :",assigned.filter(skill => skill.assignedBy === user.id));
+
+  const nonAutoAssignedScore = assigned
+    .filter(skill => skill.assignedBy !== user.id)
+    .reduce((total, skill) => total + (skill.pointSocial || 0), 0);
+
+    console.log("No Auto :",assigned.filter(skill => skill.assignedBy !== user.id));
+
+    const totalSocialPoints = Math.round((autoAssignedScore + 2 * nonAutoAssignedScore)/2);
+
+
+      // Compter le nombre de compétences auto-affectées et non-auto-affectées
+  const countAuto = assigned.filter(skill => skill.assignedBy === user.id).length;
+  const countShared = assigned.filter(skill => skill.assignedBy !== user.id).length;
 
   const fetchSkills = async () => {
     try {
@@ -139,12 +155,14 @@ function SocialSkillsUSer() {
   return (
     <div>
       <div className="user-profile-ov">
-        <h3>
-          Compétences Sociales (Score Total: <strong style={{ color: 'red' }}>{totalSocialPoints} points</strong>)
+        <h3 className='h1 text-center'>
+          Compétences Sociales 🧠 (Score Total: <strong style={{ color: 'red' }}>{totalSocialPoints} points</strong>) 
           <Link to={`/affectSkill/${user.id}`}>
-            <i className="fa fa-plus-square"></i>
-          </Link>
+            <i className="fa fa-plus-square h2"></i>
+          </Link> 
         </h3>
+        <h3 className= "text-center h4">({countShared} 💝 / {countAuto} 😎)</h3>
+
         <br />
         {/* Dropdown pour le filtrage */}
         <DropdownButton
@@ -170,13 +188,16 @@ function SocialSkillsUSer() {
                 placement="top"
                 overlay={
                   <Tooltip id={`tooltip-${skill._id}`}>
-                    Points sociaux: {skill.pointSocial} <br />
-                    Priorité: {skill.niveau} {/* Vous pouvez également afficher la priorité */}
+                    {/* Points sociaux: {skill.pointSocial} <br /> */}
+                    Type: {skill.assignedBy === user.id ? " (Myself 😎)" : " (Shared 💝)"} {/* Condition pour indiquer le type d'affectation */} <br/>
+                    Priorité: {skill.niveau} <br></br>
+                    
                   </Tooltip>
                 }
               >
                 <li 
                   style={{ 
+                    backgroundColor: skill.assignedBy === user.id ? "#c3e6cb" : " #f5c6cb ", // Couleur pour différencier auto-affecté et attribué par d'autres
                     border: '2px solid #ddd', 
                     padding: '10px', 
                     marginBottom: '10px', 
@@ -201,7 +222,7 @@ function SocialSkillsUSer() {
             ))}
           </ul>
         ) : (
-          <div>Vous n'avez pas encore de compétences sociales.</div>
+          <div>Vous n'avez pas encore ajouté de compétences sociales 😎</div>
         )}
 
         {assigned.length > displayCount && (
@@ -216,8 +237,12 @@ function SocialSkillsUSer() {
             show={showSkillModal}
             handleClose={handleCloseSkillModal}
           />
-        )}
+        )} 
+        
+        <span className="text-center"><hr/>(💝 : Social Skills affected by OTHERS Users)(15 Max)</span>
+        <span className="text-center">(😎 : Social Skills affected by YOURSELF)(10 Max)</span>
       </div>
+      
     </div>
   );
 }

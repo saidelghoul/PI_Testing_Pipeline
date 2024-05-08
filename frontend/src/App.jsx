@@ -16,6 +16,7 @@ import TaskDetails from "./Components/Pages/TaskDetails";
 import AccountUpdate from "./Components/Pages/AccountUpdate";
 import Section from "./Components/Pages/Section";
 import AffectSkill from "./Components/Modals/Skills/AffectSkill";
+import AffectSkillOtherUser from "./Components/Modals/Skills/AffectSkillOtherUser";
 import SocialSkills from "./Components/Pages/Skills/SocialSkills/SocialSkills";
 import TechnicalSkills from "./Components/Pages/Skills/TechnicalSkills/TechnicalSkills";
 import AddSocialSkill from "./Components/Pages/Skills/SocialSkills/AddSocialSkill";
@@ -517,6 +518,17 @@ function App() {
               <>
                 <Navbar />
                 <TechnicalSkills />
+                <Footer />
+              </>
+            }
+          />
+
+          <Route
+            path="/affectSkillOtherUser/:id"
+            element={
+              <>
+                <Navbar />
+                <AffectSkillOtherUser />
                 <Footer />
               </>
             }

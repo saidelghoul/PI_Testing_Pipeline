@@ -75,6 +75,16 @@ const userSchema = new Schema({
   
 });
 
+// Ajout de nouvelles propriétés au schéma
+userSchema.add({
+  assignedSocialSkills: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "socialSkills", // Social Skills attribués par cet utilisateur
+    },
+  ],
+});
+
 const UserModel = mongoose.model("User", userSchema);
 
 module.exports = UserModel;

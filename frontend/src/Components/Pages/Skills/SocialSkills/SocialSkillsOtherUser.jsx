@@ -2,23 +2,27 @@ import {  useEffect, useState } from 'react';
 import SocialSkillService from "../../../../services/socialSkill-service";
 import { Modal, Button, Badge, OverlayTrigger, Tooltip, DropdownButton , Dropdown } from 'react-bootstrap';
 import {  FaStar, FaHeart,  FaInfoCircle } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
-function SocialSkillsUSer(user) {
-    console.log("userId",user.userId);
+function SocialSkillsUSer({ user }) {
+    console.log("userId(other User)",user._id);
   const [isLoading, setIsLoading] = useState(true);
   const [assigned, setAssigned] = useState([]);
   const [showSkillModal, setShowSkillModal] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [displayCount, setDisplayCount] = useState(4); // Initialisez avec 4 compétences à afficher
-  const [filterLevel, setFilterLevel] = useState("⭐⭐⭐");
+  const [filterLevel, setFilterLevel] = useState("Tous");
   const [filteredSkills, setFilteredSkills] = useState([]);
+
+
+  
 
   const getAssigned = async () => {
     try {
-      const skillsData = await SocialSkillService.getSocialSkillsByUser(user.userId);
+      const skillsData = await SocialSkillService.getSocialSkillsByUser(user._id);
       setAssigned(skillsData.socialSkills);
       setFilteredSkills(skillsData.socialSkills); // Initialiser avec toutes les compétences
-      console.log("skills du user "+user+" sont:",skillsData);
+      console.log("skills du user "+user.name+" sont:",skillsData);
 
       
     } catch (error) {
@@ -35,6 +39,19 @@ function SocialSkillsUSer(user) {
       //fetchSkills();
     }
   }, [user]);
+
+  // Calcul du total des points sociaux selon la nouvelle formule
+  const totalSocialPoints = Math.round(assigned.reduce((total, skill) => {
+    const weight = skill.assignedBy === user._id ? 1 : 2;
+    return total + (skill.pointSocial || 0) * weight;
+  }, 0)); // Arrondi
+
+  console.log("total :", totalSocialPoints);
+
+  // Compter le nombre de compétences auto-affectées et non-auto-affectées
+  const countAuto = assigned.filter(skill => skill.assignedBy === user._id).length;
+  const countShared = assigned.filter(skill => skill.assignedBy !== user._id).length;
+
   
   const applyFilter = (level) => {
     setFilterLevel(level);
@@ -67,7 +84,7 @@ function SocialSkillsUSer(user) {
 
   const handleRemove = async (skillId) => {
     try {
-      await SocialSkillService.unassignSocialSkillFromUser(skillId, user.id);
+      await SocialSkillService.unassignSocialSkillFromUser(skillId, user._id);
       setAssigned(assigned.filter((skill) => skill._id !== skillId));
       setFilteredSkills(filteredSkills.filter(skill => skill._id !== skillId)); // Mettre à jour la liste filtrée
     } catch (error) {
@@ -126,8 +143,12 @@ function SocialSkillsUSer(user) {
     <div>
       <div className="user-profile-ov">
         <h3 style={{textAlign: 'center'}}>
-          Compétences Sociales 🧠
+          Compétences Sociales 🧠 de {user.name} 
+          <Link to={`/affectSkillOtherUser/${user._id}`}>
+            <i className="fa fa-plus-square"></i>
+          </Link>
         </h3>
+        <h3 className= "text-center h4">({countShared} 💝 / {countAuto} 😎)</h3>
 
         {/* Dropdown pour le filtrage */}
         
@@ -156,13 +177,14 @@ function SocialSkillsUSer(user) {
                 placement="top"
                 overlay={
                   <Tooltip id={`tooltip-${skill._id}`}>
-                    Points sociaux: {skill.pointSocial} <br />
+                   Type: {skill.assignedBy === user._id ? " (Myself 😎) "  : " (Shared 💝) "} {/* Condition pour indiquer le type d'affectation */} <br/>
                     Priorité: {skill.niveau} {/* Vous pouvez également afficher la priorité */}
                   </Tooltip>
                 }
               >
                 <li 
                   style={{ 
+                    backgroundColor: skill.assignedBy === user._id ? "#c3e6cb" : "#f5c6cb",
                     border: '2px solid #ddd', 
                     padding: '10px', 
                     marginBottom: '10px', 
@@ -188,8 +210,9 @@ function SocialSkillsUSer(user) {
             <div style={{textAlign: 'center'}}>
                 <hr />
                 <h1>Aucune compétence sociale n'est disponible pour le moment (*) </h1>
-                <hr />
-                <p> (*) : il est possible que l'utilisateur n'ait pas encore ajouter des socials Skills.</p>
+                
+                <p> (*) : il est possible que l'utilisateur n'aie pas encore ajouter des socials Skills 😎. </p> 
+                <h3  style={{textAlign: 'center'}}>Offrez-lui des SocialSkills💝</h3>
             </div>
           
         )}
@@ -207,6 +230,8 @@ function SocialSkillsUSer(user) {
             handleClose={handleCloseSkillModal}
           />
         )}
+        <span className="text-center"><hr/>(💝 : Social Skills affected by OTHERS Users)(15 Max)</span>
+        <span className="text-center">(😎 : Social Skills affected by YOURSELF)(10 Max)</span>
       </div>
     </div>
   );

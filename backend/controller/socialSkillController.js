@@ -139,6 +139,8 @@ async function updateSocialSkill(req, res) {
 
 // Méthode pour affecter un SocialSkill à un utilisateur
 const assignSocialSkillToUser = async (req, res) => {
+  const { assignedBy } = req.body; // ID de l'utilisateur qui attribue
+
   try {
     // Rechercher le SocialSkill par ID
     let socialSkill = await SocialSkill.findById(req.params.socialSkillId);
@@ -159,6 +161,9 @@ const assignSocialSkillToUser = async (req, res) => {
 
     // Ajouter l'utilisateur à la liste des utilisateurs du SocialSkill
     socialSkill.users.push(req.params.userId);
+
+    // Mettre à jour "assignedBy" avec l'utilisateur qui a attribué
+    socialSkill.assignedBy = assignedBy;
 
     // Sauvegarder les modifications
     await socialSkill.save();
@@ -294,7 +299,6 @@ const unassignSocialSkillFromUser = async (req, res) => {
 }*/
 
 
-// Méthode pour obtenir les SocialSkills associés à un utilisateur spécifique
 // Méthode pour obtenir les SocialSkills associés à un utilisateur spécifique
 const getSocialSkillsByUser = async (req, res) => {
   try {
