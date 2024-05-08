@@ -18,7 +18,6 @@ import publicationService from "../../../services/page-service";
 
 function Leaderboard() {
   const { user } = useContext(UserContext);
-  console.log("user:", user);
   const [users, setUsers] = useState([]);
   const [socialPoints, setSocialPoints] = useState({});
   const [SkillsAssignedAuto, setSkillsAssignedAuto] = useState({});
@@ -34,7 +33,6 @@ function Leaderboard() {
   const [isLoading, setIsLoading] = useState(true);
 
   const itemsPerPage = 10; // Nombre d'éléments par page (ajustez si nécessaire)
-  //console.log("user Actu",user);
 
   const departmentName = user?.departement || "N/A";
   const uniteName = user?.unite || "N/A";
@@ -50,9 +48,6 @@ function Leaderboard() {
       setIsLoading(true);
       const listUsers = await getUsersForTask();
       let filteredUsers = listUsers.data.message;
-      console.log("Filtre", filteredUsers);
-
-      console.log("userActuel :", user);
 
       const roleUserActuel = user.role;
       const departmentUserActuel = user.departement;
@@ -106,18 +101,13 @@ function Leaderboard() {
             (skill) => skill.assignedBy !== usr._id
           ).length;
 
-          //console.log("User :",usr)
           const autoAssignedScore = socialResult.socialSkills
             .filter((skill) => skill.assignedBy === usr._id)
             .reduce((total, skill) => total + (skill.pointSocial || 0), 0);
 
-          //console.log("AUTOOOO",socialResult.socialSkills.filter(skill => skill.assignedBy === usr._id))
-
           const nonAutoAssignedScore = socialResult.socialSkills
             .filter((skill) => skill.assignedBy !== usr._id)
             .reduce((total, skill) => total + (skill.pointSocial || 0), 0);
-
-          //console.log("NO AUTOO",socialResult.socialSkills.filter(skill => skill.assignedBy !== usr._id));
 
           socialScores[usr._id] = Math.round(
             0.2 * autoAssignedScore + 0.8 * nonAutoAssignedScore
@@ -127,16 +117,9 @@ function Leaderboard() {
 
           SkillsNoAuto[usr._id] = sharedCount;
 
-          //console.log("AUTOO+ NO AUUTOOO",socialScores[usr._id]);
-
           // Récupérer les scores des tâches
 
           const checklistResult = await getChecklistScoreForUser(usr._id);
-
-          console.log("le usr ");
-          const taskScore = checklistResult.data.message.somme;
-          // console.log("maybeeee"+usr.name,checklistResult.data);
-          const nbrTasks = checklistResult.data.message.numberOfTasks;
 
           taskScores[usr._id] = checklistResult.data.message.somme || 1;
           nbrTasksScores[usr._id] =
@@ -164,9 +147,7 @@ function Leaderboard() {
           const postScore = calculatePostScore(likes, dislikes, reports);
 
           publicationScores[usr._id] = postScore; // Stocker le score de publication
-          //console.log("Ceci est le score de la publication du user"+usr._id+":",postScore);
           const pageScore = pagePublications.length || 0;
-          //console.log("ija",pageScore);
           pageScores[usr._id] = pageScore;
         })
       );
@@ -178,19 +159,6 @@ function Leaderboard() {
           (taskScores[usr._id] || 0) +
           (publicationScores[usr._id] || 0) +
           (pageScores[usr._id] || 0);
-
-        console.log("filterUsers Social", socialScores[usr._id]);
-        console.log(
-          "filtered Users Task (le prblm est dans le tasks points)",
-          TaskPoints[usr._id]
-        );
-        console.log("filtered Users Page", pageScores[usr._id]);
-        console.log("filtered Users publication", publicationScores[usr._id]);
-        // let finalScore1 = finalScore;
-        console.log(
-          "le score finale du user " + usr.name + " est : ",
-          finalScore
-        );
 
         // Déterminer le nombre de sous-scores égaux à 0
         const zeroCount = [
@@ -219,17 +187,7 @@ function Leaderboard() {
 
       // Trouver Xmax et Xmin
       const Xmax = Math.max(...finalUsers.map((usr) => usr.finalScore));
-      console.log(
-        "liste pr trouver le max",
-        finalUsers.map((usr) => usr.finalScore)
-      );
-      console.log("xmax du user", Xmax);
-      console.log(
-        "liste Users pr trouver le max",
-        finalUsers.map((usr) => usr)
-      );
       const Xmin = Math.min(...finalUsers.map((usr) => usr.finalScore));
-      console.log("xmin", Xmin);
 
       // Déterminer le rating pour chaque utilisateur
       const ratedUsers = finalUsers.map((usr) => {
@@ -238,30 +196,18 @@ function Leaderboard() {
           (taskScores[usr._id] || 0) +
           (publicationScores[usr._id] || 0) +
           (pageScores[usr._id] || 0);
-        console.log("formule final scorre akram  ", usr.name, finalScore);
         const Fi = (Xmax - finalScore) / (Xmax - Xmin);
-        console.log("FiMax", Xmax);
-        console.log("FiMin", Xmin);
-        console.log(
-          "user haha,le problème ESST LAAAAAAAAAA" + usr.name,
-          usr.finalScore
-        );
         let rating;
         if (Fi >= 0.8) {
           rating = "⭐"; // 5 étoiles
-          console.log("1 étoile pour le user" + usr.name, usr.finalScore1);
         } else if (Fi >= 0.6) {
           rating = "⭐⭐"; // 4 étoiles
-          console.log("2 étoile pour le user" + usr.name, usr.finalScore1);
         } else if (Fi >= 0.4) {
           rating = "⭐⭐⭐"; // 3 étoiles
-          console.log("3 étoile pour le user" + usr.name, usr.finalScore1);
         } else if (Fi >= 0.2) {
           rating = "⭐⭐⭐⭐"; // 2 étoiles
-          console.log("4 étoile pour le user" + usr.name, usr.finalScore1);
         } else {
           rating = "⭐⭐⭐⭐⭐"; // 1 étoile
-          console.log("5 étoile pour le user" + usr.name, usr.finalScore1);
         }
 
         return {
@@ -270,11 +216,8 @@ function Leaderboard() {
         };
       });
 
-      console.log("USers Rated", ratedUsers);
       // Obtenir le rating de l'utilisateur actuel
       const currentUser = ratedUsers.find((usr) => usr._id === user.id);
-
-      console.log("Current" + user.name, currentUser.rating);
 
       setCurrentUserRating(currentUser ? currentUser.rating : "");
       setUsers(ratedUsers);
@@ -328,24 +271,7 @@ function Leaderboard() {
       (TaskPoints[usr._id] || 0) +
       (publicationScores[usr._id] || 0) +
       (pageScores[usr._id] || 0);
-    console.log(
-      "le user " + usr.name + " a comme score social ",
-      socialPoints[usr._id]
-    );
-    console.log(
-      "le user " + usr.name + " a comme score task ",
-      TaskPoints[usr._id]
-    );
-    console.log(
-      "le user " + usr.name + " a comme score publication ",
-      publicationScores[usr._id]
-    );
-    console.log(
-      "le user " + usr.name + " a comme score pageScores ",
-      pageScores[usr._id]
-    );
 
-    //console.log("Score final de l'utilisateur:", usr.name, finalScore); // Afficher le score final pour chaque utilisateur
     // Déterminer le nombre de sous-scores égaux à 0
     const zeroCount = [
       socialPoints[usr._id],
@@ -353,8 +279,6 @@ function Leaderboard() {
       publicationScores[usr._id],
       pageScores[usr._id],
     ].filter((score) => score === 0).length;
-
-    console.log("nbr de 0 est : ", zeroCount);
 
     // Appliquer la réduction en fonction du nombre de zéros
     if (zeroCount === 1) {
@@ -366,11 +290,6 @@ function Leaderboard() {
     } else if (zeroCount === 4) {
       finalScore = 0; // Si tous les sous-scores sont 0, le score final est 0
     }
-    //console.log("Final Score du user "+usr.name+"est :", finalScore)
-    console.log(
-      "le user " + usr.name + " aura donc comme score final ",
-      finalScore
-    );
 
     return {
       ...usr,
@@ -387,7 +306,6 @@ function Leaderboard() {
   // Utilisation du sort
   sortedUsers.sort((a, b) => {
     if (isNaN(a.finalScore) || isNaN(b.finalScore)) {
-      console.error("Erreur: finalScore contient des valeurs non numériques");
       return 0; // Aucun tri en cas d'erreur
     }
     return b.finalScore - a.finalScore;
@@ -398,7 +316,6 @@ function Leaderboard() {
   // Utilisation du sort
   sortedUsers.sort((a, b) => {
     if (isNaN(a.finalScore) || isNaN(b.finalScore)) {
-      console.error("Erreur: finalScore contient des valeurs non numériques");
       return 0; // Aucun tri en cas d'erreur
     }
     return b.finalScore - a.finalScore;
@@ -545,8 +462,6 @@ function Leaderboard() {
       format: "a4",
     });
 
-    console.log("OKLM", usr);
-
     const socialScore = socialPoints[usr._id] || 0;
     const taskScore = TaskPoints[usr._id] || 0;
     const publicationScore = publicationScores[usr._id] || 0;
@@ -602,25 +517,20 @@ function Leaderboard() {
         publicationScore,
         pageScore
       );
-      console.log("PIE", pieChartBase64);
 
       pdf.addImage(pieChartBase64, "JPEG", 180, 105, 100, 100);
     }
 
     const profileImageUrl = imageUrl(usr._id, usr);
-    console.log("AAAAAA", profileImageUrl);
     try {
       const response = await axios.get(profileImageUrl, {
         responseType: "arraybuffer",
       });
-      console.log("RES", response);
       const base64 = btoa(
         String.fromCharCode(...new Uint8Array(response.data))
       ); // Conversion en base64 sans Buffer
-      console.log("Base  64:", base64);
       pdf.addImage(`data:image/jpeg;base64,${base64}`, "JPEG", 220, 5, 50, 50);
     } catch (error) {
-      console.error("Erreur lors du chargement de la photo de profil:", error);
       pdf.text("Aucune image de profil disponible", 180, 10);
     }
 
@@ -653,7 +563,6 @@ function Leaderboard() {
 
   // Déterminer les indices pour les différentes parties
   const totalUsers = sortedUsers.length;
-  console.log(sortedUsers);
   const totalPages = Math.ceil(totalUsers / itemsPerPage);
   const topQuartileIndex = Math.ceil(totalUsers * 0.25); // 25%
   const middleHalfIndex = Math.ceil(totalUsers * 0.75); // 75%
@@ -677,7 +586,6 @@ function Leaderboard() {
   const startIndex = currentPage * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const usersToDisplay = sortedUsers.slice(startIndex, endIndex);
-  console.log("JE SUIS JUSTE LAA", usersToDisplay);
 
   const applyBordersAndCenter = (worksheet) => {
     const range = XLSX.utils.decode_range(worksheet["!ref"]); // Obtenir la plage des cellules
@@ -839,7 +747,7 @@ function Leaderboard() {
           secondes ...
         </h3>
         <Spinner animation="border" role="status">
-          <span className="visually-hidden">Chargement...</span>
+          <span className="visually-hidden"></span>
         </Spinner>
       </div>
     );

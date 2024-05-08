@@ -462,9 +462,7 @@ function App() {
             element={
               <>
                 <Navbar />
-                {/*<AffectSkill />*/}
                 <Leaderboard />
-                <Footer />
               </>
             }
           />

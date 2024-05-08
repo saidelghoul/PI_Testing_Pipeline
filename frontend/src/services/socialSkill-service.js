@@ -96,7 +96,6 @@ const SocialSkillService = {
           assignedBy: assignedByUserId, // Envoyer l'ID de l'utilisateur qui fait l'affectation
         }
       );
-      console.log("JE suis LA AAAAAAAAAA", response.data.socialSkill);
       return response.data.socialSkill;
     } catch (error) {
       console.error(
