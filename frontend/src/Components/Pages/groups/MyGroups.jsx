@@ -92,7 +92,7 @@ export default function MyGroups() {
                     <div className="company_profile_info">
                       <div className="company-up-info">
                         <img
-                          src={`http://localhost:8000/images/${page.profileImage}`}
+                          src={`${process.env.REACT_APP_BACKEND_URL}/images/${page.profileImage}`}
                           alt="Profile"
                         />
                         <h3>{page.nomgroups}</h3>
@@ -162,13 +162,6 @@ export default function MyGroups() {
                           )}
                         </ul>
                       </div>
-                      <Link
-                        to={`/groups/${page._id}`}
-                        title=""
-                        className="view-more-pro"
-                      >
-                        View Profile
-                      </Link>
                       <Link
                         to={`/groups/${page._id}`}
                         title=""
