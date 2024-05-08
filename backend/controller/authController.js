@@ -2,12 +2,15 @@ const SocialSkill = require("../model/socialSkill");
 const User = require("../model/user");
 const Departement = require("../model/departement");
 const Unite = require("../model/unite");
-const nodemailer = require('nodemailer');
-const crypto = require('crypto');
-const ResetPasswordToken = require('../model/ResetPasswordToken');
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
+const ResetPasswordToken = require("../model/ResetPasswordToken");
+const { promisify } = require("util");
 
 const { hashPassword, comparePassword } = require("../helpers/auth");
 const jwt = require("jsonwebtoken");
+
+const verifyToken = promisify(jwt.verify);
 
 const test = (req, res) => {
   res.json("test is working");
@@ -66,18 +69,18 @@ const registerUser = async (req, res) => {
         error: "Email is required",
       });
     }
-    
+
     // Vérifier si l'email se termine par @esprit.tn
     if (!email.endsWith("@esprit.tn")) {
       return res.json({
         error: "Email must end with @esprit.tn",
       });
     }
-    
+
     const hashedPassword = await hashPassword(password);
     const hashedConfirmedPassword = await hashPassword(confirmedPassword);
 
-    const emailToken = crypto.randomBytes(20).toString('hex');
+    const emailToken = crypto.randomBytes(20).toString("hex");
 
     const user = await User.create({
       name,
@@ -89,9 +92,9 @@ const registerUser = async (req, res) => {
       unite,
       emailToken,
     });
-    
+
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -99,9 +102,9 @@ const registerUser = async (req, res) => {
     });
 
     const mailOptions = {
-      from: 'marwakb4@gmail.com',
+      from: "marwakb4@gmail.com",
       to: email,
-      subject: 'Confirmation of your registration',
+      subject: "Confirmation of your registration",
       html: `<!DOCTYPE html>
       <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
       
@@ -321,12 +324,11 @@ const registerUser = async (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log(error);
-        return res.json({ error: 'Failed to send confirmation email!' });
+        return res.json({ error: "Failed to send confirmation email!" });
       }
-      console.log('Email sent: ' + info.response);
-      res.json({ message: 'A confirmation email has been sent' });
+      console.log("Email sent: " + info.response);
+      res.json({ message: "A confirmation email has been sent" });
     });
-
 
     return res.json(user);
   } catch (error) {
@@ -341,23 +343,21 @@ const confirmEmail = async (req, res) => {
     const user = await User.findOne({ emailToken: token });
 
     if (!user) {
-      return res.json({ error: 'Invalid or expired token' });
+      return res.json({ error: "Invalid or expired token" });
     }
 
     user.isEmailVerified = true;
-    user.emailToken = ''; 
+    user.emailToken = "";
     user.badges.push("New Member");
 
     await user.save();
 
-    res.json({ message: 'Your account has been successfully activated' });
-
+    res.json({ message: "Your account has been successfully activated" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: 'Server Error' });
+    res.status(500).json({ error: "Server Error" });
   }
 };
-
 
 const loginUser = async (req, res) => {
   try {
@@ -373,10 +373,12 @@ const loginUser = async (req, res) => {
       return res.json({ error: "Account Disabled" });
     }
 
-    if (!user.emailToken && !user.isEmailVerified ) {
-      return res.json({ error: "Please verify your email address to activate your account!" });
+    if (!user.emailToken && !user.isEmailVerified) {
+      return res.json({
+        error: "Please verify your email address to activate your account!",
+      });
     }
-  
+
     // Vérifier si les mots de passe correspondent
     const match = await comparePassword(password, user.password);
     if (match) {
@@ -400,8 +402,8 @@ const loginUser = async (req, res) => {
         unite: unite.name, // Inclure seulement le nom de l'unité
         socialSkills: user.socialSkills,
         technicalSkills: user.technicalSkills,
-        profileImage: user.profileImage, 
-        coverImage: user.coverImage, 
+        profileImage: user.profileImage,
+        coverImage: user.coverImage,
       };
 
       jwt.sign(tokenPayload, process.env.JWT_SECRET, {}, (err, token) => {
@@ -417,98 +419,80 @@ const loginUser = async (req, res) => {
 };
 
 const getProfile = async (req, res) => {
-  const { token } = req.cookies;
-  if (token) {
-    jwt.verify(token, process.env.JWT_SECRET, {}, async (err, decodedToken) => {
-      if (err) {
-        console.error("Error while decoding the token:", err);
-        return res
-          .status(500)
-          .json({ error: "Error while decoding the token" });
-      }
-      const {
-        id,
-        email,
-        name,
-        role,
-        addresse,
-        gouvernorat,
-        dateNaissance,
-        telephone,
-        gender,
-        departement, 
-        unite,
-        socialSkills,
-        technicalSkills,
-        profileImage,
-        coverImage
+  try {
+    const { token } = req.cookies;
+    if (!token) {
+      return res.json(null);
+    }
 
-      } = decodedToken;
-      if (!id) {
-        return res
-          .status(400)
-          .json({ error: "User ID not found in token" });
-      }
-      // L'ID de l'utilisateur est disponible ici
-      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // désactive la mise en cache
+    const decodedToken = await verifyToken(token, process.env.JWT_SECRET);
+    const {
+      id,
+      email,
+      name,
+      role,
+      addresse,
+      gouvernorat,
+      dateNaissance,
+      telephone,
+      gender,
+      departement,
+      unite,
+      socialSkills,
+      technicalSkills,
+      profileImage,
+      coverImage,
+    } = decodedToken;
 
-      try {
-        // Utilisation de Promise.all avec map pour récupérer toutes les compétences sociales de manière asynchrone
-        const socialSkillsList = await Promise.all(
-          socialSkills.map(async (element) => {
-            return await SocialSkill.findById(element);
-          })
-        );
+    if (!id) {
+      return res.status(400).json({ error: "User ID not found in token" });
+    }
 
-        // Renvoyer la réponse avec les données de l'utilisateur, y compris la liste des compétences sociales
-        res.json({
-          id,
-          email,
-          name,
-          role,
-          addresse,
-          gouvernorat,
-          dateNaissance,
-          telephone,
-          gender,
-          departement, 
-          unite,
-          socialSkills: socialSkillsList,
-          technicalSkills,
-          profileImage,
-        coverImage,
-        });
-      } catch (error) {
-        console.error(
-          "Erreur lors de la récupération des compétences sociales :",
-          error
-        );
-        res.status(500).json({
-          error:
-            "Une erreur est survenue lors de la récupération des compétences sociales",
-        });
-      }
+    const socialSkillsList = await Promise.all(
+      socialSkills.map(async (element) => {
+        return await SocialSkill.findById(element);
+      })
+    );
+
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.json({
+      id,
+      email,
+      name,
+      role,
+      addresse,
+      gouvernorat,
+      dateNaissance,
+      telephone,
+      gender,
+      departement,
+      unite,
+      socialSkills: socialSkillsList,
+      technicalSkills,
+      profileImage,
+      coverImage,
     });
-  } else {
-    res.json(null);
+  } catch (error) {
+    console.error("Error while decoding/verifying token:", error);
+    res.status(401).json({ error: "Unauthorized" });
   }
 };
 
 const logout = (req, res) => {
-  res.clearCookie('token').json({ message: 'Logout successful' });
+  res.clearCookie("token").json({ message: "Logout successful" });
 };
 
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
-  
+
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({ error: 'No users found with this email' });
+      return res.json({ error: "No users found with this email" });
     }
 
     // Generate reset token
-    const resetToken = crypto.randomBytes(20).toString('hex');
+    const resetToken = crypto.randomBytes(20).toString("hex");
     const resetPasswordToken = await ResetPasswordToken.create({
       userId: user._id,
       token: resetToken,
@@ -517,7 +501,7 @@ const forgotPassword = async (req, res) => {
 
     // Send reset token to user's email
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -531,9 +515,9 @@ const forgotPassword = async (req, res) => {
     //   text: ` Click this link to reset your password: ${process.env.CLIENT_URL}/reset/${resetToken} or click this link  ${process.env.CLIENT_URL1}/reset/${resetToken}`,
     // };
     const mailOptions = {
-      from: 'marwakb4@gmail.com',
+      from: "marwakb4@gmail.com",
       to: email,
-      subject: 'Password Reset Request',
+      subject: "Password Reset Request",
       html: `
       <!DOCTYPE html>
 <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
@@ -777,21 +761,20 @@ const forgotPassword = async (req, res) => {
 </body>
 
 </html>
-      `
-  };
-  
+      `,
+    };
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log(error);
-        return res.json({ error: 'Failed to send email' });
+        return res.json({ error: "Failed to send email" });
       }
-      console.log('Email sent: ' + info.response);
-      res.json({ message: 'Email sent with password reset instructions' });
+      console.log("Email sent: " + info.response);
+      res.json({ message: "Email sent with password reset instructions" });
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -801,29 +784,27 @@ const resetPassword = async (req, res) => {
   try {
     const resetPasswordToken = await ResetPasswordToken.findOne({ token });
     if (!resetPasswordToken || resetPasswordToken.expires < Date.now()) {
-      return res.json({ error: 'Invalid or expired token' });
+      return res.json({ error: "Invalid or expired token" });
     }
 
     const user = await User.findById(resetPasswordToken.userId);
     if (!user) {
-      return res.json({ error: 'No user found' });
+      return res.json({ error: "No user found" });
     }
 
     const hashedPassword = await hashPassword(newPassword);
     user.password = hashedPassword;
     await user.save();
 
-    res.json({ message: 'Password updated successfully' });
+    res.json({ message: "Password updated successfully" });
 
     // Delete the reset token
     await ResetPasswordToken.deleteOne({ token });
-    
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: "Server error" });
   }
 };
-
 
 module.exports = {
   test,
@@ -833,5 +814,5 @@ module.exports = {
   logout,
   forgotPassword,
   resetPassword,
-  confirmEmail
+  confirmEmail,
 };
