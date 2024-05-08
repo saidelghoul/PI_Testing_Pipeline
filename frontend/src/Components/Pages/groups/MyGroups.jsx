@@ -55,13 +55,6 @@ export default function MyGroups() {
     setCurrentPage(selected);
   };
 
-  // Filtrer les pages à afficher pour la page actuelle
-  const displayPagesForPage = () => {
-    const startIndex = currentPage * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return pages.slice(startIndex, endIndex);
-  };
-
   return (
     <section className="companies-info">
       <div className="container">
@@ -99,16 +92,22 @@ export default function MyGroups() {
                     <div className="company_profile_info">
                       <div className="company-up-info">
                         <img
-                          src={`${process.env.REACT_APP_BACKEND_URL}/images/${page.profileImage}`}
+                          src={`http://localhost:8000/images/${page.profileImage}`}
                           alt="Profile"
                         />
                         <h3>{page.nomgroups}</h3>
                         <h4>{formatDate(page.date)}</h4>
+                        {page.visibilite ? (
+                          <b> 🔓 Public page 🔓</b>
+                        ) : (
+                          <b> 🔒 Private Page 🔒</b>
+                        )}
+                        <br></br> <br></br>
                         <ul>
                           {user.id === page.creator && (
                             <li>
                               <Link
-                                to={`/modifier/${page._id}`}
+                                to={`/modifierPage/${page._id}`}
                                 title=""
                                 className="follow"
                               >
@@ -169,6 +168,13 @@ export default function MyGroups() {
                         className="view-more-pro"
                       >
                         View Profile
+                      </Link>
+                      <Link
+                        to={`/groups/${page._id}`}
+                        title=""
+                        className="view-more-pro"
+                      >
+                        View Page
                       </Link>
                     </div>
                   </div>

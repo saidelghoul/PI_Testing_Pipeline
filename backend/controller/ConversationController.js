@@ -1,14 +1,18 @@
 var Conversation = require("../model/Chats/conversation");
 var Message = require("../model/Chats/message");
 const User = require("../model/user");
+const path = require('path'); // Importez le module path pour manipuler les chemins de fichier
 
 async function getAllConversations(req, res) {
   try {
-    const conversations = await Conversation.find({}).
-    populate({
-      path: 'messages',
-      select: 'createdAt' // Sélectionnez les champs à afficher
-    }) 
+    const conversations = await  Conversation.find({}).populate({path: "messages",
+    select: "repondeur",
+    populate: {
+      path: "repondeur",
+      select: "profileImage"
+    }})
+  
+
       .exec();
     res.status(200).json(conversations);
   } catch (error) {
@@ -40,7 +44,7 @@ async function getMessage(req, res) {
   try {
     const messages = await Message.find({ conversation: conversationId })// Utilisez { createdAt: -1 } pour trier par ordre décroissant
                                   .populate({path:'sender',
-                                            select:'name'});
+                                            select:'name profileImage'});
     res.status(200).json(messages);
   } catch (error) {
     res.status(500).json({ error: "Erreur du serveur : " + error.message });
@@ -57,45 +61,54 @@ async function getUsers(req, res) {
   }
 }
 async function addConversation(req, res) {
-  const { members, creator: connectedUserId } = req.body;
+  const { members, creator: connectedUserId, name } = req.body;
 
-  if (!members || members.length !== 2) {
-    return res.status(400).json({ error: "Veuillez fournir deux membres pour créer une conversation" });
+  // Vérifier si au moins un membre est fourni
+  if (!members || members.length < 1) {
+    return res.status(400).json({ error: "Veuillez fournir au moins un membre pour créer une conversation" });
   }
-
-  const clickedUserId = members.find(memberId => memberId !== connectedUserId); // Trouver l'ID de l'autre membre
 
   try {
-    // Vérifier s'il existe déjà une conversation entre les deux utilisateurs
+    // Vérifier s'il existe déjà une conversation entre ces membres
     const existingConversation = await Conversation.findOne({
-      members: { $all: [connectedUserId, clickedUserId] }
+      members: { $all: [connectedUserId, ...members] }
     });
 
+    // Si une conversation existe déjà, renvoyer une erreur
     if (existingConversation) {
-      return res.status(400).json({ error: "Une conversation entre ces utilisateurs existe déjà" });
+      return res.status(400).json({ error: "Une conversation avec ces membres existe déjà" });
     }
 
-    const connectedUser = await User.findById(connectedUserId);
-    const clickedUser = await User.findById(clickedUserId);
+    // Récupérer les informations de chaque membre, y compris leurs images de profil
+    const membersInfo = await User.find({ _id: { $in: [connectedUserId, ...members] } });
 
-    if (!connectedUser || !clickedUser) {
-      return res.status(404).json({ error: "Un ou les deux utilisateurs non trouvés" });
-    }
+    // Générer l'image de la conversation en combinant les images de profil de chaque membre
+    const conversationImage = membersInfo.map(member => member.profileImage).join('');
 
+    // Définir le chemin d'enregistrement de l'image dans le répertoire "public"
+    const imagePath = `${conversationImage}`;
+    // Créer une nouvelle conversation avec le nom spécifié et l'image combinée
     const conversation = {
-      name: clickedUser.name,
-      members: [connectedUserId, clickedUserId],
-      creator: connectedUserId // Définir le créateur de la conversation comme l'utilisateur connecté
+      name: name,
+      members: [connectedUserId, ...members],
+      creator: connectedUserId,
+      image: imagePath // Utiliser le chemin de l'image combinée pour la conversation
     };
-
     const newConversation = new Conversation(conversation);
     const saved = await newConversation.save();
-    res.status(201).json(saved);
+    return res.status(201).json(saved);
   } catch (err) {
     console.error("Erreur:", err);
-    res.status(500).json({ error: "Erreur du serveur " + err.message });
+    return res.status(500).json({ error: "Erreur du serveur " + err.message });
   }
 }
+
+
+
+
+
+
+
 
 async function removeConversation(req, res) {
   const id = req.params.id;
@@ -234,7 +247,23 @@ async function getAllMessagesByContent(req, res) {
   } catch (err) {
     res.status(500).json({ error: "Server error" + err.message });
   }
+};
+
+async function getMembersByConversation(req, res) {
+
+  try {
+    const conversation = await Conversation.findById(req.params.id).populate({
+      path: "members",
+      select: "name"
+    });
+
+    if (!conversation) {
+      return res.status(404).json({ error: "Conversation not found" });
+    }
+
+    res.status(200).json(conversation);
+  } catch (error) {
+    res.status(500).json({ error: "Server error" + error.message });
+  }
 }
-
-
-module.exports = { getAllConversations,removeMessage,getMessagesByConversationId,getMessage,sendMessage,updateConversationMembres, getUsers,getConversationById, addConversation, removeConversation, updateConversation ,getAllMessagesByContent };
+module.exports = { getAllConversations,getMembersByConversation,removeMessage,getMessagesByConversationId,getMessage,sendMessage,updateConversationMembres, getUsers,getConversationById, addConversation, removeConversation, updateConversation ,getAllMessagesByContent };

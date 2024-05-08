@@ -102,7 +102,7 @@ async function getall(req, res) {
 async function getbyid(req, res) {
   try {
     const groupId = req.params.id;
-    const group = await Page.findById(groupId);
+    const group = await Page.findById(groupId).populate({path:"notifications",select:"isAccept"});
     if (!group) {
         return res.status(404).json({ message: 'Le groupe n\'existe pas' });
     }
@@ -132,6 +132,7 @@ async function update(req, res) {
   const id = req.params.id;
   const profileImage = req.files.profileImage ? req.files.profileImage[0].filename : undefined;
   const coverImage = req.files.coverImage ? req.files.coverImage[0].filename : undefined;
+  const { nomgroups, description, visibilite } = req.body;
 
   try {
     let group = await Page.findById(id);
@@ -146,6 +147,15 @@ async function update(req, res) {
     }
     if (coverImage) {
       group.coverImage = coverImage;
+    }
+    if (nomgroups) {
+      group.nomgroups = nomgroups;
+    }
+    if (description) {
+      group.description = description;
+    }
+    if (visibilite) {
+      group.visibilite = visibilite;
     }
 
     // Enregistrer les modifications

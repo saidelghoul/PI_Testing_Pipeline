@@ -272,6 +272,7 @@ header {
 	float: left;
 	width: 100%;
 	background-color: #e44d3a;
+	margin-top:-20px
 }
 .header-data {
 	float: left;
@@ -3165,7 +3166,11 @@ footer {
 	object-fit: cover;
 }
 .row {
-	margin: 0;
+	margin-top: 13px;
+	margin-right: 1px;
+	margin-left: 1px;
+	margin-bottom: 15px;
+
 }
 .gallery_pt > a {
 	position: absolute;

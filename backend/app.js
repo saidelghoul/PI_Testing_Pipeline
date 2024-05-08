@@ -52,15 +52,21 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "twig");
 
 io.on("connection", (socket) => {
-  console.log("Client connected");
+  // Gérer l'événement de typing côté serveur
+  socket.on("typing", (data) => {
+    try {
+      const { conversationId, sender, isTyping } = data;
+
+      // Diffuser l'état de typing à tous les clients sauf à l'émetteur
+      socket.broadcast.emit("typing", { conversationId, sender, isTyping });
+    } catch (error) {
+      console.error("Error in typing event:", error.message);
+    }
+  });
 
   socket.on("message", async (data) => {
     try {
       const { content, sender, repondeur, conversationId } = data;
-      console.log("Message content:", content);
-      console.log("Message sender:", sender);
-      console.log("Message repondeur:", repondeur);
-      console.log("Message conversationId:", conversationId);
 
       const newMessage = new Message({
         content,
@@ -115,11 +121,6 @@ app.use("/technicalSkills", technicalSkillsRouter);
 app.use("/user", require("./controller/userController"));
 app.use("/badges", require("./controller/badgesController"));
 app.use("/userScore", UserScoreRoutes);
-
-app.use(
-  "/imagesUser",
-  express.static(path.join(__dirname, "public/imagesUser"))
-);
 
 const accountSid = "AC123f75a58cfaeaad10128a4d8a8ac843";
 const authToken = "58b03b9ac98cffd551468d55cf18da4f";

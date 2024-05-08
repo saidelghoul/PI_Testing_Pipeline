@@ -66,10 +66,9 @@ export default function Navbar() {
           <div className="logo">
             <img src="/assets/images/esprit.png" alt="" width="100em" />
           </div>
-          <div className="logo" style = {{paddingBottom:'25px'}}>
+          <div className="logo" style={{ paddingBottom: "25px" }}>
             <ODDSocialSkillPopup></ODDSocialSkillPopup>
           </div>
-
           <nav style={{ paddingRight: "60px" }}>
             <ul>
               <li>
@@ -145,7 +144,7 @@ export default function Navbar() {
               </li>
 
               <li>
-                <Link to="/message" title="" className="not-box-openm">
+                <Link to="/teste" title="" className="not-box-openm">
                   <span>
                     <img src="/assets/images/icon6.png" alt="" />
                   </span>

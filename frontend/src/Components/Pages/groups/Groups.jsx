@@ -24,13 +24,9 @@ export default function Groups() {
   const [isParticipating, setIsParticipating] = useState(true);
   const [userIsCreator, setUserIsCreator] = useState(true); // Mettez la valeur correcte ici, true si l'utilisateur est le créateur, false sinon
   const [pageScore, setPageScore] = useState(0);
-  const [publications, setPublications] = useState([]);
   const [publicationsCount, setPublicationsCount] = useState(0);
   const [totalLikes, setTotalLikes] = useState(0);
   const [totalDislikes, setTotalDislikes] = useState(0);
-  const [likesCount, setLikesCount] = useState(0);
-  const [dislikesCount, setDislikesCount] = useState(0);
-  const [comments, setComments] = useState([]);
   const userId = user ? user.id : null;
 
   //const imageUrl = userId ? `http://localhost:8000/user/${userId}/profile` : "/assets/images/resources/user-pro-img.png";
@@ -85,7 +81,6 @@ export default function Groups() {
       });
 
       groupScore = totalLikes - totalDislikes;
-      console.log("laaa", groupScore);
     }
 
     return { totalPublications, groupScore, totalLikes, totalDislikes };
@@ -97,7 +92,6 @@ export default function Groups() {
         userId: user.id,
       });
 
-      console.log(response.data.message);
       alert(
         "votre participation est bien effectuer attendez admin pour l acceptation"
       );
@@ -163,7 +157,8 @@ export default function Groups() {
                         {user &&
                           page &&
                           user.id !== page.creator &&
-                          !isParticipating && (
+                          !isParticipating &&
+                          !page.visibilite && (
                             <ul className="flw-hr">
                               <li>
                                 <a
@@ -172,7 +167,7 @@ export default function Groups() {
                                   title=""
                                   className="flww"
                                 >
-                                  <i className="la la-plus"></i> Rejoindre
+                                  <i className="la la-plus"></i> Follow
                                 </a>
                               </li>
                             </ul>
@@ -229,22 +224,47 @@ export default function Groups() {
                         <div className="user-picy">
                           <img src={imageUrl} alt="" />
                         </div>
-                        <div className="post-st">
-                          <ul>
-                            <li>
-                              <Link
-                                className="post-jb active"
-                                to={`/addPub/${page._id}`}
-                                title=""
-                              >
-                                Ajouter une Publication
-                              </Link>
-                            </li>
-                          </ul>
-                        </div>
+                        {user.id === page.creator ||
+                        isParticipating ||
+                        (page.notifications.isAccept && page.visibilite) ? (
+                          <div className="post-st">
+                            <ul>
+                              <li>
+                                <Link
+                                  className="post-jb active"
+                                  to={`/addPub/${page._id}`}
+                                  title=""
+                                >
+                                  Ajouter une Publication
+                                </Link>
+                              </li>
+                            </ul>
+                          </div>
+                        ) : (
+                          <span>👋😊</span>
+                        )}
                       </div>
                     </div>
-                    <PubGroups groupId={id} />
+                    {user.id === page.creator ||
+                    isParticipating ||
+                    page.notifications.isAccept ||
+                    page.visibilite ? (
+                      <PubGroups groupId={id} />
+                    ) : !isParticipating && !page.notifications.isAccept ? (
+                      <div>
+                        <p>
+                          Vous n'êtes pas autorisé à voir les publications de
+                          cette page car vos notifications sont désactivées.
+                        </p>
+                      </div>
+                    ) : (
+                      <div>
+                        <p>
+                          Vous n'êtes pas autorisé à voir les publications de
+                          cette page car vous n'êtes pas le créateur.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="col-lg-3">

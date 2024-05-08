@@ -38,8 +38,10 @@ export default function ListNotification() {
       <div className="acc-setting">
         <h3>Notifications</h3>
         <div className="notifications-list">
-          {notifications.map(notification => (
-            <div className="notfication-details" key={notification._id}>
+        {notifications
+          .filter(notification => !notification.isAccept) // Filtrer les notifications non acceptées
+          .map(notification => (
+                        <div className="notfication-details" key={notification._id}>
               <div className="noty-user-img">
                 <img src="/assets/images/resources/ny-img1.png" alt="" />
               </div>

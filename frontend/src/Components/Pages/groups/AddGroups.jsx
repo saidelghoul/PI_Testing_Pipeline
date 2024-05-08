@@ -4,6 +4,7 @@ import { UserContext } from "../../../../context/userContext";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
+import { Spinner } from "react-bootstrap";
 export default function AddPage() {
   const { user } = useContext(UserContext);
   const [profileImage, setProfileImage] = useState(null);

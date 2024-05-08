@@ -55,6 +55,7 @@ import UpdatePubGroups from "./Components/Pages/groups/UpdatePubGroups";
 import PubGroups from "./Components/Pages/groups/PubGroups";
 import PubActions from "./Components/Pages/groups/PubActions";
 import AddCommentPub from "./Components/Pages/groups/AddCommentPub";
+import Teste from "./Components/Pages/chats/Teste";
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL;
 axios.defaults.withCredentials = true;
@@ -88,6 +89,16 @@ function App() {
               <>
                 <Navbar />
                 <UpdatePubGroups />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/teste"
+            element={
+              <>
+                <Navbar />
+                <Teste />
                 <Footer />
               </>
             }
@@ -182,7 +193,7 @@ function App() {
             }
           />
           <Route
-            path="/modifier/:id"
+            path="/modifierPage/:id"
             element={
               <>
                 <Navbar />

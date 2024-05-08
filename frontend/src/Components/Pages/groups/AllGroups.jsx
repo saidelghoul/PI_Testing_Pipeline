@@ -79,13 +79,6 @@ export default function AllGroups() {
               />
             </div>
           </div>
-          {/* <Link
-            to="/addGroup"
-            className="btn btn-danger"
-            style={{ backgroundColor: "#dc3545" }}
-          >
-            Add Page
-          </Link> */}
         </div>
         <br></br>
         <div className="companies-list">
@@ -104,8 +97,13 @@ export default function AllGroups() {
                           alt="Profile"
                         />
                         <h3>{page.nomgroups}</h3>
-
                         <h4>{formatDate(page.date)}</h4>
+                        {page.visibilite ? (
+                          <b> 🔓 Public page 🔓</b>
+                        ) : (
+                          <b> 🔒 Private Page 🔒</b>
+                        )}
+                        <br></br> <br></br>
                         <ul>
                           {user.id === page.creator && (
                             <li>

@@ -16,7 +16,6 @@ const notificationSchema = new mongoose.Schema({
   },
   isAccept:{
      type: Boolean,
-  default: true,
 }, 
   details: {
     type: mongoose.Schema.Types.ObjectId, 
@@ -26,12 +25,8 @@ const notificationSchema = new mongoose.Schema({
   },
   isActive: {
     type: Boolean,
-    default: true // Par défaut, la notification est active
   },
-  isRead: {
-    type: Boolean,
-    default: false
-  },
+
   createdAt: {
     type: Date,
     default: Date.now
