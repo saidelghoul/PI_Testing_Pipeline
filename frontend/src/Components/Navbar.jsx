@@ -61,15 +61,15 @@ export default function Navbar() {
 
   return (
     <header>
-      <div style={{ marginTop: "25px" }} className="container">
+      <div style={{ marginTop: "20px" }} className="container">
         <div className="header-data">
-          <div className="logo">
-            <img src="/assets/images/esprit.png" alt="" width="100em" />
+          <div className="logo pd-btm" title="Co-Teacher">
+            <img src="/assets/images/logo/iconpng.png" alt="" width="100em" />
           </div>
-          <div className="logo" style={{ paddingBottom: "25px" }}>
+          <div className="logo pd-btm">
             <ODDSocialSkillPopup></ODDSocialSkillPopup>
           </div>
-          <nav style={{ paddingRight: "60px" }}>
+          <nav style={{ paddingRight: "60px", marginTop: "7px" }}>
             <ul>
               <li>
                 <a href="/home" title="">
@@ -151,18 +151,6 @@ export default function Navbar() {
                   Messages
                 </Link>
               </li>
-              {/* <li>
-                <Link
-                  to={`/Historiques/${user?.id}`}
-                  title=""
-                  className="not-box-open"
-                >
-                  <span>
-                    <img src="/assets/images/icon7.png" alt="" />
-                  </span>
-                  Historiques
-                </Link>
-              </li> */}
             </ul>
           </nav>
           <div className="menu-btn">
@@ -172,12 +160,7 @@ export default function Navbar() {
           </div>
           <div className="user-account" style={{ marginLeft: "10px" }}>
             <div className="user-info">
-              <img
-                src={imageUrl}
-                alt="Image de profil"
-                width="40px"
-                height="40px"
-              />
+              <img src={imageUrl} alt="profile" width="40px" height="40px" />
               <a href="#" title="">
                 {!!user && <h1>{user.name}</h1>}
               </a>

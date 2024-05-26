@@ -123,7 +123,7 @@ export default function Groups() {
     return (
       <div style={{ textAlign: "center", marginTop: "20px" }}>
         <Spinner animation="border" role="status">
-          <span className="visually-hidden">Chargement...</span>
+          <span className="visually-hidden"></span>
         </Spinner>
       </div>
     );

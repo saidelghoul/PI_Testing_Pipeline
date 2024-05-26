@@ -7,7 +7,7 @@ import { UserContext } from "../../../../context/userContext";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import moment from "moment";
-import espritLogo from "../../../../public/assets/images/esprit.png";
+import espritLogo from "../../../../public/assets/images/logo/logo.png";
 import UserStats, { generatePieChartBase64 } from "./UserStats";
 import axios from "axios";
 import ReactPaginate from "react-paginate";
@@ -340,48 +340,12 @@ function Leaderboard() {
 
     // Ajouter le logo
     const logoWidth = 50;
-    const logoHeight = 50;
+    const logoHeight = 25;
     pdf.addImage(espritLogo, "PNG", 150, 10, logoWidth, logoHeight);
 
-    // Ajouter le tableau des scores
-    pdf.autoTable({
-      startY: 70,
-      head: [
-        [
-          "Rang",
-          "Nom",
-          "Rôle",
-          "Points sociaux",
-          "Score des tâches",
-          "Score des publications",
-          "Score de Page",
-          "Score final",
-          "Rating",
-        ],
-      ],
-      body: sortedUsers.map((usr, index) => [
-        {
-          content: index + 1,
-          styles: {
-            fontStyle: "bold",
-            fillColor: getRowBackgroundColor(index),
-          },
-        },
-        usr.name,
-        `${usr.role} (${usr.departmentDetails?.[0]?.name || "N/A"} / ${
-          usr.uniteDetails?.[0]?.name || "N/A"
-        })`,
-        socialPoints[usr._id] || 0,
-        `${TaskPoints[usr._id]} (/ ${nbrTasksPoints[usr._id]})`,
-        publicationScores[usr._id] || 0,
-        pageScores[usr._id] || 0,
-        Math.round(usr.finalScore) || 0,
-        {
-          content: usr.rating.length,
-          styles: { fontStyle: "bold" },
-        },
-      ]),
-    });
+    // Ajouter les formules des scores
+    pdf.setFont("Helvetica", "bold");
+    pdf.text("Formules pour le calcul des scores :", 10, 40);
 
     pdf.setFont("Helvetica", "normal");
     pdf.text("Score des tâches = Somme des points obtenus", 10, 45);
@@ -424,7 +388,10 @@ function Leaderboard() {
       body: sortedUsers.map((usr, index) => [
         {
           content: index + 1,
-          styles: { fontStyle: "bold" },
+          styles: {
+            fontStyle: "bold",
+            fillColor: getRowBackgroundColor(index),
+          },
         },
         usr.name,
         `${usr.role} (${usr.departmentDetails?.[0]?.name || "N/A"} / ${
@@ -434,7 +401,7 @@ function Leaderboard() {
         `${TaskPoints[usr._id]} (/ ${nbrTasksPoints[usr._id]})`,
         publicationScores[usr._id] || 0,
         pageScores[usr._id] || 0,
-        usr.finalScore || 0,
+        Math.round(usr.finalScore) || 0,
         {
           content: usr.rating.length,
           styles: { fontStyle: "bold" },
@@ -538,7 +505,7 @@ function Leaderboard() {
     pdf.setTextColor(255, 0, 0);
     pdf.text("Ces données sont strictement confidentielles !", 10, 10);
 
-    pdf.addImage(espritLogo, "PNG", 40, 100, 80, 80);
+    pdf.addImage(espritLogo, "PNG", 40, 100, 160, 80);
 
     // Ajouter la date d'aujourd'hui en bas à gauche
     const todayDate = moment().format("DD/MM/YYYY");
