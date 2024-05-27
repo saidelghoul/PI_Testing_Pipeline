@@ -96,10 +96,10 @@ function UserStats() {
 
   const data = {
     labels: [
-      "Points sociaux 🗣️",
-      "Score des tâches 📋",
-      "Score des publications ✍️",
-      "Score de Page 📄",
+      "Social Points 🗣️",
+      "Task Score 📋",
+      "Publication Score ✍️",
+      "Page Score 📄",
     ],
     datasets: [
       {
@@ -132,15 +132,15 @@ function UserStats() {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <h3 className="h3">Vos statistiques 📊</h3>
+      <h3 className="h3">Your Stats 📊</h3>
 
       <p>
         <b>
-          Pour connaître vos
+        To find out about your
           <span className="h6">
-            <br /> points forts 💪
+            <br /> strengths 💪
           </span>{" "}
-          et <span className="h6">points faibles 🤕</span>
+          and <span className="h6">weaknesses 🤕</span>
         </b>
       </p>
       <br />

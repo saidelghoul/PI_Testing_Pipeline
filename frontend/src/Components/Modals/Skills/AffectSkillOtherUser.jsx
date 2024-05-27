@@ -46,7 +46,7 @@ function AffectSkillOtherUser( targetUserId ) {
 
     const handleAddSocialSkill = async () => {
         if (!socialSkillItem) {
-          alert("Veuillez sélectionner une compétence à ajouter.");
+          alert("Please select a skill to add.");
           return;
         }
     
@@ -78,7 +78,7 @@ function AffectSkillOtherUser( targetUserId ) {
       <Card className="my-4 p-4">
         <Row className="mb-3">
           <Col>
-            <h2 className="text-center h4" >Offrez une compétence sociale 💝 <br /><span className="h6">( Le nombre de "⭐" équivaut à la demande de cette compétence dans le marché)</span></h2>
+            <h2 className="text-center h4" >Offer social skills 💝 <br /><span className="h6">( The number of “⭐” equals the demand for this skill in the market.)</span></h2>
             <p className="text-center"></p>
           </Col>
           
@@ -91,7 +91,7 @@ function AffectSkillOtherUser( targetUserId ) {
   <Dropdown.Toggle variant="primary" id="dropdown-basic">
     {socialSkillItem
       ? skills.find((sk) => sk._id === socialSkillItem)?.name
-      : "Sélectionnez une compétence qui vous représente le mieux !!!"}
+      : "Select a skill that best represents you!!!"}
   </Dropdown.Toggle>
 
   <Dropdown.Menu style={{ maxHeight: '100px', overflowY: 'auto', paddingRight: '10px' }}>

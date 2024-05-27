@@ -18,31 +18,32 @@ function ODDSocialSkillPopup() {
   // Liste des ODD à afficher
   const oddSections = [
     {
-      title: "✔️ Accès à une éducation de qualité",
+      title: "✔️ Access to Quality Education",
       img: odd4,
-      desc: '👨🏻‍🎓 : "Grâce à cette application, nous favorisons un accès équitable à travers une éducation de qualité pour tous. Venez apprendre les bonnes pratiques en travaillant dans des activités/projets en groupe !"',
+      desc: '👨🏻‍🎓 : "Thanks to this application, we promote equitable access through quality education for all. Come learn best practices by working on group activities/projects!"',
     },
     {
-      title: "✔️ Egalité entre les sexes",
+      title: "✔️ Gender Equality",
       img: odd5,
-      desc: '👩 : "Pas de discrimination ni de sexisme. Tous vos investissements et votre travail sont promus grâce à l\'intelligence du système." 🧑 : "Génial, sympa et honnête !!"',
+      desc: '👩 : "No discrimination or sexism. All your investments and work are promoted thanks to the system\'s intelligence." 🧑 : "Great, nice and honest!!"',
     },
     {
-      title: "✔️ Accès à des emplois décents",
+      title: "✔️ Access to Decent Jobs",
       img: odd8,
-      desc: '🧑🏻‍💻 : "Grâce à notre application, nous vous assurons un emploi décent et une croissance économique durable qui seront récompensés par votre dur labeur!"',
+      desc: '🧑🏻‍💻 : "Thanks to our application, we ensure you decent employment and sustainable economic growth that will be rewarded by your hard work!"',
     },
     {
-      title: "✔️ Réduction des inégalités",
+      title: "✔️ Reducing Inequalities",
       img: odd10,
-      desc: '🧑🏿🤝🏼🧑🏼 : "Dans notre application, vous pouvez oublier le racisme et toute autre forme d\'inégalité au sein du pays et entre nous!"',
+      desc: '🧑🏿🤝🏼🧑🏼 : "In our application, you can forget racism and any other form of inequality within the country and among us!"',
     },
     {
-      title: "✔️ Protection de la faune et de la flore terrestre",
+      title: "✔️ Protecting Terrestrial Wildlife and Flora",
       img: odd15,
-      desc: '🌱🌍🌱 : "La déforestation et le gaspillage de papier, c\'est terminé!"',
+      desc: '🌱🌍🌱 : "Deforestation and paper waste are over!"',
     },
   ];
+
 
   // Filtrer les sections à afficher en fonction du nombre visible
   const displayedSections = oddSections.slice(0, visibleSections);
@@ -63,7 +64,7 @@ function ODDSocialSkillPopup() {
 
       <Modal show={show} onHide={handleClose} centered animation>
         <Modal.Header style={{ backgroundColor: "#f5f5f5" }}>
-          <Modal.Title>Objectifs de Développement Durable (ODD)</Modal.Title>
+          <Modal.Title>Sustainable Development Goals (SDG)</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {displayedSections.map((section, index) => (
@@ -81,10 +82,10 @@ function ODDSocialSkillPopup() {
               {/* Ligne de séparation entre sections */}
             </div>
           ))}
-          {visibleSections < oddSections.length && ( // Afficher le bouton "Voir plus" si des sections supplémentaires existent
+          {visibleSections < oddSections.length && ( 
             <div className="text-center">
               <Button variant="link" onClick={handleViewMore}>
-                Voir plus
+                View More
               </Button>
             </div>
           )}

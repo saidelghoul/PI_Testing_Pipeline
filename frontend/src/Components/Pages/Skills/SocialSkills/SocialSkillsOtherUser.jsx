@@ -167,7 +167,7 @@ function SocialSkillsUSer({ user }) {
     <div>
       <div className="user-profile-ov">
         <h3 style={{ textAlign: "center" }}>
-          Compétences Sociales 🧠 de {user.name}
+          Social Skills 🧠 of {user.name}
           <Link to={`/affectSkillOtherUser/${user._id}`}>
             <i className="fa fa-plus-square"></i>
           </Link>
@@ -261,23 +261,23 @@ function SocialSkillsUSer({ user }) {
           <div style={{ textAlign: "center" }}>
             <hr />
             <h1>
-              Aucune compétence sociale n'est disponible pour le moment (*){" "}
+            No social skills available at present (*){" "}
             </h1>
 
             <p>
               {" "}
-              (*) : il est possible que l'utilisateur n'aie pas encore ajouter
-              des socials Skills 😎.{" "}
+              (*) : it is possible that the user has not yet added
+              Social Skills 😎.{" "}
             </p>
             <h3 style={{ textAlign: "center" }}>
-              Offrez-lui des SocialSkills💝
+            Give him some SocialSkills💝
             </h3>
           </div>
         )}
 
         {assigned.length > displayCount && (
           <Button variant="primary" onClick={showMoreSkills}>
-            Voir plus
+            View More
           </Button>
         )}
 

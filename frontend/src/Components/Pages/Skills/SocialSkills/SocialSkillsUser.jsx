@@ -289,7 +289,7 @@ function SocialSkillsUSer() {
 
         {assigned.length > displayCount && (
           <Button variant="primary" onClick={showMoreSkills}>
-            Voir plus
+            View More
           </Button>
         )}
 

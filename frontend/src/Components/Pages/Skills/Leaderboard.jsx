@@ -335,8 +335,8 @@ function Leaderboard() {
     const pdf = new jsPDF("p", "mm", "a4");
 
     // Titre du document
-    pdf.text("Leaderboard des professeurs", 10, 20);
-    pdf.text(`Date du jour: ${moment().format("DD/MM/YYYY")}`, 10, 30);
+    pdf.text("Teacher Leaderboard", 10, 20);
+    pdf.text(`Today's date: ${moment().format("DD/MM/YYYY")}`, 10, 30);
 
     // Ajouter le logo
     const logoWidth = 50;
@@ -345,26 +345,26 @@ function Leaderboard() {
 
     // Ajouter les formules des scores
     pdf.setFont("Helvetica", "bold");
-    pdf.text("Formules pour le calcul des scores :", 10, 40);
+    pdf.text("Formulas for calculating scores :", 10, 40);
 
     pdf.setFont("Helvetica", "normal");
-    pdf.text("Score des tâches = Somme des points obtenus", 10, 45);
+    pdf.text("Task score = Sum of points obtained", 10, 45);
 
     // Formule des publications (posts)
     pdf.text(
-      "Score des publications dépend du nbr de LIkes, Dislikes et Report",
+      "Publication score (depends on number of LIkes, Dislikes and Reports)",
       10,
       50
     ); // Exemple de formule
     pdf.text(
-      "Score des publications inclut les rapports (si applicables)",
+      "Score of publications includes reports (if applicable)",
       10,
       55
     );
 
     // Formule du score de page
     pdf.text(
-      "Score de Page = Nombre de publications dans toutes les pages du site",
+      "Page Score = Number of publications on all pages of the site",
       10,
       60
     );
@@ -374,14 +374,14 @@ function Leaderboard() {
       startY: 70,
       head: [
         [
-          "Rang",
-          "Nom",
-          "Rôle",
-          "Points sociaux",
-          "Score des tâches",
-          "Score des publications",
-          "Score de Page",
-          "Score final",
+          "Rank",
+          "Name",
+          "Role",
+          "Social Points",
+          "Task Score",
+          "Publication Score",
+          "Page Score",
+          "FINAL SCORE",
           "Rating",
         ],
       ],
@@ -413,7 +413,7 @@ function Leaderboard() {
     const pageHeight = pdf.internal.pageSize.getHeight();
     pdf.setTextColor(255, 0, 0);
     pdf.text(
-      "Ces données sont strictement confidentielles !",
+      "These data are strictly confidential!",
       10,
       pageHeight - 10
     );
@@ -444,10 +444,10 @@ function Leaderboard() {
       10,
       30
     );
-    pdf.text(`Points sociaux: ${socialScore || 0}`, 10, 40);
-    pdf.text(`Score des tâches: ${taskScore || 0}`, 10, 50);
-    pdf.text(`Score des publications: ${publicationScore || 0}`, 10, 60);
-    pdf.text(`Score de page: ${pageScore || 0}`, 10, 70);
+    pdf.text(`Social points: ${socialScore || 0}`, 10, 40);
+    pdf.text(`Task score: ${taskScore || 0}`, 10, 50);
+    pdf.text(`Publication score: ${publicationScore || 0}`, 10, 60);
+    pdf.text(`Page score: ${pageScore || 0}`, 10, 70);
 
     // Calcul du score final
     let finalScore = socialScore + taskScore + publicationScore + pageScore;
@@ -472,7 +472,7 @@ function Leaderboard() {
     }
     pdf.setFont("Helvetica", "bold");
     pdf.text(
-      `Score final = Points sociaux + Score des tâches + Score des publications + Score de page= ${finalScore}`,
+      `Final score = Social points + Task score + Publication score + Page score= ${finalScore}`,
       10,
       80
     );
@@ -503,9 +503,9 @@ function Leaderboard() {
 
     const pageHeight = pdf.internal.pageSize.getHeight();
     pdf.setTextColor(255, 0, 0);
-    pdf.text("Ces données sont strictement confidentielles !", 10, 10);
+    pdf.text("These data are strictly confidential!", 10, 10);
 
-    pdf.addImage(espritLogo, "PNG", 40, 100, 160, 80);
+    pdf.addImage(espritLogo, "PNG", 40, 100, 150, 80);
 
     // Ajouter la date d'aujourd'hui en bas à gauche
     const todayDate = moment().format("DD/MM/YYYY");
@@ -710,8 +710,8 @@ function Leaderboard() {
       >
         <h3 className="h4">
           {" "}
-          ⌛Chargement des données du tableau ⏳ veuillez patienter quelques
-          secondes ...
+          ⌛ Loading table data ⏳ please wait a few
+          seconds ...
         </h3>
         <Spinner animation="border" role="status">
           <span className="visually-hidden"></span>
@@ -740,7 +740,7 @@ function Leaderboard() {
             <InputGroup>
               <InputGroup.Text>🔎</InputGroup.Text>
               <Form.Control
-                placeholder="Rechercher par nom, rôle, département ou unité"
+                placeholder="Search by name, role, department or unit"
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </InputGroup>
@@ -768,26 +768,26 @@ function Leaderboard() {
       <Table striped bordered hover>
         <thead>
           <tr>
-            {shouldDisplayRank && <th className="text-center h4">Rang 🏆</th>}
+            {shouldDisplayRank && <th className="text-center h4">Rank 🏆</th>}
             <th className="text-center h5">
-              Nom 🙎‍♂️
+              Name 🙎‍♂️
               <br />
-              (❌ : vous)
+              (❌ : YOU)
             </th>
             <th className="text-center h5">
-              Rôle 💼<span>(Département/Unité)</span>
+              Role 💼<span>(Département/Unité)</span>
             </th>
             <th className="text-center h5">
-              Score social 🗣️ <br /> <br />( 😎 / 💝 )
+              Social Score 🗣️ <br /> ( 😎 / 💝 )
             </th>
             <th className="text-center ">
-              Score des tâches 📋
+              Task Score 📋
               <br />
-              (/nbr de tâches📚)
+              (/nbr of tasks📚)
             </th>
-            <th className="text-center ">Score des publications ✍️</th>
-            <th className="text-center ">Score de Page 📄</th>
-            <th className="text-center">Score final 🎯</th>
+            <th className="text-center ">publication Score ✍️</th>
+            <th className="text-center ">Page Score 📄</th>
+            <th className="text-center">FINAL SCORE 🎯</th>
             {!isEnseignant && <th className="text-center">Rating⭐</th>}
             <th className="text-center"> 📥</th>
           </tr>
@@ -841,7 +841,7 @@ function Leaderboard() {
                         }}
                       />
                       <br />
-                      (voir profile) {/* Lien pour les autres utilisateurs */}
+                      (View profile) {/* Lien pour les autres utilisateurs */}
                     </Link>
                   </>
                 )}
@@ -880,8 +880,7 @@ function Leaderboard() {
           ))}
         </tbody>
       </Table>
-      {/* Pagination */}
-      {/* Pagination */}
+
 
       {shouldDisplayPagination && (
         <div
