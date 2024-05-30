@@ -56,6 +56,7 @@ import PubGroups from "./Components/Pages/groups/PubGroups";
 import PubActions from "./Components/Pages/groups/PubActions";
 import AddCommentPub from "./Components/Pages/groups/AddCommentPub";
 import Teste from "./Components/Pages/chats/Teste";
+import PrivateRoute from "./Components/PrivateRoute";
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL;
 axios.defaults.withCredentials = true;
@@ -78,7 +79,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <Home />
+                <PrivateRoute>  
+                  <Home />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -88,7 +91,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>  
                 <UpdatePubGroups />
+                </PrivateRoute>  
                 <Footer />
               </>
             }
@@ -98,7 +103,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <Teste />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -108,7 +115,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <PubGroups />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -118,7 +127,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <PubActions />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -128,27 +139,34 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <AddCommentPub />
+                </PrivateRoute>
                 <Footer />
               </>
             }
           />
 
-          <Route
+<Route
             path="/message"
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <Disscussions />
+                </PrivateRoute>
               </>
             }
-          />
+          /> 
           <Route
             path="/addPub/:groupId"
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <AddPubGroups />
+                </PrivateRoute>
+
               </>
             }
           />
@@ -157,7 +175,10 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <AllGroups />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -167,7 +188,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <MyGroups />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -175,11 +200,15 @@ function App() {
           <Route
             path="/groups/:id"
             element={
-              <>
+              <PrivateRoute>
                 <Navbar />
+                <PrivateRoute>
+
                 <Groups />
+                </PrivateRoute>
+
                 <Footer />
-              </>
+              </PrivateRoute>
             }
           />
           <Route
@@ -187,7 +216,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <AddGroup />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -197,7 +230,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <UpdateGroups />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -207,7 +244,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <ListNotification />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -217,7 +258,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <AddConversation />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -227,7 +272,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <Historiques />
+                </PrivateRoute>
+
               </>
             }
           />
@@ -236,7 +285,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <UpdateConversation />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -247,7 +300,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <AddUsers />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -257,7 +314,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <AddPub />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -267,7 +328,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <AddEvent />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -277,7 +342,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <Update />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -287,7 +356,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <UpdateEvent />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -299,7 +372,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <Home />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -309,7 +386,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <Groups />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -319,7 +400,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <Messages />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -329,7 +414,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <Profil />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -339,7 +428,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <AccountSetting />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -350,7 +443,11 @@ function App() {
               element={
                 <>
                   <Navbar />
+                  <PrivateRoute>
+
                   <Activites />
+                  </PrivateRoute>
+
                 </>
               }
             />
@@ -360,7 +457,11 @@ function App() {
               element={
                 <>
                   <Navbar />
+                  <PrivateRoute>
+
                   <ActivityDetails />
+                  </PrivateRoute>
+
                 </>
               }
             />
@@ -370,7 +471,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <TaskDetails />
+                </PrivateRoute>
+
               </>
             }
           />
@@ -380,7 +485,11 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
+
                 <TaskDetails />
+                </PrivateRoute>
+
               </>
             }
           />
@@ -390,7 +499,10 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <Section />
+                </PrivateRoute>
+
               </>
             }
           />
@@ -400,7 +512,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <AccountUpdate />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -411,7 +525,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <AddFriends />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -430,7 +546,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <ProfileFriend />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -440,7 +558,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <UpdateProfil />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -463,7 +583,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <AffectSkill />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -473,7 +595,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <Leaderboard />
+                </PrivateRoute>
               </>
             }
           />
@@ -483,7 +607,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <SocialSkills />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -493,7 +619,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <AddSocialSkill />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -504,7 +632,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <EditSocialSkill />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -515,7 +645,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <DeleteSocialSkill />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -526,7 +658,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <TechnicalSkills />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -537,7 +671,9 @@ function App() {
             element={
               <>
                 <Navbar />
+                <PrivateRoute>
                 <AffectSkillOtherUser />
+                </PrivateRoute>
                 <Footer />
               </>
             }

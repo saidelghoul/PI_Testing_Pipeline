@@ -331,8 +331,11 @@ export default function SignIn() {
                             value={registerdata.selectedDepartementId}
                             onChange={handleDepartementChange}
                           >
-                            <option value="Choose a department"></option>
+                            <option value="" disabled>
+            Choose a department
+          </option>
                             {departements.map((departement) => (
+
                               <option
                                 key={departement._id}
                                 value={departement._id}
@@ -353,8 +356,11 @@ export default function SignIn() {
                             onChange={handleUnitChange}
                             disabled={!selectedDepartementId} // Désactiver si aucun département n'est sélectionné
                           >
-                            <option value="Choose a unit"></option>
+                            <option value="" disabled>
+            Choose a unit
+          </option>
                             {units.map((unit) => (
+
                               <option key={unit._id} value={unit._id}>
                                 {unit.name}
                               </option>
