@@ -227,7 +227,7 @@ function SocialSkillsUSer() {
 
         {filteredSkills.length > 0 ? (
           <ul
-            className="skill-tags"
+            className="skill-tags text-center"
             style={{ listStyle: "none", paddingLeft: "0" }}
           >
             {filteredSkills.slice(0, displayCount).map(

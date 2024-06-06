@@ -912,4 +912,31 @@ function Leaderboard() {
   );
 }
 
+export const calculateFinalScore = (
+  socialScore,
+  taskScore,
+  publicationScore,
+  pageScore
+) => {
+  let finalScore = socialScore + taskScore + publicationScore + pageScore;
+
+  // Déterminer le nombre de sous-scores égaux à 0
+  const zeroCount = [socialScore, taskScore, publicationScore, pageScore].filter(
+    (score) => score === 0
+  ).length;
+
+  // Appliquer la réduction en fonction du nombre de zéros
+  if (zeroCount === 1) {
+    finalScore *= 0.8;
+  } else if (zeroCount === 2) {
+    finalScore *= 0.5;
+  } else if (zeroCount === 3) {
+    finalScore *= 0.3;
+  } else if (zeroCount === 4) {
+    finalScore = 0; // Si tous les sous-scores sont 0, le score final est 0
+  }
+
+  return finalScore;
+};
+
 export default Leaderboard;

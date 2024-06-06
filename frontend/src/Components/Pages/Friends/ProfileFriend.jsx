@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import SocialSkillsOnlyReading from "../Skills/SocialSkills/SocialSkillsOtherUser";
 import UsersBadges from "./UsersBadges";
+import TechnicalSkillsOtherUser from "../Skills/TechnicalSkills/TechnicalSkillsOtherUser";
 
 export default function Profils() {
   const { id } = useParams();
@@ -2643,7 +2644,11 @@ export default function Profils() {
                         <SocialSkillsOnlyReading user={user} />
                       </div>
 
-                      <div className="user-profile-ov ">
+                      <div className="star-descp border-radius: 56px">
+                        <TechnicalSkillsOtherUser user={user} />
+                      </div>
+
+                      {/* <div className="user-profile-ov ">
                         <h3>
                           <a href="#" title="" className="ed-box-open">
                             Education/Technical Skills
@@ -2664,7 +2669,7 @@ export default function Profils() {
                           efficitur tincidunt. Vivamus consectetur aliquam
                           lectus commodo viverra.{" "}
                         </p>
-                      </div>
+                      </div> */}
                     </div>
                     <div className="product-feed-tab" id="rewivewdata">
                       <section></section>

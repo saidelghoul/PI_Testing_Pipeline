@@ -206,7 +206,7 @@ function SocialSkillsUSer({ user }) {
             </DropdownButton>
             <hr />
             <ul
-              className="skill-tags"
+              className="skill-tags text-center"
               style={{ listStyle: "none", paddingLeft: "0" }}
             >
               {filteredSkills.slice(0, displayCount).map(
@@ -236,12 +236,12 @@ function SocialSkillsUSer({ user }) {
                         border: "2px solid #ddd",
                         padding: "10px",
                         marginBottom: "10px",
-                        borderRadius: "5px",
+                        borderRadius: "15px",
                         position: "relative",
                         marginLeft: "20px",
                       }}
                     >
-                      <span
+                      <span 
                         onClick={() => handleShowSkillModal(skill)}
                         style={{
                           cursor: "pointer",
@@ -276,7 +276,7 @@ function SocialSkillsUSer({ user }) {
         )}
 
         {assigned.length > displayCount && (
-          <Button variant="primary" onClick={showMoreSkills}>
+          <Button variant="primary" onClick={showMoreSkills} >
             View More
           </Button>
         )}

@@ -181,8 +181,8 @@ export default function Navbar() {
                       <li>
                         <div className="text-center">
                           <Link to={`/socialSkills/`}>
-                            <h4 span className="h6">
-                              ➡ Social Skills 🗣️
+                            <h4 span className="h5">
+                               Social Skills 🗣️
                             </h4>
                           </Link>
                         </div>
@@ -191,14 +191,12 @@ export default function Navbar() {
                         {" "}
                         <br />
                         <div className="text-center">
-                          <Link to={`/technicalSkills/`}>
-                            <h4>
+                          <Link to={`/technologies/`}>
+                            <h3 className="h5">
                               {" "}
-                              ➡Technical Skills
-                              <>
-                                <br /> (COMING SOON )
-                              </>
-                            </h4>
+                              Technologies 👨‍💻
+
+                            </h3>
                           </Link>
                         </div>
                       </li>

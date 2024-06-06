@@ -30,8 +30,10 @@ const commentaireRoutes = require("./routes/ComentaireRoute");
 const PageRoute = require("./routes/PageRoute");
 const socialSkillsRouter = require("./routes/socialSkillsRoute");
 const technicalSkillsRouter = require("./routes/technicalSkillsRoute");
+const technologyRouter = require("./routes/technologyRoutes");
 const UserScoreRoutes = require("./routes/UserScoreRoutes");
 const CommentPageRoute = require("./routes/commentairePubRoute");
+
 
 const app = express();
 const server = http.createServer(app);
@@ -118,6 +120,7 @@ app.use("/checklists", checklistsRoute);
 app.use("/documents", documentRoute);
 app.use("/socialSkills", socialSkillsRouter);
 app.use("/technicalSkills", technicalSkillsRouter);
+app.use("/technologies", technologyRouter);
 app.use("/user", require("./controller/userController"));
 app.use("/badges", require("./controller/badgesController"));
 app.use("/userScore", UserScoreRoutes);

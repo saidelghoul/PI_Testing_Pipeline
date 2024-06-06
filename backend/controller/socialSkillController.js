@@ -14,31 +14,6 @@ async function getallSocialSkills(req, res) {
     });
 }
 
-/*async function getallSocialSkills(req, res) {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-
-  try {
-    const totalSocialSkills = await SocialSkill.countDocuments();
-    const totalPages = Math.ceil(totalSocialSkills / limit);
-    const offset = (page - 1) * limit;
-
-    const socialSkills = await SocialSkill.find({})
-      .skip(offset)
-      .limit(limit)
-      .exec();
-
-    res.status(200).json({
-      totalSocialSkills,
-      totalPages,
-      currentPage: page,
-      socialSkills
-    });
-  } catch (error) {
-    res.status(500).json({ error: "Erreur du serveur: " + error.message });
-  }
-}*/
-
 
 async function getSocialSkillbyid(req, res) {
   SocialSkill.findById(req.params.id)
@@ -88,54 +63,6 @@ async function updateSocialSkill(req, res) {
 }
 
 
-/*async function assignSocialSkillToUser(req, res) {
-  try {
-    const userId = req.params.userId;
-    const { skillIds } = req.body;
-
-    const user = await User.findById(userId);
-    const socialSkillsToAdd = await SocialSkill.find({ _id: { $in: skillIds } });
-
-    if (!user) {
-      return res.status(404).json({ error: 'Utilisateur non trouvé' });
-    }
-
-    if (!socialSkillsToAdd || socialSkillsToAdd.length === 0) {
-      return res.status(404).json({ error: 'Compétences sociales non trouvées' });
-    }
-
-    const skillsAlreadyAssigned = [];
-
-    // Vérification et ajout des compétences sociales non présentes dans le tableau
-    socialSkillsToAdd.forEach((socialSkill) => {
-      // Vérifie si la compétence sociale n'est pas déjà présente dans le tableau
-      if (!user.socialSkills.some(existingSkill => existingSkill.equals(socialSkill._id))) {
-        // Ajoute la compétence sociale avec la date d'attribution
-        socialSkill.dateAttribution = new Date();
-        user.socialSkills.push(socialSkill);
-      } else {
-        // Ajoute la compétence sociale à la liste des compétences déjà affectées
-        skillsAlreadyAssigned.push(socialSkill.name);
-      }
-    });
-
-    await user.save();
-
-    const successMessage = 'Compétences sociales affectées à l"utilisateur avec succès';
-    
-    if (skillsAlreadyAssigned.length > 0) {
-      return res.status(200).json({
-        message: successMessage,
-        warning: 'Certaines compétences étaient déjà affectées à l\'utilisateur.',
-      });
-    } else {
-      return res.status(200).json({ message: successMessage });
-    }
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Une erreur est survenue lors de l"affectation des compétences sociales' + error.message });
-  }
-}*/
 
 // Méthode pour affecter un SocialSkill à un utilisateur
 const assignSocialSkillToUser = async (req, res) => {
@@ -182,73 +109,6 @@ const assignSocialSkillToUser = async (req, res) => {
 
 
 
-
-/*async function assignSocialSkillToUser(req, res) {
-  try {
-    const userId = req.params.userId;
-    const { skillId } = req.body;
-
-    const user = await User.findById(userId);
-    const socialSkill = await SocialSkill.findById(skillId);
-
-    if (!user) {
-      return res.status(404).json({ error: 'Utilisateur non trouvé' });
-    }
-
-    if (!socialSkill) {
-      return res.status(404).json({ error: 'Compétence sociale non trouvée' });
-    }
-
-    // Vérifie si l'utilisateur est déjà assigné à cette compétence sociale
-    if (socialSkill.users.includes(userId)) {
-      return res.status(400).json({ error: 'L\'utilisateur est déjà assigné à cette compétence sociale' });
-    }
-
-    // Ajoute l'utilisateur à la liste des utilisateurs de la compétence sociale
-    socialSkill.users.push(userId);
-    // Met à jour la date d'attribution de la compétence sociale
-    socialSkill.dateAttribution = new Date();
-    // Sauvegarde la compétence sociale mise à jour
-    await socialSkill.save();
-
-    return res.status(200).json({ message: 'Utilisateur assigné à la compétence sociale avec succès' });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Une erreur est survenue lors de l\'assignation de l\'utilisateur à la compétence sociale' + error.message });
-  }
-}*/
-
-
-
-
-/*async function unassignSocialSkillFromUser(req, res, next) {
-  try {
-    const userId = req.params.userId;
-    const { skillId } = req.body;
-
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ error: 'Utilisateur non trouvé' });
-    }
-
-    const socialSkill = await SocialSkill.findById(skillId);
-
-    if (!socialSkill) {
-      return res.status(404).json({ error: 'Compétence sociale non trouvée' });
-    }
-
-    // Retrait de la compétence sociale de la liste socialSkills de l'utilisateur
-    user.socialSkills.pull(skillId);
-    await user.save();
-
-    return res.status(200).json({ message: 'Compétence sociale désassignée de l"utilisateur avec succès' });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Une erreur est survenue lors de la désaffectation de la compétence sociale' + error.message });
-  }
-}*/
-
 // Méthode pour désaffecter un utilisateur d'un SocialSkill
 const unassignSocialSkillFromUser = async (req, res) => {
   try {
@@ -281,22 +141,6 @@ const unassignSocialSkillFromUser = async (req, res) => {
     });
   }
 };
-
-
-
-
-/*async function getSocialSkillsByUser(req, res, next) {
-  try {
-    //const user = await User.findById(req.params.userId).populate("socialSkills");
-    
-    const socialSkills = await SocialSkill.find({$in:{users:req.params.userId}});
-
-    res.status(200).json({ title: "succes", message: socialSkills });
-    //res.status(200).json({ title: "success", message: user.socialSkills });
-  } catch (err) {
-    res.status(500).json({ title: "error", message: err.message });
-  }
-}*/
 
 
 // Méthode pour obtenir les SocialSkills associés à un utilisateur spécifique
@@ -355,32 +199,6 @@ const getAvailableSocialSkills = async (req, res) => {
     });
   }
 };
-
-
-
-
-
-/*const getUsersForSocialSkills = async (req, res) => {
-  try {
-    const users = await UserModel.aggregate([
-      { $unwind: "$socialSkills" }, // décomposer la liste
-      { 
-        $group: { 
-          _id: "$_id", 
-          name: { $first: "$name" },
-          totalSocialPoints: { $sum: "$socialSkills.pointSocial" } 
-        } 
-      }, // grouper par utilisateur et calculer la somme
-    ]);
-    if (users.length > 0) {
-      res.status(200).json({ title: "success", message: users });
-    } else {
-      res.status(404).json({ title: "error", message: "No users found." });
-    }
-  } catch (err) {
-    res.status(500).json({ title: "error", message: err.message });
-  }
-};*/
 
 // Méthode pour calculer la somme des points sociaux pour un utilisateur
 const getUsersForSocialSkills = async (req, res) => {

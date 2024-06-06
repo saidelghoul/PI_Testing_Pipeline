@@ -16,10 +16,11 @@ import axios from "axios";
 import Badges from "./Friends/Badges";
 import SocialSkillService from "../../services/socialSkill-service";
 import { Link } from "react-router-dom";
-import SocialSkillAffect from "./Skills/SocialSkills/SocialSkillAffect";
+
 import SocialSkillsUSer from "./Skills/SocialSkills/SocialSkillsUser";
 import UserStats, { generatePieChartBase64 } from "../Pages/Skills/UserStats";
 import PostsList from "./Home/Posts/PostsList";
+import TechnicalSkillsUser from "./Skills/TechnicalSkills/TechnicalSkillsUser";
 
 export default function Profils() {
   const [isLoading, setIsLoading] = useState(true);
@@ -2743,8 +2744,27 @@ export default function Profils() {
                     <div className="product-feed-tab current" id="info-dd">
                       <div className="star-descp border-radius: 56px">
                         <SocialSkillsUSer />
-                        {<SocialSkillAffect userId={user._id} />}
                       </div>
+
+                      <div className="star-descp border-radius: 56px">
+                        <TechnicalSkillsUser />
+                      </div>
+
+
+                      {/* <div className="user-profile-ov ">
+                        <h3>
+                          <a href="#" title="" className="ed-box-open">
+                            Technical Skills
+                          </a>{" "}
+                          <a href="#" title="">
+                            <i className="fa fa-plus-square"></i>
+                          </a>
+                        </h3>
+
+
+
+
+                      </div> */}
 
                       <div style={{ borderRadius: "56px" }}>
                         <div>

@@ -18,10 +18,16 @@ import Section from "./Components/Pages/Section";
 import AffectSkill from "./Components/Modals/Skills/AffectSkill";
 import AffectSkillOtherUser from "./Components/Modals/Skills/AffectSkillOtherUser";
 import SocialSkills from "./Components/Pages/Skills/SocialSkills/SocialSkills";
-import TechnicalSkills from "./Components/Pages/Skills/TechnicalSkills/TechnicalSkills";
+
 import AddSocialSkill from "./Components/Pages/Skills/SocialSkills/AddSocialSkill";
 import EditSocialSkill from "./Components/Pages/Skills/SocialSkills/EditSocialSkill";
 import DeleteSocialSkill from "./Components/Pages/Skills/SocialSkills/DeleteSocialSkill";
+
+import TechnicalSkills from "./Components/Pages/Skills/TechnicalSkills/TechnicalSkills";
+import AddTechnicalSkill from "./Components/Pages/Skills/TechnicalSkills/AddTechnicalSkill";
+import EditTechnicalSkill from "./Components/Pages/Skills/TechnicalSkills/EditTechnicalSkill";
+import DeleteTechnicalSkill from "./Components/Pages/Skills/TechnicalSkills/DeleteTechnicalSkill";
+import TechnicalSkillAffect from "./Components/Modals/Skills/technical/TechnicalSkillAffect";
 
 import AddGroup from "./Components/Pages/groups/AddGroups";
 import AllGroups from "./Components/Pages/groups/AllGroups";
@@ -56,6 +62,11 @@ import PubGroups from "./Components/Pages/groups/PubGroups";
 import PubActions from "./Components/Pages/groups/PubActions";
 import AddCommentPub from "./Components/Pages/groups/AddCommentPub";
 import Teste from "./Components/Pages/chats/Teste";
+import Technologies from "./Components/Pages/Skills/Technology/Technologies";
+import AddTechnology from "./Components/Pages/Skills/Technology/AddTechnology";
+import EditTechnology from "./Components/Pages/Skills/Technology/EditTechnology";
+import DeleteTechnology from "./Components/Pages/Skills/Technology/DeleteTechnology";
+
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL;
 axios.defaults.withCredentials = true;
@@ -531,6 +542,93 @@ function App() {
               </>
             }
           />
+          <Route
+            path="/technicalSkills/add"
+            element={
+              <>
+                <Navbar />
+                <AddTechnicalSkill />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/technicalSkills/edit/:id"
+            element={
+              <>
+                <Navbar />
+                <EditTechnicalSkill />
+                <Footer />
+              </>
+            }
+          />
+
+          <Route
+            path="/technicalSkills/delete/:id"
+            element={
+              <>
+                <Navbar />
+                <DeleteTechnicalSkill />
+                <Footer />
+              </>
+            }
+          />
+
+          <Route
+            path="/:id/assign"
+            element={
+              <>
+                <Navbar />
+                <TechnicalSkillAffect />
+                <Footer />
+              </>
+            }
+          />
+
+          <Route
+            path="/technologies/"
+            element={
+              <>
+                <Navbar />
+                <Technologies />
+                <Footer />
+              </>
+            }
+          />
+
+          <Route
+            path="/technologies/add"
+            element={
+              <>
+                <Navbar />
+                <AddTechnology />
+                <Footer />
+              </>
+            }
+          />
+
+          <Route
+            path="/technologies/edit/:id"
+            element={
+              <>
+                <Navbar />
+                <EditTechnology />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/technologies/delete/:id"
+            element={
+              <>
+                <Navbar />
+                <DeleteTechnology />
+                <Footer />
+              </>
+            }
+          />
+
+
 
           <Route
             path="/affectSkillOtherUser/:id"
