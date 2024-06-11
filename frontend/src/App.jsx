@@ -55,6 +55,10 @@ import PubGroups from "./Components/Pages/groups/PubGroups";
 import PubActions from "./Components/Pages/groups/PubActions";
 import AddCommentPub from "./Components/Pages/groups/AddCommentPub";
 import Teste from "./Components/Pages/chats/Teste";
+import ListForum from "./Components/Pages/Forum/ListForum";
+import AddSujet from "./Components/Pages/Forum/AddSujet";
+import UpdateSujet from "./Components/Pages/Forum/UpdateSujet";
+import ListeReplay from "./Components/Pages/Forum/ListReplay";
 
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
@@ -92,12 +96,53 @@ function App() {
               </>
             }
           />
+           <Route
+            path="/forum"
+            element={
+              <>
+                <Navbar />
+                <ListForum />
+                <Footer />
+              </>
+            }
+          />
+
+<Route
+            path="/addSujet"
+            element={
+              <>
+                <Navbar />
+                <AddSujet />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/updateSujet/:id"
+            element={
+              <>
+                <Navbar />
+                <UpdateSujet />
+                <Footer />
+              </>
+            }
+          />
                     <Route
             path="/teste"
             element={
               <>
                 <Navbar />
                 <Teste />
+                <Footer />
+              </>
+            }
+          />
+           <Route
+            path="/ListeReplay/:id"
+            element={
+              <>
+                <Navbar />
+                <ListeReplay />
                 <Footer />
               </>
             }
