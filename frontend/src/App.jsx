@@ -67,6 +67,7 @@ import AddTechnology from "./Components/Pages/Skills/Technology/AddTechnology";
 import EditTechnology from "./Components/Pages/Skills/Technology/EditTechnology";
 import DeleteTechnology from "./Components/Pages/Skills/Technology/DeleteTechnology";
 
+import PrivateRoute from "./Components/PrivateRoute";
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL;
 axios.defaults.withCredentials = true;
@@ -89,7 +90,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <Home />
+                <PrivateRoute>
+                  <Home />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -99,7 +102,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <UpdatePubGroups />
+                <PrivateRoute>
+                  <UpdatePubGroups />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -109,7 +114,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <Teste />
+                <PrivateRoute>
+                  <Teste />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -119,7 +126,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <PubGroups />
+                <PrivateRoute>
+                  <PubGroups />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -129,7 +138,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <PubActions />
+                <PrivateRoute>
+                  <PubActions />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -139,7 +150,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AddCommentPub />
+                <PrivateRoute>
+                  <AddCommentPub />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -150,7 +163,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <Disscussions />
+                <PrivateRoute>
+                  <Disscussions />
+                </PrivateRoute>
               </>
             }
           />
@@ -159,7 +174,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AddPubGroups />
+                <PrivateRoute>
+                  <AddPubGroups />
+                </PrivateRoute>
               </>
             }
           />
@@ -168,7 +185,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AllGroups />
+                <PrivateRoute>
+                  <AllGroups />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -178,7 +198,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <MyGroups />
+                <PrivateRoute>
+                  <MyGroups />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -186,11 +209,14 @@ function App() {
           <Route
             path="/groups/:id"
             element={
-              <>
+              <PrivateRoute>
                 <Navbar />
-                <Groups />
+                <PrivateRoute>
+                  <Groups />
+                </PrivateRoute>
+
                 <Footer />
-              </>
+              </PrivateRoute>
             }
           />
           <Route
@@ -198,7 +224,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AddGroup />
+                <PrivateRoute>
+                  <AddGroup />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -208,7 +237,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <UpdateGroups />
+                <PrivateRoute>
+                  <UpdateGroups />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -218,7 +250,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <ListNotification />
+                <PrivateRoute>
+                  <ListNotification />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -228,7 +263,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AddConversation />
+                <PrivateRoute>
+                  <AddConversation />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -238,7 +276,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <Historiques />
+                <PrivateRoute>
+                  <Historiques />
+                </PrivateRoute>
               </>
             }
           />
@@ -247,7 +287,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <UpdateConversation />
+                <PrivateRoute>
+                  <UpdateConversation />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -258,7 +301,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AddUsers />
+                <PrivateRoute>
+                  <AddUsers />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -268,7 +314,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AddPub />
+                <PrivateRoute>
+                  <AddPub />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -278,7 +327,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AddEvent />
+                <PrivateRoute>
+                  <AddEvent />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -288,7 +340,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <Update />
+                <PrivateRoute>
+                  <Update />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -298,7 +353,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <UpdateEvent />
+                <PrivateRoute>
+                  <UpdateEvent />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -310,7 +368,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <Home />
+                <PrivateRoute>
+                  <Home />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -320,7 +381,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <Groups />
+                <PrivateRoute>
+                  <Groups />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -330,7 +394,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <Messages />
+                <PrivateRoute>
+                  <Messages />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -340,7 +407,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <Profil />
+                <PrivateRoute>
+                  <Profil />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -350,7 +420,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AccountSetting />
+                <PrivateRoute>
+                  <AccountSetting />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -361,7 +434,9 @@ function App() {
               element={
                 <>
                   <Navbar />
-                  <Activites />
+                  <PrivateRoute>
+                    <Activites />
+                  </PrivateRoute>
                 </>
               }
             />
@@ -371,7 +446,9 @@ function App() {
               element={
                 <>
                   <Navbar />
-                  <ActivityDetails />
+                  <PrivateRoute>
+                    <ActivityDetails />
+                  </PrivateRoute>
                 </>
               }
             />
@@ -381,7 +458,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <TaskDetails />
+                <PrivateRoute>
+                  <TaskDetails />
+                </PrivateRoute>
               </>
             }
           />
@@ -391,7 +470,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <TaskDetails />
+                <PrivateRoute>
+                  <TaskDetails />
+                </PrivateRoute>
               </>
             }
           />
@@ -401,7 +482,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <Section />
+                <PrivateRoute>
+                  <Section />
+                </PrivateRoute>
               </>
             }
           />
@@ -411,7 +494,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AccountUpdate />
+                <PrivateRoute>
+                  <AccountUpdate />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -422,7 +507,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AddFriends />
+                <PrivateRoute>
+                  <AddFriends />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -441,7 +528,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <ProfileFriend />
+                <PrivateRoute>
+                  <ProfileFriend />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -451,7 +540,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <UpdateProfil />
+                <PrivateRoute>
+                  <UpdateProfil />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -474,7 +565,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AffectSkill />
+                <PrivateRoute>
+                  <AffectSkill />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -484,7 +577,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <Leaderboard />
+                <PrivateRoute>
+                  <Leaderboard />
+                </PrivateRoute>
               </>
             }
           />
@@ -494,7 +589,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <SocialSkills />
+                <PrivateRoute>
+                  <SocialSkills />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -504,7 +601,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AddSocialSkill />
+                <PrivateRoute>
+                  <AddSocialSkill />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -515,7 +614,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <EditSocialSkill />
+                <PrivateRoute>
+                  <EditSocialSkill />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -526,7 +627,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <DeleteSocialSkill />
+                <PrivateRoute>
+                  <DeleteSocialSkill />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -537,7 +640,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <TechnicalSkills />
+                <PrivateRoute>
+                  <TechnicalSkills />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -628,14 +733,14 @@ function App() {
             }
           />
 
-
-
           <Route
             path="/affectSkillOtherUser/:id"
             element={
               <>
                 <Navbar />
-                <AffectSkillOtherUser />
+                <PrivateRoute>
+                  <AffectSkillOtherUser />
+                </PrivateRoute>
                 <Footer />
               </>
             }
