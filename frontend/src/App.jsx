@@ -118,7 +118,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <ListForum />
+                <PrivateRoute>
+                  <ListForum />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -129,7 +131,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AddSujet />
+                <PrivateRoute>
+                  <AddSujet />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -139,7 +143,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <UpdateSujet />
+                <PrivateRoute>
+                  <UpdateSujet />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -161,7 +167,9 @@ function App() {
             element={
               <>
                 <Navbar />
-                <ListeReplay />
+                <PrivateRoute>
+                  <ListeReplay />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -697,7 +705,10 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AddTechnicalSkill />
+
+                <PrivateRoute>
+                  <AddTechnicalSkill />
+                </PrivateRoute>
                 <Footer />
               </>
             }
@@ -707,7 +718,11 @@ function App() {
             element={
               <>
                 <Navbar />
-                <EditTechnicalSkill />
+
+                <PrivateRoute>
+                  <EditTechnicalSkill />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -718,7 +733,11 @@ function App() {
             element={
               <>
                 <Navbar />
-                <DeleteTechnicalSkill />
+
+                <PrivateRoute>
+                  <DeleteTechnicalSkill />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -729,7 +748,11 @@ function App() {
             element={
               <>
                 <Navbar />
-                <TechnicalSkillAffect />
+
+                <PrivateRoute>
+                  <TechnicalSkillAffect />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -740,7 +763,11 @@ function App() {
             element={
               <>
                 <Navbar />
-                <Technologies />
+
+                <PrivateRoute>
+                  <Technologies />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -751,7 +778,11 @@ function App() {
             element={
               <>
                 <Navbar />
-                <AddTechnology />
+
+                <PrivateRoute>
+                  <AddTechnology />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -762,7 +793,11 @@ function App() {
             element={
               <>
                 <Navbar />
-                <EditTechnology />
+
+                <PrivateRoute>
+                  <EditTechnology />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
@@ -772,7 +807,11 @@ function App() {
             element={
               <>
                 <Navbar />
-                <DeleteTechnology />
+
+                <PrivateRoute>
+                  <DeleteTechnology />
+                </PrivateRoute>
+
                 <Footer />
               </>
             }
