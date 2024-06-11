@@ -33,6 +33,7 @@ const technicalSkillsRouter = require("./routes/technicalSkillsRoute");
 const technologyRouter = require("./routes/technologyRoutes");
 const UserScoreRoutes = require("./routes/UserScoreRoutes");
 const CommentPageRoute = require("./routes/commentairePubRoute");
+const forumRoute = require("./routes/forumRoute");
 
 
 const app = express();
@@ -112,6 +113,8 @@ app.use("/pubGroupe", PubPageRoute);
 app.use("/commentGroupe", CommentPageRoute);
 
 app.use("/messages", messageRoute);
+app.use("/forum", forumRoute);
+
 app.use("/test", messageRouter);
 app.use("/activities", activitiesRoute);
 app.use("/tasks", tasksRoute);

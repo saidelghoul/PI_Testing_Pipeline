@@ -68,6 +68,10 @@ import EditTechnology from "./Components/Pages/Skills/Technology/EditTechnology"
 import DeleteTechnology from "./Components/Pages/Skills/Technology/DeleteTechnology";
 
 import PrivateRoute from "./Components/PrivateRoute";
+import ListForum from "./Components/Pages/Forum/ListForum";
+import AddSujet from "./Components/Pages/Forum/AddSujet";
+import UpdateSujet from "./Components/Pages/Forum/UpdateSujet";
+import ListeReplay from "./Components/Pages/Forum/ListReplay";
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL;
 axios.defaults.withCredentials = true;
@@ -110,6 +114,37 @@ function App() {
             }
           />
           <Route
+            path="/forum"
+            element={
+              <>
+                <Navbar />
+                <ListForum />
+                <Footer />
+              </>
+            }
+          />
+
+          <Route
+            path="/addSujet"
+            element={
+              <>
+                <Navbar />
+                <AddSujet />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/updateSujet/:id"
+            element={
+              <>
+                <Navbar />
+                <UpdateSujet />
+                <Footer />
+              </>
+            }
+          />
+          <Route
             path="/teste"
             element={
               <>
@@ -117,6 +152,16 @@ function App() {
                 <PrivateRoute>
                   <Teste />
                 </PrivateRoute>
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/ListeReplay/:id"
+            element={
+              <>
+                <Navbar />
+                <ListeReplay />
                 <Footer />
               </>
             }

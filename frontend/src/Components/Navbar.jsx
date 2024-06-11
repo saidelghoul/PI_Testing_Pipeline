@@ -205,6 +205,7 @@ export default function Navbar() {
                   </Link>
                   <hr />
                 </div>
+                <h3 className="text-center"><Link to="/forum"> 📰 Forum 📰</Link> </h3>
 
                 <h3 className="text-center">Setting ⚙️</h3>
                 <ul className="us-links">
