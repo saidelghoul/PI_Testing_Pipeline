@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import TaskDelete from "../Modals/TaskDelete";
 import TaskUpdate from "../Modals/TaskUpdate";
 
-const Task = ({ task, upTask, refresh, options, activity }) => {
+const Task = ({ task, upTask, refresh, options, user, activity }) => {
   /* pop up*/
   const [showDelete, setShowDelete] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
@@ -173,6 +173,7 @@ const Task = ({ task, upTask, refresh, options, activity }) => {
           handleClose={handleCloseUpdate}
           task={task}
           options={options}
+          user={user}
           activity={activity}
         />
       </div>
@@ -185,6 +186,7 @@ Task.propTypes = {
   upTask: PropTypes.func,
   refresh: PropTypes.func,
   options: PropTypes.arrayOf(PropTypes.object),
+  user: PropTypes.object,
   activity: PropTypes.object,
 };
 

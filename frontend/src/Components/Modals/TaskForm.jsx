@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { addTask, getUsersForTask } from "../../services/task-service";
+
+import technologyService from "../../services/technology-service";
 import Select from "react-select";
 import PropTypes from "prop-types";
 import toast from "react-hot-toast";
 
-const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
+const TaskForm = ({ refresh, show, handleClose, activity, options, user }) => {
   const [users, setUsers] = useState([]);
+
+  const [technologies, setTechnologies] = useState([]);
   const [taskItem, setTaskItem] = useState({
     title: "",
     initDate: "",
@@ -88,16 +92,50 @@ const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
       const dbusers = await getUsersForTask();
       let options = [];
 
-      dbusers.data.message.map((user) =>
-        options.push({
-          value: user._id,
-          label: user.name + " (" + user.role + ")",
-        })
-      );
+      if (user.role !== "Directeur d'étude") {
+        const fusers = dbusers.data.message.filter(
+          (duser) => duser.role === user.role || duser.role === "Enseignant"
+        );
+        fusers.map((user) =>
+          options.push({
+            value: user._id,
+            label: user.name + " (" + user.role + ")",
+          })
+        );
+      } else {
+        dbusers.data.message.map((user) =>
+          options.push({
+            value: user._id,
+            label: user.name + " (" + user.role + ")",
+          })
+        );
+      }
 
       setUsers(options);
     };
     fetchUsers();
+
+    const fetchTechnologies = async () => {
+      const dbTechnologies = await technologyService.getAllTechnologies();
+      let technos = [];
+
+      options.map((tag) =>
+        technos.push({
+          value: tag.value,
+          label: tag.label,
+        })
+      );
+
+      dbTechnologies.map((tech) =>
+        technos.push({
+          value: tech.name,
+          label: tech.name,
+        })
+      );
+
+      setTechnologies(technos);
+    };
+    fetchTechnologies();
 
     setErrors(validateValues(taskItem));
   }, [taskItem]);
@@ -242,7 +280,7 @@ const TaskForm = ({ refresh, show, handleClose, activity, options }) => {
                 onChange={(value) => onTagChange("tags", value)}
                 isMulti
                 name="tags"
-                options={options}
+                options={technologies}
                 className="basic-multi-select mt-2 "
                 classNamePrefix="select"
               />
@@ -331,6 +369,7 @@ TaskForm.propTypes = {
   handleClose: PropTypes.func,
   activity: PropTypes.object,
   options: PropTypes.arrayOf(PropTypes.object),
+  user: PropTypes.object,
 };
 
 export default TaskForm;

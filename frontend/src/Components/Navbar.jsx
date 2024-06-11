@@ -60,7 +60,7 @@ export default function Navbar() {
   }, [userId]);
 
   return (
-    <header>
+    <header style={{ boxShadow: "1px 1px 10px 0px grey" }}>
       <div style={{ marginTop: "20px" }} className="container">
         <div className="header-data">
           <div className="logo pd-btm" title="Co-Teacher">
@@ -182,7 +182,7 @@ export default function Navbar() {
                         <div className="text-center">
                           <Link to={`/socialSkills/`}>
                             <h4 span className="h5">
-                               Social Skills 🗣️
+                              Social Skills 🗣️
                             </h4>
                           </Link>
                         </div>
@@ -192,11 +192,7 @@ export default function Navbar() {
                         <br />
                         <div className="text-center">
                           <Link to={`/technologies/`}>
-                            <h3 className="h5">
-                              {" "}
-                              Technologies 👨‍💻
-
-                            </h3>
+                            <h3 className="h5"> Technologies 👨‍💻</h3>
                           </Link>
                         </div>
                       </li>

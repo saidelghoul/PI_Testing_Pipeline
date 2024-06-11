@@ -49,62 +49,65 @@ const ActivityDetails = () => {
   }
 
   return (
-    <div className="container p-0 ">
-      <h1 className="h3 mb-3 text-center ">Activity Details 📈</h1>
-      <h1 className="h3 mb-3 text-center ">
-        [ {activity.category} ] : ( {activity.name} )
-      </h1>
-      <div className=" row ">
-        <div className=" col text-center h5 ">
-          <h1 className=" text-bg-primary ">
-            {" "}
-            {activity?.startDate?.substr(0, 10)} ~{" "}
-            {activity?.endDate?.substr(0, 10)} 📅
-          </h1>
-          {new Date() > new Date(activity?.endDate) && (
-            <h1 className=" text-bg-primary text-danger ">
+    <main className="content">
+      <div className="container p-0 ">
+        <h1 className="h3 mb-3 text-center ">Activity Details 📈</h1>
+        <h1 className="h3 mb-3 text-center ">
+          [ {activity.category} ] : ( {activity.name} )
+        </h1>
+        <div className=" row ">
+          <div className=" col text-center h5 ">
+            <h1 className=" text-bg-primary ">
               {" "}
-              (Days passed:{" "}
-              {Math.round(
-                (new Date().getTime() - new Date(activity?.endDate).getTime()) /
-                  (1000 * 3600 * 24)
-              )}
-              )
+              {activity?.startDate?.substr(0, 10)} ~{" "}
+              {activity?.endDate?.substr(0, 10)} 📅
             </h1>
-          )}
-          {new Date() < new Date(activity?.endDate) && (
-            <h1 className=" text-bg-primary text-danger ">
-              {" "}
-              (Days left:{" "}
-              {Math.round(
-                (-1 *
+            {new Date() > new Date(activity?.endDate) && (
+              <h1 className=" text-bg-primary text-danger ">
+                {" "}
+                (Days passed:{" "}
+                {Math.round(
                   (new Date().getTime() -
-                    new Date(activity?.endDate).getTime())) /
-                  (1000 * 3600 * 24)
-              )}
-              )
-            </h1>
+                    new Date(activity?.endDate).getTime()) /
+                    (1000 * 3600 * 24)
+                )}
+                )
+              </h1>
+            )}
+            {new Date() < new Date(activity?.endDate) && (
+              <h1 className=" text-bg-primary text-danger ">
+                {" "}
+                (Days left:{" "}
+                {Math.round(
+                  (-1 *
+                    (new Date().getTime() -
+                      new Date(activity?.endDate).getTime())) /
+                    (1000 * 3600 * 24)
+                )}
+                )
+              </h1>
+            )}
+          </div>
+          {activity.description !== "" && (
+            <div className=" col-auto ">
+              <small className=" text-bg-primary "> Description: ✒️</small>
+              <p className=" text-body-emphasis ">{activity.description}</p>
+            </div>
           )}
         </div>
-        {activity.description !== "" && (
-          <div className=" col-auto ">
-            <small className=" text-bg-primary "> Description: ✒️</small>
-            <p className=" text-body-emphasis ">{activity.description}</p>
-          </div>
-        )}
+        <div className=" row-cols-1 mt-2">
+          <ProgressBar
+            striped
+            variant="success"
+            animated
+            now={progress}
+            label={`${progress}%`}
+          />
+        </div>
+        <hr />
+        <Tasks activity={activity} refresh={refresh} />
       </div>
-      <div className=" row-cols-1 mt-2">
-        <ProgressBar
-          striped
-          variant="success"
-          animated
-          now={progress}
-          label={`${progress}%`}
-        />
-      </div>
-      <hr />
-      <Tasks activity={activity} refresh={refresh} />
-    </div>
+    </main>
   );
 };
 

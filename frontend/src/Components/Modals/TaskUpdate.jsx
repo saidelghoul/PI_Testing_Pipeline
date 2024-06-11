@@ -5,6 +5,7 @@ import {
   getUsersForTask,
   getTasks,
 } from "../../services/task-service";
+import technologyService from "../../services/technology-service";
 import Select from "react-select";
 import PropTypes from "prop-types";
 import toast from "react-hot-toast";
@@ -15,6 +16,7 @@ const TaskUpdate = ({
   handleClose,
   task,
   options,
+  user,
   activity,
 }) => {
   const [taskItem, setTaskItem] = useState({
@@ -94,6 +96,8 @@ const TaskUpdate = ({
   // end of form errors validation
 
   const [users, setUsers] = useState([]);
+
+  const [technologies, setTechnologies] = useState([]);
   const [assignedTags, setAssignedTags] = useState([]);
   const [collaborators, setCollaborators] = useState([]);
 
@@ -130,20 +134,52 @@ const TaskUpdate = ({
     const fetchUsers = async () => {
       const dbusers = await getUsersForTask();
       let options = [];
+      if (user.role !== "Directeur d'étude") {
+        const fusers = dbusers.data.message.filter(
+          (duser) => duser.role === user.role || duser.role === "Enseignant"
+        );
+        fusers.map((user) =>
+          options.push({
+            value: user._id,
+            label: user.name + " (" + user.role + ")",
+          })
+        );
+      } else {
+        dbusers.data.message.map((user) =>
+          options.push({
+            value: user._id,
+            label: user.name + " (" + user.role + ")",
+          })
+        );
+      }
 
-      dbusers.data.message.map((user) =>
-        options.push({
-          value: user._id,
-          label: user.name + " (" + user.role + ")",
+      setUsers(options);
+    };
+    const fetchTechnologies = async () => {
+      const dbTechnologies = await technologyService.getAllTechnologies();
+      let technos = [];
+
+      options.map((tag) =>
+        technos.push({
+          value: tag.value,
+          label: tag.label,
         })
       );
 
-      setUsers(options);
+      dbTechnologies.map((tech) =>
+        technos.push({
+          value: tech.name,
+          label: tech.name,
+        })
+      );
+
+      setTechnologies(technos);
     };
 
     // fetch tags from task into proper list for the react select
 
     fetchUsers();
+    fetchTechnologies();
     fetchAssignedCollaboratorsAndTags();
 
     setErrors(validateValues(taskItem));
@@ -304,7 +340,7 @@ const TaskUpdate = ({
                 defaultValue={assignedTags}
                 isMulti
                 name="tags"
-                options={options}
+                options={technologies}
                 className="basic-multi-select mt-2 "
                 classNamePrefix="select"
               />
@@ -394,6 +430,7 @@ TaskUpdate.propTypes = {
   handleClose: PropTypes.func,
   task: PropTypes.object,
   options: PropTypes.arrayOf(PropTypes.object),
+  user: PropTypes.object,
   activity: PropTypes.object,
 };
 

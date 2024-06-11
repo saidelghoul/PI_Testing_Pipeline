@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../../../context/userContext";
 import Task from "./Task";
 import { Button, Spinner, Table } from "react-bootstrap";
 import TaskForm from "../Modals/TaskForm";
@@ -13,6 +14,8 @@ import toast from "react-hot-toast";
 
 const Tasks = ({ activity, refresh }) => {
   const [tasks, setTasks] = useState([]);
+
+  const { user } = useContext(UserContext);
 
   const [archived, setArchived] = useState([]);
   //handle showing archived activity
@@ -228,6 +231,7 @@ const Tasks = ({ activity, refresh }) => {
                 handleClose={handleClose}
                 activity={activity}
                 options={options}
+                user={user}
               />
             </h1>
           </div>
@@ -256,6 +260,7 @@ const Tasks = ({ activity, refresh }) => {
                         refresh={refreshTable}
                         upTask={editTask}
                         options={options}
+                        user={user}
                         activity={activity}
                       />
                     );
@@ -287,6 +292,7 @@ const Tasks = ({ activity, refresh }) => {
                         refresh={refreshTable}
                         upTask={editTask}
                         options={options}
+                        user={user}
                         activity={activity}
                       />
                     );
@@ -318,6 +324,7 @@ const Tasks = ({ activity, refresh }) => {
                         refresh={refreshTable}
                         upTask={editTask}
                         options={options}
+                        user={user}
                         activity={activity}
                       />
                     );
@@ -347,6 +354,7 @@ const Tasks = ({ activity, refresh }) => {
                         refresh={refreshTable}
                         upTask={editTask}
                         options={options}
+                        user={user}
                         activity={activity}
                       />
                     );
