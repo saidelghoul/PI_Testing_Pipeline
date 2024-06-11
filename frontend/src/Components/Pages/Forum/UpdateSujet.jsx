@@ -1,29 +1,29 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../../../context/userContext";
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios'; // Assurez-vous d'importer axios correctement
-import Form from 'react-bootstrap/Form'; // Import Form de react-bootstrap
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios"; // Assurez-vous d'importer axios correctement
+import Form from "react-bootstrap/Form"; // Import Form de react-bootstrap
 
 export default function UpdateSujet() {
   const { user } = useContext(UserContext);
   const { id } = useParams();
   const navigate = useNavigate(); // Utilisation de useNavigate pour la navigation
   const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    activity: '',
+    title: "",
+    content: "",
+    activity: "",
   });
   const [activities, setActivities] = useState([]); // Ajouter un état pour les activités
 
   useEffect(() => {
-      axios
-          .get('/forum/activites') // Assurez-vous que l'URL est correcte
-          .then((response) => {
-              setActivities(response.data); // Assurez-vous que la réponse est correctement analysée
-          })
-          .catch((error) => {
-              console.error('Erreur lors de la récupération des activités:', error);
-          });
+    axios
+      .get("/forum/activites") // Assurez-vous que l'URL est correcte
+      .then((response) => {
+        setActivities(response.data); // Assurez-vous que la réponse est correctement analysée
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la récupération des activités:", error);
+      });
   }, []); // Cette fonction useEffect sera exécutée une seule fois après le premier rendu
 
   useEffect(() => {
@@ -34,23 +34,26 @@ export default function UpdateSujet() {
         setFormData({
           title: sujetData.title,
           content: sujetData.content,
-          activity: sujetData.activity._id // Assurez-vous que c'est bien l'ID de l'activité
+          activity: sujetData.activity._id, // Assurez-vous que c'est bien l'ID de l'activité
         });
       } catch (error) {
-        console.error('Erreur lors de la récupération des données du sujet:', error);
+        console.error(
+          "Erreur lors de la récupération des données du sujet:",
+          error
+        );
       }
     }
 
     // Assurez-vous que fetchActivities est correctement défini
     async function fetchActivities() {
       try {
-        const response = await axios.get('/forum/activites');
+        const response = await axios.get("/forum/activites");
         setActivities(response.data);
       } catch (error) {
-        console.error('Erreur lors de la récupération des activités:', error);
+        console.error("Erreur lors de la récupération des activités:", error);
       }
     }
-    
+
     fetchSujet();
     fetchActivities();
   }, [id]);
@@ -58,7 +61,7 @@ export default function UpdateSujet() {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -66,9 +69,9 @@ export default function UpdateSujet() {
     e.preventDefault();
     try {
       await axios.put(`/forum/update/${id}`, formData);
-      navigate('/forum'); // Redirigez vers la liste des forums après la mise à jour
+      navigate("/forum"); // Redirigez vers la liste des forums après la mise à jour
     } catch (error) {
-      console.error('Erreur lors de la mise à jour du sujet:', error);
+      console.error("Erreur lors de la mise à jour du sujet:", error);
     }
   };
 
@@ -96,14 +99,15 @@ export default function UpdateSujet() {
             <textarea
               id="content"
               name="content"
-              value={formData.contenu}
+              value={formData.content}
               onChange={handleChange}
             />
           </div>
 
           <div className="cp-field">
-            <h5>Activity:</h5>
+            <h5>Activity</h5>
             <Form.Select
+              className="form-control w-50"
               aria-label="Default select example"
               id="activity"
               name="activity"
@@ -111,16 +115,19 @@ export default function UpdateSujet() {
               onChange={handleChange}
             >
               <option value="">-- Select an activity --</option>
-              {activities && activities.map((activity) => (
-                <option key={activity._id} value={activity._id}>{activity.name}</option>
-              ))}
+              {activities &&
+                activities.map((activity) => (
+                  <option key={activity._id} value={activity._id}>
+                    {activity.name}
+                  </option>
+                ))}
             </Form.Select>
           </div>
 
           <div className="save-stngs pd3">
             <ul>
               <li>
-                <button type="submit">Modifier</button>
+                <button type="submit">Update</button>
               </li>
             </ul>
           </div>
