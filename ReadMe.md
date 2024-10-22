@@ -10,6 +10,7 @@ The objective is to facilitate communication, collaboration, and information sha
 
 ## Technologies Used
 ### Front-end
+
 #### React JS : port 
 React lets you build user interfaces out of individual pieces called components.
 
